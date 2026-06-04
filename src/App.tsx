@@ -1,8 +1,16 @@
 import { useEffect, useMemo, useState } from "react";
-import { ANSWER_OPTIONS, STARTER_NOTES, getNoteAccuracy, getRandomNote } from "./noteData";
+import {
+  PITCH_ANSWER_OPTIONS,
+  PITCH_NOTES,
+  READING_ANSWER_OPTIONS,
+  STARTER_NOTES,
+  getNoteAccuracy,
+  getRandomPitchNote,
+  getRandomReadingNote,
+} from "./noteData";
 import { playTone } from "./audio";
-import { loadProgress, recordAttempt, resetProgress, saveProgress } from "./storage";
-import type { FeedbackState, NoteName, PracticeProgress, TrainingNote } from "./types";
+import { completeRound, loadProgress, recordPitchAttempt, recordReadingAttempt, resetProgress, saveProgress } from "./storage";
+import type { FeedbackState, NoteName, PitchNote, PracticeMode, PracticeProgress, ReadingNoteName, TrainingNote } from "./types";
 
 const ROUND_SECONDS = 60;
 const ADVANCE_DELAY_MS = 650;
@@ -13,6 +21,10 @@ function formatAccuracy(correct: number, attempts: number): string {
   }
 
   return `${Math.round((correct / attempts) * 100)}%`;
+}
+
+function getModeLabel(mode: PracticeMode): string {
+  return mode === "reading" ? "Note reading" : "Pitch training";
 }
 
 function MusicStaff({ note }: { note: TrainingNote }) {
@@ -34,6 +46,17 @@ function MusicStaff({ note }: { note: TrainingNote }) {
   );
 }
 
+function PitchPrompt({ note, reveal }: { note: PitchNote; reveal: boolean }) {
+  return (
+    <div className="pitch-prompt" aria-label={reveal ? `Pitch note ${note.id}` : "Hidden pitch note"}>
+      <div className="sound-ring">
+        <span aria-hidden="true">♪</span>
+      </div>
+      <strong>{reveal ? note.id : "?"}</strong>
+    </div>
+  );
+}
+
 function StatTile({ label, value }: { label: string; value: string | number }) {
   return (
     <div className="stat-tile">
@@ -44,7 +67,9 @@ function StatTile({ label, value }: { label: string; value: string | number }) {
 }
 
 function App() {
-  const [currentNote, setCurrentNote] = useState<TrainingNote>(() => getRandomNote());
+  const [mode, setMode] = useState<PracticeMode>("reading");
+  const [currentReadingNote, setCurrentReadingNote] = useState<TrainingNote>(() => getRandomReadingNote());
+  const [currentPitchNote, setCurrentPitchNote] = useState<PitchNote>(() => getRandomPitchNote());
   const [progress, setProgress] = useState<PracticeProgress>(() => loadProgress());
   const [feedback, setFeedback] = useState<FeedbackState>(null);
   const [timeRemaining, setTimeRemaining] = useState(ROUND_SECONDS);
@@ -52,19 +77,26 @@ function App() {
   const [roundCorrect, setRoundCorrect] = useState(0);
   const [isRunning, setIsRunning] = useState(false);
 
+  const activeProgress = progress[mode];
+  const answerOptions = mode === "reading" ? READING_ANSWER_OPTIONS : PITCH_ANSWER_OPTIONS;
+  const activeNote = mode === "reading" ? currentReadingNote : currentPitchNote;
   const roundAccuracy = formatAccuracy(roundCorrect, roundAttempts);
-  const lifetimeAccuracy = formatAccuracy(progress.totalCorrect, progress.totalAttempts);
+  const lifetimeAccuracy = formatAccuracy(activeProgress.totalCorrect, activeProgress.totalAttempts);
+  const modeLabel = getModeLabel(mode);
 
-  const weakestNotes = useMemo(() => {
-    return STARTER_NOTES.map((note) => ({
-      note,
-      accuracy: getNoteAccuracy(progress, note.id),
-      attempts: progress.noteStats[note.id]?.attempts ?? 0,
-    }))
+  const focusItems = useMemo(() => {
+    const sourceNotes = mode === "reading" ? STARTER_NOTES : PITCH_NOTES;
+
+    return sourceNotes
+      .map((note) => ({
+        note,
+        accuracy: getNoteAccuracy(progress[mode], note.id),
+        attempts: progress[mode].noteStats[note.id]?.attempts ?? 0,
+      }))
       .filter((entry) => entry.attempts > 0)
       .sort((a, b) => a.accuracy - b.accuracy)
       .slice(0, 3);
-  }, [progress]);
+  }, [mode, progress]);
 
   useEffect(() => {
     if (!isRunning) {
@@ -74,11 +106,7 @@ function App() {
     if (timeRemaining <= 0) {
       setIsRunning(false);
       setProgress((currentProgress) => {
-        const nextProgress = {
-          ...currentProgress,
-          bestRoundScore: Math.max(currentProgress.bestRoundScore, roundCorrect),
-          sessionsCompleted: currentProgress.sessionsCompleted + 1,
-        };
+        const nextProgress = completeRound(currentProgress, mode, roundCorrect);
         saveProgress(nextProgress);
         return nextProgress;
       });
@@ -90,16 +118,18 @@ function App() {
     }, 1000);
 
     return () => window.clearTimeout(timer);
-  }, [isRunning, roundCorrect, timeRemaining]);
+  }, [isRunning, mode, roundCorrect, timeRemaining]);
 
   useEffect(() => {
     function handleKeyDown(event: KeyboardEvent) {
       const key = event.key.toUpperCase();
-      const option = ANSWER_OPTIONS.find((answer) => answer === key);
-      const shortcutOption = STARTER_NOTES.find((note) => note.keyboardShortcut === event.key);
+      const letterOption = answerOptions.find((answer) => answer === key);
+      const shortcutSource = mode === "reading" ? STARTER_NOTES : PITCH_NOTES;
+      const shortcutOption = shortcutSource.find((note) => note.keyboardShortcut === event.key);
 
-      if (option) {
-        handleAnswer(option);
+      if (letterOption) {
+        handleAnswer(letterOption);
+        return;
       }
 
       if (shortcutOption) {
@@ -111,13 +141,34 @@ function App() {
     return () => window.removeEventListener("keydown", handleKeyDown);
   });
 
+  function setPracticeMode(nextMode: PracticeMode) {
+    setMode(nextMode);
+    setFeedback(null);
+    setIsRunning(false);
+    setRoundAttempts(0);
+    setRoundCorrect(0);
+    setTimeRemaining(ROUND_SECONDS);
+  }
+
   function startRound() {
     setIsRunning(true);
     setFeedback(null);
     setRoundAttempts(0);
     setRoundCorrect(0);
     setTimeRemaining(ROUND_SECONDS);
-    setCurrentNote((note) => getRandomNote(note.id));
+
+    if (mode === "reading") {
+      setCurrentReadingNote((note) => getRandomReadingNote(note.id));
+      return;
+    }
+
+    const nextPitch = getRandomPitchNote(currentPitchNote.id);
+    setCurrentPitchNote(nextPitch);
+    playTone(nextPitch.frequency);
+  }
+
+  function playCurrentNote() {
+    playTone(activeNote.frequency);
   }
 
   function handleAnswer(answer: NoteName) {
@@ -125,20 +176,36 @@ function App() {
       return;
     }
 
-    const isCorrect = answer === currentNote.name;
+    const answeredMode = mode;
+    const answeredReadingNote = currentReadingNote;
+    const answeredPitchNote = currentPitchNote;
+    const expectedAnswer = answeredMode === "reading" ? answeredReadingNote.name : answeredPitchNote.name;
+    const isCorrect = answer === expectedAnswer;
+
     setFeedback({ answer, isCorrect });
     setRoundAttempts((attempts) => attempts + 1);
     setRoundCorrect((correct) => correct + (isCorrect ? 1 : 0));
 
     setProgress((currentProgress) => {
-      const nextProgress = recordAttempt(currentProgress, currentNote, answer);
+      const nextProgress =
+        answeredMode === "reading"
+          ? recordReadingAttempt(currentProgress, answeredReadingNote, answer as ReadingNoteName)
+          : recordPitchAttempt(currentProgress, answeredPitchNote, answer);
       saveProgress(nextProgress);
       return nextProgress;
     });
 
     window.setTimeout(() => {
       setFeedback(null);
-      setCurrentNote((note) => getRandomNote(note.id));
+
+      if (answeredMode === "reading") {
+        setCurrentReadingNote((note) => getRandomReadingNote(note.id));
+        return;
+      }
+
+      const nextPitch = getRandomPitchNote(answeredPitchNote.id);
+      setCurrentPitchNote(nextPitch);
+      playTone(nextPitch.frequency);
     }, ADVANCE_DELAY_MS);
   }
 
@@ -154,40 +221,55 @@ function App() {
     }
   }
 
+  const feedbackClass = feedback ? (feedback.isCorrect ? "correct" : "wrong") : "";
+  const feedbackText = feedback ? (feedback.isCorrect ? "Correct" : `It was ${activeNote.id}`) : isRunning ? "Listening" : "Ready";
+
   return (
     <main className="app-shell">
       <section className="practice-panel" aria-labelledby="app-title">
         <header className="topbar">
           <div>
-            <p className="eyebrow">Piano sight-reading trainer</p>
+            <p className="eyebrow">Sight reading + ear training</p>
             <h1 id="app-title">NoteSense</h1>
           </div>
-          <button className="secondary-button" type="button" onClick={() => playTone(currentNote.frequency)}>
-            Play note
+          <button className="secondary-button" type="button" onClick={playCurrentNote}>
+            {mode === "reading" ? "Play note" : "Replay pitch"}
           </button>
         </header>
+
+        <div className="mode-switch" aria-label="Practice mode">
+          <button type="button" className={mode === "reading" ? "active" : ""} onClick={() => setPracticeMode("reading")}>
+            Note reading
+          </button>
+          <button type="button" className={mode === "pitch" ? "active" : ""} onClick={() => setPracticeMode("pitch")}>
+            Pitch training
+          </button>
+        </div>
 
         <div className="round-strip" aria-label="Current round status">
           <StatTile label="Time" value={`${timeRemaining}s`} />
           <StatTile label="Round" value={`${roundCorrect}/${roundAttempts}`} />
           <StatTile label="Accuracy" value={roundAccuracy} />
-          <StatTile label="Best" value={progress.bestRoundScore} />
+          <StatTile label="Best" value={activeProgress.bestRoundScore} />
         </div>
 
-        <div className="staff-card">
-          <MusicStaff note={currentNote} />
+        <div className={`staff-card ${mode === "pitch" ? "pitch-card" : ""}`}>
+          {mode === "reading" ? (
+            <MusicStaff note={currentReadingNote} />
+          ) : (
+            <PitchPrompt note={currentPitchNote} reveal={Boolean(feedback)} />
+          )}
+
           <div className="prompt-row">
             <div>
-              <span className="prompt-label">Which note is this?</span>
-              <p>{isRunning ? "Answer with the buttons or keyboard keys C-G / 1-5." : "Start a 60-second drill when you are ready."}</p>
+              <span className="prompt-label">{mode === "reading" ? "Which note is this?" : "Name the pitch you hear."}</span>
+              <p>{mode === "reading" ? "Treble clef C4-G4" : "Natural notes C4-B4"}</p>
             </div>
-            <span className={`feedback ${feedback ? (feedback.isCorrect ? "correct" : "wrong") : ""}`}>
-              {feedback ? (feedback.isCorrect ? "Correct" : `It was ${currentNote.name}`) : isRunning ? "Listening" : "Ready"}
-            </span>
+            <span className={`feedback ${feedbackClass}`}>{feedbackText}</span>
           </div>
 
-          <div className="answer-grid">
-            {ANSWER_OPTIONS.map((answer, index) => (
+          <div className={`answer-grid ${mode === "pitch" ? "pitch-answer-grid" : ""}`}>
+            {answerOptions.map((answer, index) => (
               <button
                 className="answer-button"
                 key={answer}
@@ -215,23 +297,23 @@ function App() {
       <aside className="stats-panel" aria-label="Practice progress">
         <div className="panel-heading">
           <p className="eyebrow">Saved locally</p>
-          <h2>Progress</h2>
+          <h2>{modeLabel}</h2>
         </div>
 
         <div className="lifetime-grid">
-          <StatTile label="Attempts" value={progress.totalAttempts} />
-          <StatTile label="Correct" value={progress.totalCorrect} />
+          <StatTile label="Attempts" value={activeProgress.totalAttempts} />
+          <StatTile label="Correct" value={activeProgress.totalCorrect} />
           <StatTile label="Accuracy" value={lifetimeAccuracy} />
-          <StatTile label="Rounds" value={progress.sessionsCompleted} />
+          <StatTile label="Rounds" value={activeProgress.sessionsCompleted} />
         </div>
 
         <div className="weak-notes">
-          <h3>Focus notes</h3>
-          {weakestNotes.length === 0 ? (
-            <p className="empty-state">Finish a few questions and NoteSense will show notes that need extra attention.</p>
+          <h3>{mode === "reading" ? "Focus notes" : "Focus pitches"}</h3>
+          {focusItems.length === 0 ? (
+            <p className="empty-state">Finish a few questions and NoteSense will show what needs extra attention.</p>
           ) : (
             <ul>
-              {weakestNotes.map(({ note, accuracy, attempts }) => (
+              {focusItems.map(({ note, accuracy, attempts }) => (
                 <li key={note.id}>
                   <span>{note.id}</span>
                   <div className="meter" aria-hidden="true">
@@ -246,8 +328,12 @@ function App() {
         </div>
 
         <div className="range-card">
-          <h3>V1 range</h3>
-          <p>Treble clef only: middle C, D, E, F, and G. This keeps the first drill focused enough to practise daily.</p>
+          <h3>V2 range</h3>
+          <p>
+            {mode === "reading"
+              ? "Treble clef note reading from middle C to G."
+              : "Pitch recognition across one natural-note octave from C4 to B4."}
+          </p>
         </div>
       </aside>
     </main>

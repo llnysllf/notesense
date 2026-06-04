@@ -1,25 +1,40 @@
-export type NoteName = "C" | "D" | "E" | "F" | "G";
+export type NoteName = "C" | "D" | "E" | "F" | "G" | "A" | "B";
+export type ReadingNoteName = "C" | "D" | "E" | "F" | "G";
+export type PracticeMode = "reading" | "pitch";
 
 export type TrainingNote = {
   id: string;
-  name: NoteName;
+  name: ReadingNoteName;
   octave: number;
   frequency: number;
   staffY: number;
   keyboardShortcut: string;
 };
 
-export type NoteProgress = {
+export type PitchNote = {
+  id: string;
+  name: NoteName;
+  octave: number;
+  frequency: number;
+  keyboardShortcut: string;
+};
+
+export type AttemptProgress = {
   attempts: number;
   correct: number;
 };
 
-export type PracticeProgress = {
+export type ModeProgress = {
   totalAttempts: number;
   totalCorrect: number;
   bestRoundScore: number;
-  noteStats: Record<string, NoteProgress>;
+  noteStats: Record<string, AttemptProgress>;
   sessionsCompleted: number;
+};
+
+export type PracticeProgress = {
+  reading: ModeProgress;
+  pitch: ModeProgress;
 };
 
 export type FeedbackState = {
