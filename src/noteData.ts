@@ -105,11 +105,11 @@ function createEmptyModeProgress(notes: Array<{ id: string }>): ModeProgress {
     bestRoundScore: 0,
     sessionsCompleted: 0,
     noteStats: notes.reduce<Record<string, { attempts: number; correct: number }>>(
-    (stats, note) => {
-      stats[note.id] = { attempts: 0, correct: 0 };
-      return stats;
-    },
-    {},
+      (stats, note) => {
+        stats[note.id] = { attempts: 0, correct: 0 };
+        return stats;
+      },
+      {},
     ),
   };
 }
@@ -122,20 +122,53 @@ export const emptyProgress = {
   pitch: emptyPitchProgress,
 };
 
-export function getRandomReadingNote(previousNoteId?: string): TrainingNote {
-  const availableNotes =
-    STARTER_NOTES.length > 1
-      ? STARTER_NOTES.filter((note) => note.id !== previousNoteId)
-      : STARTER_NOTES;
+type SelectNoteOptions = {
+  previousNoteId?: string;
+  progress?: ModeProgress;
+  useAdaptive?: boolean;
+};
 
-  return availableNotes[Math.floor(Math.random() * availableNotes.length)];
+function getPracticeWeight(noteId: string, progress?: ModeProgress): number {
+  const stat = progress?.noteStats[noteId];
+  if (!stat || stat.attempts === 0) {
+    return 4;
+  }
+
+  const misses = stat.attempts - stat.correct;
+  const accuracy = stat.correct / stat.attempts;
+  return 1 + (1 - accuracy) * 5 + Math.min(misses, 5) * 0.4;
 }
 
-export function getRandomPitchNote(previousNoteId?: string): PitchNote {
-  const availableNotes =
-    PITCH_NOTES.length > 1 ? PITCH_NOTES.filter((note) => note.id !== previousNoteId) : PITCH_NOTES;
+function selectPracticeNote<TNote extends { id: string }>(notes: TNote[], options: SelectNoteOptions): TNote {
+  const availableNotes = notes.length > 1 ? notes.filter((note) => note.id !== options.previousNoteId) : notes;
 
-  return availableNotes[Math.floor(Math.random() * availableNotes.length)];
+  if (!options.useAdaptive) {
+    return availableNotes[Math.floor(Math.random() * availableNotes.length)];
+  }
+
+  const weightedNotes = availableNotes.map((note) => ({
+    note,
+    weight: getPracticeWeight(note.id, options.progress),
+  }));
+  const totalWeight = weightedNotes.reduce((sum, entry) => sum + entry.weight, 0);
+  let cursor = Math.random() * totalWeight;
+
+  for (const entry of weightedNotes) {
+    cursor -= entry.weight;
+    if (cursor <= 0) {
+      return entry.note;
+    }
+  }
+
+  return weightedNotes[weightedNotes.length - 1].note;
+}
+
+export function selectReadingNote(options: SelectNoteOptions = {}): TrainingNote {
+  return selectPracticeNote(STARTER_NOTES, options);
+}
+
+export function selectPitchNote(options: SelectNoteOptions = {}): PitchNote {
+  return selectPracticeNote(PITCH_NOTES, options);
 }
 
 export function getNoteAccuracy(progress: ModeProgress, noteId: string): number {

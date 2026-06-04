@@ -1,6 +1,6 @@
 # NoteSense
 
-NoteSense is a small piano sight-reading and ear-training app for beginner musicians. It focuses on two practical habits: reading notes on the treble staff and recognizing natural piano pitches by ear.
+NoteSense is a small piano sight-reading and ear-training app for beginner musicians. It focuses on two practical habits: reading notes on the treble staff and recognizing natural piano pitches by ear, then adapts practice toward weak notes and pitches.
 
 ## Features
 
@@ -14,6 +14,9 @@ NoteSense is a small piano sight-reading and ear-training app for beginner music
 - Web Audio note playback for ear association
 - Separate local progress tracking for note reading and pitch training
 - Focus-note and focus-pitch stats for weak areas
+- Adaptive practice that weights weak notes and pitches more often
+- Configurable 30, 60, or 90 second rounds
+- Round summary with score, accuracy, best streak, and next-practice suggestion
 
 ## Tech Stack
 
@@ -26,7 +29,7 @@ NoteSense is a small piano sight-reading and ear-training app for beginner music
 
 ## Why I Built It
 
-I am learning piano and wanted a simple tool to improve note-reading speed and pitch recognition. The project is intentionally small, but it is built like a real product: reusable note data, persistent practice stats, responsive UI, and a clear roadmap for stronger ear-training and MIDI input.
+I am learning piano and wanted a simple tool to improve note-reading speed and pitch recognition. The project is intentionally small, but it is built like a real product: reusable note data, adaptive practice logic, persistent practice stats, responsive UI, and a clear roadmap for stronger ear-training and MIDI input.
 
 ## Getting Started
 
@@ -48,7 +51,7 @@ Create a production build:
 npm run build
 ```
 
-## V2 Scope
+## V3 Scope
 
 The current version is deliberately focused:
 
@@ -56,6 +59,9 @@ The current version is deliberately focused:
 - One sight-reading clef
 - Five starter reading notes
 - Seven natural pitch-training notes
+- Adaptive or random practice selection
+- Configurable round length
+- Session summaries
 - No backend
 - No login
 - No sharps or flats
@@ -73,4 +79,4 @@ This keeps the practice loop fast and finishable while leaving room for meaningf
 
 ## Portfolio Summary
 
-Built a piano sight-reading and ear-training app using React and TypeScript, with timed drills, interactive notation, pitch recognition, Web Audio playback, and locally persisted progress analytics.
+Built a piano sight-reading and ear-training app using React and TypeScript, with adaptive timed drills, interactive notation, pitch recognition, Web Audio playback, session summaries, and locally persisted progress analytics.

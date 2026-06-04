@@ -1,6 +1,7 @@
 export type NoteName = "C" | "D" | "E" | "F" | "G" | "A" | "B";
 export type ReadingNoteName = "C" | "D" | "E" | "F" | "G";
 export type PracticeMode = "reading" | "pitch";
+export type RoundLength = 30 | 60 | 90;
 
 export type TrainingNote = {
   id: string;
@@ -35,6 +36,23 @@ export type ModeProgress = {
 export type PracticeProgress = {
   reading: ModeProgress;
   pitch: ModeProgress;
+};
+
+export type PracticeSettings = {
+  roundLength: RoundLength;
+  adaptivePractice: boolean;
+  autoPlayPitch: boolean;
+  revealPitchAfterAnswer: boolean;
+};
+
+export type SessionSummary = {
+  mode: PracticeMode;
+  score: number;
+  attempts: number;
+  accuracy: number;
+  bestStreak: number;
+  focusItem?: string;
+  suggestion: string;
 };
 
 export type FeedbackState = {

@@ -1,8 +1,25 @@
 import { emptyProgress } from "./noteData";
-import type { ModeProgress, NoteName, PitchNote, PracticeMode, PracticeProgress, ReadingNoteName, TrainingNote } from "./types";
+import type {
+  ModeProgress,
+  NoteName,
+  PitchNote,
+  PracticeMode,
+  PracticeProgress,
+  PracticeSettings,
+  ReadingNoteName,
+  TrainingNote,
+} from "./types";
 
 const STORAGE_KEY = "notesense.progress.v2";
 const LEGACY_STORAGE_KEY = "notesense.progress.v1";
+const SETTINGS_STORAGE_KEY = "notesense.settings.v3";
+
+export const defaultSettings: PracticeSettings = {
+  roundLength: 60,
+  adaptivePractice: true,
+  autoPlayPitch: true,
+  revealPitchAfterAnswer: true,
+};
 
 type LegacyPracticeProgress = Partial<ModeProgress> & Partial<PracticeProgress>;
 
@@ -48,6 +65,35 @@ export function loadProgress(): PracticeProgress {
 
 export function saveProgress(progress: PracticeProgress): void {
   window.localStorage.setItem(STORAGE_KEY, JSON.stringify(progress));
+}
+
+function normalizeSettings(settings: Partial<PracticeSettings>): PracticeSettings {
+  const roundLength = [30, 60, 90].includes(Number(settings.roundLength))
+    ? (Number(settings.roundLength) as PracticeSettings["roundLength"])
+    : defaultSettings.roundLength;
+
+  return {
+    ...defaultSettings,
+    ...settings,
+    roundLength,
+  };
+}
+
+export function loadSettings(): PracticeSettings {
+  try {
+    const stored = window.localStorage.getItem(SETTINGS_STORAGE_KEY);
+    if (!stored) {
+      return defaultSettings;
+    }
+
+    return normalizeSettings(JSON.parse(stored) as Partial<PracticeSettings>);
+  } catch {
+    return defaultSettings;
+  }
+}
+
+export function saveSettings(settings: PracticeSettings): void {
+  window.localStorage.setItem(SETTINGS_STORAGE_KEY, JSON.stringify(settings));
 }
 
 function recordModeAttempt(
