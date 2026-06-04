@@ -23,6 +23,7 @@ NoteSense is a small piano sight-reading and ear-training app for beginner music
 - React
 - TypeScript
 - Vite
+- Vitest
 - CSS
 - Browser Web Audio API
 - LocalStorage for progress persistence
@@ -51,6 +52,26 @@ Create a production build:
 npm run build
 ```
 
+Run the test suite:
+
+```bash
+npm test
+```
+
+Run the full local quality check:
+
+```bash
+npm run check
+```
+
+## Engineering Notes
+
+- Practice selection and summary logic live in `src/practiceEngine.ts` so the learning behavior can be tested outside React.
+- UI-only pieces live in `src/components` to keep the main app focused on state and orchestration.
+- Progress and settings are normalized when loaded from LocalStorage, including migration from the original V1 progress shape.
+- Keyboard answers, ARIA pressed states, live feedback, visible focus rings, and reduced-motion support are included for accessibility.
+- The test suite covers adaptive weighting, deterministic note selection, focus-note ranking, session summaries, and progress reducers.
+
 ## V3 Scope
 
 The current version is deliberately focused:
@@ -62,6 +83,7 @@ The current version is deliberately focused:
 - Adaptive or random practice selection
 - Configurable round length
 - Session summaries
+- Tested practice engine
 - No backend
 - No login
 - No sharps or flats

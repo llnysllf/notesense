@@ -1,14 +1,18 @@
 import { useEffect, useMemo, useState } from "react";
+import MusicStaff from "./components/MusicStaff";
+import PitchPrompt from "./components/PitchPrompt";
+import StatTile from "./components/StatTile";
+import { PITCH_ANSWER_OPTIONS, PITCH_NOTES, READING_ANSWER_OPTIONS, STARTER_NOTES } from "./noteData";
+import { playTone } from "./audio";
 import {
-  PITCH_ANSWER_OPTIONS,
-  PITCH_NOTES,
-  READING_ANSWER_OPTIONS,
-  STARTER_NOTES,
-  getNoteAccuracy,
+  ROUND_LENGTHS,
+  createSessionSummary,
+  formatAccuracy,
+  getFocusItems,
+  getModeLabel,
   selectPitchNote,
   selectReadingNote,
-} from "./noteData";
-import { playTone } from "./audio";
+} from "./practiceEngine";
 import {
   completeRound,
   loadProgress,
@@ -21,112 +25,17 @@ import {
 } from "./storage";
 import type {
   FeedbackState,
-  ModeProgress,
   NoteName,
   PitchNote,
   PracticeMode,
   PracticeProgress,
   PracticeSettings,
   ReadingNoteName,
-  RoundLength,
   SessionSummary,
   TrainingNote,
 } from "./types";
 
 const ADVANCE_DELAY_MS = 650;
-const ROUND_LENGTHS: RoundLength[] = [30, 60, 90];
-
-function formatAccuracy(correct: number, attempts: number): string {
-  if (attempts === 0) {
-    return "0%";
-  }
-
-  return `${Math.round((correct / attempts) * 100)}%`;
-}
-
-function getModeLabel(mode: PracticeMode): string {
-  return mode === "reading" ? "Note reading" : "Pitch training";
-}
-
-function getFocusItems(mode: PracticeMode, modeProgress: ModeProgress) {
-  const sourceNotes = mode === "reading" ? STARTER_NOTES : PITCH_NOTES;
-
-  return sourceNotes
-    .map((note) => ({
-      note,
-      accuracy: getNoteAccuracy(modeProgress, note.id),
-      attempts: modeProgress.noteStats[note.id]?.attempts ?? 0,
-    }))
-    .filter((entry) => entry.attempts > 0)
-    .sort((a, b) => a.accuracy - b.accuracy)
-    .slice(0, 3);
-}
-
-function createSessionSummary(
-  mode: PracticeMode,
-  progress: PracticeProgress,
-  score: number,
-  attempts: number,
-  bestStreak: number,
-): SessionSummary {
-  const focusItem = getFocusItems(mode, progress[mode]).find((entry) => entry.accuracy < 85)?.note.id;
-  const accuracy = attempts > 0 ? Math.round((score / attempts) * 100) : 0;
-  const suggestion =
-    attempts === 0
-      ? "Next: start with a short round and answer at least five prompts."
-      : focusItem
-        ? `Next: spend one short round on ${focusItem}.`
-        : "Next: keep the same range and try to beat this score.";
-
-  return {
-    mode,
-    score,
-    attempts,
-    accuracy,
-    bestStreak,
-    focusItem,
-    suggestion,
-  };
-}
-
-function MusicStaff({ note }: { note: TrainingNote }) {
-  const staffLines = [56, 72, 88, 104, 120];
-  const shouldShowLedgerLine = note.id === "C4";
-
-  return (
-    <svg className="staff" viewBox="0 0 420 184" role="img" aria-label={`Treble staff note ${note.id}`}>
-      <text className="clef" x="54" y="119" aria-hidden="true">
-        𝄞
-      </text>
-      {staffLines.map((lineY) => (
-        <line key={lineY} x1="34" x2="386" y1={lineY} y2={lineY} className="staff-line" />
-      ))}
-      {shouldShowLedgerLine && <line x1="212" x2="276" y1={note.staffY} y2={note.staffY} className="staff-line" />}
-      <ellipse cx="244" cy={note.staffY} rx="18" ry="12" className="note-head" transform={`rotate(-18 244 ${note.staffY})`} />
-      <line x1="259" x2="259" y1={note.staffY - 5} y2={note.staffY - 68} className="note-stem" />
-    </svg>
-  );
-}
-
-function PitchPrompt({ note, reveal }: { note: PitchNote; reveal: boolean }) {
-  return (
-    <div className="pitch-prompt" aria-label={reveal ? `Pitch note ${note.id}` : "Hidden pitch note"}>
-      <div className="sound-ring">
-        <span aria-hidden="true">♪</span>
-      </div>
-      <strong>{reveal ? note.id : "?"}</strong>
-    </div>
-  );
-}
-
-function StatTile({ label, value }: { label: string; value: string | number }) {
-  return (
-    <div className="stat-tile">
-      <span>{label}</span>
-      <strong>{value}</strong>
-    </div>
-  );
-}
 
 function App() {
   const [mode, setMode] = useState<PracticeMode>("reading");
@@ -364,10 +273,20 @@ function App() {
         </header>
 
         <div className="mode-switch" aria-label="Practice mode">
-          <button type="button" className={mode === "reading" ? "active" : ""} onClick={() => setPracticeMode("reading")}>
+          <button
+            type="button"
+            aria-pressed={mode === "reading"}
+            className={mode === "reading" ? "active" : ""}
+            onClick={() => setPracticeMode("reading")}
+          >
             Note reading
           </button>
-          <button type="button" className={mode === "pitch" ? "active" : ""} onClick={() => setPracticeMode("pitch")}>
+          <button
+            type="button"
+            aria-pressed={mode === "pitch"}
+            className={mode === "pitch" ? "active" : ""}
+            onClick={() => setPracticeMode("pitch")}
+          >
             Pitch training
           </button>
         </div>
@@ -391,7 +310,9 @@ function App() {
               <span className="prompt-label">{mode === "reading" ? "Which note is this?" : "Name the pitch you hear."}</span>
               <p>{promptDetail}</p>
             </div>
-            <span className={`feedback ${feedbackClass}`}>{getFeedbackText()}</span>
+            <span className={`feedback ${feedbackClass}`} aria-live="polite">
+              {getFeedbackText()}
+            </span>
           </div>
 
           <div className={`answer-grid ${mode === "pitch" ? "pitch-answer-grid" : ""}`}>
@@ -439,7 +360,7 @@ function App() {
         </div>
 
         {lastSummary && lastSummary.mode === mode && (
-          <div className="summary-card">
+          <div className="summary-card" aria-live="polite">
             <h3>Last round</h3>
             <div className="summary-grid">
               <StatTile label="Score" value={`${lastSummary.score}/${lastSummary.attempts}`} />
@@ -459,6 +380,7 @@ function App() {
                 <button
                   key={length}
                   type="button"
+                  aria-pressed={settings.roundLength === length}
                   className={settings.roundLength === length ? "active" : ""}
                   onClick={() => updateSettings({ roundLength: length })}
                 >
