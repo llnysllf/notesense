@@ -310,7 +310,7 @@ function App() {
               <span className="prompt-label">{mode === "reading" ? "Which note is this?" : "Name the pitch you hear."}</span>
               <p>{promptDetail}</p>
             </div>
-            <span className={`feedback ${feedbackClass}`} aria-live="polite">
+            <span className={`feedback ${feedbackClass}`} aria-live="polite" data-testid="practice-feedback">
               {getFeedbackText()}
             </span>
           </div>
@@ -321,6 +321,7 @@ function App() {
                 className="answer-button"
                 key={answer}
                 type="button"
+                aria-label={`Answer ${answer}`}
                 disabled={!isRunning || Boolean(feedback)}
                 onClick={() => handleAnswer(answer)}
               >
@@ -439,7 +440,7 @@ function App() {
         </div>
 
         <div className="range-card">
-          <h3>V3 range</h3>
+          <h3>Starter range</h3>
           <p>
             {mode === "reading"
               ? "Treble clef note reading from middle C to G."

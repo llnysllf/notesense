@@ -29,6 +29,8 @@ Live demo: [https://llnysllf.github.io/notesense/](https://llnysllf.github.io/no
 - TypeScript
 - Vite
 - Vitest
+- Playwright
+- axe-core
 - CSS
 - Browser Web Audio API
 - LocalStorage for progress persistence
@@ -69,6 +71,12 @@ Run the test suite:
 npm test
 ```
 
+Run the browser and accessibility test suite:
+
+```bash
+npm run test:e2e
+```
+
 Run the full local quality check:
 
 ```bash
@@ -82,10 +90,11 @@ npm run check
 - Progress and settings are normalized when loaded from LocalStorage, including migration from the original V1 progress shape.
 - Keyboard answers, ARIA pressed states, live feedback, visible focus rings, and reduced-motion support are included for accessibility.
 - The test suite covers adaptive weighting, deterministic note selection, focus-note ranking, session summaries, and progress reducers.
-- GitHub Actions run typechecking, tests, and builds on every push and pull request.
+- Playwright and axe-core cover the browser practice loop, responsive layout, console health, and automated accessibility violations.
+- GitHub Actions run typechecking, unit tests, browser tests, and builds on every push and pull request.
 - The `main` branch publishes a static production build to GitHub Pages.
 
-## V3 Scope
+## Current Scope
 
 The current version is deliberately focused:
 
@@ -97,6 +106,7 @@ The current version is deliberately focused:
 - Configurable round length
 - Session summaries
 - Tested practice engine
+- Browser-level accessibility and smoke tests
 - CI quality gate
 - GitHub Pages deployment
 - No backend
@@ -116,4 +126,4 @@ This keeps the practice loop fast and finishable while leaving room for meaningf
 
 ## Portfolio Summary
 
-Built a piano sight-reading and ear-training app using React and TypeScript, with adaptive timed drills, interactive notation, pitch recognition, Web Audio playback, session summaries, and locally persisted progress analytics.
+Built a piano sight-reading and ear-training app using React and TypeScript, with adaptive timed drills, interactive notation, pitch recognition, Web Audio playback, session summaries, locally persisted progress analytics, CI/CD, and browser-level accessibility testing.
