@@ -1,15 +1,14 @@
 import { useEffect, useMemo, useState } from "react";
 import MusicStaff from "./components/MusicStaff";
 import PitchPrompt from "./components/PitchPrompt";
+import PracticeStatsPanel from "./components/PracticeStatsPanel";
 import StatTile from "./components/StatTile";
 import { PITCH_ANSWER_OPTIONS, PITCH_NOTES, READING_ANSWER_OPTIONS, STARTER_NOTES } from "./noteData";
 import { playTone } from "./audio";
 import {
-  ROUND_LENGTHS,
   createSessionRecord,
   createSessionSummary,
   formatAccuracy,
-  formatDuration,
   getFocusItems,
   getModeLabel,
   getSessionHistorySummary,
@@ -39,21 +38,6 @@ import type {
 } from "./types";
 
 const ADVANCE_DELAY_MS = 650;
-const sessionDateFormatter = new Intl.DateTimeFormat(undefined, {
-  month: "short",
-  day: "numeric",
-  hour: "numeric",
-  minute: "2-digit",
-});
-
-function formatSessionDate(completedAt: string) {
-  const date = new Date(completedAt);
-  if (Number.isNaN(date.getTime())) {
-    return "Saved session";
-  }
-
-  return sessionDateFormatter.format(date);
-}
 
 function App() {
   const [mode, setMode] = useState<PracticeMode>("reading");
@@ -377,153 +361,22 @@ function App() {
                 Finish round
               </button>
             )}
-            <button className="ghost-button" type="button" onClick={handleResetProgress}>
-              Reset progress
-            </button>
           </div>
         </div>
       </section>
 
-      <aside className="stats-panel" aria-label="Practice progress">
-        <div className="panel-heading">
-          <p className="eyebrow">Saved locally</p>
-          <h2>{modeLabel}</h2>
-        </div>
-
-        <div className="lifetime-grid">
-          <StatTile label="Attempts" value={activeProgress.totalAttempts} />
-          <StatTile label="Correct" value={activeProgress.totalCorrect} />
-          <StatTile label="Accuracy" value={lifetimeAccuracy} />
-          <StatTile label="Best" value={activeProgress.bestRoundScore} />
-        </div>
-
-        {lastSummary && lastSummary.mode === mode && (
-          <div className="summary-card" aria-live="polite">
-            <h3>Last round</h3>
-            <div className="summary-grid">
-              <StatTile label="Score" value={`${lastSummary.score}/${lastSummary.attempts}`} />
-              <StatTile label="Accuracy" value={`${lastSummary.accuracy}%`} />
-              <StatTile label="Best streak" value={lastSummary.bestStreak} />
-            </div>
-            <p>{lastSummary.suggestion}</p>
-          </div>
-        )}
-
-        <div className="history-card" aria-labelledby="history-title">
-          <h3 id="history-title">Practice history</h3>
-          {historySummary.recentSessions.length === 0 ? (
-            <p className="empty-state">Finish a round and recent sessions will appear here.</p>
-          ) : (
-            <>
-              <div className="history-metrics" aria-label="Recent practice summary">
-                <div>
-                  <span>Recent avg</span>
-                  <strong>{historySummary.averageAccuracy}%</strong>
-                </div>
-                <div>
-                  <span>Practice time</span>
-                  <strong>{formatDuration(historySummary.totalPracticeSeconds)}</strong>
-                </div>
-              </div>
-              <ol className="history-list" aria-label={`${modeLabel} recent sessions`}>
-                {historySummary.recentSessions.map((session) => (
-                  <li
-                    key={session.id}
-                    aria-label={`${modeLabel} session ${session.score} out of ${session.attempts}, ${session.accuracy}% accuracy`}
-                  >
-                    <div className="history-copy">
-                      <strong>
-                        {session.score}/{session.attempts}
-                      </strong>
-                      <span>{formatSessionDate(session.completedAt)}</span>
-                    </div>
-                    <div className="history-meter" aria-hidden="true">
-                      <span style={{ width: `${session.accuracy}%` }} />
-                    </div>
-                    <em>{session.accuracy}%</em>
-                  </li>
-                ))}
-              </ol>
-            </>
-          )}
-        </div>
-
-        <div className="settings-card">
-          <h3>Drill settings</h3>
-          <div className="setting-row">
-            <span>Round length</span>
-            <div className="length-options" aria-label="Round length">
-              {ROUND_LENGTHS.map((length) => (
-                <button
-                  key={length}
-                  type="button"
-                  aria-pressed={settings.roundLength === length}
-                  className={settings.roundLength === length ? "active" : ""}
-                  onClick={() => updateSettings({ roundLength: length })}
-                >
-                  {length}s
-                </button>
-              ))}
-            </div>
-          </div>
-
-          <label className="toggle-row">
-            <input
-              type="checkbox"
-              checked={settings.adaptivePractice}
-              onChange={(event) => updateSettings({ adaptivePractice: event.currentTarget.checked })}
-            />
-            <span>Adaptive practice</span>
-          </label>
-
-          <label className="toggle-row">
-            <input
-              type="checkbox"
-              checked={settings.autoPlayPitch}
-              onChange={(event) => updateSettings({ autoPlayPitch: event.currentTarget.checked })}
-            />
-            <span>Auto-play pitch</span>
-          </label>
-
-          <label className="toggle-row">
-            <input
-              type="checkbox"
-              checked={settings.revealPitchAfterAnswer}
-              onChange={(event) => updateSettings({ revealPitchAfterAnswer: event.currentTarget.checked })}
-            />
-            <span>Reveal pitch answer</span>
-          </label>
-        </div>
-
-        <div className="weak-notes">
-          <h3>{mode === "reading" ? "Focus notes" : "Focus pitches"}</h3>
-          {focusItems.length === 0 ? (
-            <p className="empty-state">Finish a few questions and NoteSense will show what needs extra attention.</p>
-          ) : (
-            <ul>
-              {focusItems.map(({ note, accuracy, attempts }) => (
-                <li key={note.id}>
-                  <span>{note.id}</span>
-                  <div className="meter" aria-hidden="true">
-                    <span style={{ width: `${accuracy}%` }} />
-                  </div>
-                  <strong>{accuracy}%</strong>
-                  <em>{attempts} tries</em>
-                </li>
-              ))}
-            </ul>
-          )}
-        </div>
-
-        <div className="range-card">
-          <h3>Starter range</h3>
-          <p>
-            {mode === "reading"
-              ? "Treble clef note reading from middle C to G."
-              : "Pitch recognition across one natural-note octave from C4 to B4."}
-          </p>
-        </div>
-      </aside>
+      <PracticeStatsPanel
+        activeProgress={activeProgress}
+        focusItems={focusItems}
+        historySummary={historySummary}
+        lastSummary={lastSummary}
+        lifetimeAccuracy={lifetimeAccuracy}
+        mode={mode}
+        modeLabel={modeLabel}
+        settings={settings}
+        onResetProgress={handleResetProgress}
+        onSettingsChange={updateSettings}
+      />
     </main>
   );
 }

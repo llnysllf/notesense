@@ -32,7 +32,7 @@ Live demo: [https://llnysllf.github.io/notesense/](https://llnysllf.github.io/no
 - Vitest
 - Playwright
 - axe-core
-- CSS
+- CSS design tokens
 - Browser Web Audio API
 - LocalStorage for progress persistence
 - Local-first analytics for session history
@@ -89,6 +89,8 @@ npm run check
 
 - Practice selection and summary logic live in `src/practiceEngine.ts` so the learning behavior can be tested outside React.
 - UI-only pieces live in `src/components` to keep the main app focused on state and orchestration.
+- `PracticeStatsPanel` and `SessionHistory` isolate the progress sidebar from the drill loop, which keeps product analytics UI easier to evolve.
+- CSS custom properties define shared color, spacing, radius, and shadow tokens so the interface can be tuned consistently.
 - Progress, history, and settings are normalized when loaded from LocalStorage, including migration from the original V1 progress shape.
 - Keyboard answers, ARIA pressed states, live feedback, visible focus rings, and reduced-motion support are included for accessibility.
 - The test suite covers adaptive weighting, deterministic note selection, focus-note ranking, session summaries, session-history analytics, and progress reducers.
