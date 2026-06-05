@@ -4,18 +4,19 @@ NoteSense is currently a local-first React application. The product goal is to k
 
 ## Current Shape
 
-- `src/practiceEngine.ts` owns scoring, adaptive weighting, session summaries, and analytics helpers. It is pure TypeScript and does not depend on React or browser storage.
+- `src/practiceEngine.ts` owns scoring, adaptive weighting, session summaries, trend summaries, and analytics helpers. It is pure TypeScript and does not depend on React or browser storage.
 - `src/storage.ts` owns persistence, normalization, migration from the original local progress shape, and versioned data import/export.
 - `src/audio.ts` owns browser audio playback.
-- `src/components` contains focused UI sections for the staff, pitch prompt, stats panel, session history, and stat tiles.
+- `src/components` contains focused UI sections for the staff, pitch prompt, stats panel, session history, practice insights, and stat tiles.
 - `src/App.tsx` coordinates product state, round flow, settings, storage calls, and component composition.
-- `e2e/app.spec.ts` covers the browser practice loop, accessibility, layout health, import/export behavior, and storage failure messaging.
+- `e2e/app.spec.ts` covers the browser practice loop, accessibility, layout health, insight chart rendering, import/export behavior, and storage failure messaging.
 
 ## Quality Bar
 
 Every feature should keep these expectations intact:
 
 - Practice logic remains testable outside React.
+- Product analytics and chart inputs are derived in pure functions before rendering.
 - Persistence changes go through a storage boundary instead of being scattered through UI components.
 - User-visible state has a failure path, especially for save, export, auth, and sync operations.
 - Accessibility is part of the feature definition, not a final cleanup step.

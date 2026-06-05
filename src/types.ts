@@ -97,6 +97,23 @@ export type SessionHistorySummary = {
   bestStreak: number;
 };
 
+export type PracticeTrendPoint = {
+  id: string;
+  label: string;
+  completedAt: string;
+  accuracy: number;
+  score: number;
+  attempts: number;
+};
+
+export type PracticeInsightSummary = {
+  trendPoints: PracticeTrendPoint[];
+  latestAccuracy: number;
+  accuracyDelta: number;
+  bestStreak: number;
+  totalPracticeSeconds: number;
+};
+
 export type FeedbackState = {
   answer: NoteName;
   isCorrect: boolean;

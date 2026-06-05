@@ -410,6 +410,7 @@ h3 {
 
 .weak-notes,
 .history-card,
+.insights-card,
 .data-card,
 .range-card,
 .settings-card,
@@ -513,6 +514,74 @@ h3 {
 .history-card {
   display: grid;
   gap: 14px;
+}
+
+.insights-card {
+  display: grid;
+  gap: 14px;
+}
+
+.insight-metrics {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.insight-metrics div {
+  min-width: 0;
+  padding: 10px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-card);
+  background: var(--color-surface-warm);
+}
+
+.insight-metrics span {
+  display: block;
+  color: var(--color-muted);
+  font-size: 0.72rem;
+  font-weight: 750;
+}
+
+.insight-metrics strong {
+  display: block;
+  margin-top: 2px;
+  color: var(--color-text);
+  font-size: 1rem;
+  line-height: 1.1;
+}
+
+.insight-metrics strong.positive {
+  color: var(--color-success);
+}
+
+.insight-metrics strong.negative {
+  color: var(--color-danger);
+}
+
+.trend-chart {
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+
+.trend-gridline {
+  stroke: var(--color-meter);
+  stroke-linecap: round;
+  stroke-width: 2;
+}
+
+.trend-line {
+  fill: none;
+  stroke: var(--color-brand);
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 4;
+}
+
+.trend-point {
+  fill: var(--color-surface);
+  stroke: var(--color-brand-strong);
+  stroke-width: 3;
 }
 
 .data-card {
@@ -687,6 +756,7 @@ h3 {
 
   .round-strip,
   .answer-grid,
+  .insight-metrics,
   .summary-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }

@@ -95,6 +95,26 @@ test("imports local practice data", async ({ page }) => {
               accuracy: 80,
               bestStreak: 4,
             },
+            {
+              id: "imported-session-previous",
+              mode: "reading",
+              completedAt: "2026-06-05T08:00:00.000Z",
+              durationSeconds: 30,
+              score: 3,
+              attempts: 5,
+              accuracy: 60,
+              bestStreak: 2,
+            },
+            {
+              id: "imported-session-old",
+              mode: "reading",
+              completedAt: "2026-06-05T07:00:00.000Z",
+              durationSeconds: 30,
+              score: 2,
+              attempts: 5,
+              accuracy: 40,
+              bestStreak: 1,
+            },
           ],
         },
         settings: {
@@ -110,8 +130,17 @@ test("imports local practice data", async ({ page }) => {
   const progressPanel = page.getByLabel("Practice progress");
   await expect(progressPanel.getByRole("status")).toHaveText("Progress imported.");
   await expect(progressPanel.getByText("12")).toBeVisible();
+  await expect(progressPanel.getByRole("heading", { name: "Practice insight" })).toBeVisible();
+  await expect(progressPanel.getByText("+20%")).toBeVisible();
+  await expect(
+    progressPanel.getByRole("img", {
+      name: "Note reading accuracy trend across 3 saved rounds, latest 80 percent.",
+    }),
+  ).toBeVisible();
   await expect(page.getByRole("button", { name: "30s" })).toHaveAttribute("aria-pressed", "true");
-  await expect(progressPanel.getByRole("listitem", { name: /Note reading session/ })).toBeVisible();
+  await expect(
+    progressPanel.getByRole("listitem", { name: "Note reading session 8 out of 10, 80% accuracy" }),
+  ).toBeVisible();
 
   await page.reload();
   await expect(progressPanel.getByText("12")).toBeVisible();

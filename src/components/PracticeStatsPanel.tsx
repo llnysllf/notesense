@@ -6,10 +6,12 @@ import type {
   PitchNote,
   PracticeMode,
   PracticeSettings,
+  PracticeInsightSummary,
   SessionHistorySummary,
   SessionSummary,
   TrainingNote,
 } from "../types";
+import PracticeInsights from "./PracticeInsights";
 import SessionHistory from "./SessionHistory";
 import StatTile from "./StatTile";
 
@@ -23,6 +25,7 @@ type PracticeStatsPanelProps = {
   activeProgress: ModeProgress;
   focusItems: FocusItem[];
   historySummary: SessionHistorySummary;
+  insightSummary: PracticeInsightSummary;
   lastSummary: SessionSummary | null;
   lifetimeAccuracy: string;
   mode: PracticeMode;
@@ -39,6 +42,7 @@ function PracticeStatsPanel({
   activeProgress,
   focusItems,
   historySummary,
+  insightSummary,
   lastSummary,
   lifetimeAccuracy,
   mode,
@@ -89,6 +93,7 @@ function PracticeStatsPanel({
       )}
 
       <SessionHistory modeLabel={modeLabel} summary={historySummary} />
+      <PracticeInsights modeLabel={modeLabel} summary={insightSummary} />
 
       <div className="settings-card">
         <h3>Drill settings</h3>

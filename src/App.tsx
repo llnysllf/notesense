@@ -11,6 +11,7 @@ import {
   formatAccuracy,
   getFocusItems,
   getModeLabel,
+  getPracticeInsightSummary,
   getSessionHistorySummary,
   selectPitchNote,
   selectReadingNote,
@@ -72,6 +73,7 @@ function App() {
   const modeLabel = getModeLabel(mode);
   const focusItems = useMemo(() => getFocusItems(mode, progress[mode]), [mode, progress]);
   const historySummary = useMemo(() => getSessionHistorySummary(progress.history, mode), [mode, progress.history]);
+  const insightSummary = useMemo(() => getPracticeInsightSummary(progress.history, mode), [mode, progress.history]);
   const promptDetail =
     mode === "reading"
       ? `${settings.adaptivePractice ? "Adaptive" : "Random"} | Treble clef C4-G4`
@@ -453,6 +455,7 @@ function App() {
         activeProgress={activeProgress}
         focusItems={focusItems}
         historySummary={historySummary}
+        insightSummary={insightSummary}
         lastSummary={lastSummary}
         lifetimeAccuracy={lifetimeAccuracy}
         mode={mode}

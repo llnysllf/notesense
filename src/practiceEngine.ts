@@ -2,6 +2,7 @@ import { PITCH_NOTES, STARTER_NOTES } from "./noteData";
 import type {
   ModeProgress,
   PitchNote,
+  PracticeInsightSummary,
   PracticeMode,
   PracticeProgress,
   PracticeSessionRecord,
@@ -13,6 +14,7 @@ import type {
 
 export const ROUND_LENGTHS: RoundLength[] = [30, 60, 90];
 export const RECENT_SESSION_LIMIT = 5;
+export const TREND_SESSION_LIMIT = 6;
 
 type CreateSessionRecordInput = Omit<PracticeSessionRecord, "id" | "completedAt" | "accuracy"> &
   Partial<Pick<PracticeSessionRecord, "id" | "completedAt">>;
@@ -133,6 +135,34 @@ export function getSessionHistorySummary(
     totalAttempts: totals.attempts,
     totalPracticeSeconds: totals.durationSeconds,
     bestStreak: totals.bestStreak,
+  };
+}
+
+export function getPracticeInsightSummary(
+  history: PracticeSessionRecord[],
+  mode: PracticeMode,
+  limit = TREND_SESSION_LIMIT,
+): PracticeInsightSummary {
+  const recentSessions = getRecentSessions(history, mode, limit);
+  const latestSession = recentSessions[0];
+  const previousSession = recentSessions[1];
+
+  return {
+    trendPoints: [...recentSessions].reverse().map((session, index) => ({
+      id: session.id,
+      label: `Round ${index + 1}`,
+      completedAt: session.completedAt,
+      accuracy: session.accuracy,
+      score: session.score,
+      attempts: session.attempts,
+    })),
+    latestAccuracy: latestSession?.accuracy ?? 0,
+    accuracyDelta: latestSession && previousSession ? latestSession.accuracy - previousSession.accuracy : 0,
+    bestStreak: recentSessions.reduce((bestStreak, session) => Math.max(bestStreak, session.bestStreak), 0),
+    totalPracticeSeconds: recentSessions.reduce(
+      (totalPracticeSeconds, session) => totalPracticeSeconds + session.durationSeconds,
+      0,
+    ),
   };
 }
 

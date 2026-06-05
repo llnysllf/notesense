@@ -7,6 +7,7 @@ import {
   formatDuration,
   getFocusItems,
   getPracticeWeight,
+  getPracticeInsightSummary,
   getSessionHistorySummary,
   selectPitchNote,
   selectReadingNote,
@@ -176,6 +177,37 @@ describe("practiceEngine", () => {
       totalAttempts: 10,
       totalPracticeSeconds: 90,
       bestStreak: 5,
+    });
+  });
+
+  it("creates chronological practice insight trends from recent sessions", () => {
+    const history = [
+      session({ id: "new", score: 5, attempts: 5, accuracy: 100, bestStreak: 5, durationSeconds: 45 }),
+      session({ id: "previous", score: 3, attempts: 5, accuracy: 60, bestStreak: 2, durationSeconds: 30 }),
+      session({ id: "pitch", mode: "pitch", score: 1, attempts: 5, accuracy: 20 }),
+      session({ id: "old", score: 4, attempts: 5, accuracy: 80, bestStreak: 4, durationSeconds: 60 }),
+    ];
+
+    expect(getPracticeInsightSummary(history, "reading")).toMatchObject({
+      trendPoints: [
+        { id: "old", label: "Round 1", accuracy: 80 },
+        { id: "previous", label: "Round 2", accuracy: 60 },
+        { id: "new", label: "Round 3", accuracy: 100 },
+      ],
+      latestAccuracy: 100,
+      accuracyDelta: 40,
+      bestStreak: 5,
+      totalPracticeSeconds: 135,
+    });
+  });
+
+  it("returns empty practice insights when no sessions match the mode", () => {
+    expect(getPracticeInsightSummary([session({ mode: "pitch" })], "reading")).toEqual({
+      trendPoints: [],
+      latestAccuracy: 0,
+      accuracyDelta: 0,
+      bestStreak: 0,
+      totalPracticeSeconds: 0,
     });
   });
 });

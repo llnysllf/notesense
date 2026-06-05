@@ -25,6 +25,7 @@ Architecture notes: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)
 - Configurable 30, 60, or 90 second rounds
 - Round summary with score, accuracy, best streak, and next-practice suggestion
 - Recent practice history with accuracy, time, and streak analytics
+- Practice insight trend chart for recent accuracy, streak, and time
 - Local data import/export and storage-failure messaging
 
 ## Tech Stack
@@ -38,6 +39,7 @@ Architecture notes: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)
 - ESLint
 - Prettier
 - CSS design tokens
+- Accessible SVG trend chart
 - Browser Web Audio API
 - LocalStorage for progress persistence
 - Versioned JSON import/export for local data portability
@@ -103,6 +105,7 @@ npm run check
 - Practice selection and summary logic live in `src/practiceEngine.ts` so the learning behavior can be tested outside React.
 - UI-only pieces live in `src/components` to keep the main app focused on state and orchestration.
 - `PracticeStatsPanel` and `SessionHistory` isolate the progress sidebar from the drill loop, which keeps product analytics UI easier to evolve.
+- `PracticeInsights` renders tested trend data from `practiceEngine.ts` as an accessible SVG chart.
 - CSS custom properties define shared color, spacing, radius, and shadow tokens so the interface can be tuned consistently.
 - Progress, history, and settings are normalized when loaded from LocalStorage, including migration from the original V1 progress shape.
 - Save operations fail safely and surface a non-blocking status message when browser storage is unavailable.
@@ -128,6 +131,7 @@ The current version is deliberately focused:
 - Configurable round length
 - Session summaries
 - Capped local session history
+- Recent practice insight chart
 - Local JSON data import/export
 - Tested practice engine
 - Enforced formatting and linting
@@ -147,10 +151,9 @@ This keeps the practice loop fast and finishable while leaving room for meaningf
 - Add sharps and flats
 - Add interval training
 - Add MIDI keyboard input
-- Add weekly practice-history charts
 - Add sign-in and cloud sync for practice history
 - Add a service-backed profile and storage layer when the learning loop needs cross-device persistence
 
 ## Portfolio Summary
 
-Built a piano sight-reading and ear-training app using React and TypeScript, with adaptive timed drills, interactive notation, pitch recognition, Web Audio playback, session summaries, local session-history analytics, versioned data portability, CI/CD, and browser-level accessibility testing.
+Built a piano sight-reading and ear-training app using React and TypeScript, with adaptive timed drills, interactive notation, pitch recognition, Web Audio playback, session summaries, accessible practice-insight charts, local session-history analytics, versioned data portability, CI/CD, and browser-level accessibility testing.
