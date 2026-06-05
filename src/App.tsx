@@ -17,6 +17,7 @@ import {
 } from "./practiceEngine";
 import {
   completeRound,
+  createExportFileName,
   loadProgress,
   loadSettings,
   recordPitchAttempt,
@@ -24,6 +25,7 @@ import {
   resetProgress,
   saveProgress,
   saveSettings,
+  serializePracticeDataExport,
 } from "./storage";
 import type {
   FeedbackState,
@@ -38,6 +40,7 @@ import type {
 } from "./types";
 
 const ADVANCE_DELAY_MS = 650;
+const STORAGE_WARNING = "Progress is not being saved on this device right now.";
 
 function App() {
   const [mode, setMode] = useState<PracticeMode>("reading");
@@ -54,6 +57,7 @@ function App() {
   const [isRunning, setIsRunning] = useState(false);
   const [roundStartedAt, setRoundStartedAt] = useState<number | null>(null);
   const [lastSummary, setLastSummary] = useState<SessionSummary | null>(null);
+  const [storageWarning, setStorageWarning] = useState<string | null>(null);
 
   const activeProgress = progress[mode];
   const answerOptions = mode === "reading" ? READING_ANSWER_OPTIONS : PITCH_ANSWER_OPTIONS;
@@ -67,6 +71,16 @@ function App() {
     mode === "reading"
       ? `${settings.adaptivePractice ? "Adaptive" : "Random"} | Treble clef C4-G4`
       : `${settings.adaptivePractice ? "Adaptive" : "Random"} | Natural notes C4-B4`;
+
+  const persistProgress = useCallback((nextProgress: PracticeProgress) => {
+    const saved = saveProgress(nextProgress);
+    setStorageWarning(saved ? null : STORAGE_WARNING);
+  }, []);
+
+  const persistSettings = useCallback((nextSettings: PracticeSettings) => {
+    const saved = saveSettings(nextSettings);
+    setStorageWarning(saved ? null : STORAGE_WARNING);
+  }, []);
 
   const finishRound = useCallback(() => {
     if (!isRunning) {
@@ -88,7 +102,7 @@ function App() {
     });
     const nextProgress = completeRound(progress, sessionRecord);
     const summary = createSessionSummary(mode, nextProgress, roundCorrect, roundAttempts, bestRoundStreak);
-    saveProgress(nextProgress);
+    persistProgress(nextProgress);
     setProgress(nextProgress);
     setLastSummary(summary);
     setIsRunning(false);
@@ -103,6 +117,7 @@ function App() {
     roundAttempts,
     roundCorrect,
     roundStartedAt,
+    persistProgress,
     settings.roundLength,
     timeRemaining,
   ]);
@@ -148,7 +163,7 @@ function App() {
   function updateSettings(patch: Partial<PracticeSettings>) {
     setSettings((currentSettings) => {
       const nextSettings = { ...currentSettings, ...patch };
-      saveSettings(nextSettings);
+      persistSettings(nextSettings);
 
       if (!isRunning && patch.roundLength) {
         setTimeRemaining(patch.roundLength);
@@ -237,7 +252,7 @@ function App() {
     setCurrentStreak(nextStreak);
     setBestRoundStreak(nextBestStreak);
     setProgress(nextProgress);
-    saveProgress(nextProgress);
+    persistProgress(nextProgress);
 
     window.setTimeout(() => {
       setFeedback(null);
@@ -258,7 +273,9 @@ function App() {
   function handleResetProgress() {
     const confirmed = window.confirm("Reset all saved NoteSense progress?");
     if (confirmed) {
-      setProgress(resetProgress());
+      const nextProgress = resetProgress();
+      persistProgress(nextProgress);
+      setProgress(nextProgress);
       setRoundAttempts(0);
       setRoundCorrect(0);
       setCurrentStreak(0);
@@ -269,6 +286,21 @@ function App() {
       setRoundStartedAt(null);
       setTimeRemaining(settings.roundLength);
     }
+  }
+
+  function handleExportData() {
+    const exportedAt = new Date();
+    const exportData = serializePracticeDataExport(progress, settings, exportedAt.toISOString());
+    const blob = new Blob([exportData], { type: "application/json" });
+    const objectUrl = URL.createObjectURL(blob);
+    const downloadLink = document.createElement("a");
+
+    downloadLink.href = objectUrl;
+    downloadLink.download = createExportFileName(exportedAt);
+    document.body.append(downloadLink);
+    downloadLink.click();
+    downloadLink.remove();
+    URL.revokeObjectURL(objectUrl);
   }
 
   function getFeedbackText() {
@@ -386,6 +418,8 @@ function App() {
         mode={mode}
         modeLabel={modeLabel}
         settings={settings}
+        storageWarning={storageWarning}
+        onExportData={handleExportData}
         onResetProgress={handleResetProgress}
         onSettingsChange={updateSettings}
       />

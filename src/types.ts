@@ -46,6 +46,13 @@ export type PracticeSettings = {
   revealPitchAfterAnswer: boolean;
 };
 
+export type PracticeDataExport = {
+  schemaVersion: 1;
+  exportedAt: string;
+  progress: PracticeProgress;
+  settings: PracticeSettings;
+};
+
 export type SessionSummary = {
   mode: PracticeMode;
   score: number;

@@ -14,9 +14,15 @@ import {
 import {
   SESSION_HISTORY_LIMIT,
   completeRound,
+  createExportFileName,
+  createPracticeDataExport,
+  defaultSettings,
   loadProgress,
   recordPitchAttempt,
   recordReadingAttempt,
+  saveProgress,
+  saveSettings,
+  serializePracticeDataExport,
 } from "./storage";
 import type { PracticeMode, PracticeProgress, PracticeSessionRecord } from "./types";
 
@@ -38,15 +44,23 @@ function session(overrides: Partial<PracticeSessionRecord> = {}): PracticeSessio
   };
 }
 
-function stubLocalStorage(initialState: Record<string, string>) {
+function stubLocalStorage(initialState: Record<string, string>, shouldFailWrites = false) {
   const store = new Map(Object.entries(initialState));
 
   vi.stubGlobal("window", {
     localStorage: {
       getItem: (key: string) => store.get(key) ?? null,
-      setItem: (key: string, value: string) => store.set(key, value),
+      setItem: (key: string, value: string) => {
+        if (shouldFailWrites) {
+          throw new DOMException("Quota exceeded", "QuotaExceededError");
+        }
+
+        store.set(key, value);
+      },
     },
   });
+
+  return store;
 }
 
 afterEach(() => {
@@ -254,5 +268,42 @@ describe("storage progress reducers", () => {
     expect(progress.history.map((entry) => entry.id)).toEqual(["new", "old"]);
     expect(progress.history[0]).toMatchObject({ accuracy: 75, mode: "pitch" });
     expect(progress.history[1]).toMatchObject({ accuracy: 25, mode: "reading" });
+  });
+
+  it("reports storage write failures without throwing", () => {
+    stubLocalStorage({}, true);
+
+    expect(saveProgress(freshProgress())).toBe(false);
+    expect(saveSettings(defaultSettings)).toBe(false);
+  });
+
+  it("saves progress and settings when storage is available", () => {
+    const store = stubLocalStorage({});
+
+    expect(saveProgress(freshProgress())).toBe(true);
+    expect(saveSettings(defaultSettings)).toBe(true);
+    expect(store.has("notesense.progress.v2")).toBe(true);
+    expect(store.has("notesense.settings.v3")).toBe(true);
+  });
+
+  it("creates versioned practice data exports", () => {
+    const progress = completeRound(
+      freshProgress(),
+      session({ id: "export-session", completedAt: "2026-06-05T09:00:00.000Z" }),
+    );
+    const exportData = createPracticeDataExport(progress, defaultSettings, "2026-06-05T10:00:00.000Z");
+    const serializedExport = serializePracticeDataExport(progress, defaultSettings, "2026-06-05T10:00:00.000Z");
+
+    expect(exportData).toMatchObject({
+      schemaVersion: 1,
+      exportedAt: "2026-06-05T10:00:00.000Z",
+      settings: defaultSettings,
+    });
+    expect(exportData.progress.history[0].id).toBe("export-session");
+    expect(JSON.parse(serializedExport)).toMatchObject(exportData);
+  });
+
+  it("creates stable export filenames", () => {
+    expect(createExportFileName(new Date("2026-06-05T10:00:00.000Z"))).toBe("notesense-progress-2026-06-05.json");
   });
 });

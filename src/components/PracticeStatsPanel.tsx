@@ -26,6 +26,8 @@ type PracticeStatsPanelProps = {
   mode: PracticeMode;
   modeLabel: string;
   settings: PracticeSettings;
+  storageWarning: string | null;
+  onExportData: () => void;
   onResetProgress: () => void;
   onSettingsChange: (patch: Partial<PracticeSettings>) => void;
 };
@@ -39,6 +41,8 @@ function PracticeStatsPanel({
   mode,
   modeLabel,
   settings,
+  storageWarning,
+  onExportData,
   onResetProgress,
   onSettingsChange,
 }: PracticeStatsPanelProps) {
@@ -146,9 +150,22 @@ function PracticeStatsPanel({
         </p>
       </div>
 
-      <button className="ghost-button full-width-button" type="button" onClick={onResetProgress}>
-        Reset progress
-      </button>
+      <div className="data-card">
+        <h3>Data</h3>
+        {storageWarning && (
+          <p className="storage-warning" role="status">
+            {storageWarning}
+          </p>
+        )}
+        <div className="data-actions">
+          <button className="secondary-button" type="button" onClick={onExportData}>
+            Export data
+          </button>
+          <button className="ghost-button" type="button" onClick={onResetProgress}>
+            Reset progress
+          </button>
+        </div>
+      </div>
     </aside>
   );
 }

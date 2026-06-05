@@ -4,6 +4,7 @@ import type {
   NoteName,
   PitchNote,
   PracticeMode,
+  PracticeDataExport,
   PracticeProgress,
   PracticeSettings,
   PracticeSessionRecord,
@@ -15,6 +16,7 @@ const STORAGE_KEY = "notesense.progress.v2";
 const LEGACY_STORAGE_KEY = "notesense.progress.v1";
 const SETTINGS_STORAGE_KEY = "notesense.settings.v3";
 export const SESSION_HISTORY_LIMIT = 20;
+export const DATA_EXPORT_SCHEMA_VERSION = 1;
 
 export const defaultSettings: PracticeSettings = {
   roundLength: 60,
@@ -122,8 +124,13 @@ export function loadProgress(): PracticeProgress {
   }
 }
 
-export function saveProgress(progress: PracticeProgress): void {
-  window.localStorage.setItem(STORAGE_KEY, JSON.stringify(progress));
+export function saveProgress(progress: PracticeProgress): boolean {
+  try {
+    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(progress));
+    return true;
+  } catch {
+    return false;
+  }
 }
 
 function normalizeSettings(settings: Partial<PracticeSettings>): PracticeSettings {
@@ -151,8 +158,39 @@ export function loadSettings(): PracticeSettings {
   }
 }
 
-export function saveSettings(settings: PracticeSettings): void {
-  window.localStorage.setItem(SETTINGS_STORAGE_KEY, JSON.stringify(settings));
+export function saveSettings(settings: PracticeSettings): boolean {
+  try {
+    window.localStorage.setItem(SETTINGS_STORAGE_KEY, JSON.stringify(settings));
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+export function createPracticeDataExport(
+  progress: PracticeProgress,
+  settings: PracticeSettings,
+  exportedAt = new Date().toISOString(),
+): PracticeDataExport {
+  return {
+    schemaVersion: DATA_EXPORT_SCHEMA_VERSION,
+    exportedAt,
+    progress: normalizeProgress(progress),
+    settings: normalizeSettings(settings),
+  };
+}
+
+export function serializePracticeDataExport(
+  progress: PracticeProgress,
+  settings: PracticeSettings,
+  exportedAt?: string,
+): string {
+  return `${JSON.stringify(createPracticeDataExport(progress, settings, exportedAt), null, 2)}\n`;
+}
+
+export function createExportFileName(exportedAt = new Date()): string {
+  const dateStamp = exportedAt.toISOString().slice(0, 10);
+  return `notesense-progress-${dateStamp}.json`;
 }
 
 function recordModeAttempt(
@@ -209,6 +247,5 @@ export function completeRound(progress: PracticeProgress, session: PracticeSessi
 }
 
 export function resetProgress(): PracticeProgress {
-  saveProgress(emptyProgress);
   return emptyProgress;
 }

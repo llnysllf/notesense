@@ -388,10 +388,6 @@ h3 {
   color: var(--color-text);
 }
 
-.full-width-button {
-  width: 100%;
-}
-
 .stats-panel .stat-tile {
   min-height: 76px;
 }
@@ -402,6 +398,7 @@ h3 {
 
 .weak-notes,
 .history-card,
+.data-card,
 .range-card,
 .settings-card,
 .summary-card {
@@ -504,6 +501,27 @@ h3 {
 .history-card {
   display: grid;
   gap: 14px;
+}
+
+.data-card {
+  display: grid;
+  gap: 14px;
+}
+
+.data-actions {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+}
+
+.storage-warning {
+  margin-bottom: 0;
+  padding: 10px 12px;
+  border-radius: var(--radius-card);
+  background: var(--color-danger-bg);
+  color: var(--color-danger);
+  font-size: 0.86rem;
+  font-weight: 800;
 }
 
 .history-metrics {
