@@ -1,5 +1,7 @@
+import { useRef, type ChangeEvent } from "react";
 import { ROUND_LENGTHS } from "../practiceEngine";
 import type {
+  DataStatus,
   ModeProgress,
   PitchNote,
   PracticeMode,
@@ -26,8 +28,9 @@ type PracticeStatsPanelProps = {
   mode: PracticeMode;
   modeLabel: string;
   settings: PracticeSettings;
-  storageWarning: string | null;
+  dataStatus: DataStatus;
   onExportData: () => void;
+  onImportData: (file: File) => void;
   onResetProgress: () => void;
   onSettingsChange: (patch: Partial<PracticeSettings>) => void;
 };
@@ -41,11 +44,24 @@ function PracticeStatsPanel({
   mode,
   modeLabel,
   settings,
-  storageWarning,
+  dataStatus,
   onExportData,
+  onImportData,
   onResetProgress,
   onSettingsChange,
 }: PracticeStatsPanelProps) {
+  const importInputRef = useRef<HTMLInputElement>(null);
+
+  function handleImportInputChange(event: ChangeEvent<HTMLInputElement>) {
+    const importFile = event.currentTarget.files?.[0];
+
+    if (importFile) {
+      onImportData(importFile);
+    }
+
+    event.currentTarget.value = "";
+  }
+
   return (
     <aside className="stats-panel" aria-label="Practice progress">
       <div className="panel-heading">
@@ -152,15 +168,27 @@ function PracticeStatsPanel({
 
       <div className="data-card">
         <h3>Data</h3>
-        {storageWarning && (
-          <p className="storage-warning" role="status">
-            {storageWarning}
+        {dataStatus && (
+          <p className={`data-status ${dataStatus.tone}`} role="status">
+            {dataStatus.message}
           </p>
         )}
         <div className="data-actions">
           <button className="secondary-button" type="button" onClick={onExportData}>
             Export data
           </button>
+          <button className="secondary-button" type="button" onClick={() => importInputRef.current?.click()}>
+            Import data
+          </button>
+          <input
+            ref={importInputRef}
+            aria-label="Import data file"
+            className="file-input"
+            type="file"
+            tabIndex={-1}
+            accept="application/json,.json"
+            onChange={handleImportInputChange}
+          />
           <button className="ghost-button" type="button" onClick={onResetProgress}>
             Reset progress
           </button>

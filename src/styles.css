@@ -71,6 +71,18 @@ input:focus-visible {
   outline-offset: 3px;
 }
 
+.file-input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
 .app-shell {
   display: grid;
   grid-template-columns: minmax(0, 1fr) 360px;
@@ -514,14 +526,22 @@ h3 {
   gap: 10px;
 }
 
-.storage-warning {
+.data-status {
   margin-bottom: 0;
   padding: 10px 12px;
   border-radius: var(--radius-card);
-  background: var(--color-danger-bg);
-  color: var(--color-danger);
   font-size: 0.86rem;
   font-weight: 800;
+}
+
+.data-status.success {
+  background: var(--color-success-bg);
+  color: var(--color-success);
+}
+
+.data-status.warning {
+  background: var(--color-danger-bg);
+  color: var(--color-danger);
 }
 
 .history-metrics {

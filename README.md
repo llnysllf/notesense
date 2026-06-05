@@ -25,7 +25,7 @@ Architecture notes: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)
 - Configurable 30, 60, or 90 second rounds
 - Round summary with score, accuracy, best streak, and next-practice suggestion
 - Recent practice history with accuracy, time, and streak analytics
-- Local data export and storage-failure messaging
+- Local data import/export and storage-failure messaging
 
 ## Tech Stack
 
@@ -40,7 +40,7 @@ Architecture notes: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)
 - CSS design tokens
 - Browser Web Audio API
 - LocalStorage for progress persistence
-- Versioned JSON export for local data portability
+- Versioned JSON import/export for local data portability
 - Local-first analytics for session history
 
 ## Why I Built It
@@ -106,7 +106,7 @@ npm run check
 - CSS custom properties define shared color, spacing, radius, and shadow tokens so the interface can be tuned consistently.
 - Progress, history, and settings are normalized when loaded from LocalStorage, including migration from the original V1 progress shape.
 - Save operations fail safely and surface a non-blocking status message when browser storage is unavailable.
-- Exported practice data includes a schema version, timestamp, progress, and settings for local-first data portability.
+- Imported and exported practice data includes a schema version, timestamp, progress, and settings for local-first data portability.
 - The architecture notes document the local-first data model and the path toward sign-in, backend APIs, cloud storage, and sync.
 - Keyboard answers, ARIA pressed states, live feedback, visible focus rings, and reduced-motion support are included for accessibility.
 - ESLint enforces TypeScript, React hooks, React refresh, and JSX accessibility rules with zero warnings allowed.
@@ -128,7 +128,7 @@ The current version is deliberately focused:
 - Configurable round length
 - Session summaries
 - Capped local session history
-- Local JSON data export
+- Local JSON data import/export
 - Tested practice engine
 - Enforced formatting and linting
 - Browser-level accessibility and smoke tests
@@ -148,10 +148,9 @@ This keeps the practice loop fast and finishable while leaving room for meaningf
 - Add interval training
 - Add MIDI keyboard input
 - Add weekly practice-history charts
-- Add local data import
 - Add sign-in and cloud sync for practice history
 - Add a service-backed profile and storage layer when the learning loop needs cross-device persistence
 
 ## Portfolio Summary
 
-Built a piano sight-reading and ear-training app using React and TypeScript, with adaptive timed drills, interactive notation, pitch recognition, Web Audio playback, session summaries, local session-history analytics, CI/CD, and browser-level accessibility testing.
+Built a piano sight-reading and ear-training app using React and TypeScript, with adaptive timed drills, interactive notation, pitch recognition, Web Audio playback, session summaries, local session-history analytics, versioned data portability, CI/CD, and browser-level accessibility testing.

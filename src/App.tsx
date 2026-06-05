@@ -20,6 +20,7 @@ import {
   createExportFileName,
   loadProgress,
   loadSettings,
+  parsePracticeDataImport,
   recordPitchAttempt,
   recordReadingAttempt,
   resetProgress,
@@ -28,6 +29,7 @@ import {
   serializePracticeDataExport,
 } from "./storage";
 import type {
+  DataStatus,
   FeedbackState,
   NoteName,
   PitchNote,
@@ -41,6 +43,9 @@ import type {
 
 const ADVANCE_DELAY_MS = 650;
 const STORAGE_WARNING = "Progress is not being saved on this device right now.";
+const IMPORT_SUCCESS = "Progress imported.";
+const IMPORT_STORAGE_WARNING = "Imported data is loaded but not saved on this device.";
+const IMPORT_READ_ERROR = "Could not read this file.";
 
 function App() {
   const [mode, setMode] = useState<PracticeMode>("reading");
@@ -57,7 +62,7 @@ function App() {
   const [isRunning, setIsRunning] = useState(false);
   const [roundStartedAt, setRoundStartedAt] = useState<number | null>(null);
   const [lastSummary, setLastSummary] = useState<SessionSummary | null>(null);
-  const [storageWarning, setStorageWarning] = useState<string | null>(null);
+  const [dataStatus, setDataStatus] = useState<DataStatus>(null);
 
   const activeProgress = progress[mode];
   const answerOptions = mode === "reading" ? READING_ANSWER_OPTIONS : PITCH_ANSWER_OPTIONS;
@@ -74,12 +79,12 @@ function App() {
 
   const persistProgress = useCallback((nextProgress: PracticeProgress) => {
     const saved = saveProgress(nextProgress);
-    setStorageWarning(saved ? null : STORAGE_WARNING);
+    setDataStatus(saved ? null : { message: STORAGE_WARNING, tone: "warning" });
   }, []);
 
   const persistSettings = useCallback((nextSettings: PracticeSettings) => {
     const saved = saveSettings(nextSettings);
-    setStorageWarning(saved ? null : STORAGE_WARNING);
+    setDataStatus(saved ? null : { message: STORAGE_WARNING, tone: "warning" });
   }, []);
 
   const finishRound = useCallback(() => {
@@ -303,6 +308,41 @@ function App() {
     URL.revokeObjectURL(objectUrl);
   }
 
+  async function handleImportData(file: File) {
+    try {
+      const importResult = parsePracticeDataImport(await file.text());
+
+      if (!importResult.ok) {
+        setDataStatus({ message: importResult.error, tone: "warning" });
+        return;
+      }
+
+      const nextProgress = importResult.data.progress;
+      const nextSettings = importResult.data.settings;
+      const progressSaved = saveProgress(nextProgress);
+      const settingsSaved = saveSettings(nextSettings);
+
+      setProgress(nextProgress);
+      setSettings(nextSettings);
+      setRoundAttempts(0);
+      setRoundCorrect(0);
+      setCurrentStreak(0);
+      setBestRoundStreak(0);
+      setFeedback(null);
+      setLastSummary(null);
+      setIsRunning(false);
+      setRoundStartedAt(null);
+      setTimeRemaining(nextSettings.roundLength);
+      setDataStatus(
+        progressSaved && settingsSaved
+          ? { message: IMPORT_SUCCESS, tone: "success" }
+          : { message: IMPORT_STORAGE_WARNING, tone: "warning" },
+      );
+    } catch {
+      setDataStatus({ message: IMPORT_READ_ERROR, tone: "warning" });
+    }
+  }
+
   function getFeedbackText() {
     if (!feedback) {
       return isRunning ? "Listening" : "Ready";
@@ -418,8 +458,9 @@ function App() {
         mode={mode}
         modeLabel={modeLabel}
         settings={settings}
-        storageWarning={storageWarning}
+        dataStatus={dataStatus}
         onExportData={handleExportData}
+        onImportData={handleImportData}
         onResetProgress={handleResetProgress}
         onSettingsChange={updateSettings}
       />

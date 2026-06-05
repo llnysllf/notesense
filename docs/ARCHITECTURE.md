@@ -5,11 +5,11 @@ NoteSense is currently a local-first React application. The product goal is to k
 ## Current Shape
 
 - `src/practiceEngine.ts` owns scoring, adaptive weighting, session summaries, and analytics helpers. It is pure TypeScript and does not depend on React or browser storage.
-- `src/storage.ts` owns persistence, normalization, migration from the original local progress shape, and versioned data export.
+- `src/storage.ts` owns persistence, normalization, migration from the original local progress shape, and versioned data import/export.
 - `src/audio.ts` owns browser audio playback.
 - `src/components` contains focused UI sections for the staff, pitch prompt, stats panel, session history, and stat tiles.
 - `src/App.tsx` coordinates product state, round flow, settings, storage calls, and component composition.
-- `e2e/app.spec.ts` covers the browser practice loop, accessibility, layout health, export behavior, and storage failure messaging.
+- `e2e/app.spec.ts` covers the browser practice loop, accessibility, layout health, import/export behavior, and storage failure messaging.
 
 ## Quality Bar
 
@@ -31,7 +31,7 @@ The app saves progress and settings in browser LocalStorage today. This keeps ve
 - `progress`
 - `settings`
 
-That export schema is the first contract for future account migration. When sign-in arrives, imported local data can be uploaded to a user profile without relying on fragile DOM or browser-state scraping.
+That import/export schema is the first contract for future account migration. When sign-in arrives, imported local data can be uploaded to a user profile without relying on fragile DOM or browser-state scraping.
 
 ## Future Cloud-Ready Path
 
@@ -41,7 +41,7 @@ The likely service-backed version should introduce these pieces in order:
 2. API boundary: create a small backend service for profile, practice session, settings, and sync endpoints.
 3. Managed persistence: store user profiles, settings, and practice sessions in a database such as Postgres or DynamoDB.
 4. Sync model: keep local progress as the fast source during practice, then sync completed sessions and settings after each round.
-5. Migration: offer "import local progress" for anonymous users who later create an account.
+5. Migration: use the versioned local data import path for anonymous users who later create an account.
 6. Observability: add structured server logs, request tracing, and client-side error reporting.
 7. Release safety: use feature flags or staged rollout for account and sync features.
 
@@ -58,7 +58,6 @@ An AWS version could use Cognito, API Gateway, Lambda, DynamoDB or RDS, S3, Clou
 
 ## Near-Term Product Roadmap
 
-- Add import for exported local data.
 - Add richer practice history charts.
 - Add bass clef, expanded range, sharps, and flats.
 - Add MIDI keyboard input.

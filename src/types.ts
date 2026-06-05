@@ -53,6 +53,21 @@ export type PracticeDataExport = {
   settings: PracticeSettings;
 };
 
+export type PracticeDataImportResult =
+  | {
+      ok: true;
+      data: PracticeDataExport;
+    }
+  | {
+      ok: false;
+      error: string;
+    };
+
+export type DataStatus = {
+  message: string;
+  tone: "success" | "warning";
+} | null;
+
 export type SessionSummary = {
   mode: PracticeMode;
   score: number;

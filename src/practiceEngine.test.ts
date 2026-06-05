@@ -18,6 +18,7 @@ import {
   createPracticeDataExport,
   defaultSettings,
   loadProgress,
+  parsePracticeDataImport,
   recordPitchAttempt,
   recordReadingAttempt,
   saveProgress,
@@ -305,5 +306,95 @@ describe("storage progress reducers", () => {
 
   it("creates stable export filenames", () => {
     expect(createExportFileName(new Date("2026-06-05T10:00:00.000Z"))).toBe("notesense-progress-2026-06-05.json");
+  });
+
+  it("parses exported practice data for import", () => {
+    const progress = completeRound(
+      freshProgress(),
+      session({ id: "import-session", completedAt: "2026-06-05T09:00:00.000Z" }),
+    );
+    const importResult = parsePracticeDataImport(
+      serializePracticeDataExport(progress, defaultSettings, "2026-06-05T10:00:00.000Z"),
+    );
+
+    expect(importResult.ok).toBe(true);
+    if (!importResult.ok) {
+      throw new Error(importResult.error);
+    }
+
+    expect(importResult.data).toMatchObject({
+      schemaVersion: 1,
+      exportedAt: "2026-06-05T10:00:00.000Z",
+      settings: defaultSettings,
+    });
+    expect(importResult.data.progress.history[0].id).toBe("import-session");
+  });
+
+  it("normalizes imported practice data defensively", () => {
+    const importResult = parsePracticeDataImport(
+      JSON.stringify({
+        schemaVersion: 1,
+        exportedAt: "not a date",
+        progress: {
+          reading: {
+            totalAttempts: "8.2",
+            totalCorrect: 20,
+            bestRoundScore: "5",
+            sessionsCompleted: "2",
+            noteStats: {
+              C4: { attempts: "4", correct: 9 },
+            },
+          },
+          pitch: {},
+          history: [session({ score: 20, attempts: 5, accuracy: 0 })],
+        },
+        settings: {
+          roundLength: 90,
+          adaptivePractice: false,
+          autoPlayPitch: "yes",
+        },
+      }),
+    );
+
+    expect(importResult.ok).toBe(true);
+    if (!importResult.ok) {
+      throw new Error(importResult.error);
+    }
+
+    expect(importResult.data.exportedAt).toBe("1970-01-01T00:00:00.000Z");
+    expect(importResult.data.progress.reading).toMatchObject({
+      totalAttempts: 8,
+      totalCorrect: 8,
+      bestRoundScore: 5,
+      sessionsCompleted: 2,
+    });
+    expect(importResult.data.progress.reading.noteStats.C4).toEqual({ attempts: 4, correct: 4 });
+    expect(importResult.data.progress.history[0]).toMatchObject({ score: 5, accuracy: 100 });
+    expect(importResult.data.settings).toEqual({
+      ...defaultSettings,
+      roundLength: 90,
+      adaptivePractice: false,
+    });
+  });
+
+  it("rejects invalid practice data imports", () => {
+    expect(parsePracticeDataImport("{").ok).toBe(false);
+    expect(parsePracticeDataImport(JSON.stringify({ schemaVersion: 1 })).ok).toBe(false);
+  });
+
+  it("rejects unsupported practice data export versions", () => {
+    const importResult = parsePracticeDataImport(
+      JSON.stringify({
+        schemaVersion: 2,
+        exportedAt: "2026-06-05T10:00:00.000Z",
+        progress: freshProgress(),
+        settings: defaultSettings,
+      }),
+    );
+
+    expect(importResult).toEqual({
+      ok: false,
+      error: "This NoteSense export version is not supported.",
+    });
   });
 });

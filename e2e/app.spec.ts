@@ -55,6 +55,81 @@ test("exports local practice data", async ({ page }) => {
   expect(download.suggestedFilename()).toMatch(/^notesense-progress-\d{4}-\d{2}-\d{2}\.json$/);
 });
 
+test("imports local practice data", async ({ page }) => {
+  await page.goto("/");
+
+  await page.locator('input[type="file"]').setInputFiles({
+    name: "notesense-progress.json",
+    mimeType: "application/json",
+    buffer: Buffer.from(
+      JSON.stringify({
+        schemaVersion: 1,
+        exportedAt: "2026-06-05T10:00:00.000Z",
+        progress: {
+          reading: {
+            totalAttempts: 12,
+            totalCorrect: 9,
+            bestRoundScore: 8,
+            sessionsCompleted: 2,
+            noteStats: {
+              C4: { attempts: 6, correct: 4 },
+            },
+          },
+          pitch: {
+            totalAttempts: 3,
+            totalCorrect: 1,
+            bestRoundScore: 1,
+            sessionsCompleted: 1,
+            noteStats: {
+              C4: { attempts: 3, correct: 1 },
+            },
+          },
+          history: [
+            {
+              id: "imported-session",
+              mode: "reading",
+              completedAt: "2026-06-05T09:00:00.000Z",
+              durationSeconds: 60,
+              score: 8,
+              attempts: 10,
+              accuracy: 80,
+              bestStreak: 4,
+            },
+          ],
+        },
+        settings: {
+          roundLength: 30,
+          adaptivePractice: false,
+          autoPlayPitch: true,
+          revealPitchAfterAnswer: true,
+        },
+      }),
+    ),
+  });
+
+  const progressPanel = page.getByLabel("Practice progress");
+  await expect(progressPanel.getByRole("status")).toHaveText("Progress imported.");
+  await expect(progressPanel.getByText("12")).toBeVisible();
+  await expect(page.getByRole("button", { name: "30s" })).toHaveAttribute("aria-pressed", "true");
+  await expect(progressPanel.getByRole("listitem", { name: /Note reading session/ })).toBeVisible();
+
+  await page.reload();
+  await expect(progressPanel.getByText("12")).toBeVisible();
+  await expect(page.getByRole("button", { name: "30s" })).toHaveAttribute("aria-pressed", "true");
+});
+
+test("rejects invalid imported practice data", async ({ page }) => {
+  await page.goto("/");
+
+  await page.locator('input[type="file"]').setInputFiles({
+    name: "broken-notesense-progress.json",
+    mimeType: "application/json",
+    buffer: Buffer.from("{"),
+  });
+
+  await expect(page.getByRole("status")).toHaveText("Choose a valid NoteSense export file.");
+});
+
 test("surfaces storage failures without crashing", async ({ page }) => {
   await page.addInitScript(() => {
     const storagePrototype = Object.getPrototypeOf(window.localStorage) as Storage;
