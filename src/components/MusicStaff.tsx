@@ -17,7 +17,14 @@ function MusicStaff({ note }: MusicStaffProps) {
         <line key={lineY} x1="34" x2="386" y1={lineY} y2={lineY} className="staff-line" />
       ))}
       {shouldShowLedgerLine && <line x1="212" x2="276" y1={note.staffY} y2={note.staffY} className="staff-line" />}
-      <ellipse cx="244" cy={note.staffY} rx="18" ry="12" className="note-head" transform={`rotate(-18 244 ${note.staffY})`} />
+      <ellipse
+        cx="244"
+        cy={note.staffY}
+        rx="18"
+        ry="12"
+        className="note-head"
+        transform={`rotate(-18 244 ${note.staffY})`}
+      />
       <line x1="259" x2="259" y1={note.staffY - 5} y2={note.staffY - 68} className="note-stem" />
     </svg>
   );

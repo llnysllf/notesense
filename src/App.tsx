@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import MusicStaff from "./components/MusicStaff";
 import PitchPrompt from "./components/PitchPrompt";
 import PracticeStatsPanel from "./components/PracticeStatsPanel";
@@ -68,14 +68,53 @@ function App() {
       ? `${settings.adaptivePractice ? "Adaptive" : "Random"} | Treble clef C4-G4`
       : `${settings.adaptivePractice ? "Adaptive" : "Random"} | Natural notes C4-B4`;
 
+  const finishRound = useCallback(() => {
+    if (!isRunning) {
+      return;
+    }
+
+    const completedAt = Date.now();
+    const durationSeconds = roundStartedAt
+      ? Math.max(1, Math.round((completedAt - roundStartedAt) / 1000))
+      : Math.max(0, settings.roundLength - timeRemaining);
+    const sessionRecord = createSessionRecord({
+      id: `${mode}-${completedAt}`,
+      mode,
+      completedAt: new Date(completedAt).toISOString(),
+      durationSeconds,
+      score: roundCorrect,
+      attempts: roundAttempts,
+      bestStreak: bestRoundStreak,
+    });
+    const nextProgress = completeRound(progress, sessionRecord);
+    const summary = createSessionSummary(mode, nextProgress, roundCorrect, roundAttempts, bestRoundStreak);
+    saveProgress(nextProgress);
+    setProgress(nextProgress);
+    setLastSummary(summary);
+    setIsRunning(false);
+    setRoundStartedAt(null);
+    setFeedback(null);
+    setTimeRemaining(settings.roundLength);
+  }, [
+    bestRoundStreak,
+    isRunning,
+    mode,
+    progress,
+    roundAttempts,
+    roundCorrect,
+    roundStartedAt,
+    settings.roundLength,
+    timeRemaining,
+  ]);
+
   useEffect(() => {
     if (!isRunning) {
       return;
     }
 
     if (timeRemaining <= 0) {
-      finishRound();
-      return;
+      const finishTimer = window.setTimeout(finishRound, 0);
+      return () => window.clearTimeout(finishTimer);
     }
 
     const timer = window.setTimeout(() => {
@@ -83,7 +122,7 @@ function App() {
     }, 1000);
 
     return () => window.clearTimeout(timer);
-  }, [isRunning, timeRemaining]);
+  }, [finishRound, isRunning, timeRemaining]);
 
   useEffect(() => {
     function handleKeyDown(event: KeyboardEvent) {
@@ -169,35 +208,6 @@ function App() {
     if (settings.autoPlayPitch) {
       playTone(nextPitch.frequency);
     }
-  }
-
-  function finishRound() {
-    if (!isRunning) {
-      return;
-    }
-
-    const completedAt = Date.now();
-    const durationSeconds = roundStartedAt
-      ? Math.max(1, Math.round((completedAt - roundStartedAt) / 1000))
-      : Math.max(0, settings.roundLength - timeRemaining);
-    const sessionRecord = createSessionRecord({
-      id: `${mode}-${completedAt}`,
-      mode,
-      completedAt: new Date(completedAt).toISOString(),
-      durationSeconds,
-      score: roundCorrect,
-      attempts: roundAttempts,
-      bestStreak: bestRoundStreak,
-    });
-    const nextProgress = completeRound(progress, sessionRecord);
-    const summary = createSessionSummary(mode, nextProgress, roundCorrect, roundAttempts, bestRoundStreak);
-    saveProgress(nextProgress);
-    setProgress(nextProgress);
-    setLastSummary(summary);
-    setIsRunning(false);
-    setRoundStartedAt(null);
-    setFeedback(null);
-    setTimeRemaining(settings.roundLength);
   }
 
   function playCurrentNote() {
@@ -328,7 +338,9 @@ function App() {
 
           <div className="prompt-row">
             <div>
-              <span className="prompt-label">{mode === "reading" ? "Which note is this?" : "Name the pitch you hear."}</span>
+              <span className="prompt-label">
+                {mode === "reading" ? "Which note is this?" : "Name the pitch you hear."}
+              </span>
               <p>{promptDetail}</p>
             </div>
             <span className={`feedback ${feedbackClass}`} aria-live="polite" data-testid="practice-feedback">

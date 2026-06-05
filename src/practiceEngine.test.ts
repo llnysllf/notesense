@@ -11,7 +11,13 @@ import {
   selectPitchNote,
   selectReadingNote,
 } from "./practiceEngine";
-import { SESSION_HISTORY_LIMIT, completeRound, loadProgress, recordPitchAttempt, recordReadingAttempt } from "./storage";
+import {
+  SESSION_HISTORY_LIMIT,
+  completeRound,
+  loadProgress,
+  recordPitchAttempt,
+  recordReadingAttempt,
+} from "./storage";
 import type { PracticeMode, PracticeProgress, PracticeSessionRecord } from "./types";
 
 function freshProgress(): PracticeProgress {
@@ -181,17 +187,20 @@ describe("storage progress reducers", () => {
   });
 
   it("caps session history to the newest saved rounds", () => {
-    const progress = Array.from({ length: SESSION_HISTORY_LIMIT + 2 }).reduce<PracticeProgress>((currentProgress, _, index) => {
-      const mode: PracticeMode = index % 2 === 0 ? "reading" : "pitch";
-      return completeRound(
-        currentProgress,
-        session({
-          id: `session-${index}`,
-          mode,
-          completedAt: `2026-06-05T09:${String(index).padStart(2, "0")}:00.000Z`,
-        }),
-      );
-    }, freshProgress());
+    const progress = Array.from({ length: SESSION_HISTORY_LIMIT + 2 }).reduce<PracticeProgress>(
+      (currentProgress, _, index) => {
+        const mode: PracticeMode = index % 2 === 0 ? "reading" : "pitch";
+        return completeRound(
+          currentProgress,
+          session({
+            id: `session-${index}`,
+            mode,
+            completedAt: `2026-06-05T09:${String(index).padStart(2, "0")}:00.000Z`,
+          }),
+        );
+      },
+      freshProgress(),
+    );
 
     expect(progress.history).toHaveLength(SESSION_HISTORY_LIMIT);
     expect(progress.history[0].id).toBe(`session-${SESSION_HISTORY_LIMIT + 1}`);
@@ -227,7 +236,14 @@ describe("storage progress reducers", () => {
         pitch: {},
         history: [
           session({ id: "old", completedAt: "2026-06-05T08:00:00.000Z", score: 1, attempts: 4, accuracy: 100 }),
-          session({ id: "new", mode: "pitch", completedAt: "2026-06-05T09:00:00.000Z", score: 3, attempts: 4, accuracy: 0 }),
+          session({
+            id: "new",
+            mode: "pitch",
+            completedAt: "2026-06-05T09:00:00.000Z",
+            score: 3,
+            attempts: 4,
+            accuracy: 0,
+          }),
           { id: "invalid", mode: "unsupported" },
         ],
       }),

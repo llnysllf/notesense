@@ -62,7 +62,10 @@ function normalizeSessionHistory(history: unknown): PracticeSessionRecord[] {
       const score = Math.min(attempts, toSafeWholeNumber(sessionRecord.score));
 
       return {
-        id: typeof sessionRecord.id === "string" && sessionRecord.id.trim() ? sessionRecord.id : `${sessionRecord.mode}-${completedAt}-${index}`,
+        id:
+          typeof sessionRecord.id === "string" && sessionRecord.id.trim()
+            ? sessionRecord.id
+            : `${sessionRecord.mode}-${completedAt}-${index}`,
         mode: sessionRecord.mode,
         completedAt,
         durationSeconds: toSafeWholeNumber(sessionRecord.durationSeconds),

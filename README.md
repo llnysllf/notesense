@@ -32,6 +32,8 @@ Live demo: [https://llnysllf.github.io/notesense/](https://llnysllf.github.io/no
 - Vitest
 - Playwright
 - axe-core
+- ESLint
+- Prettier
 - CSS design tokens
 - Browser Web Audio API
 - LocalStorage for progress persistence
@@ -79,6 +81,13 @@ Run the browser and accessibility test suite:
 npm run test:e2e
 ```
 
+Run static code-quality checks:
+
+```bash
+npm run format:check
+npm run lint
+```
+
 Run the full local quality check:
 
 ```bash
@@ -93,9 +102,11 @@ npm run check
 - CSS custom properties define shared color, spacing, radius, and shadow tokens so the interface can be tuned consistently.
 - Progress, history, and settings are normalized when loaded from LocalStorage, including migration from the original V1 progress shape.
 - Keyboard answers, ARIA pressed states, live feedback, visible focus rings, and reduced-motion support are included for accessibility.
+- ESLint enforces TypeScript, React hooks, React refresh, and JSX accessibility rules with zero warnings allowed.
+- Prettier formatting is enforced before the test suite runs.
 - The test suite covers adaptive weighting, deterministic note selection, focus-note ranking, session summaries, session-history analytics, and progress reducers.
 - Playwright and axe-core cover the browser practice loop, responsive layout, console health, and automated accessibility violations.
-- GitHub Actions run typechecking, unit tests, browser tests, and builds on every push and pull request.
+- GitHub Actions run formatting, linting, typechecking, unit tests, and browser tests on every push and pull request.
 - The `main` branch publishes a static production build to GitHub Pages.
 
 ## Current Scope
@@ -111,6 +122,7 @@ The current version is deliberately focused:
 - Session summaries
 - Capped local session history
 - Tested practice engine
+- Enforced formatting and linting
 - Browser-level accessibility and smoke tests
 - CI quality gate
 - GitHub Pages deployment

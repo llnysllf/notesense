@@ -104,13 +104,10 @@ function createEmptyModeProgress(notes: Array<{ id: string }>): ModeProgress {
     totalCorrect: 0,
     bestRoundScore: 0,
     sessionsCompleted: 0,
-    noteStats: notes.reduce<Record<string, { attempts: number; correct: number }>>(
-      (stats, note) => {
-        stats[note.id] = { attempts: 0, correct: 0 };
-        return stats;
-      },
-      {},
-    ),
+    noteStats: notes.reduce<Record<string, { attempts: number; correct: number }>>((stats, note) => {
+      stats[note.id] = { attempts: 0, correct: 0 };
+      return stats;
+    }, {}),
   };
 }
 
