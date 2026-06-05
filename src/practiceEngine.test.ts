@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { emptyProgress, PITCH_NOTES, STARTER_NOTES } from "./noteData";
+import { BASS_STARTER_NOTES, emptyProgress, PITCH_NOTES, STARTER_NOTES } from "./noteData";
 import {
   createSessionRecord,
   createSessionSummary,
@@ -109,6 +109,17 @@ describe("practiceEngine", () => {
     expect(note.id).toBe(PITCH_NOTES[PITCH_NOTES.length - 1].id);
   });
 
+  it("selects bass clef reading notes when the bass range is active", () => {
+    const note = selectReadingNote({
+      readingRange: "bass-starter",
+      rng: () => 0.99,
+      useAdaptive: false,
+    });
+
+    expect(note.id).toBe(BASS_STARTER_NOTES[BASS_STARTER_NOTES.length - 1].id);
+    expect(note.clef).toBe("bass");
+  });
+
   it("sorts focus items by weakest accuracy first", () => {
     const progress = freshProgress();
     progress.pitch.noteStats.C4 = { attempts: 10, correct: 9 };
@@ -116,6 +127,18 @@ describe("practiceEngine", () => {
     progress.pitch.noteStats.E4 = { attempts: 10, correct: 6 };
 
     expect(getFocusItems("pitch", progress.pitch).map((entry) => entry.note.id)).toEqual(["D4", "E4", "C4"]);
+  });
+
+  it("scopes reading focus items to the selected clef range", () => {
+    const progress = freshProgress();
+    progress.reading.noteStats.C4 = { attempts: 10, correct: 10 };
+    progress.reading.noteStats.C3 = { attempts: 10, correct: 2 };
+    progress.reading.noteStats.D3 = { attempts: 10, correct: 8 };
+
+    expect(getFocusItems("reading", progress.reading, "bass-starter").map((entry) => entry.note.id)).toEqual([
+      "C3",
+      "D3",
+    ]);
   });
 
   it("creates useful round summaries without inventing weak notes", () => {
@@ -382,6 +405,7 @@ describe("storage progress reducers", () => {
         },
         settings: {
           roundLength: 90,
+          readingRange: "bass-starter",
           adaptivePractice: false,
           autoPlayPitch: "yes",
         },
@@ -405,6 +429,7 @@ describe("storage progress reducers", () => {
     expect(importResult.data.settings).toEqual({
       ...defaultSettings,
       roundLength: 90,
+      readingRange: "bass-starter",
       adaptivePractice: false,
     });
   });

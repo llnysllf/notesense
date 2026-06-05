@@ -1,6 +1,8 @@
 import AxeBuilder from "@axe-core/playwright";
 import { expect, test } from "@playwright/test";
 
+const ADVANCE_DELAY_MS = 650;
+
 test.beforeEach(async ({ page }) => {
   page.on("pageerror", (error) => {
     throw error;
@@ -45,6 +47,35 @@ test("runs the note-reading practice loop", async ({ page }) => {
   await expect(page.getByRole("listitem", { name: /Note reading session/ })).toBeVisible();
 });
 
+test("switches to bass clef reading practice", async ({ page }) => {
+  await page.goto("/");
+
+  await page.getByRole("button", { name: "Bass" }).click();
+  await expect(page.getByText("Adaptive | Bass clef C3-G3")).toBeVisible();
+  await expect(page.getByLabel(/Bass staff note [C-G]3/)).toBeVisible();
+
+  await page.getByRole("button", { name: "Start drill" }).click();
+  await expect(page.getByRole("button", { name: "Answer C" })).toBeEnabled();
+
+  await page.reload();
+  await expect(page.getByRole("button", { name: "Bass" })).toHaveAttribute("aria-pressed", "true");
+  await expect(page.getByLabel(/Bass staff note [C-G]3/)).toBeVisible();
+});
+
+test("keeps the selected reading range after switching during feedback", async ({ page }) => {
+  await page.goto("/");
+
+  await page.getByRole("button", { name: "Start drill" }).click();
+  await page.getByRole("button", { name: "Answer C" }).click();
+  await expect(page.getByTestId("practice-feedback")).not.toHaveText("Listening");
+
+  await page.getByRole("button", { name: "Bass" }).click();
+  await page.waitForTimeout(ADVANCE_DELAY_MS + 150);
+
+  await expect(page.getByText("Adaptive | Bass clef C3-G3")).toBeVisible();
+  await expect(page.getByLabel(/Bass staff note [C-G]3/)).toBeVisible();
+});
+
 test("exports local practice data", async ({ page }) => {
   await page.goto("/");
 
@@ -72,7 +103,7 @@ test("imports local practice data", async ({ page }) => {
             bestRoundScore: 8,
             sessionsCompleted: 2,
             noteStats: {
-              C4: { attempts: 6, correct: 4 },
+              C3: { attempts: 6, correct: 4 },
             },
           },
           pitch: {
@@ -119,6 +150,7 @@ test("imports local practice data", async ({ page }) => {
         },
         settings: {
           roundLength: 30,
+          readingRange: "bass-starter",
           adaptivePractice: false,
           autoPlayPitch: true,
           revealPitchAfterAnswer: true,
@@ -130,6 +162,8 @@ test("imports local practice data", async ({ page }) => {
   const progressPanel = page.getByLabel("Practice progress");
   await expect(progressPanel.getByRole("status")).toHaveText("Progress imported.");
   await expect(progressPanel.getByText("12")).toBeVisible();
+  await expect(page.getByRole("button", { name: "Bass" })).toHaveAttribute("aria-pressed", "true");
+  await expect(page.getByText("Random | Bass clef C3-G3")).toBeVisible();
   await expect(progressPanel.getByRole("heading", { name: "Practice insight" })).toBeVisible();
   await expect(progressPanel.getByText("+20%")).toBeVisible();
   await expect(
@@ -145,6 +179,7 @@ test("imports local practice data", async ({ page }) => {
   await page.reload();
   await expect(progressPanel.getByText("12")).toBeVisible();
   await expect(page.getByRole("button", { name: "30s" })).toHaveAttribute("aria-pressed", "true");
+  await expect(page.getByRole("button", { name: "Bass" })).toHaveAttribute("aria-pressed", "true");
 });
 
 test("rejects invalid imported practice data", async ({ page }) => {

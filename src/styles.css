@@ -281,6 +281,10 @@ h3 {
   font-size: 88px;
 }
 
+.bass-clef {
+  font-size: 78px;
+}
+
 .note-head {
   fill: var(--color-ink);
 }
@@ -438,9 +442,9 @@ h3 {
   font-weight: 800;
 }
 
-.length-options {
+.length-options,
+.range-options {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 6px;
   padding: 5px;
   border: 1px solid var(--color-border);
@@ -448,7 +452,16 @@ h3 {
   background: var(--color-control-soft);
 }
 
-.length-options button {
+.length-options {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.range-options {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.length-options button,
+.range-options button {
   min-height: 34px;
   border-radius: var(--radius-control);
   background: transparent;
@@ -457,7 +470,8 @@ h3 {
   font-weight: 850;
 }
 
-.length-options button.active {
+.length-options button.active,
+.range-options button.active {
   background: var(--color-surface);
   color: var(--color-text);
   box-shadow: var(--shadow-control);

@@ -1,9 +1,15 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import MusicStaff from "./components/MusicStaff";
 import PitchPrompt from "./components/PitchPrompt";
 import PracticeStatsPanel from "./components/PracticeStatsPanel";
 import StatTile from "./components/StatTile";
-import { PITCH_ANSWER_OPTIONS, PITCH_NOTES, READING_ANSWER_OPTIONS, STARTER_NOTES } from "./noteData";
+import {
+  PITCH_ANSWER_OPTIONS,
+  PITCH_NOTES,
+  READING_ANSWER_OPTIONS,
+  getReadingNotes,
+  getReadingRange,
+} from "./noteData";
 import { playTone } from "./audio";
 import {
   createSessionRecord,
@@ -51,7 +57,9 @@ const IMPORT_READ_ERROR = "Could not read this file.";
 function App() {
   const [mode, setMode] = useState<PracticeMode>("reading");
   const [settings, setSettings] = useState<PracticeSettings>(() => loadSettings());
-  const [currentReadingNote, setCurrentReadingNote] = useState<TrainingNote>(() => selectReadingNote());
+  const [currentReadingNote, setCurrentReadingNote] = useState<TrainingNote>(() =>
+    selectReadingNote({ readingRange: settings.readingRange }),
+  );
   const [currentPitchNote, setCurrentPitchNote] = useState<PitchNote>(() => selectPitchNote());
   const [progress, setProgress] = useState<PracticeProgress>(() => loadProgress());
   const [feedback, setFeedback] = useState<FeedbackState>(null);
@@ -64,6 +72,7 @@ function App() {
   const [roundStartedAt, setRoundStartedAt] = useState<number | null>(null);
   const [lastSummary, setLastSummary] = useState<SessionSummary | null>(null);
   const [dataStatus, setDataStatus] = useState<DataStatus>(null);
+  const advanceTimerRef = useRef<number | null>(null);
 
   const activeProgress = progress[mode];
   const answerOptions = mode === "reading" ? READING_ANSWER_OPTIONS : PITCH_ANSWER_OPTIONS;
@@ -71,12 +80,16 @@ function App() {
   const roundAccuracy = formatAccuracy(roundCorrect, roundAttempts);
   const lifetimeAccuracy = formatAccuracy(activeProgress.totalCorrect, activeProgress.totalAttempts);
   const modeLabel = getModeLabel(mode);
-  const focusItems = useMemo(() => getFocusItems(mode, progress[mode]), [mode, progress]);
+  const readingRange = useMemo(() => getReadingRange(settings.readingRange), [settings.readingRange]);
+  const focusItems = useMemo(
+    () => getFocusItems(mode, progress[mode], settings.readingRange),
+    [mode, progress, settings.readingRange],
+  );
   const historySummary = useMemo(() => getSessionHistorySummary(progress.history, mode), [mode, progress.history]);
   const insightSummary = useMemo(() => getPracticeInsightSummary(progress.history, mode), [mode, progress.history]);
   const promptDetail =
     mode === "reading"
-      ? `${settings.adaptivePractice ? "Adaptive" : "Random"} | Treble clef C4-G4`
+      ? `${settings.adaptivePractice ? "Adaptive" : "Random"} | ${readingRange.detail}`
       : `${settings.adaptivePractice ? "Adaptive" : "Random"} | Natural notes C4-B4`;
 
   const persistProgress = useCallback((nextProgress: PracticeProgress) => {
@@ -89,11 +102,19 @@ function App() {
     setDataStatus(saved ? null : { message: STORAGE_WARNING, tone: "warning" });
   }, []);
 
+  const clearAdvanceTimer = useCallback(() => {
+    if (advanceTimerRef.current !== null) {
+      window.clearTimeout(advanceTimerRef.current);
+      advanceTimerRef.current = null;
+    }
+  }, []);
+
   const finishRound = useCallback(() => {
     if (!isRunning) {
       return;
     }
 
+    clearAdvanceTimer();
     const completedAt = Date.now();
     const durationSeconds = roundStartedAt
       ? Math.max(1, Math.round((completedAt - roundStartedAt) / 1000))
@@ -108,7 +129,14 @@ function App() {
       bestStreak: bestRoundStreak,
     });
     const nextProgress = completeRound(progress, sessionRecord);
-    const summary = createSessionSummary(mode, nextProgress, roundCorrect, roundAttempts, bestRoundStreak);
+    const summary = createSessionSummary(
+      mode,
+      nextProgress,
+      roundCorrect,
+      roundAttempts,
+      bestRoundStreak,
+      settings.readingRange,
+    );
     persistProgress(nextProgress);
     setProgress(nextProgress);
     setLastSummary(summary);
@@ -124,10 +152,14 @@ function App() {
     roundAttempts,
     roundCorrect,
     roundStartedAt,
+    clearAdvanceTimer,
     persistProgress,
+    settings.readingRange,
     settings.roundLength,
     timeRemaining,
   ]);
+
+  useEffect(() => () => clearAdvanceTimer(), [clearAdvanceTimer]);
 
   useEffect(() => {
     if (!isRunning) {
@@ -150,7 +182,7 @@ function App() {
     function handleKeyDown(event: KeyboardEvent) {
       const key = event.key.toUpperCase();
       const letterOption = answerOptions.find((answer) => answer === key);
-      const shortcutSource = mode === "reading" ? STARTER_NOTES : PITCH_NOTES;
+      const shortcutSource = mode === "reading" ? getReadingNotes(settings.readingRange) : PITCH_NOTES;
       const shortcutOption = shortcutSource.find((note) => note.keyboardShortcut === event.key);
 
       if (letterOption) {
@@ -168,22 +200,40 @@ function App() {
   });
 
   function updateSettings(patch: Partial<PracticeSettings>) {
-    setSettings((currentSettings) => {
-      const nextSettings = { ...currentSettings, ...patch };
-      persistSettings(nextSettings);
+    const nextSettings = { ...settings, ...patch };
+    persistSettings(nextSettings);
+    setSettings(nextSettings);
 
-      if (!isRunning && patch.roundLength) {
-        setTimeRemaining(patch.roundLength);
-      }
+    if (!isRunning && patch.roundLength) {
+      setTimeRemaining(patch.roundLength);
+    }
 
-      return nextSettings;
-    });
+    if (patch.readingRange && patch.readingRange !== settings.readingRange) {
+      clearAdvanceTimer();
+      setCurrentReadingNote(
+        selectReadingNote({
+          progress: progress.reading,
+          readingRange: nextSettings.readingRange,
+          useAdaptive: nextSettings.adaptivePractice,
+        }),
+      );
+      setRoundAttempts(0);
+      setRoundCorrect(0);
+      setCurrentStreak(0);
+      setBestRoundStreak(0);
+      setFeedback(null);
+      setLastSummary(null);
+      setIsRunning(false);
+      setRoundStartedAt(null);
+      setTimeRemaining(nextSettings.roundLength);
+    }
   }
 
   function getNextReadingNote(previousNoteId?: string, nextProgress = progress) {
     return selectReadingNote({
       previousNoteId,
       progress: nextProgress.reading,
+      readingRange: settings.readingRange,
       useAdaptive: settings.adaptivePractice,
     });
   }
@@ -197,6 +247,7 @@ function App() {
   }
 
   function setPracticeMode(nextMode: PracticeMode) {
+    clearAdvanceTimer();
     setMode(nextMode);
     setFeedback(null);
     setLastSummary(null);
@@ -210,6 +261,7 @@ function App() {
   }
 
   function startRound() {
+    clearAdvanceTimer();
     setRoundStartedAt(Date.now());
     setIsRunning(true);
     setFeedback(null);
@@ -261,7 +313,9 @@ function App() {
     setProgress(nextProgress);
     persistProgress(nextProgress);
 
-    window.setTimeout(() => {
+    clearAdvanceTimer();
+    advanceTimerRef.current = window.setTimeout(() => {
+      advanceTimerRef.current = null;
       setFeedback(null);
 
       if (answeredMode === "reading") {
@@ -280,6 +334,7 @@ function App() {
   function handleResetProgress() {
     const confirmed = window.confirm("Reset all saved NoteSense progress?");
     if (confirmed) {
+      clearAdvanceTimer();
       const nextProgress = resetProgress();
       persistProgress(nextProgress);
       setProgress(nextProgress);
@@ -324,6 +379,7 @@ function App() {
       const progressSaved = saveProgress(nextProgress);
       const settingsSaved = saveSettings(nextSettings);
 
+      clearAdvanceTimer();
       setProgress(nextProgress);
       setSettings(nextSettings);
       setRoundAttempts(0);
@@ -335,6 +391,13 @@ function App() {
       setIsRunning(false);
       setRoundStartedAt(null);
       setTimeRemaining(nextSettings.roundLength);
+      setCurrentReadingNote(
+        selectReadingNote({
+          progress: nextProgress.reading,
+          readingRange: nextSettings.readingRange,
+          useAdaptive: nextSettings.adaptivePractice,
+        }),
+      );
       setDataStatus(
         progressSaved && settingsSaved
           ? { message: IMPORT_SUCCESS, tone: "success" }

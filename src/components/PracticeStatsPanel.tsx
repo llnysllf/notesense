@@ -1,4 +1,5 @@
 import { useRef, type ChangeEvent } from "react";
+import { READING_RANGES, getReadingRange } from "../noteData";
 import { ROUND_LENGTHS } from "../practiceEngine";
 import type {
   DataStatus,
@@ -55,6 +56,7 @@ function PracticeStatsPanel({
   onSettingsChange,
 }: PracticeStatsPanelProps) {
   const importInputRef = useRef<HTMLInputElement>(null);
+  const readingRange = getReadingRange(settings.readingRange);
 
   function handleImportInputChange(event: ChangeEvent<HTMLInputElement>) {
     const importFile = event.currentTarget.files?.[0];
@@ -97,6 +99,23 @@ function PracticeStatsPanel({
 
       <div className="settings-card">
         <h3>Drill settings</h3>
+        <div className="setting-row">
+          <span>Reading range</span>
+          <div className="range-options" aria-label="Reading range">
+            {READING_RANGES.map((range) => (
+              <button
+                key={range.id}
+                type="button"
+                aria-pressed={settings.readingRange === range.id}
+                className={settings.readingRange === range.id ? "active" : ""}
+                onClick={() => onSettingsChange({ readingRange: range.id })}
+              >
+                {range.label}
+              </button>
+            ))}
+          </div>
+        </div>
+
         <div className="setting-row">
           <span>Round length</span>
           <div className="length-options" aria-label="Round length">
@@ -166,7 +185,7 @@ function PracticeStatsPanel({
         <h3>Starter range</h3>
         <p>
           {mode === "reading"
-            ? "Treble clef note reading from middle C to G."
+            ? `${readingRange.detail} note reading.`
             : "Pitch recognition across one natural-note octave from C4 to B4."}
         </p>
       </div>

@@ -2,6 +2,8 @@ export type NoteName = "C" | "D" | "E" | "F" | "G" | "A" | "B";
 export type ReadingNoteName = "C" | "D" | "E" | "F" | "G";
 export type PracticeMode = "reading" | "pitch";
 export type RoundLength = 30 | 60 | 90;
+export type StaffClef = "treble" | "bass";
+export type ReadingRange = "treble-starter" | "bass-starter";
 
 export type TrainingNote = {
   id: string;
@@ -9,6 +11,8 @@ export type TrainingNote = {
   octave: number;
   frequency: number;
   staffY: number;
+  clef: StaffClef;
+  ledgerLineY?: number;
   keyboardShortcut: string;
 };
 
@@ -41,6 +45,7 @@ export type PracticeProgress = {
 
 export type PracticeSettings = {
   roundLength: RoundLength;
+  readingRange: ReadingRange;
   adaptivePractice: boolean;
   autoPlayPitch: boolean;
   revealPitchAfterAnswer: boolean;

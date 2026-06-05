@@ -5,6 +5,7 @@ NoteSense is currently a local-first React application. The product goal is to k
 ## Current Shape
 
 - `src/practiceEngine.ts` owns scoring, adaptive weighting, session summaries, trend summaries, and analytics helpers. It is pure TypeScript and does not depend on React or browser storage.
+- `src/noteData.ts` owns structured note ranges for treble reading, bass reading, and pitch training.
 - `src/storage.ts` owns persistence, normalization, migration from the original local progress shape, and versioned data import/export.
 - `src/audio.ts` owns browser audio playback.
 - `src/components` contains focused UI sections for the staff, pitch prompt, stats panel, session history, practice insights, and stat tiles.
@@ -16,6 +17,7 @@ NoteSense is currently a local-first React application. The product goal is to k
 Every feature should keep these expectations intact:
 
 - Practice logic remains testable outside React.
+- New note ranges should be added as data first, then wired through tested selection and settings paths.
 - Product analytics and chart inputs are derived in pure functions before rendering.
 - Persistence changes go through a storage boundary instead of being scattered through UI components.
 - User-visible state has a failure path, especially for save, export, auth, and sync operations.
@@ -30,7 +32,7 @@ The app saves progress and settings in browser LocalStorage today. This keeps ve
 - `schemaVersion`
 - `exportedAt`
 - `progress`
-- `settings`
+- `settings`, including selected reading range
 
 That import/export schema is the first contract for future account migration. When sign-in arrives, imported local data can be uploaded to a user profile without relying on fragile DOM or browser-state scraping.
 
@@ -60,7 +62,7 @@ An AWS version could use Cognito, API Gateway, Lambda, DynamoDB or RDS, S3, Clou
 ## Near-Term Product Roadmap
 
 - Add richer practice history charts.
-- Add bass clef, expanded range, sharps, and flats.
+- Add expanded ranges, sharps, and flats.
 - Add MIDI keyboard input.
 - Add anonymous local profile naming.
 - Add sign-in behind a feature flag.

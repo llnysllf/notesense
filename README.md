@@ -3,7 +3,7 @@
 [![CI](https://github.com/llnysllf/notesense/actions/workflows/ci.yml/badge.svg)](https://github.com/llnysllf/notesense/actions/workflows/ci.yml)
 [![Deploy Pages](https://github.com/llnysllf/notesense/actions/workflows/deploy-pages.yml/badge.svg)](https://github.com/llnysllf/notesense/actions/workflows/deploy-pages.yml)
 
-NoteSense is a small piano sight-reading and ear-training app for beginner musicians. It focuses on two practical habits: reading notes on the treble staff and recognizing natural piano pitches by ear, then adapts practice toward weak notes and pitches.
+NoteSense is a small piano sight-reading and ear-training app for beginner musicians. It focuses on two practical habits: reading notes on starter treble and bass staffs and recognizing natural piano pitches by ear, then adapts practice toward weak notes and pitches.
 
 Live demo: [https://llnysllf.github.io/notesense/](https://llnysllf.github.io/notesense/)
 
@@ -12,8 +12,9 @@ Architecture notes: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)
 ## Features
 
 - Timed 60-second note-reading drill
-- Treble clef starter range from middle C to G
+- Treble and bass clef starter ranges
 - Interactive SVG staff with ledger-line support
+- Saved reading-range setting for treble or bass practice
 - Keyboard or button answers for C, D, E, F, and G
 - Pitch-training mode across one natural-note octave, C4 to B4
 - Hidden pitch reveal after each answer
@@ -103,6 +104,7 @@ npm run check
 ## Engineering Notes
 
 - Practice selection and summary logic live in `src/practiceEngine.ts` so the learning behavior can be tested outside React.
+- `src/noteData.ts` keeps treble, bass, and pitch-note definitions structured so new ranges can be added without rewriting the practice loop.
 - UI-only pieces live in `src/components` to keep the main app focused on state and orchestration.
 - `PracticeStatsPanel` and `SessionHistory` isolate the progress sidebar from the drill loop, which keeps product analytics UI easier to evolve.
 - `PracticeInsights` renders tested trend data from `practiceEngine.ts` as an accessible SVG chart.
@@ -124,8 +126,8 @@ npm run check
 The current version is deliberately focused:
 
 - Two practice modes
-- One sight-reading clef
-- Five starter reading notes
+- Two starter sight-reading clefs
+- Ten starter reading notes across treble and bass
 - Seven natural pitch-training notes
 - Adaptive or random practice selection
 - Configurable round length
@@ -146,8 +148,7 @@ This keeps the practice loop fast and finishable while leaving room for meaningf
 
 ## Roadmap
 
-- Add bass clef practice
-- Expand note range
+- Expand note ranges
 - Add sharps and flats
 - Add interval training
 - Add MIDI keyboard input

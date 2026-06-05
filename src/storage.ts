@@ -1,4 +1,4 @@
-import { emptyProgress } from "./noteData";
+import { DEFAULT_READING_RANGE, emptyProgress, isReadingRange } from "./noteData";
 import type {
   AttemptProgress,
   ModeProgress,
@@ -24,6 +24,7 @@ export const UNSUPPORTED_IMPORT_ERROR = "This NoteSense export version is not su
 
 export const defaultSettings: PracticeSettings = {
   roundLength: 60,
+  readingRange: DEFAULT_READING_RANGE,
   adaptivePractice: true,
   autoPlayPitch: true,
   revealPitchAfterAnswer: true,
@@ -175,6 +176,9 @@ function normalizeSettings(settings: unknown): PracticeSettings {
 
   return {
     roundLength,
+    readingRange: isReadingRange(settingsRecord.readingRange)
+      ? settingsRecord.readingRange
+      : defaultSettings.readingRange,
     adaptivePractice:
       typeof settingsRecord.adaptivePractice === "boolean"
         ? settingsRecord.adaptivePractice

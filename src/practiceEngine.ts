@@ -1,4 +1,4 @@
-import { PITCH_NOTES, STARTER_NOTES } from "./noteData";
+import { DEFAULT_READING_RANGE, PITCH_NOTES, getReadingNotes } from "./noteData";
 import type {
   ModeProgress,
   PitchNote,
@@ -6,6 +6,7 @@ import type {
   PracticeMode,
   PracticeProgress,
   PracticeSessionRecord,
+  ReadingRange,
   RoundLength,
   SessionHistorySummary,
   SessionSummary,
@@ -22,6 +23,7 @@ type CreateSessionRecordInput = Omit<PracticeSessionRecord, "id" | "completedAt"
 type SelectNoteOptions = {
   previousNoteId?: string;
   progress?: ModeProgress;
+  readingRange?: ReadingRange;
   rng?: () => number;
   useAdaptive?: boolean;
 };
@@ -67,8 +69,12 @@ export function getNoteAccuracy(progress: ModeProgress, noteId: string): number 
   return Math.round((stat.correct / stat.attempts) * 100);
 }
 
-export function getFocusItems(mode: PracticeMode, modeProgress: ModeProgress) {
-  const sourceNotes = mode === "reading" ? STARTER_NOTES : PITCH_NOTES;
+export function getFocusItems(
+  mode: PracticeMode,
+  modeProgress: ModeProgress,
+  readingRange: ReadingRange = DEFAULT_READING_RANGE,
+) {
+  const sourceNotes = mode === "reading" ? getReadingNotes(readingRange) : PITCH_NOTES;
 
   return sourceNotes
     .map((note) => ({
@@ -203,7 +209,7 @@ function selectPracticeNote<TNote extends { id: string }>(notes: TNote[], option
 }
 
 export function selectReadingNote(options: SelectNoteOptions = {}): TrainingNote {
-  return selectPracticeNote(STARTER_NOTES, options);
+  return selectPracticeNote(getReadingNotes(options.readingRange), options);
 }
 
 export function selectPitchNote(options: SelectNoteOptions = {}): PitchNote {
@@ -216,8 +222,9 @@ export function createSessionSummary(
   score: number,
   attempts: number,
   bestStreak: number,
+  readingRange: ReadingRange = DEFAULT_READING_RANGE,
 ): SessionSummary {
-  const focusItem = getFocusItems(mode, progress[mode]).find((entry) => entry.accuracy < 85)?.note.id;
+  const focusItem = getFocusItems(mode, progress[mode], readingRange).find((entry) => entry.accuracy < 85)?.note.id;
   const accuracy = attempts > 0 ? Math.round((score / attempts) * 100) : 0;
   const suggestion =
     attempts === 0
