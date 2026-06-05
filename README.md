@@ -22,6 +22,7 @@ Live demo: [https://llnysllf.github.io/notesense/](https://llnysllf.github.io/no
 - Adaptive practice that weights weak notes and pitches more often
 - Configurable 30, 60, or 90 second rounds
 - Round summary with score, accuracy, best streak, and next-practice suggestion
+- Recent practice history with accuracy, time, and streak analytics
 
 ## Tech Stack
 
@@ -34,6 +35,7 @@ Live demo: [https://llnysllf.github.io/notesense/](https://llnysllf.github.io/no
 - CSS
 - Browser Web Audio API
 - LocalStorage for progress persistence
+- Local-first analytics for session history
 
 ## Why I Built It
 
@@ -87,9 +89,9 @@ npm run check
 
 - Practice selection and summary logic live in `src/practiceEngine.ts` so the learning behavior can be tested outside React.
 - UI-only pieces live in `src/components` to keep the main app focused on state and orchestration.
-- Progress and settings are normalized when loaded from LocalStorage, including migration from the original V1 progress shape.
+- Progress, history, and settings are normalized when loaded from LocalStorage, including migration from the original V1 progress shape.
 - Keyboard answers, ARIA pressed states, live feedback, visible focus rings, and reduced-motion support are included for accessibility.
-- The test suite covers adaptive weighting, deterministic note selection, focus-note ranking, session summaries, and progress reducers.
+- The test suite covers adaptive weighting, deterministic note selection, focus-note ranking, session summaries, session-history analytics, and progress reducers.
 - Playwright and axe-core cover the browser practice loop, responsive layout, console health, and automated accessibility violations.
 - GitHub Actions run typechecking, unit tests, browser tests, and builds on every push and pull request.
 - The `main` branch publishes a static production build to GitHub Pages.
@@ -105,6 +107,7 @@ The current version is deliberately focused:
 - Adaptive or random practice selection
 - Configurable round length
 - Session summaries
+- Capped local session history
 - Tested practice engine
 - Browser-level accessibility and smoke tests
 - CI quality gate
@@ -122,8 +125,8 @@ This keeps the practice loop fast and finishable while leaving room for meaningf
 - Add sharps and flats
 - Add interval training
 - Add MIDI keyboard input
-- Add charts for weekly practice history
+- Add weekly practice-history charts
 
 ## Portfolio Summary
 
-Built a piano sight-reading and ear-training app using React and TypeScript, with adaptive timed drills, interactive notation, pitch recognition, Web Audio playback, session summaries, locally persisted progress analytics, CI/CD, and browser-level accessibility testing.
+Built a piano sight-reading and ear-training app using React and TypeScript, with adaptive timed drills, interactive notation, pitch recognition, Web Audio playback, session summaries, local session-history analytics, CI/CD, and browser-level accessibility testing.

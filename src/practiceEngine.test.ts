@@ -1,24 +1,62 @@
-import { describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import { emptyProgress, PITCH_NOTES, STARTER_NOTES } from "./noteData";
 import {
+  createSessionRecord,
   createSessionSummary,
   formatAccuracy,
+  formatDuration,
   getFocusItems,
   getPracticeWeight,
+  getSessionHistorySummary,
   selectPitchNote,
   selectReadingNote,
 } from "./practiceEngine";
-import { completeRound, recordPitchAttempt, recordReadingAttempt } from "./storage";
-import type { PracticeProgress } from "./types";
+import { SESSION_HISTORY_LIMIT, completeRound, loadProgress, recordPitchAttempt, recordReadingAttempt } from "./storage";
+import type { PracticeMode, PracticeProgress, PracticeSessionRecord } from "./types";
 
 function freshProgress(): PracticeProgress {
   return structuredClone(emptyProgress);
 }
 
+function session(overrides: Partial<PracticeSessionRecord> = {}): PracticeSessionRecord {
+  return {
+    id: "session-1",
+    mode: "reading",
+    completedAt: "2026-06-05T09:00:00.000Z",
+    durationSeconds: 60,
+    score: 4,
+    attempts: 5,
+    accuracy: 80,
+    bestStreak: 3,
+    ...overrides,
+  };
+}
+
+function stubLocalStorage(initialState: Record<string, string>) {
+  const store = new Map(Object.entries(initialState));
+
+  vi.stubGlobal("window", {
+    localStorage: {
+      getItem: (key: string) => store.get(key) ?? null,
+      setItem: (key: string, value: string) => store.set(key, value),
+    },
+  });
+}
+
+afterEach(() => {
+  vi.unstubAllGlobals();
+});
+
 describe("practiceEngine", () => {
   it("formats zero and non-zero accuracy safely", () => {
     expect(formatAccuracy(0, 0)).toBe("0%");
     expect(formatAccuracy(7, 9)).toBe("78%");
+  });
+
+  it("formats session durations for compact analytics", () => {
+    expect(formatDuration(42)).toBe("42s");
+    expect(formatDuration(60)).toBe("1m");
+    expect(formatDuration(95)).toBe("1m 35s");
   });
 
   it("weights weak notes above mastered notes", () => {
@@ -80,6 +118,45 @@ describe("practiceEngine", () => {
       suggestion: "Next: spend one short round on F4.",
     });
   });
+
+  it("creates normalized session records from round data", () => {
+    expect(
+      createSessionRecord({
+        id: "reading-demo",
+        mode: "reading",
+        completedAt: "2026-06-05T09:00:00.000Z",
+        durationSeconds: 58.6,
+        score: 9,
+        attempts: 10,
+        bestStreak: 4,
+      }),
+    ).toEqual({
+      id: "reading-demo",
+      mode: "reading",
+      completedAt: "2026-06-05T09:00:00.000Z",
+      durationSeconds: 59,
+      score: 9,
+      attempts: 10,
+      accuracy: 90,
+      bestStreak: 4,
+    });
+  });
+
+  it("summarizes recent history by mode", () => {
+    const history = [
+      session({ id: "new", score: 3, attempts: 4, accuracy: 75, bestStreak: 2 }),
+      session({ id: "pitch", mode: "pitch", score: 1, attempts: 5, accuracy: 20 }),
+      session({ id: "old", score: 5, attempts: 6, accuracy: 83, durationSeconds: 30, bestStreak: 5 }),
+    ];
+
+    expect(getSessionHistorySummary(history, "reading")).toMatchObject({
+      recentSessions: [history[0], history[2]],
+      averageAccuracy: 80,
+      totalAttempts: 10,
+      totalPracticeSeconds: 90,
+      bestStreak: 5,
+    });
+  });
 });
 
 describe("storage progress reducers", () => {
@@ -94,10 +171,72 @@ describe("storage progress reducers", () => {
   });
 
   it("completes a round without touching the other mode", () => {
-    const progress = completeRound(freshProgress(), "pitch", 6);
+    const progress = completeRound(freshProgress(), session({ mode: "pitch", score: 6, attempts: 8, accuracy: 75 }));
 
     expect(progress.pitch.bestRoundScore).toBe(6);
     expect(progress.pitch.sessionsCompleted).toBe(1);
     expect(progress.reading.sessionsCompleted).toBe(0);
+    expect(progress.history).toHaveLength(1);
+    expect(progress.history[0]).toMatchObject({ mode: "pitch", score: 6 });
+  });
+
+  it("caps session history to the newest saved rounds", () => {
+    const progress = Array.from({ length: SESSION_HISTORY_LIMIT + 2 }).reduce<PracticeProgress>((currentProgress, _, index) => {
+      const mode: PracticeMode = index % 2 === 0 ? "reading" : "pitch";
+      return completeRound(
+        currentProgress,
+        session({
+          id: `session-${index}`,
+          mode,
+          completedAt: `2026-06-05T09:${String(index).padStart(2, "0")}:00.000Z`,
+        }),
+      );
+    }, freshProgress());
+
+    expect(progress.history).toHaveLength(SESSION_HISTORY_LIMIT);
+    expect(progress.history[0].id).toBe(`session-${SESSION_HISTORY_LIMIT + 1}`);
+    expect(progress.history.at(-1)?.id).toBe("session-2");
+  });
+
+  it("loads older progress without requiring session history", () => {
+    stubLocalStorage({
+      "notesense.progress.v2": JSON.stringify({
+        reading: {
+          totalAttempts: 2,
+          totalCorrect: 1,
+          bestRoundScore: 1,
+          sessionsCompleted: 1,
+          noteStats: {
+            C4: { attempts: 2, correct: 1 },
+          },
+        },
+      }),
+    });
+
+    const progress = loadProgress();
+
+    expect(progress.history).toEqual([]);
+    expect(progress.reading.noteStats.C4).toEqual({ attempts: 2, correct: 1 });
+    expect(progress.pitch.totalAttempts).toBe(0);
+  });
+
+  it("normalizes stored session history defensively", () => {
+    stubLocalStorage({
+      "notesense.progress.v2": JSON.stringify({
+        reading: {},
+        pitch: {},
+        history: [
+          session({ id: "old", completedAt: "2026-06-05T08:00:00.000Z", score: 1, attempts: 4, accuracy: 100 }),
+          session({ id: "new", mode: "pitch", completedAt: "2026-06-05T09:00:00.000Z", score: 3, attempts: 4, accuracy: 0 }),
+          { id: "invalid", mode: "unsupported" },
+        ],
+      }),
+    });
+
+    const progress = loadProgress();
+
+    expect(progress.history.map((entry) => entry.id)).toEqual(["new", "old"]);
+    expect(progress.history[0]).toMatchObject({ accuracy: 75, mode: "pitch" });
+    expect(progress.history[1]).toMatchObject({ accuracy: 25, mode: "reading" });
   });
 });

@@ -6,10 +6,13 @@ import { PITCH_ANSWER_OPTIONS, PITCH_NOTES, READING_ANSWER_OPTIONS, STARTER_NOTE
 import { playTone } from "./audio";
 import {
   ROUND_LENGTHS,
+  createSessionRecord,
   createSessionSummary,
   formatAccuracy,
+  formatDuration,
   getFocusItems,
   getModeLabel,
+  getSessionHistorySummary,
   selectPitchNote,
   selectReadingNote,
 } from "./practiceEngine";
@@ -36,6 +39,21 @@ import type {
 } from "./types";
 
 const ADVANCE_DELAY_MS = 650;
+const sessionDateFormatter = new Intl.DateTimeFormat(undefined, {
+  month: "short",
+  day: "numeric",
+  hour: "numeric",
+  minute: "2-digit",
+});
+
+function formatSessionDate(completedAt: string) {
+  const date = new Date(completedAt);
+  if (Number.isNaN(date.getTime())) {
+    return "Saved session";
+  }
+
+  return sessionDateFormatter.format(date);
+}
 
 function App() {
   const [mode, setMode] = useState<PracticeMode>("reading");
@@ -50,6 +68,7 @@ function App() {
   const [currentStreak, setCurrentStreak] = useState(0);
   const [bestRoundStreak, setBestRoundStreak] = useState(0);
   const [isRunning, setIsRunning] = useState(false);
+  const [roundStartedAt, setRoundStartedAt] = useState<number | null>(null);
   const [lastSummary, setLastSummary] = useState<SessionSummary | null>(null);
 
   const activeProgress = progress[mode];
@@ -59,6 +78,7 @@ function App() {
   const lifetimeAccuracy = formatAccuracy(activeProgress.totalCorrect, activeProgress.totalAttempts);
   const modeLabel = getModeLabel(mode);
   const focusItems = useMemo(() => getFocusItems(mode, progress[mode]), [mode, progress]);
+  const historySummary = useMemo(() => getSessionHistorySummary(progress.history, mode), [mode, progress.history]);
   const promptDetail =
     mode === "reading"
       ? `${settings.adaptivePractice ? "Adaptive" : "Random"} | Treble clef C4-G4`
@@ -140,10 +160,12 @@ function App() {
     setRoundCorrect(0);
     setCurrentStreak(0);
     setBestRoundStreak(0);
+    setRoundStartedAt(null);
     setTimeRemaining(settings.roundLength);
   }
 
   function startRound() {
+    setRoundStartedAt(Date.now());
     setIsRunning(true);
     setFeedback(null);
     setLastSummary(null);
@@ -170,12 +192,26 @@ function App() {
       return;
     }
 
-    const nextProgress = completeRound(progress, mode, roundCorrect);
+    const completedAt = Date.now();
+    const durationSeconds = roundStartedAt
+      ? Math.max(1, Math.round((completedAt - roundStartedAt) / 1000))
+      : Math.max(0, settings.roundLength - timeRemaining);
+    const sessionRecord = createSessionRecord({
+      id: `${mode}-${completedAt}`,
+      mode,
+      completedAt: new Date(completedAt).toISOString(),
+      durationSeconds,
+      score: roundCorrect,
+      attempts: roundAttempts,
+      bestStreak: bestRoundStreak,
+    });
+    const nextProgress = completeRound(progress, sessionRecord);
     const summary = createSessionSummary(mode, nextProgress, roundCorrect, roundAttempts, bestRoundStreak);
     saveProgress(nextProgress);
     setProgress(nextProgress);
     setLastSummary(summary);
     setIsRunning(false);
+    setRoundStartedAt(null);
     setFeedback(null);
     setTimeRemaining(settings.roundLength);
   }
@@ -236,6 +272,7 @@ function App() {
       setFeedback(null);
       setLastSummary(null);
       setIsRunning(false);
+      setRoundStartedAt(null);
       setTimeRemaining(settings.roundLength);
     }
   }
@@ -371,6 +408,45 @@ function App() {
             <p>{lastSummary.suggestion}</p>
           </div>
         )}
+
+        <div className="history-card" aria-labelledby="history-title">
+          <h3 id="history-title">Practice history</h3>
+          {historySummary.recentSessions.length === 0 ? (
+            <p className="empty-state">Finish a round and recent sessions will appear here.</p>
+          ) : (
+            <>
+              <div className="history-metrics" aria-label="Recent practice summary">
+                <div>
+                  <span>Recent avg</span>
+                  <strong>{historySummary.averageAccuracy}%</strong>
+                </div>
+                <div>
+                  <span>Practice time</span>
+                  <strong>{formatDuration(historySummary.totalPracticeSeconds)}</strong>
+                </div>
+              </div>
+              <ol className="history-list" aria-label={`${modeLabel} recent sessions`}>
+                {historySummary.recentSessions.map((session) => (
+                  <li
+                    key={session.id}
+                    aria-label={`${modeLabel} session ${session.score} out of ${session.attempts}, ${session.accuracy}% accuracy`}
+                  >
+                    <div className="history-copy">
+                      <strong>
+                        {session.score}/{session.attempts}
+                      </strong>
+                      <span>{formatSessionDate(session.completedAt)}</span>
+                    </div>
+                    <div className="history-meter" aria-hidden="true">
+                      <span style={{ width: `${session.accuracy}%` }} />
+                    </div>
+                    <em>{session.accuracy}%</em>
+                  </li>
+                ))}
+              </ol>
+            </>
+          )}
+        </div>
 
         <div className="settings-card">
           <h3>Drill settings</h3>

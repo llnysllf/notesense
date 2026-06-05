@@ -36,6 +36,7 @@ export type ModeProgress = {
 export type PracticeProgress = {
   reading: ModeProgress;
   pitch: ModeProgress;
+  history: PracticeSessionRecord[];
 };
 
 export type PracticeSettings = {
@@ -53,6 +54,25 @@ export type SessionSummary = {
   bestStreak: number;
   focusItem?: string;
   suggestion: string;
+};
+
+export type PracticeSessionRecord = {
+  id: string;
+  mode: PracticeMode;
+  completedAt: string;
+  durationSeconds: number;
+  score: number;
+  attempts: number;
+  accuracy: number;
+  bestStreak: number;
+};
+
+export type SessionHistorySummary = {
+  recentSessions: PracticeSessionRecord[];
+  averageAccuracy: number;
+  totalAttempts: number;
+  totalPracticeSeconds: number;
+  bestStreak: number;
 };
 
 export type FeedbackState = {

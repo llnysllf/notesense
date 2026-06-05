@@ -35,6 +35,14 @@ test("runs the note-reading practice loop", async ({ page }) => {
 
   await page.getByRole("button", { name: "Finish round" }).click();
   await expect(page.getByRole("heading", { name: "Last round" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Practice history" })).toBeVisible();
+  await expect(page.getByRole("listitem", { name: /Note reading session/ })).toBeVisible();
+
+  const postRoundAccessibilityScanResults = await new AxeBuilder({ page }).analyze();
+  expect(postRoundAccessibilityScanResults.violations).toEqual([]);
+
+  await page.reload();
+  await expect(page.getByRole("listitem", { name: /Note reading session/ })).toBeVisible();
 });
 
 test("runs the pitch-training practice loop", async ({ page }) => {

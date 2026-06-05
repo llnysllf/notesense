@@ -1,4 +1,4 @@
-import type { ModeProgress, NoteName, PitchNote, ReadingNoteName, TrainingNote } from "./types";
+import type { ModeProgress, NoteName, PitchNote, PracticeProgress, ReadingNoteName, TrainingNote } from "./types";
 
 export const STARTER_NOTES: TrainingNote[] = [
   {
@@ -117,7 +117,8 @@ function createEmptyModeProgress(notes: Array<{ id: string }>): ModeProgress {
 export const emptyReadingProgress = createEmptyModeProgress(STARTER_NOTES);
 export const emptyPitchProgress = createEmptyModeProgress(PITCH_NOTES);
 
-export const emptyProgress = {
+export const emptyProgress: PracticeProgress = {
   reading: emptyReadingProgress,
   pitch: emptyPitchProgress,
+  history: [],
 };

@@ -357,6 +357,7 @@ h3 {
 }
 
 .weak-notes,
+.history-card,
 .range-card,
 .settings-card,
 .summary-card {
@@ -454,6 +455,84 @@ h3 {
   margin: 0;
   padding: 0;
   list-style: none;
+}
+
+.history-card {
+  display: grid;
+  gap: 14px;
+}
+
+.history-metrics {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  padding: 10px 0;
+  border-top: 1px solid rgba(29, 29, 31, 0.1);
+  border-bottom: 1px solid rgba(29, 29, 31, 0.1);
+}
+
+.history-metrics div {
+  min-width: 0;
+}
+
+.history-metrics span,
+.history-copy span {
+  display: block;
+  color: #68706b;
+  font-size: 0.78rem;
+  font-weight: 750;
+}
+
+.history-metrics strong {
+  display: block;
+  margin-top: 4px;
+  color: #1d1d1f;
+  font-size: 1.25rem;
+  line-height: 1.1;
+}
+
+.history-list {
+  display: grid;
+  gap: 12px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.history-list li {
+  display: grid;
+  grid-template-columns: minmax(72px, auto) minmax(0, 1fr) 42px;
+  align-items: center;
+  gap: 10px;
+}
+
+.history-copy strong {
+  display: block;
+  color: #1d1d1f;
+  font-size: 0.98rem;
+  line-height: 1.2;
+}
+
+.history-list em {
+  color: #1d1d1f;
+  font-size: 0.82rem;
+  font-style: normal;
+  font-weight: 850;
+  text-align: right;
+}
+
+.history-meter {
+  height: 10px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: #e3e5e1;
+}
+
+.history-meter span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: #1f6d33;
 }
 
 .weak-notes li {

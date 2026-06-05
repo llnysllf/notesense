@@ -1,7 +1,21 @@
 import { PITCH_NOTES, STARTER_NOTES } from "./noteData";
-import type { ModeProgress, PitchNote, PracticeMode, PracticeProgress, RoundLength, SessionSummary, TrainingNote } from "./types";
+import type {
+  ModeProgress,
+  PitchNote,
+  PracticeMode,
+  PracticeProgress,
+  PracticeSessionRecord,
+  RoundLength,
+  SessionHistorySummary,
+  SessionSummary,
+  TrainingNote,
+} from "./types";
 
 export const ROUND_LENGTHS: RoundLength[] = [30, 60, 90];
+export const RECENT_SESSION_LIMIT = 5;
+
+type CreateSessionRecordInput = Omit<PracticeSessionRecord, "id" | "completedAt" | "accuracy"> &
+  Partial<Pick<PracticeSessionRecord, "id" | "completedAt">>;
 
 type SelectNoteOptions = {
   previousNoteId?: string;
@@ -16,6 +30,26 @@ export function formatAccuracy(correct: number, attempts: number): string {
   }
 
   return `${Math.round((correct / attempts) * 100)}%`;
+}
+
+function clampWholeNumber(value: number): number {
+  if (!Number.isFinite(value)) {
+    return 0;
+  }
+
+  return Math.max(0, Math.round(value));
+}
+
+export function formatDuration(seconds: number): string {
+  const safeSeconds = clampWholeNumber(seconds);
+  if (safeSeconds < 60) {
+    return `${safeSeconds}s`;
+  }
+
+  const minutes = Math.floor(safeSeconds / 60);
+  const remainingSeconds = safeSeconds % 60;
+
+  return remainingSeconds === 0 ? `${minutes}m` : `${minutes}m ${remainingSeconds}s`;
 }
 
 export function getModeLabel(mode: PracticeMode): string {
@@ -43,6 +77,63 @@ export function getFocusItems(mode: PracticeMode, modeProgress: ModeProgress) {
     .filter((entry) => entry.attempts > 0)
     .sort((a, b) => a.accuracy - b.accuracy)
     .slice(0, 3);
+}
+
+export function createSessionRecord({
+  mode,
+  score,
+  attempts,
+  bestStreak,
+  durationSeconds,
+  completedAt = new Date().toISOString(),
+  id = `${mode}-${completedAt}`,
+}: CreateSessionRecordInput): PracticeSessionRecord {
+  const safeAttempts = clampWholeNumber(attempts);
+  const safeScore = Math.min(safeAttempts, clampWholeNumber(score));
+
+  return {
+    id,
+    mode,
+    completedAt,
+    durationSeconds: clampWholeNumber(durationSeconds),
+    score: safeScore,
+    attempts: safeAttempts,
+    accuracy: safeAttempts > 0 ? Math.round((safeScore / safeAttempts) * 100) : 0,
+    bestStreak: clampWholeNumber(bestStreak),
+  };
+}
+
+export function getRecentSessions(
+  history: PracticeSessionRecord[],
+  mode: PracticeMode,
+  limit = RECENT_SESSION_LIMIT,
+): PracticeSessionRecord[] {
+  return history.filter((session) => session.mode === mode).slice(0, limit);
+}
+
+export function getSessionHistorySummary(
+  history: PracticeSessionRecord[],
+  mode: PracticeMode,
+  limit = RECENT_SESSION_LIMIT,
+): SessionHistorySummary {
+  const recentSessions = getRecentSessions(history, mode, limit);
+  const totals = recentSessions.reduce(
+    (summary, session) => ({
+      score: summary.score + session.score,
+      attempts: summary.attempts + session.attempts,
+      durationSeconds: summary.durationSeconds + session.durationSeconds,
+      bestStreak: Math.max(summary.bestStreak, session.bestStreak),
+    }),
+    { score: 0, attempts: 0, durationSeconds: 0, bestStreak: 0 },
+  );
+
+  return {
+    recentSessions,
+    averageAccuracy: totals.attempts > 0 ? Math.round((totals.score / totals.attempts) * 100) : 0,
+    totalAttempts: totals.attempts,
+    totalPracticeSeconds: totals.durationSeconds,
+    bestStreak: totals.bestStreak,
+  };
 }
 
 export function getPracticeWeight(noteId: string, progress?: ModeProgress): number {

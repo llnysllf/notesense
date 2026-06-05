@@ -6,6 +6,7 @@ import type {
   PracticeMode,
   PracticeProgress,
   PracticeSettings,
+  PracticeSessionRecord,
   ReadingNoteName,
   TrainingNote,
 } from "./types";
@@ -13,6 +14,7 @@ import type {
 const STORAGE_KEY = "notesense.progress.v2";
 const LEGACY_STORAGE_KEY = "notesense.progress.v1";
 const SETTINGS_STORAGE_KEY = "notesense.settings.v3";
+export const SESSION_HISTORY_LIMIT = 20;
 
 export const defaultSettings: PracticeSettings = {
   roundLength: 60,
@@ -22,6 +24,58 @@ export const defaultSettings: PracticeSettings = {
 };
 
 type LegacyPracticeProgress = Partial<ModeProgress> & Partial<PracticeProgress>;
+
+function isPracticeMode(value: unknown): value is PracticeMode {
+  return value === "reading" || value === "pitch";
+}
+
+function toSafeWholeNumber(value: unknown): number {
+  const numberValue = Number(value);
+  if (!Number.isFinite(numberValue)) {
+    return 0;
+  }
+
+  return Math.max(0, Math.round(numberValue));
+}
+
+function normalizeSessionHistory(history: unknown): PracticeSessionRecord[] {
+  if (!Array.isArray(history)) {
+    return [];
+  }
+
+  return history
+    .map((session, index): PracticeSessionRecord | null => {
+      if (!session || typeof session !== "object") {
+        return null;
+      }
+
+      const sessionRecord = session as Partial<PracticeSessionRecord>;
+      if (!isPracticeMode(sessionRecord.mode)) {
+        return null;
+      }
+
+      const completedAt =
+        typeof sessionRecord.completedAt === "string" && !Number.isNaN(Date.parse(sessionRecord.completedAt))
+          ? sessionRecord.completedAt
+          : new Date(0).toISOString();
+      const attempts = toSafeWholeNumber(sessionRecord.attempts);
+      const score = Math.min(attempts, toSafeWholeNumber(sessionRecord.score));
+
+      return {
+        id: typeof sessionRecord.id === "string" && sessionRecord.id.trim() ? sessionRecord.id : `${sessionRecord.mode}-${completedAt}-${index}`,
+        mode: sessionRecord.mode,
+        completedAt,
+        durationSeconds: toSafeWholeNumber(sessionRecord.durationSeconds),
+        score,
+        attempts,
+        accuracy: attempts > 0 ? Math.round((score / attempts) * 100) : 0,
+        bestStreak: toSafeWholeNumber(sessionRecord.bestStreak),
+      };
+    })
+    .filter((session): session is PracticeSessionRecord => Boolean(session))
+    .sort((a, b) => Date.parse(b.completedAt) - Date.parse(a.completedAt))
+    .slice(0, SESSION_HISTORY_LIMIT);
+}
 
 function normalizeModeProgress(progress: Partial<ModeProgress> | undefined, mode: PracticeMode): ModeProgress {
   const emptyModeProgress = emptyProgress[mode];
@@ -41,12 +95,14 @@ function normalizeProgress(progress: LegacyPracticeProgress): PracticeProgress {
     return {
       reading: normalizeModeProgress(progress.reading, "reading"),
       pitch: normalizeModeProgress(progress.pitch, "pitch"),
+      history: normalizeSessionHistory(progress.history),
     };
   }
 
   return {
     reading: normalizeModeProgress(progress, "reading"),
     pitch: normalizeModeProgress(undefined, "pitch"),
+    history: [],
   };
 }
 
@@ -135,16 +191,17 @@ export function recordPitchAttempt(progress: PracticeProgress, note: PitchNote, 
   return recordModeAttempt(progress, "pitch", note, answer);
 }
 
-export function completeRound(progress: PracticeProgress, mode: PracticeMode, roundCorrect: number): PracticeProgress {
-  const modeProgress = progress[mode];
+export function completeRound(progress: PracticeProgress, session: PracticeSessionRecord): PracticeProgress {
+  const modeProgress = progress[session.mode];
 
   return {
     ...progress,
-    [mode]: {
+    [session.mode]: {
       ...modeProgress,
-      bestRoundScore: Math.max(modeProgress.bestRoundScore, roundCorrect),
+      bestRoundScore: Math.max(modeProgress.bestRoundScore, session.score),
       sessionsCompleted: modeProgress.sessionsCompleted + 1,
     },
+    history: [session, ...progress.history].slice(0, SESSION_HISTORY_LIMIT),
   };
 }
 
