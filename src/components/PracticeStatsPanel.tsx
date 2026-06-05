@@ -8,10 +8,12 @@ import type {
   PracticeMode,
   PracticeSettings,
   PracticeInsightSummary,
+  PracticePlan,
   SessionHistorySummary,
   SessionSummary,
   TrainingNote,
 } from "../types";
+import PracticeCoach from "./PracticeCoach";
 import PracticeInsights from "./PracticeInsights";
 import SessionHistory from "./SessionHistory";
 import StatTile from "./StatTile";
@@ -31,6 +33,7 @@ type PracticeStatsPanelProps = {
   lifetimeAccuracy: string;
   mode: PracticeMode;
   modeLabel: string;
+  practicePlan: PracticePlan;
   settings: PracticeSettings;
   dataStatus: DataStatus;
   onExportData: () => void;
@@ -48,6 +51,7 @@ function PracticeStatsPanel({
   lifetimeAccuracy,
   mode,
   modeLabel,
+  practicePlan,
   settings,
   dataStatus,
   onExportData,
@@ -96,6 +100,7 @@ function PracticeStatsPanel({
 
       <SessionHistory modeLabel={modeLabel} summary={historySummary} />
       <PracticeInsights modeLabel={modeLabel} summary={insightSummary} />
+      <PracticeCoach mode={mode} modeLabel={modeLabel} plan={practicePlan} />
 
       <div className="settings-card">
         <h3>Drill settings</h3>

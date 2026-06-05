@@ -27,6 +27,7 @@ Architecture notes: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)
 - Round summary with score, accuracy, best streak, and next-practice suggestion
 - Recent practice history with accuracy, time, and streak analytics
 - Practice insight trend chart for recent accuracy, streak, and time
+- Practice plan coach that recommends baseline, focus, recovery, steady, or stretch sessions
 - Local data import/export and storage-failure messaging
 
 ## Tech Stack
@@ -41,6 +42,7 @@ Architecture notes: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)
 - Prettier
 - CSS design tokens
 - Accessible SVG trend chart
+- Tested practice-plan recommendation engine
 - Browser Web Audio API
 - LocalStorage for progress persistence
 - Versioned JSON import/export for local data portability
@@ -104,6 +106,7 @@ npm run check
 ## Engineering Notes
 
 - Practice selection and summary logic live in `src/practiceEngine.ts` so the learning behavior can be tested outside React.
+- Practice-plan recommendations are derived in `src/practiceEngine.ts`, keeping the coaching layer deterministic and ready for a future service boundary.
 - `src/noteData.ts` keeps treble, bass, and pitch-note definitions structured so new ranges can be added without rewriting the practice loop.
 - UI-only pieces live in `src/components` to keep the main app focused on state and orchestration.
 - `PracticeStatsPanel` and `SessionHistory` isolate the progress sidebar from the drill loop, which keeps product analytics UI easier to evolve.
@@ -134,6 +137,7 @@ The current version is deliberately focused:
 - Session summaries
 - Capped local session history
 - Recent practice insight chart
+- Derived practice plan coach
 - Local JSON data import/export
 - Tested practice engine
 - Enforced formatting and linting
@@ -157,4 +161,4 @@ This keeps the practice loop fast and finishable while leaving room for meaningf
 
 ## Portfolio Summary
 
-Built a piano sight-reading and ear-training app using React and TypeScript, with adaptive timed drills, interactive notation, pitch recognition, Web Audio playback, session summaries, accessible practice-insight charts, local session-history analytics, versioned data portability, CI/CD, and browser-level accessibility testing.
+Built a piano sight-reading and ear-training app using React and TypeScript, with adaptive timed drills, interactive notation, pitch recognition, Web Audio playback, session summaries, a tested practice-plan coach, accessible practice-insight charts, local session-history analytics, versioned data portability, CI/CD, and browser-level accessibility testing.

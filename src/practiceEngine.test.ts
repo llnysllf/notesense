@@ -6,8 +6,9 @@ import {
   formatAccuracy,
   formatDuration,
   getFocusItems,
-  getPracticeWeight,
   getPracticeInsightSummary,
+  getPracticePlan,
+  getPracticeWeight,
   getSessionHistorySummary,
   selectPitchNote,
   selectReadingNote,
@@ -231,6 +232,101 @@ describe("practiceEngine", () => {
       accuracyDelta: 0,
       bestStreak: 0,
       totalPracticeSeconds: 0,
+    });
+  });
+
+  it("recommends a baseline plan before enough answers exist", () => {
+    expect(
+      getPracticePlan({
+        adaptivePractice: true,
+        mode: "reading",
+        progress: freshProgress(),
+        readingRange: "treble-starter",
+        roundLength: 60,
+      }),
+    ).toMatchObject({
+      tone: "baseline",
+      title: "Build baseline",
+      focus: "Treble clef C4-G4",
+      target: "5 more answers",
+    });
+  });
+
+  it("recommends the weakest saved note within the active reading range", () => {
+    const progress = freshProgress();
+    progress.reading.totalAttempts = 24;
+    progress.reading.totalCorrect = 16;
+    progress.reading.noteStats.C4 = { attempts: 12, correct: 2 };
+    progress.reading.noteStats.C3 = { attempts: 12, correct: 9 };
+
+    expect(
+      getPracticePlan({
+        adaptivePractice: false,
+        mode: "reading",
+        progress,
+        readingRange: "bass-starter",
+        roundLength: 30,
+      }),
+    ).toMatchObject({
+      tone: "focus",
+      title: "Focus C3",
+      focus: "75% accuracy",
+      target: "85% on C3",
+      steps: ["One 30s note reading round", "Turn on adaptive practice", "Slow answers on C3"],
+    });
+  });
+
+  it("recommends recovery when recent accuracy drops sharply", () => {
+    const progress = freshProgress();
+    progress.pitch.totalAttempts = 12;
+    progress.pitch.totalCorrect = 10;
+    progress.pitch.noteStats.C4 = { attempts: 6, correct: 6 };
+    progress.pitch.noteStats.D4 = { attempts: 6, correct: 6 };
+    progress.history = [
+      session({ id: "latest", mode: "pitch", accuracy: 70, score: 7, attempts: 10 }),
+      session({ id: "previous", mode: "pitch", accuracy: 90, score: 9, attempts: 10 }),
+    ];
+
+    expect(
+      getPracticePlan({
+        adaptivePractice: true,
+        mode: "pitch",
+        progress,
+        roundLength: 90,
+      }),
+    ).toMatchObject({
+      tone: "recovery",
+      title: "Stabilize accuracy",
+      focus: "70% latest",
+      target: "Back to 80%",
+    });
+  });
+
+  it("recommends a stretch plan after consistently strong recent rounds", () => {
+    const progress = freshProgress();
+    progress.reading.totalAttempts = 20;
+    progress.reading.totalCorrect = 19;
+    progress.reading.noteStats.C4 = { attempts: 10, correct: 10 };
+    progress.reading.noteStats.D4 = { attempts: 10, correct: 9 };
+    progress.history = [
+      session({ id: "latest", accuracy: 95, score: 19, attempts: 20 }),
+      session({ id: "previous", accuracy: 90, score: 18, attempts: 20 }),
+      session({ id: "old", accuracy: 90, score: 18, attempts: 20 }),
+    ];
+
+    expect(
+      getPracticePlan({
+        adaptivePractice: true,
+        mode: "reading",
+        progress,
+        readingRange: "treble-starter",
+        roundLength: 60,
+      }),
+    ).toMatchObject({
+      tone: "advance",
+      title: "Ready to stretch",
+      focus: "92% recent avg",
+      target: "Hold 90% again",
     });
   });
 });

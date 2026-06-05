@@ -18,6 +18,7 @@ import {
   getFocusItems,
   getModeLabel,
   getPracticeInsightSummary,
+  getPracticePlan,
   getSessionHistorySummary,
   selectPitchNote,
   selectReadingNote,
@@ -87,6 +88,17 @@ function App() {
   );
   const historySummary = useMemo(() => getSessionHistorySummary(progress.history, mode), [mode, progress.history]);
   const insightSummary = useMemo(() => getPracticeInsightSummary(progress.history, mode), [mode, progress.history]);
+  const practicePlan = useMemo(
+    () =>
+      getPracticePlan({
+        adaptivePractice: settings.adaptivePractice,
+        mode,
+        progress,
+        readingRange: settings.readingRange,
+        roundLength: settings.roundLength,
+      }),
+    [mode, progress, settings.adaptivePractice, settings.readingRange, settings.roundLength],
+  );
   const promptDetail =
     mode === "reading"
       ? `${settings.adaptivePractice ? "Adaptive" : "Random"} | ${readingRange.detail}`
@@ -523,6 +535,7 @@ function App() {
         lifetimeAccuracy={lifetimeAccuracy}
         mode={mode}
         modeLabel={modeLabel}
+        practicePlan={practicePlan}
         settings={settings}
         dataStatus={dataStatus}
         onExportData={handleExportData}

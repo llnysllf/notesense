@@ -119,6 +119,17 @@ export type PracticeInsightSummary = {
   totalPracticeSeconds: number;
 };
 
+export type PracticePlanTone = "baseline" | "focus" | "recovery" | "advance" | "steady";
+
+export type PracticePlan = {
+  tone: PracticePlanTone;
+  title: string;
+  focus: string;
+  reason: string;
+  target: string;
+  steps: string[];
+};
+
 export type FeedbackState = {
   answer: NoteName;
   isCorrect: boolean;

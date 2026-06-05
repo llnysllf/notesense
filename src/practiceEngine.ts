@@ -1,9 +1,10 @@
-import { DEFAULT_READING_RANGE, PITCH_NOTES, getReadingNotes } from "./noteData";
+import { DEFAULT_READING_RANGE, PITCH_NOTES, getReadingNotes, getReadingRange } from "./noteData";
 import type {
   ModeProgress,
   PitchNote,
   PracticeInsightSummary,
   PracticeMode,
+  PracticePlan,
   PracticeProgress,
   PracticeSessionRecord,
   ReadingRange,
@@ -16,6 +17,10 @@ import type {
 export const ROUND_LENGTHS: RoundLength[] = [30, 60, 90];
 export const RECENT_SESSION_LIMIT = 5;
 export const TREND_SESSION_LIMIT = 6;
+const BASELINE_ATTEMPT_TARGET = 5;
+const FOCUS_ACCURACY_TARGET = 85;
+const ADVANCE_ACCURACY_TARGET = 90;
+const RECOVERY_DROP_THRESHOLD = -10;
 
 type CreateSessionRecordInput = Omit<PracticeSessionRecord, "id" | "completedAt" | "accuracy"> &
   Partial<Pick<PracticeSessionRecord, "id" | "completedAt">>;
@@ -26,6 +31,14 @@ type SelectNoteOptions = {
   readingRange?: ReadingRange;
   rng?: () => number;
   useAdaptive?: boolean;
+};
+
+type GetPracticePlanInput = {
+  adaptivePractice: boolean;
+  mode: PracticeMode;
+  progress: PracticeProgress;
+  readingRange?: ReadingRange;
+  roundLength: RoundLength;
 };
 
 export function formatAccuracy(correct: number, attempts: number): string {
@@ -169,6 +182,83 @@ export function getPracticeInsightSummary(
       (totalPracticeSeconds, session) => totalPracticeSeconds + session.durationSeconds,
       0,
     ),
+  };
+}
+
+export function getPracticePlan({
+  adaptivePractice,
+  mode,
+  progress,
+  readingRange = DEFAULT_READING_RANGE,
+  roundLength,
+}: GetPracticePlanInput): PracticePlan {
+  const modeLabel = getModeLabel(mode).toLowerCase();
+  const modeProgress = progress[mode];
+  const focusItems = getFocusItems(mode, modeProgress, readingRange);
+  const weakestItem = focusItems.find((entry) => entry.accuracy < FOCUS_ACCURACY_TARGET);
+  const historySummary = getSessionHistorySummary(progress.history, mode);
+  const insightSummary = getPracticeInsightSummary(progress.history, mode);
+  const scope = mode === "reading" ? getReadingRange(readingRange).detail : "Natural notes C4-B4";
+
+  if (modeProgress.totalAttempts < BASELINE_ATTEMPT_TARGET) {
+    const remainingAttempts = BASELINE_ATTEMPT_TARGET - modeProgress.totalAttempts;
+
+    return {
+      tone: "baseline",
+      title: "Build baseline",
+      focus: scope,
+      reason: "A few saved answers will make the next recommendation more reliable.",
+      target: `${remainingAttempts} more answer${remainingAttempts === 1 ? "" : "s"}`,
+      steps: [`One ${roundLength}s ${modeLabel} round`, "At least 5 answers", "First focus area"],
+    };
+  }
+
+  if (weakestItem) {
+    const adaptiveStep = adaptivePractice ? "Adaptive round" : "Turn on adaptive practice";
+
+    return {
+      tone: "focus",
+      title: `Focus ${weakestItem.note.id}`,
+      focus: `${weakestItem.accuracy}% accuracy`,
+      reason: `${weakestItem.note.id} is the weakest saved item across ${weakestItem.attempts} tries.`,
+      target: `${FOCUS_ACCURACY_TARGET}% on ${weakestItem.note.id}`,
+      steps: [`One ${roundLength}s ${modeLabel} round`, adaptiveStep, `Slow answers on ${weakestItem.note.id}`],
+    };
+  }
+
+  if (insightSummary.trendPoints.length >= 2 && insightSummary.accuracyDelta <= RECOVERY_DROP_THRESHOLD) {
+    return {
+      tone: "recovery",
+      title: "Stabilize accuracy",
+      focus: `${insightSummary.latestAccuracy}% latest`,
+      reason: `Accuracy is down ${Math.abs(insightSummary.accuracyDelta)}% from the previous saved round.`,
+      target: "Back to 80%",
+      steps: [`One careful ${roundLength}s round`, "Accuracy before speed", "Finish with a steady streak"],
+    };
+  }
+
+  if (
+    historySummary.recentSessions.length >= 3 &&
+    historySummary.averageAccuracy >= ADVANCE_ACCURACY_TARGET &&
+    insightSummary.latestAccuracy >= ADVANCE_ACCURACY_TARGET
+  ) {
+    return {
+      tone: "advance",
+      title: "Ready to stretch",
+      focus: `${historySummary.averageAccuracy}% recent avg`,
+      reason: `Recent ${modeLabel} rounds are staying above ${ADVANCE_ACCURACY_TARGET}%.`,
+      target: "Hold 90% again",
+      steps: [`One faster ${roundLength}s round`, "Keep the best streak steady", "Move up after another clean round"],
+    };
+  }
+
+  return {
+    tone: "steady",
+    title: "Keep momentum",
+    focus: `${formatAccuracy(modeProgress.totalCorrect, modeProgress.totalAttempts)} lifetime`,
+    reason: `The current ${modeLabel} profile is balanced enough for a normal round.`,
+    target: `${FOCUS_ACCURACY_TARGET}% accuracy`,
+    steps: [`One ${roundLength}s ${modeLabel} round`, "Steady tempo", "Review the round summary"],
   };
 }
 
