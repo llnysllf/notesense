@@ -3,6 +3,7 @@ import { READING_RANGES, getReadingRange } from "../noteData";
 import { ROUND_LENGTHS } from "../practiceEngine";
 import type {
   DataStatus,
+  DailyGoalSummary,
   MasterySummary,
   ModeProgress,
   PitchNote,
@@ -14,6 +15,7 @@ import type {
   SessionSummary,
   TrainingNote,
 } from "../types";
+import DailyGoal from "./DailyGoal";
 import MasteryMap from "./MasteryMap";
 import PracticeCoach from "./PracticeCoach";
 import PracticeInsights from "./PracticeInsights";
@@ -28,6 +30,7 @@ type FocusItem = {
 
 type PracticeStatsPanelProps = {
   activeProgress: ModeProgress;
+  dailyGoalSummary: DailyGoalSummary;
   focusItems: FocusItem[];
   historySummary: SessionHistorySummary;
   insightSummary: PracticeInsightSummary;
@@ -47,6 +50,7 @@ type PracticeStatsPanelProps = {
 
 function PracticeStatsPanel({
   activeProgress,
+  dailyGoalSummary,
   focusItems,
   historySummary,
   insightSummary,
@@ -89,6 +93,8 @@ function PracticeStatsPanel({
         <StatTile label="Accuracy" value={lifetimeAccuracy} />
         <StatTile label="Best" value={activeProgress.bestRoundScore} />
       </div>
+
+      <DailyGoal summary={dailyGoalSummary} />
 
       {lastSummary && lastSummary.mode === mode && (
         <div className="summary-card" aria-live="polite">

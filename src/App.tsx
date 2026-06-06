@@ -15,6 +15,7 @@ import {
   createSessionRecord,
   createSessionSummary,
   formatAccuracy,
+  getDailyGoalSummary,
   getFocusItems,
   getMasterySummary,
   getModeLabel,
@@ -91,6 +92,7 @@ function App() {
     () => getMasterySummary(mode, progress[mode], settings.readingRange),
     [mode, progress, settings.readingRange],
   );
+  const dailyGoalSummary = useMemo(() => getDailyGoalSummary(progress.history), [progress.history]);
   const historySummary = useMemo(() => getSessionHistorySummary(progress.history, mode), [mode, progress.history]);
   const insightSummary = useMemo(() => getPracticeInsightSummary(progress.history, mode), [mode, progress.history]);
   const practicePlan = useMemo(
@@ -533,6 +535,7 @@ function App() {
 
       <PracticeStatsPanel
         activeProgress={activeProgress}
+        dailyGoalSummary={dailyGoalSummary}
         focusItems={focusItems}
         historySummary={historySummary}
         insightSummary={insightSummary}

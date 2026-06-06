@@ -20,6 +20,8 @@ test("loads with no automated accessibility violations", async ({ page }) => {
 
   await expect(page.getByRole("heading", { name: "NoteSense" })).toBeVisible();
   await expect(page.getByRole("button", { name: "Start drill" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Daily goal" })).toBeVisible();
+  await expect(page.getByText(/0\/1\s+round/)).toBeVisible();
   await expect(page.getByRole("heading", { name: "Build baseline" })).toBeVisible();
   await expect(page.getByText("5 more answers")).toBeVisible();
   await expect(page.getByRole("heading", { name: "Mastery map" })).toBeVisible();
@@ -41,6 +43,8 @@ test("runs the note-reading practice loop", async ({ page }) => {
 
   await page.getByRole("button", { name: "Finish round" }).click();
   await expect(page.getByRole("heading", { name: "Last round" })).toBeVisible();
+  await expect(page.getByText(/1\/1\s+round/)).toBeVisible();
+  await expect(page.getByText("Goal complete. Keep the streak alive tomorrow.")).toBeVisible();
   await expect(page.getByRole("heading", { name: "Practice history" })).toBeVisible();
   await expect(page.getByRole("listitem", { name: /Note reading session/ })).toBeVisible();
 

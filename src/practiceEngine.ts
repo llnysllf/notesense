@@ -1,5 +1,6 @@
 import { DEFAULT_READING_RANGE, PITCH_NOTES, getReadingNotes, getReadingRange } from "./noteData";
 import type {
+  DailyGoalSummary,
   MasteryItem,
   MasteryStatus,
   MasterySummary,
@@ -20,6 +21,7 @@ import type {
 export const ROUND_LENGTHS: RoundLength[] = [30, 60, 90];
 export const RECENT_SESSION_LIMIT = 5;
 export const TREND_SESSION_LIMIT = 6;
+export const DAILY_GOAL_SESSION_TARGET = 1;
 const BASELINE_ATTEMPT_TARGET = 5;
 const FOCUS_ACCURACY_TARGET = 85;
 const ADVANCE_ACCURACY_TARGET = 90;
@@ -61,6 +63,17 @@ function clampWholeNumber(value: number): number {
   }
 
   return Math.max(0, Math.round(value));
+}
+
+function getDayKey(date: Date): string {
+  return date.toISOString().slice(0, 10);
+}
+
+function shiftDayKey(dayKey: string, offsetDays: number): string {
+  const date = new Date(`${dayKey}T00:00:00.000Z`);
+  date.setUTCDate(date.getUTCDate() + offsetDays);
+
+  return getDayKey(date);
 }
 
 export function formatDuration(seconds: number): string {
@@ -207,6 +220,76 @@ export function getSessionHistorySummary(
     totalAttempts: totals.attempts,
     totalPracticeSeconds: totals.durationSeconds,
     bestStreak: totals.bestStreak,
+  };
+}
+
+export function getDailyGoalSummary(
+  history: PracticeSessionRecord[],
+  now = new Date(),
+  targetSessions = DAILY_GOAL_SESSION_TARGET,
+): DailyGoalSummary {
+  const todayKey = getDayKey(now);
+  const safeTargetSessions = Math.max(1, clampWholeNumber(targetSessions));
+  const dailySessions = new Map<string, { durationSeconds: number; sessions: number }>();
+
+  history.forEach((session) => {
+    const completedAt = new Date(session.completedAt);
+
+    if (Number.isNaN(completedAt.getTime())) {
+      return;
+    }
+
+    const dayKey = getDayKey(completedAt);
+    const currentDay = dailySessions.get(dayKey) ?? { durationSeconds: 0, sessions: 0 };
+    dailySessions.set(dayKey, {
+      durationSeconds: currentDay.durationSeconds + session.durationSeconds,
+      sessions: currentDay.sessions + 1,
+    });
+  });
+
+  const completedDays = new Set(
+    [...dailySessions.entries()]
+      .filter(([, summary]) => summary.sessions >= safeTargetSessions)
+      .map(([dayKey]) => dayKey),
+  );
+  const todaySummary = dailySessions.get(todayKey) ?? { durationSeconds: 0, sessions: 0 };
+  const isComplete = completedDays.has(todayKey);
+  const streakAnchor = isComplete ? todayKey : shiftDayKey(todayKey, -1);
+  let currentStreak = 0;
+  let cursor = streakAnchor;
+
+  while (completedDays.has(cursor)) {
+    currentStreak += 1;
+    cursor = shiftDayKey(cursor, -1);
+  }
+
+  const orderedCompletedDays = [...completedDays].sort();
+  const bestStreak = orderedCompletedDays.reduce(
+    (summary, dayKey) => {
+      const currentStreak =
+        summary.previousDayKey && shiftDayKey(summary.previousDayKey, 1) === dayKey ? summary.currentStreak + 1 : 1;
+
+      return {
+        bestStreak: Math.max(summary.bestStreak, currentStreak),
+        currentStreak,
+        previousDayKey: dayKey,
+      };
+    },
+    { bestStreak: 0, currentStreak: 0, previousDayKey: "" },
+  ).bestStreak;
+  const remainingSessions = Math.max(0, safeTargetSessions - todaySummary.sessions);
+
+  return {
+    targetSessions: safeTargetSessions,
+    completedSessions: todaySummary.sessions,
+    completionPercent: Math.min(100, Math.round((todaySummary.sessions / safeTargetSessions) * 100)),
+    isComplete,
+    currentStreak,
+    bestStreak,
+    todayPracticeSeconds: todaySummary.durationSeconds,
+    nextAction: isComplete
+      ? "Goal complete. Keep the streak alive tomorrow."
+      : `Finish ${remainingSessions} more round${remainingSessions === 1 ? "" : "s"} today.`,
   };
 }
 

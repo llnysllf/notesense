@@ -5,6 +5,7 @@ import {
   createSessionSummary,
   formatAccuracy,
   formatDuration,
+  getDailyGoalSummary,
   getFocusItems,
   getMasteryStatus,
   getMasterySummary,
@@ -252,6 +253,75 @@ describe("practiceEngine", () => {
       totalAttempts: 10,
       totalPracticeSeconds: 90,
       bestStreak: 5,
+    });
+  });
+
+  it("summarizes an empty daily goal", () => {
+    expect(getDailyGoalSummary([], new Date("2026-06-06T12:00:00.000Z"))).toEqual({
+      targetSessions: 1,
+      completedSessions: 0,
+      completionPercent: 0,
+      isComplete: false,
+      currentStreak: 0,
+      bestStreak: 0,
+      todayPracticeSeconds: 0,
+      nextAction: "Finish 1 more round today.",
+    });
+  });
+
+  it("counts today's practice and completed streaks", () => {
+    const history = [
+      session({
+        id: "today",
+        completedAt: "2026-06-06T09:00:00.000Z",
+        durationSeconds: 75,
+      }),
+      session({
+        id: "yesterday",
+        completedAt: "2026-06-05T09:00:00.000Z",
+        durationSeconds: 60,
+      }),
+      session({
+        id: "two-days-ago",
+        completedAt: "2026-06-04T09:00:00.000Z",
+        durationSeconds: 45,
+      }),
+      session({
+        id: "older",
+        completedAt: "2026-06-02T09:00:00.000Z",
+        durationSeconds: 60,
+      }),
+    ];
+
+    expect(getDailyGoalSummary(history, new Date("2026-06-06T12:00:00.000Z"))).toMatchObject({
+      completedSessions: 1,
+      completionPercent: 100,
+      isComplete: true,
+      currentStreak: 3,
+      bestStreak: 3,
+      todayPracticeSeconds: 75,
+      nextAction: "Goal complete. Keep the streak alive tomorrow.",
+    });
+  });
+
+  it("keeps yesterday's streak visible before today's round", () => {
+    const history = [
+      session({
+        id: "yesterday",
+        completedAt: "2026-06-05T09:00:00.000Z",
+      }),
+      session({
+        id: "two-days-ago",
+        completedAt: "2026-06-04T09:00:00.000Z",
+      }),
+    ];
+
+    expect(getDailyGoalSummary(history, new Date("2026-06-06T12:00:00.000Z"))).toMatchObject({
+      completedSessions: 0,
+      isComplete: false,
+      currentStreak: 2,
+      bestStreak: 2,
+      nextAction: "Finish 1 more round today.",
     });
   });
 

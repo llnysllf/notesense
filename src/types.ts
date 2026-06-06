@@ -102,6 +102,17 @@ export type SessionHistorySummary = {
   bestStreak: number;
 };
 
+export type DailyGoalSummary = {
+  targetSessions: number;
+  completedSessions: number;
+  completionPercent: number;
+  isComplete: boolean;
+  currentStreak: number;
+  bestStreak: number;
+  todayPracticeSeconds: number;
+  nextAction: string;
+};
+
 export type PracticeTrendPoint = {
   id: string;
   label: string;
