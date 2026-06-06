@@ -9,10 +9,15 @@ on:
 permissions:
   contents: read
 
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   quality:
     name: Quality gate
     runs-on: ubuntu-latest
+    timeout-minutes: 20
 
     steps:
       - name: Check out repository
@@ -32,3 +37,17 @@ jobs:
 
       - name: Run format, lint, typecheck, unit tests, and browser tests
         run: npm run check
+
+      - name: Build GitHub Pages artifact
+        run: npm run build:pages
+
+      - name: Upload browser failure artifacts
+        if: failure()
+        uses: actions/upload-artifact@v5
+        with:
+          name: playwright-failure-artifacts
+          path: |
+            playwright-report
+            test-results
+          if-no-files-found: ignore
+          retention-days: 7

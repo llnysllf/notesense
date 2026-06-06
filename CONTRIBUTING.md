@@ -1,0 +1,38 @@
+# Contributing
+
+NoteSense is intentionally small, but changes should still meet a production-quality bar. The app is a learning tool, so correctness, accessibility, and calm UX matter more than feature volume.
+
+## Local Setup
+
+```bash
+npm install
+npm run dev
+```
+
+## Before Opening a Pull Request
+
+Run the full local gate:
+
+```bash
+npm run check
+npm run build:pages
+```
+
+For UI changes, also verify the app manually at desktop and mobile widths. Check that text fits, keyboard focus is visible, controls are reachable without a mouse, and automated axe checks still pass.
+
+## Engineering Expectations
+
+- Keep practice logic in pure TypeScript where possible, especially in `src/practiceEngine.ts`.
+- Keep persistence and import/export changes behind `src/storage.ts`.
+- Add or update tests for new behavior, migrations, accessibility-sensitive UI, and practice analytics.
+- Prefer small, shippable changes with clear user value or clear maintainability value.
+- Do not add network services, auth, or cloud storage without preserving the current local-first practice loop.
+
+## Pull Request Shape
+
+A strong PR includes:
+
+- A short product/engineering summary.
+- The validation commands that passed.
+- Screenshots or notes for visual UI changes.
+- Any migration, accessibility, deployment, or data-shape risks.

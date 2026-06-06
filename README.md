@@ -8,6 +8,9 @@ NoteSense is a small piano sight-reading and ear-training app for beginner music
 Live demo: [https://llnysllf.github.io/notesense/](https://llnysllf.github.io/notesense/)
 
 Architecture notes: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)
+Quality runbook: [docs/QUALITY.md](docs/QUALITY.md)
+Contributing guide: [CONTRIBUTING.md](CONTRIBUTING.md)
+Security policy: [SECURITY.md](SECURITY.md)
 
 ## Features
 
@@ -128,6 +131,8 @@ npm run check
 - The test suite covers adaptive weighting, deterministic note selection, focus-note ranking, session summaries, session-history analytics, and progress reducers.
 - Playwright and axe-core cover the browser practice loop, responsive layout, console health, and automated accessibility violations.
 - GitHub Actions run formatting, linting, typechecking, unit tests, and browser tests on every push and pull request.
+- Pull requests also build the GitHub Pages artifact and upload browser failure artifacts for debugging.
+- Dependabot keeps npm and GitHub Actions dependencies on a weekly maintenance cadence.
 - The `main` branch publishes a static production build to GitHub Pages.
 
 ## Current Scope

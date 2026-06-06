@@ -11,6 +11,7 @@ NoteSense is currently a local-first React application. The product goal is to k
 - `src/components` contains focused UI sections for the staff, pitch prompt, stats panel, session history, practice insights, and stat tiles.
 - `src/App.tsx` coordinates product state, round flow, settings, storage calls, and component composition.
 - `e2e/app.spec.ts` covers the browser practice loop, accessibility, layout health, insight chart rendering, import/export behavior, and storage failure messaging.
+- `.github/workflows` owns the CI and Pages deployment gates.
 
 ## Quality Bar
 
@@ -27,6 +28,7 @@ Every feature should keep these expectations intact:
 - Accessibility is part of the feature definition, not a final cleanup step.
 - The full `npm run check` gate must pass before a change is considered ready.
 - The GitHub Pages build must be verified with the `/notesense/` base path before deployment.
+- Pull requests should use the quality checklist in [docs/QUALITY.md](QUALITY.md).
 
 ## Local-First Data Model
 
@@ -61,6 +63,7 @@ An AWS version could use Cognito, API Gateway, Lambda, DynamoDB or RDS, S3, Clou
 - Keep network calls outside the core practice engine.
 - Keep UI components focused on one product responsibility.
 - Keep browser tests tied to real user workflows rather than implementation details.
+- Keep repository operations, dependency updates, and release checks documented rather than tribal.
 
 ## Near-Term Product Roadmap
 
