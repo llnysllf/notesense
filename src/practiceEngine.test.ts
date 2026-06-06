@@ -6,6 +6,8 @@ import {
   formatAccuracy,
   formatDuration,
   getFocusItems,
+  getMasteryStatus,
+  getMasterySummary,
   getPracticeInsightSummary,
   getPracticePlan,
   getPracticeWeight,
@@ -139,6 +141,55 @@ describe("practiceEngine", () => {
     expect(getFocusItems("reading", progress.reading, "bass-starter").map((entry) => entry.note.id)).toEqual([
       "C3",
       "D3",
+    ]);
+  });
+
+  it("classifies mastery states from attempts and accuracy", () => {
+    expect(getMasteryStatus(0, 0)).toBe("new");
+    expect(getMasteryStatus(4, 75)).toBe("learning");
+    expect(getMasteryStatus(8, 63)).toBe("focus");
+    expect(getMasteryStatus(6, 90)).toBe("strong");
+  });
+
+  it("summarizes mastery for the selected reading range", () => {
+    const progress = freshProgress();
+    progress.reading.totalAttempts = 15;
+    progress.reading.totalCorrect = 12;
+    progress.reading.noteStats.C4 = { attempts: 5, correct: 5 };
+    progress.reading.noteStats.C3 = { attempts: 8, correct: 4 };
+    progress.reading.noteStats.D3 = { attempts: 4, correct: 3 };
+
+    expect(getMasterySummary("reading", progress.reading, "bass-starter")).toMatchObject({
+      averageAccuracy: 80,
+      strongCount: 0,
+      totalCount: 5,
+      items: [
+        { id: "C3", accuracy: 50, attempts: 8, status: "focus" },
+        { id: "D3", accuracy: 75, attempts: 4, status: "learning" },
+        { id: "E3", accuracy: 0, attempts: 0, status: "new" },
+        { id: "F3", accuracy: 0, attempts: 0, status: "new" },
+        { id: "G3", accuracy: 0, attempts: 0, status: "new" },
+      ],
+    });
+  });
+
+  it("summarizes strong pitch mastery", () => {
+    const progress = freshProgress();
+    progress.pitch.totalAttempts = 10;
+    progress.pitch.totalCorrect = 9;
+    progress.pitch.noteStats.C4 = { attempts: 5, correct: 5 };
+    progress.pitch.noteStats.D4 = { attempts: 5, correct: 4 };
+
+    const summary = getMasterySummary("pitch", progress.pitch);
+
+    expect(summary).toMatchObject({
+      averageAccuracy: 90,
+      strongCount: 1,
+      totalCount: PITCH_NOTES.length,
+    });
+    expect(summary.items.slice(0, 2)).toMatchObject([
+      { id: "C4", accuracy: 100, attempts: 5, status: "strong" },
+      { id: "D4", accuracy: 80, attempts: 5, status: "learning" },
     ]);
   });
 

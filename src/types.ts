@@ -130,6 +130,23 @@ export type PracticePlan = {
   steps: string[];
 };
 
+export type MasteryStatus = "new" | "learning" | "focus" | "strong";
+
+export type MasteryItem = {
+  id: string;
+  label: string;
+  attempts: number;
+  accuracy: number;
+  status: MasteryStatus;
+};
+
+export type MasterySummary = {
+  items: MasteryItem[];
+  averageAccuracy: number;
+  strongCount: number;
+  totalCount: number;
+};
+
 export type FeedbackState = {
   answer: NoteName;
   isCorrect: boolean;

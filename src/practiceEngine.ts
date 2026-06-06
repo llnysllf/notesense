@@ -1,5 +1,8 @@
 import { DEFAULT_READING_RANGE, PITCH_NOTES, getReadingNotes, getReadingRange } from "./noteData";
 import type {
+  MasteryItem,
+  MasteryStatus,
+  MasterySummary,
   ModeProgress,
   PitchNote,
   PracticeInsightSummary,
@@ -21,6 +24,9 @@ const BASELINE_ATTEMPT_TARGET = 5;
 const FOCUS_ACCURACY_TARGET = 85;
 const ADVANCE_ACCURACY_TARGET = 90;
 const RECOVERY_DROP_THRESHOLD = -10;
+const MASTERY_ATTEMPT_TARGET = 5;
+const MASTERY_STRONG_ACCURACY = 90;
+const MASTERY_FOCUS_ACCURACY = 70;
 
 type CreateSessionRecordInput = Omit<PracticeSessionRecord, "id" | "completedAt" | "accuracy"> &
   Partial<Pick<PracticeSessionRecord, "id" | "completedAt">>;
@@ -82,12 +88,16 @@ export function getNoteAccuracy(progress: ModeProgress, noteId: string): number 
   return Math.round((stat.correct / stat.attempts) * 100);
 }
 
+function getPracticeSourceNotes(mode: PracticeMode, readingRange: ReadingRange = DEFAULT_READING_RANGE) {
+  return mode === "reading" ? getReadingNotes(readingRange) : PITCH_NOTES;
+}
+
 export function getFocusItems(
   mode: PracticeMode,
   modeProgress: ModeProgress,
   readingRange: ReadingRange = DEFAULT_READING_RANGE,
 ) {
-  const sourceNotes = mode === "reading" ? getReadingNotes(readingRange) : PITCH_NOTES;
+  const sourceNotes = getPracticeSourceNotes(mode, readingRange);
 
   return sourceNotes
     .map((note) => ({
@@ -98,6 +108,49 @@ export function getFocusItems(
     .filter((entry) => entry.attempts > 0)
     .sort((a, b) => a.accuracy - b.accuracy)
     .slice(0, 3);
+}
+
+export function getMasteryStatus(attempts: number, accuracy: number): MasteryStatus {
+  if (attempts === 0) {
+    return "new";
+  }
+
+  if (accuracy < MASTERY_FOCUS_ACCURACY) {
+    return "focus";
+  }
+
+  if (attempts >= MASTERY_ATTEMPT_TARGET && accuracy >= MASTERY_STRONG_ACCURACY) {
+    return "strong";
+  }
+
+  return "learning";
+}
+
+export function getMasterySummary(
+  mode: PracticeMode,
+  modeProgress: ModeProgress,
+  readingRange: ReadingRange = DEFAULT_READING_RANGE,
+): MasterySummary {
+  const items: MasteryItem[] = getPracticeSourceNotes(mode, readingRange).map((note) => {
+    const attempts = modeProgress.noteStats[note.id]?.attempts ?? 0;
+    const accuracy = getNoteAccuracy(modeProgress, note.id);
+
+    return {
+      id: note.id,
+      label: note.id,
+      attempts,
+      accuracy,
+      status: getMasteryStatus(attempts, accuracy),
+    };
+  });
+
+  return {
+    items,
+    averageAccuracy:
+      modeProgress.totalAttempts > 0 ? Math.round((modeProgress.totalCorrect / modeProgress.totalAttempts) * 100) : 0,
+    strongCount: items.filter((item) => item.status === "strong").length,
+    totalCount: items.length,
+  };
 }
 
 export function createSessionRecord({

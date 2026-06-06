@@ -22,6 +22,8 @@ test("loads with no automated accessibility violations", async ({ page }) => {
   await expect(page.getByRole("button", { name: "Start drill" })).toBeVisible();
   await expect(page.getByRole("heading", { name: "Build baseline" })).toBeVisible();
   await expect(page.getByText("5 more answers")).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Mastery map" })).toBeVisible();
+  await expect(page.getByRole("listitem", { name: "C4 New, no attempts yet" })).toBeVisible();
 
   const accessibilityScanResults = await new AxeBuilder({ page }).analyze();
   expect(accessibilityScanResults.violations).toEqual([]);
@@ -168,6 +170,7 @@ test("imports local practice data", async ({ page }) => {
   await expect(page.getByText("Random | Bass clef C3-G3")).toBeVisible();
   await expect(progressPanel.getByRole("heading", { name: "Focus C3" })).toBeVisible();
   await expect(progressPanel.getByText("85% on C3")).toBeVisible();
+  await expect(progressPanel.getByRole("listitem", { name: "C3 Focus, 67% accuracy across 6 attempts" })).toBeVisible();
   await expect(progressPanel.getByRole("heading", { name: "Practice insight" })).toBeVisible();
   await expect(progressPanel.getByText("+20%")).toBeVisible();
   await expect(

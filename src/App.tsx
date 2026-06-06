@@ -16,6 +16,7 @@ import {
   createSessionSummary,
   formatAccuracy,
   getFocusItems,
+  getMasterySummary,
   getModeLabel,
   getPracticeInsightSummary,
   getPracticePlan,
@@ -84,6 +85,10 @@ function App() {
   const readingRange = useMemo(() => getReadingRange(settings.readingRange), [settings.readingRange]);
   const focusItems = useMemo(
     () => getFocusItems(mode, progress[mode], settings.readingRange),
+    [mode, progress, settings.readingRange],
+  );
+  const masterySummary = useMemo(
+    () => getMasterySummary(mode, progress[mode], settings.readingRange),
     [mode, progress, settings.readingRange],
   );
   const historySummary = useMemo(() => getSessionHistorySummary(progress.history, mode), [mode, progress.history]);
@@ -533,6 +538,7 @@ function App() {
         insightSummary={insightSummary}
         lastSummary={lastSummary}
         lifetimeAccuracy={lifetimeAccuracy}
+        masterySummary={masterySummary}
         mode={mode}
         modeLabel={modeLabel}
         practicePlan={practicePlan}

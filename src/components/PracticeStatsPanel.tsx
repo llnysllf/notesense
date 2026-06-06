@@ -3,6 +3,7 @@ import { READING_RANGES, getReadingRange } from "../noteData";
 import { ROUND_LENGTHS } from "../practiceEngine";
 import type {
   DataStatus,
+  MasterySummary,
   ModeProgress,
   PitchNote,
   PracticeMode,
@@ -13,6 +14,7 @@ import type {
   SessionSummary,
   TrainingNote,
 } from "../types";
+import MasteryMap from "./MasteryMap";
 import PracticeCoach from "./PracticeCoach";
 import PracticeInsights from "./PracticeInsights";
 import SessionHistory from "./SessionHistory";
@@ -31,6 +33,7 @@ type PracticeStatsPanelProps = {
   insightSummary: PracticeInsightSummary;
   lastSummary: SessionSummary | null;
   lifetimeAccuracy: string;
+  masterySummary: MasterySummary;
   mode: PracticeMode;
   modeLabel: string;
   practicePlan: PracticePlan;
@@ -49,6 +52,7 @@ function PracticeStatsPanel({
   insightSummary,
   lastSummary,
   lifetimeAccuracy,
+  masterySummary,
   mode,
   modeLabel,
   practicePlan,
@@ -101,6 +105,7 @@ function PracticeStatsPanel({
       <SessionHistory modeLabel={modeLabel} summary={historySummary} />
       <PracticeInsights modeLabel={modeLabel} summary={insightSummary} />
       <PracticeCoach mode={mode} modeLabel={modeLabel} plan={practicePlan} />
+      <MasteryMap mode={mode} modeLabel={modeLabel} summary={masterySummary} />
 
       <div className="settings-card">
         <h3>Drill settings</h3>
