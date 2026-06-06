@@ -1,0 +1,64 @@
+name: Bug Report
+description: Report something that is broken, confusing, inaccessible, or unreliable.
+title: "[Bug]: "
+labels:
+  - bug
+body:
+  - type: markdown
+    attributes:
+      value: Thanks for helping keep NoteSense reliable. Please avoid including private exported practice data unless it has been sanitized.
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      options:
+        - Practice loop
+        - Pitch training
+        - Progress and persistence
+        - Import/export
+        - Accessibility
+        - Responsive layout
+        - CI/CD or deployment
+        - Documentation
+    validations:
+      required: true
+  - type: textarea
+    id: current-behavior
+    attributes:
+      label: Current Behavior
+      description: What happened?
+    validations:
+      required: true
+  - type: textarea
+    id: expected-behavior
+    attributes:
+      label: Expected Behavior
+      description: What should have happened instead?
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Reproduction Steps
+      description: Please include the smallest reliable steps.
+      placeholder: |
+        1. Open ...
+        2. Choose ...
+        3. Notice ...
+    validations:
+      required: true
+  - type: input
+    id: browser
+    attributes:
+      label: Browser
+      placeholder: Chrome 125, Safari 18, Firefox 127
+  - type: input
+    id: viewport
+    attributes:
+      label: Device Or Viewport
+      placeholder: Desktop 1440px, iPhone 390px, keyboard-only, screen reader
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Evidence
+      description: Screenshots, console messages, failing commands, or links to workflow runs.

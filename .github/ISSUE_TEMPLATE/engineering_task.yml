@@ -1,0 +1,43 @@
+name: Engineering Task
+description: Track non-feature architecture, quality, security, documentation, or tooling work.
+title: "[Engineering]: "
+labels:
+  - engineering
+body:
+  - type: dropdown
+    id: category
+    attributes:
+      label: Category
+      options:
+        - Architecture
+        - Accessibility
+        - Testing
+        - CI/CD
+        - Security
+        - Documentation
+        - Performance
+        - Maintenance
+    validations:
+      required: true
+  - type: textarea
+    id: goal
+    attributes:
+      label: Goal
+      description: What quality bar does this raise?
+    validations:
+      required: true
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Acceptance Criteria
+      description: List the evidence that will prove this work is done.
+      placeholder: |
+        - ...
+        - `npm run verify` passes.
+    validations:
+      required: true
+  - type: textarea
+    id: risk
+    attributes:
+      label: Risk Notes
+      description: Anything that could affect data, deployment, accessibility, or future backend migration.

@@ -1,0 +1,65 @@
+# Release Guide
+
+NoteSense currently releases from `main` to GitHub Pages. The release process is intentionally lightweight, but every release should leave clear evidence that the app is safe to use and easy to maintain.
+
+## Release Principles
+
+- Prefer small releases with one clear product or engineering purpose.
+- Keep learner-facing behavior intentional and documented.
+- Preserve the local-first data model unless a migration plan exists.
+- Treat accessibility, import/export, persistence, and deployment changes as release risks.
+- Do not ship generated files such as `dist`, `playwright-report`, or `test-results`.
+
+## Pre-Release Checklist
+
+Run the full local verification gate:
+
+```bash
+npm run verify
+```
+
+Review the diff:
+
+```bash
+git status --short
+git diff --check
+```
+
+For UI changes, manually inspect:
+
+- Desktop layout.
+- Mobile layout.
+- Keyboard-only navigation.
+- Focus visibility.
+- Text wrapping.
+- Reduced-motion behavior when animation changes.
+
+For data changes, manually inspect:
+
+- Existing local progress loads without reset.
+- Exported data includes the expected schema version.
+- Imported data is normalized or rejected safely.
+- Storage failures stay non-blocking.
+
+## Push And Deployment
+
+Push to `main` only after the local gate passes.
+
+After pushing:
+
+- Confirm the `CI` workflow succeeds.
+- Confirm the `Deploy Pages` workflow succeeds.
+- Confirm the live URL returns HTTP 200.
+- Confirm live HTML references `/notesense/` assets.
+
+## Rollback
+
+If a release breaks the live app:
+
+1. Identify the last known good commit.
+2. Revert the risky commit with a normal Git revert.
+3. Push the revert to `main`.
+4. Confirm `CI` and `Deploy Pages` succeed.
+5. Document the cause before attempting a fix-forward.
+
+Avoid force-pushing `main`; the deployment history should remain auditable.

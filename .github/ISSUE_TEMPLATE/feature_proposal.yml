@@ -1,0 +1,38 @@
+name: Product Proposal
+description: Propose a learner-facing improvement without starting implementation too early.
+title: "[Proposal]: "
+labels:
+  - product
+body:
+  - type: textarea
+    id: learner-problem
+    attributes:
+      label: Learner Problem
+      description: What piano-learning problem does this solve?
+    validations:
+      required: true
+  - type: textarea
+    id: outcome
+    attributes:
+      label: Desired Outcome
+      description: What should a beginner learner be able to do better after this ships?
+    validations:
+      required: true
+  - type: textarea
+    id: scope
+    attributes:
+      label: Proposed Scope
+      description: Keep this about behavior and UX. Implementation can be designed later.
+  - type: textarea
+    id: risks
+    attributes:
+      label: Risks And Tradeoffs
+      description: Consider accessibility, learning accuracy, local data, performance, and product complexity.
+  - type: checkboxes
+    id: readiness
+    attributes:
+      label: Readiness
+      options:
+        - label: This has clear learner value, not just project size value.
+        - label: This can preserve the current local-first practice loop.
+        - label: This can be tested with unit and/or browser coverage.

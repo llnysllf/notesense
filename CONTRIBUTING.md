@@ -14,8 +14,7 @@ npm run dev
 Run the full local gate:
 
 ```bash
-npm run check
-npm run build:pages
+npm run verify
 ```
 
 For UI changes, also verify the app manually at desktop and mobile widths. Check that text fits, keyboard focus is visible, controls are reachable without a mouse, and automated axe checks still pass.
@@ -27,12 +26,13 @@ For UI changes, also verify the app manually at desktop and mobile widths. Check
 - Add or update tests for new behavior, migrations, accessibility-sensitive UI, and practice analytics.
 - Prefer small, shippable changes with clear user value or clear maintainability value.
 - Do not add network services, auth, or cloud storage without preserving the current local-first practice loop.
+- Record meaningful architecture decisions in `docs/adr` when a change affects data ownership, deployment, quality gates, or future backend boundaries.
 
 ## Pull Request Shape
 
 A strong PR includes:
 
 - A short product/engineering summary.
-- The validation commands that passed.
+- Confirmation that `npm run verify` passed.
 - Screenshots or notes for visual UI changes.
 - Any migration, accessibility, deployment, or data-shape risks.

@@ -30,8 +30,7 @@ Use this sequence before shipping:
 
 ```bash
 npm run format:write
-npm run check
-npm run build:pages
+npm run verify
 ```
 
 For visual QA:
@@ -66,8 +65,7 @@ When touching progress, settings, history, import, or export:
 
 Before pushing to `main`:
 
-- `npm run check`
-- `npm run build:pages`
+- `npm run verify`
 - Review the diff for unrelated churn.
 - Confirm generated folders such as `dist`, `playwright-report`, and `test-results` remain untracked.
 

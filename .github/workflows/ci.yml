@@ -35,11 +35,8 @@ jobs:
       - name: Install browser dependencies
         run: npx playwright install --with-deps chromium
 
-      - name: Run format, lint, typecheck, unit tests, and browser tests
-        run: npm run check
-
-      - name: Build GitHub Pages artifact
-        run: npm run build:pages
+      - name: Run release verification gate
+        run: npm run verify
 
       - name: Upload browser failure artifacts
         if: failure()

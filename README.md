@@ -9,6 +9,7 @@ Live demo: [https://llnysllf.github.io/notesense/](https://llnysllf.github.io/no
 
 Architecture notes: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)
 Quality runbook: [docs/QUALITY.md](docs/QUALITY.md)
+Release guide: [docs/RELEASE.md](docs/RELEASE.md)
 Contributing guide: [CONTRIBUTING.md](CONTRIBUTING.md)
 Security policy: [SECURITY.md](SECURITY.md)
 
@@ -110,6 +111,12 @@ Run the full local quality check:
 npm run check
 ```
 
+Run the full local release verification gate:
+
+```bash
+npm run verify
+```
+
 ## Engineering Notes
 
 - Practice selection and summary logic live in `src/practiceEngine.ts` so the learning behavior can be tested outside React.
@@ -130,9 +137,11 @@ npm run check
 - Prettier formatting is enforced before the test suite runs.
 - The test suite covers adaptive weighting, deterministic note selection, focus-note ranking, session summaries, session-history analytics, and progress reducers.
 - Playwright and axe-core cover the browser practice loop, responsive layout, console health, and automated accessibility violations.
+- `npm run verify` is the single local gate before release, combining code quality, unit/browser tests, accessibility checks, and the Pages build.
 - GitHub Actions run formatting, linting, typechecking, unit tests, and browser tests on every push and pull request.
 - Pull requests also build the GitHub Pages artifact and upload browser failure artifacts for debugging.
 - Dependabot keeps npm and GitHub Actions dependencies on a weekly maintenance cadence.
+- CODEOWNERS, issue templates, ADRs, and the release guide keep review, planning, and deployment expectations explicit.
 - The `main` branch publishes a static production build to GitHub Pages.
 
 ## Current Scope
