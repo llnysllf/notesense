@@ -20,6 +20,7 @@ A change is done when:
 - Pure practice, analytics, and data-shape logic has unit coverage.
 - User workflows have browser coverage when UI, persistence, import/export, or accessibility-sensitive behavior changes.
 - High and critical npm advisories are absent or explicitly handled.
+- Dependency licenses pass the lockfile compliance policy.
 - Static bundle output stays within the documented performance budgets.
 - The GitHub Pages build loads from `/notesense/` and starts a drill in the Pages smoke test.
 - `npm run check` passes.
@@ -95,6 +96,13 @@ After pushing:
 - Major npm upgrades should be tracked as engineering tasks because they can affect peer dependencies, test tooling, bundling, or browser coverage.
 - Node/npm runtime upgrades should update `.nvmrc`, package engines, workflow behavior, docs, and ADRs together.
 - Dependency PRs are not ready to merge until `npm run verify` and remote CodeQL checks pass on the branch.
+- Dependency PRs that introduce new licenses should explain why the license is acceptable before updating the policy.
+
+## License Compliance
+
+- `npm run compliance:licenses` checks installed dependency licenses from `package-lock.json`.
+- Missing, unknown, GPL-family, AGPL-family, LGPL-family, and SSPL-family licenses fail the gate.
+- License allowlist changes should be reviewed as supply-chain policy changes, not routine formatting updates.
 
 ## Security Scanning
 

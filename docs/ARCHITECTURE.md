@@ -15,6 +15,7 @@ NoteSense is currently a local-first React application. The product goal is to k
 - `.github/workflows` owns the CI, CodeQL, and Pages deployment gates.
 - `docs/adr` records architecture decisions that should survive beyond a single implementation pass.
 - `.nvmrc`, package engines, and `.npmrc` define the shared Node/npm runtime for local development, CI, deployment, and dependency maintenance.
+- `scripts/check-licenses.mjs` owns dependency license policy enforcement.
 - `scripts/check-bundle-budget.mjs` owns the static Pages bundle budget.
 - `scripts/serve-pages-preview.mjs` serves `dist` under `/notesense/` for deployment-shape smoke tests.
 
@@ -31,6 +32,7 @@ Every feature should keep these expectations intact:
 - Persistence changes go through a storage boundary instead of being scattered through UI components.
 - User-visible state has a failure path, especially for save, export, auth, and sync operations.
 - Accessibility is part of the feature definition, not a final cleanup step.
+- Dependency license compliance is part of supply-chain readiness.
 - Security scanning is part of release readiness, especially for dependency, import/export, auth, sync, and backend-boundary changes.
 - Performance budgets are part of release readiness so the practice app stays fast as scope grows.
 - Deployment base-path smoke coverage is part of release readiness because GitHub Pages serves the app from `/notesense/`.
@@ -74,6 +76,7 @@ An AWS version could use Cognito, API Gateway, Lambda, DynamoDB or RDS, S3, Clou
 - Keep UI components focused on one product responsibility.
 - Keep browser tests tied to real user workflows rather than implementation details.
 - Keep repository operations, dependency updates, and release checks documented rather than tribal.
+- Keep license policy changes explicit and reviewed when dependencies change.
 - Keep runtime version changes aligned across `.nvmrc`, package engines, CI, and docs.
 - Keep security automation aligned with the areas where user data or future service boundaries can be affected.
 - Keep static bundle budget changes explicit and tied to user value.

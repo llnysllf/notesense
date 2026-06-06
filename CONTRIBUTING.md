@@ -25,6 +25,7 @@ For UI changes, also verify the app manually at desktop and mobile widths. Check
 - Keep practice logic in pure TypeScript where possible, especially in `src/practiceEngine.ts`.
 - Keep persistence and import/export changes behind `src/storage.ts`.
 - Add or update tests for new behavior, migrations, accessibility-sensitive UI, and practice analytics.
+- Keep dependency license changes intentional; explain new licenses before updating the allowlist.
 - Keep bundle growth intentional; budget increases need a clear reason in the PR.
 - Prefer small, shippable changes with clear user value or clear maintainability value.
 - Do not add network services, auth, or cloud storage without preserving the current local-first practice loop.
@@ -38,4 +39,4 @@ A strong PR includes:
 - A short product/engineering summary.
 - Confirmation that `npm run verify` passed.
 - Screenshots or notes for visual UI changes.
-- Any migration, accessibility, deployment, dependency, security, or data-shape risks.
+- Any migration, accessibility, deployment, dependency license, security, or data-shape risks.

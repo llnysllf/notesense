@@ -124,6 +124,12 @@ Run the dependency security audit:
 npm run security:audit
 ```
 
+Run the dependency license compliance check:
+
+```bash
+npm run compliance:licenses
+```
+
 Run the bundle performance budget check after a Pages build:
 
 ```bash
@@ -160,13 +166,14 @@ npm run verify
 - The architecture notes document the local-first data model and the path toward sign-in, backend APIs, cloud storage, and sync.
 - Keyboard answers, ARIA pressed states, live feedback, visible focus rings, and reduced-motion support are included for accessibility.
 - `.nvmrc`, package engines, and `.npmrc` keep local development, CI, deployment, and dependency maintenance on the same runtime contract.
+- `npm run compliance:licenses` checks dependency licenses from the lockfile against the project policy.
 - ESLint enforces TypeScript, React hooks, React refresh, and JSX accessibility rules with zero warnings allowed.
 - Prettier formatting is enforced before the test suite runs.
 - `npm run verify` includes a high-severity npm audit gate before release.
 - The test suite covers adaptive weighting, deterministic note selection, focus-note ranking, session summaries, session-history analytics, and progress reducers.
 - Playwright and axe-core cover the browser practice loop, responsive layout, console health, and automated accessibility violations.
 - The Pages smoke test verifies the built app loads and starts correctly from the `/notesense/` deployment base path.
-- `npm run verify` is the single local gate before release, combining security audit, code quality, unit/browser tests, accessibility checks, the Pages build, bundle budgets, and the Pages smoke test.
+- `npm run verify` is the single local gate before release, combining security audit, license compliance, code quality, unit/browser tests, accessibility checks, the Pages build, bundle budgets, and the Pages smoke test.
 - `npm run perf:budget` keeps the static Pages output within explicit raw and gzip size budgets.
 - GitHub Actions run formatting, linting, typechecking, unit tests, and browser tests on every push and pull request.
 - CodeQL scans JavaScript and TypeScript security issues on pushes, pull requests, and a weekly schedule.

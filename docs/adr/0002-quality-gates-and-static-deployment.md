@@ -19,6 +19,7 @@ npm run verify
 The gate includes:
 
 - Formatting.
+- Dependency license compliance.
 - ESLint with zero warnings.
 - TypeScript checking.
 - Unit tests for deterministic practice and analytics logic.

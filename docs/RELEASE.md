@@ -8,6 +8,7 @@ NoteSense currently releases from `main` to GitHub Pages. The release process is
 - Keep learner-facing behavior intentional and documented.
 - Preserve the local-first data model unless a migration plan exists.
 - Keep the pinned Node/npm runtime consistent across local setup, CI, deployment, and dependency maintenance.
+- Treat dependency license results as supply-chain release evidence.
 - Treat dependency audit and CodeQL results as release evidence.
 - Treat bundle budget results as performance release evidence.
 - Treat the Pages smoke test as deployment-base release evidence.
@@ -49,6 +50,8 @@ For dependency changes, inspect:
 
 - Whether the update is a routine minor/patch update or a deliberate major upgrade.
 - Peer dependency warnings from `npm ci`.
+- Whether `npm run compliance:licenses` still passes.
+- Whether any new license needs explicit policy review.
 - Whether `.nvmrc`, package engines, GitHub Actions, and docs stay aligned for runtime changes.
 - Browser test behavior after Playwright, Vite, Vitest, ESLint, or TypeScript updates.
 

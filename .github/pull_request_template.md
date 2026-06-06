@@ -9,6 +9,7 @@
 - [ ] Persistence/import/export behavior is unchanged or has a tested migration path.
 - [ ] Runtime changes keep `.nvmrc`, package engines, GitHub Actions, docs, and ADRs aligned.
 - [ ] `npm run verify` passes locally.
+- [ ] Dependency license changes are intentional and explained.
 - [ ] Security impact was considered for dependency, import/export, storage, future auth, future sync, and workflow changes.
 - [ ] Bundle budget changes are intentional and explained.
 - [ ] Pages base-path behavior was considered when build, preview, routing, or deployment config changed.
