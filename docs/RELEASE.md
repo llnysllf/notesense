@@ -8,6 +8,7 @@ NoteSense currently releases from `main` to GitHub Pages. The release process is
 - Keep learner-facing behavior intentional and documented.
 - Preserve the local-first data model unless a migration plan exists.
 - Keep the pinned Node/npm runtime consistent across local setup, CI, deployment, and dependency maintenance.
+- Treat dependency audit and CodeQL results as release evidence.
 - Treat accessibility, import/export, persistence, and deployment changes as release risks.
 - Do not ship generated files such as `dist`, `playwright-report`, or `test-results`.
 
@@ -56,6 +57,7 @@ Push to `main` only after the local gate passes.
 After pushing:
 
 - Confirm the `CI` workflow succeeds.
+- Confirm the `CodeQL` workflow succeeds when it runs for the change.
 - Confirm the `Deploy Pages` workflow succeeds.
 - Confirm the live URL returns HTTP 200.
 - Confirm live HTML references `/notesense/` assets.

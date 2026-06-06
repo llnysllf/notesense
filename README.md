@@ -2,6 +2,7 @@
 
 [![CI](https://github.com/llnysllf/notesense/actions/workflows/ci.yml/badge.svg)](https://github.com/llnysllf/notesense/actions/workflows/ci.yml)
 [![Deploy Pages](https://github.com/llnysllf/notesense/actions/workflows/deploy-pages.yml/badge.svg)](https://github.com/llnysllf/notesense/actions/workflows/deploy-pages.yml)
+[![CodeQL](https://github.com/llnysllf/notesense/actions/workflows/codeql.yml/badge.svg)](https://github.com/llnysllf/notesense/actions/workflows/codeql.yml)
 
 NoteSense is a small piano sight-reading and ear-training app for beginner musicians. It focuses on two practical habits: reading notes on starter treble and bass staffs and recognizing natural piano pitches by ear, then adapts practice toward weak notes and pitches.
 
@@ -111,6 +112,12 @@ npm run format:check
 npm run lint
 ```
 
+Run the dependency security audit:
+
+```bash
+npm run security:audit
+```
+
 Run the full local quality check:
 
 ```bash
@@ -142,10 +149,12 @@ npm run verify
 - `.nvmrc`, package engines, and `.npmrc` keep local development, CI, deployment, and dependency maintenance on the same runtime contract.
 - ESLint enforces TypeScript, React hooks, React refresh, and JSX accessibility rules with zero warnings allowed.
 - Prettier formatting is enforced before the test suite runs.
+- `npm run verify` includes a high-severity npm audit gate before release.
 - The test suite covers adaptive weighting, deterministic note selection, focus-note ranking, session summaries, session-history analytics, and progress reducers.
 - Playwright and axe-core cover the browser practice loop, responsive layout, console health, and automated accessibility violations.
 - `npm run verify` is the single local gate before release, combining code quality, unit/browser tests, accessibility checks, and the Pages build.
 - GitHub Actions run formatting, linting, typechecking, unit tests, and browser tests on every push and pull request.
+- CodeQL scans JavaScript and TypeScript security issues on pushes, pull requests, and a weekly schedule.
 - Pull requests also build the GitHub Pages artifact and upload browser failure artifacts for debugging.
 - Dependabot keeps npm minor/patch updates and GitHub Actions dependencies on a weekly maintenance cadence; major npm upgrades are handled as intentional engineering tasks.
 - CODEOWNERS, issue templates, ADRs, and the release guide keep review, planning, and deployment expectations explicit.

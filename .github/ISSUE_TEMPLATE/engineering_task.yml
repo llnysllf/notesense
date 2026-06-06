@@ -34,6 +34,7 @@ body:
       placeholder: |
         - ...
         - `npm run verify` passes.
+        - Remote CodeQL checks pass when security-sensitive code or workflows change.
     validations:
       required: true
   - type: textarea

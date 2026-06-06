@@ -37,4 +37,4 @@ A strong PR includes:
 - A short product/engineering summary.
 - Confirmation that `npm run verify` passed.
 - Screenshots or notes for visual UI changes.
-- Any migration, accessibility, deployment, or data-shape risks.
+- Any migration, accessibility, deployment, dependency, security, or data-shape risks.
