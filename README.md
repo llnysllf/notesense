@@ -118,6 +118,13 @@ Run the dependency security audit:
 npm run security:audit
 ```
 
+Run the bundle performance budget check after a Pages build:
+
+```bash
+npm run build:pages
+npm run perf:budget
+```
+
 Run the full local quality check:
 
 ```bash
@@ -152,7 +159,8 @@ npm run verify
 - `npm run verify` includes a high-severity npm audit gate before release.
 - The test suite covers adaptive weighting, deterministic note selection, focus-note ranking, session summaries, session-history analytics, and progress reducers.
 - Playwright and axe-core cover the browser practice loop, responsive layout, console health, and automated accessibility violations.
-- `npm run verify` is the single local gate before release, combining code quality, unit/browser tests, accessibility checks, and the Pages build.
+- `npm run verify` is the single local gate before release, combining security audit, code quality, unit/browser tests, accessibility checks, the Pages build, and bundle budgets.
+- `npm run perf:budget` keeps the static Pages output within explicit raw and gzip size budgets.
 - GitHub Actions run formatting, linting, typechecking, unit tests, and browser tests on every push and pull request.
 - CodeQL scans JavaScript and TypeScript security issues on pushes, pull requests, and a weekly schedule.
 - Pull requests also build the GitHub Pages artifact and upload browser failure artifacts for debugging.

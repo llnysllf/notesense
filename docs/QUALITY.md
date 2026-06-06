@@ -20,6 +20,7 @@ A change is done when:
 - Pure practice, analytics, and data-shape logic has unit coverage.
 - User workflows have browser coverage when UI, persistence, import/export, or accessibility-sensitive behavior changes.
 - High and critical npm advisories are absent or explicitly handled.
+- Static bundle output stays within the documented performance budgets.
 - `npm run check` passes.
 - `npm run build:pages` passes.
 - UI changes have been visually checked at desktop and mobile widths.
@@ -48,6 +49,7 @@ For visual QA:
 - Check the progress panel after at least one saved round.
 - Check mobile width for text wrapping, button sizing, and horizontal overflow.
 - Confirm `dist/index.html` uses `/notesense/` asset paths after `npm run build:pages`.
+- Confirm bundle growth is intentional when `npm run perf:budget` changes or fails.
 
 ## Accessibility Checklist
 
@@ -97,3 +99,9 @@ After pushing:
 - `npm run security:audit` blocks high and critical advisories from the release gate.
 - CodeQL scans JavaScript and TypeScript on pushes, pull requests, and a weekly schedule.
 - Import/export parsing, storage migration, future auth, future sync, and future backend boundaries should be treated as security-sensitive areas.
+
+## Performance Budget
+
+- `npm run perf:budget` checks raw and gzip sizes for built JavaScript, CSS, and HTML.
+- The budget runs after `npm run build:pages` inside `npm run verify`.
+- Budget increases should be intentional, reviewed, and documented in the same change that needs them.

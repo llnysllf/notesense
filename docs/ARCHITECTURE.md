@@ -14,6 +14,7 @@ NoteSense is currently a local-first React application. The product goal is to k
 - `.github/workflows` owns the CI, CodeQL, and Pages deployment gates.
 - `docs/adr` records architecture decisions that should survive beyond a single implementation pass.
 - `.nvmrc`, package engines, and `.npmrc` define the shared Node/npm runtime for local development, CI, deployment, and dependency maintenance.
+- `scripts/check-bundle-budget.mjs` owns the static Pages bundle budget.
 
 ## Quality Bar
 
@@ -29,6 +30,7 @@ Every feature should keep these expectations intact:
 - User-visible state has a failure path, especially for save, export, auth, and sync operations.
 - Accessibility is part of the feature definition, not a final cleanup step.
 - Security scanning is part of release readiness, especially for dependency, import/export, auth, sync, and backend-boundary changes.
+- Performance budgets are part of release readiness so the practice app stays fast as scope grows.
 - The full `npm run check` gate must pass before a change is considered ready.
 - The full `npm run verify` release gate must pass before a change is shipped.
 - The GitHub Pages build must be verified with the `/notesense/` base path before deployment.
@@ -71,6 +73,7 @@ An AWS version could use Cognito, API Gateway, Lambda, DynamoDB or RDS, S3, Clou
 - Keep repository operations, dependency updates, and release checks documented rather than tribal.
 - Keep runtime version changes aligned across `.nvmrc`, package engines, CI, and docs.
 - Keep security automation aligned with the areas where user data or future service boundaries can be affected.
+- Keep static bundle budget changes explicit and tied to user value.
 - Keep architecture decisions explicit through ADRs when they affect data, deployment, quality gates, or service boundaries.
 
 ## Near-Term Product Roadmap

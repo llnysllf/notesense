@@ -18,8 +18,9 @@
     "test:e2e": "playwright test",
     "test:watch": "vitest",
     "security:audit": "npm audit --audit-level=high",
+    "perf:budget": "node scripts/check-bundle-budget.mjs",
     "check": "npm run format:check && npm run lint && npm run typecheck && npm run test && npm run test:e2e",
-    "verify": "npm run security:audit && npm run check && npm run build:pages",
+    "verify": "npm run security:audit && npm run check && npm run build:pages && npm run perf:budget",
     "build": "tsc -b && vite build",
     "build:pages": "npm run typecheck && vite build --base=/notesense/",
     "preview": "vite preview"
