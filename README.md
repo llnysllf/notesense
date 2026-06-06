@@ -140,7 +140,7 @@ npm run verify
 - `npm run verify` is the single local gate before release, combining code quality, unit/browser tests, accessibility checks, and the Pages build.
 - GitHub Actions run formatting, linting, typechecking, unit tests, and browser tests on every push and pull request.
 - Pull requests also build the GitHub Pages artifact and upload browser failure artifacts for debugging.
-- Dependabot keeps npm and GitHub Actions dependencies on a weekly maintenance cadence.
+- Dependabot keeps npm minor/patch updates and GitHub Actions dependencies on a weekly maintenance cadence; major npm upgrades are handled as intentional engineering tasks.
 - CODEOWNERS, issue templates, ADRs, and the release guide keep review, planning, and deployment expectations explicit.
 - The `main` branch publishes a static production build to GitHub Pages.
 

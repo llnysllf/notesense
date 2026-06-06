@@ -41,6 +41,12 @@ For data changes, manually inspect:
 - Imported data is normalized or rejected safely.
 - Storage failures stay non-blocking.
 
+For dependency changes, inspect:
+
+- Whether the update is a routine minor/patch update or a deliberate major upgrade.
+- Peer dependency warnings from `npm ci`.
+- Browser test behavior after Playwright, Vite, Vitest, ESLint, or TypeScript updates.
+
 ## Push And Deployment
 
 Push to `main` only after the local gate passes.

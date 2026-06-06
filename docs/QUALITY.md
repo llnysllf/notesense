@@ -75,3 +75,9 @@ After pushing:
 - Confirm the `Deploy Pages` workflow succeeds.
 - Confirm the live URL returns HTTP 200.
 - Confirm the live HTML references the expected asset hash from the local Pages build.
+
+## Dependency Maintenance
+
+- Dependabot opens routine npm minor/patch updates and GitHub Actions updates weekly.
+- Major npm upgrades should be tracked as engineering tasks because they can affect peer dependencies, test tooling, bundling, or browser coverage.
+- Dependency PRs are not ready to merge until `npm run verify` passes on the branch.
