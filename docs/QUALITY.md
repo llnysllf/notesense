@@ -21,6 +21,7 @@ A change is done when:
 - User workflows have browser coverage when UI, persistence, import/export, or accessibility-sensitive behavior changes.
 - High and critical npm advisories are absent or explicitly handled.
 - Static bundle output stays within the documented performance budgets.
+- The GitHub Pages build loads from `/notesense/` and starts a drill in the Pages smoke test.
 - `npm run check` passes.
 - `npm run build:pages` passes.
 - UI changes have been visually checked at desktop and mobile widths.
@@ -50,6 +51,7 @@ For visual QA:
 - Check mobile width for text wrapping, button sizing, and horizontal overflow.
 - Confirm `dist/index.html` uses `/notesense/` asset paths after `npm run build:pages`.
 - Confirm bundle growth is intentional when `npm run perf:budget` changes or fails.
+- Confirm `npm run test:e2e:pages` passes when deployment base path, build output, or preview behavior changes.
 
 ## Accessibility Checklist
 
@@ -105,3 +107,9 @@ After pushing:
 - `npm run perf:budget` checks raw and gzip sizes for built JavaScript, CSS, and HTML.
 - The budget runs after `npm run build:pages` inside `npm run verify`.
 - Budget increases should be intentional, reviewed, and documented in the same change that needs them.
+
+## Deployment Smoke
+
+- `npm run test:e2e:pages` verifies the Pages build at `/notesense/`.
+- The smoke test fails on broken asset requests, browser console errors, page errors, viewport overflow, or inability to start a drill.
+- The smoke test is intentionally narrow; full workflow coverage stays in `npm run test:e2e`.

@@ -10,6 +10,7 @@ NoteSense currently releases from `main` to GitHub Pages. The release process is
 - Keep the pinned Node/npm runtime consistent across local setup, CI, deployment, and dependency maintenance.
 - Treat dependency audit and CodeQL results as release evidence.
 - Treat bundle budget results as performance release evidence.
+- Treat the Pages smoke test as deployment-base release evidence.
 - Treat accessibility, import/export, persistence, and deployment changes as release risks.
 - Do not ship generated files such as `dist`, `playwright-report`, or `test-results`.
 
@@ -56,6 +57,12 @@ For bundle changes, inspect:
 - Whether `npm run perf:budget` passes after the Pages build.
 - Whether raw or gzip growth is expected for the change.
 - Whether a budget increase is justified by product value.
+
+For deployment-path changes, inspect:
+
+- Whether `npm run test:e2e:pages` passes.
+- Whether the app loads from `/notesense/`.
+- Whether built assets are requested from `/notesense/assets/`.
 
 ## Push And Deployment
 

@@ -105,6 +105,12 @@ Run the browser and accessibility test suite:
 npm run test:e2e
 ```
 
+Run the GitHub Pages preview smoke test:
+
+```bash
+npm run test:e2e:pages
+```
+
 Run static code-quality checks:
 
 ```bash
@@ -159,7 +165,8 @@ npm run verify
 - `npm run verify` includes a high-severity npm audit gate before release.
 - The test suite covers adaptive weighting, deterministic note selection, focus-note ranking, session summaries, session-history analytics, and progress reducers.
 - Playwright and axe-core cover the browser practice loop, responsive layout, console health, and automated accessibility violations.
-- `npm run verify` is the single local gate before release, combining security audit, code quality, unit/browser tests, accessibility checks, the Pages build, and bundle budgets.
+- The Pages smoke test verifies the built app loads and starts correctly from the `/notesense/` deployment base path.
+- `npm run verify` is the single local gate before release, combining security audit, code quality, unit/browser tests, accessibility checks, the Pages build, bundle budgets, and the Pages smoke test.
 - `npm run perf:budget` keeps the static Pages output within explicit raw and gzip size budgets.
 - GitHub Actions run formatting, linting, typechecking, unit tests, and browser tests on every push and pull request.
 - CodeQL scans JavaScript and TypeScript security issues on pushes, pull requests, and a weekly schedule.

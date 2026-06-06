@@ -2,28 +2,28 @@ import { defineConfig, devices } from "@playwright/test";
 
 export default defineConfig({
   testDir: "./e2e",
-  testIgnore: ["**/pages-smoke.spec.ts"],
+  testMatch: "**/pages-smoke.spec.ts",
   timeout: 30_000,
   expect: {
     timeout: 5_000,
   },
   reporter: process.env.CI ? "github" : [["list"], ["html", { open: "never" }]],
   use: {
-    baseURL: "http://127.0.0.1:4173",
+    baseURL: "http://127.0.0.1:4174",
     trace: "retain-on-failure",
   },
   webServer: {
-    command: "npm run build && npm run preview -- --host 127.0.0.1",
+    command: "npm run build:pages && node scripts/serve-pages-preview.mjs --port 4174",
     reuseExistingServer: !process.env.CI,
-    url: "http://127.0.0.1:4173",
+    url: "http://127.0.0.1:4174/notesense/",
   },
   projects: [
     {
-      name: "chromium",
+      name: "pages-chromium",
       use: { ...devices["Desktop Chrome"] },
     },
     {
-      name: "mobile-chromium",
+      name: "pages-mobile-chromium",
       use: { ...devices["Pixel 5"] },
     },
   ],
