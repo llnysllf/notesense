@@ -5,7 +5,8 @@ NoteSense is intentionally small, but changes should still meet a production-qua
 ## Local Setup
 
 ```bash
-npm install
+nvm use
+npm ci
 npm run dev
 ```
 
@@ -26,6 +27,7 @@ For UI changes, also verify the app manually at desktop and mobile widths. Check
 - Add or update tests for new behavior, migrations, accessibility-sensitive UI, and practice analytics.
 - Prefer small, shippable changes with clear user value or clear maintainability value.
 - Do not add network services, auth, or cloud storage without preserving the current local-first practice loop.
+- Keep runtime changes explicit: update `.nvmrc`, `package.json` engines, GitHub Actions behavior, and ADRs together.
 - Record meaningful architecture decisions in `docs/adr` when a change affects data ownership, deployment, quality gates, or future backend boundaries.
 
 ## Pull Request Shape

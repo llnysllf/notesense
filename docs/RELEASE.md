@@ -7,6 +7,7 @@ NoteSense currently releases from `main` to GitHub Pages. The release process is
 - Prefer small releases with one clear product or engineering purpose.
 - Keep learner-facing behavior intentional and documented.
 - Preserve the local-first data model unless a migration plan exists.
+- Keep the pinned Node/npm runtime consistent across local setup, CI, deployment, and dependency maintenance.
 - Treat accessibility, import/export, persistence, and deployment changes as release risks.
 - Do not ship generated files such as `dist`, `playwright-report`, or `test-results`.
 
@@ -45,6 +46,7 @@ For dependency changes, inspect:
 
 - Whether the update is a routine minor/patch update or a deliberate major upgrade.
 - Peer dependency warnings from `npm ci`.
+- Whether `.nvmrc`, package engines, GitHub Actions, and docs stay aligned for runtime changes.
 - Browser test behavior after Playwright, Vite, Vitest, ESLint, or TypeScript updates.
 
 ## Push And Deployment

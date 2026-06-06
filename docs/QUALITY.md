@@ -26,6 +26,13 @@ A change is done when:
 
 ## Local Validation
 
+Use the pinned Node.js runtime first:
+
+```bash
+nvm use
+npm ci
+```
+
 Use this sequence before shipping:
 
 ```bash
@@ -80,4 +87,5 @@ After pushing:
 
 - Dependabot opens routine npm minor/patch updates and GitHub Actions updates weekly.
 - Major npm upgrades should be tracked as engineering tasks because they can affect peer dependencies, test tooling, bundling, or browser coverage.
+- Node/npm runtime upgrades should update `.nvmrc`, package engines, workflow behavior, docs, and ADRs together.
 - Dependency PRs are not ready to merge until `npm run verify` passes on the branch.

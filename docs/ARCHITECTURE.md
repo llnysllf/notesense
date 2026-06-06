@@ -13,6 +13,7 @@ NoteSense is currently a local-first React application. The product goal is to k
 - `e2e/app.spec.ts` covers the browser practice loop, accessibility, layout health, insight chart rendering, import/export behavior, and storage failure messaging.
 - `.github/workflows` owns the CI and Pages deployment gates.
 - `docs/adr` records architecture decisions that should survive beyond a single implementation pass.
+- `.nvmrc`, package engines, and `.npmrc` define the shared Node/npm runtime for local development, CI, deployment, and dependency maintenance.
 
 ## Quality Bar
 
@@ -30,6 +31,7 @@ Every feature should keep these expectations intact:
 - The full `npm run check` gate must pass before a change is considered ready.
 - The full `npm run verify` release gate must pass before a change is shipped.
 - The GitHub Pages build must be verified with the `/notesense/` base path before deployment.
+- Runtime upgrades should be intentional engineering changes, not incidental workflow edits.
 - Pull requests should use the quality checklist in [docs/QUALITY.md](QUALITY.md).
 
 ## Local-First Data Model
@@ -66,6 +68,7 @@ An AWS version could use Cognito, API Gateway, Lambda, DynamoDB or RDS, S3, Clou
 - Keep UI components focused on one product responsibility.
 - Keep browser tests tied to real user workflows rather than implementation details.
 - Keep repository operations, dependency updates, and release checks documented rather than tribal.
+- Keep runtime version changes aligned across `.nvmrc`, package engines, CI, and docs.
 - Keep architecture decisions explicit through ADRs when they affect data, deployment, quality gates, or service boundaries.
 
 ## Near-Term Product Roadmap

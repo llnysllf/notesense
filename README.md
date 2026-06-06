@@ -62,10 +62,16 @@ I am learning piano and wanted a simple tool to improve note-reading speed and p
 
 ## Getting Started
 
-Install dependencies:
+Use the Node.js version pinned in `.nvmrc`. If you use `nvm`, run:
 
 ```bash
-npm install
+nvm use
+```
+
+Install dependencies from the lockfile:
+
+```bash
+npm ci
 ```
 
 Start the development server:
@@ -133,6 +139,7 @@ npm run verify
 - Imported and exported practice data includes a schema version, timestamp, progress, and settings for local-first data portability.
 - The architecture notes document the local-first data model and the path toward sign-in, backend APIs, cloud storage, and sync.
 - Keyboard answers, ARIA pressed states, live feedback, visible focus rings, and reduced-motion support are included for accessibility.
+- `.nvmrc`, package engines, and `.npmrc` keep local development, CI, deployment, and dependency maintenance on the same runtime contract.
 - ESLint enforces TypeScript, React hooks, React refresh, and JSX accessibility rules with zero warnings allowed.
 - Prettier formatting is enforced before the test suite runs.
 - The test suite covers adaptive weighting, deterministic note selection, focus-note ranking, session summaries, session-history analytics, and progress reducers.
