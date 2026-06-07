@@ -21,6 +21,7 @@
     "compliance:licenses": "node scripts/check-licenses.mjs",
     "security:audit": "npm audit --audit-level=high",
     "perf:budget": "node scripts/check-bundle-budget.mjs",
+    "deploy:verify-live": "node scripts/verify-live-pages.mjs",
     "check": "npm run format:check && npm run lint && npm run typecheck && npm run test && npm run test:e2e",
     "verify": "npm run security:audit && npm run compliance:licenses && npm run check && npm run build:pages && npm run perf:budget && npm run test:e2e:pages",
     "build": "tsc -b && vite build",

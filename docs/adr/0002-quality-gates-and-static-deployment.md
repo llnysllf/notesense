@@ -27,6 +27,7 @@ The gate includes:
 - Automated accessibility checks.
 - GitHub Pages production build validation.
 - GitHub Pages base-path smoke testing.
+- Post-deploy live URL verification.
 
 GitHub Actions must run the same quality expectations on pushes and pull requests, and Pages deployment must build from the checked-in source rather than committed build artifacts.
 

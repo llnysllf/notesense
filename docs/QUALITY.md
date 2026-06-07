@@ -87,8 +87,7 @@ After pushing:
 - Confirm the `CI` workflow succeeds.
 - Confirm the `CodeQL` workflow succeeds for changes that affect source, workflows, or security-sensitive paths.
 - Confirm the `Deploy Pages` workflow succeeds.
-- Confirm the live URL returns HTTP 200.
-- Confirm the live HTML references the expected asset hash from the local Pages build.
+- Run `npm run deploy:verify-live`.
 
 ## Dependency Maintenance
 
@@ -121,3 +120,4 @@ After pushing:
 - `npm run test:e2e:pages` verifies the Pages build at `/notesense/`.
 - The smoke test fails on broken asset requests, browser console errors, page errors, viewport overflow, or inability to start a drill.
 - The smoke test is intentionally narrow; full workflow coverage stays in `npm run test:e2e`.
+- `npm run deploy:verify-live` checks the public GitHub Pages URL after deployment.

@@ -149,6 +149,12 @@ Run the full local release verification gate:
 npm run verify
 ```
 
+Verify the live GitHub Pages deployment after pushing:
+
+```bash
+npm run deploy:verify-live
+```
+
 ## Engineering Notes
 
 - Practice selection and summary logic live in `src/practiceEngine.ts` so the learning behavior can be tested outside React.
@@ -174,6 +180,7 @@ npm run verify
 - Playwright and axe-core cover the browser practice loop, responsive layout, console health, and automated accessibility violations.
 - The Pages smoke test verifies the built app loads and starts correctly from the `/notesense/` deployment base path.
 - `npm run verify` is the single local gate before release, combining security audit, license compliance, code quality, unit/browser tests, accessibility checks, the Pages build, bundle budgets, and the Pages smoke test.
+- `npm run deploy:verify-live` checks the public GitHub Pages deployment after release.
 - `npm run perf:budget` keeps the static Pages output within explicit raw and gzip size budgets.
 - GitHub Actions run formatting, linting, typechecking, unit tests, and browser tests on every push and pull request.
 - CodeQL scans JavaScript and TypeScript security issues on pushes, pull requests, and a weekly schedule.

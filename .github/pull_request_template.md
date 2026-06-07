@@ -13,6 +13,7 @@
 - [ ] Security impact was considered for dependency, import/export, storage, future auth, future sync, and workflow changes.
 - [ ] Bundle budget changes are intentional and explained.
 - [ ] Pages base-path behavior was considered when build, preview, routing, or deployment config changed.
+- [ ] Live deployment verification impact was considered for hosting, domain, or Pages config changes.
 - [ ] Visual QA was done for desktop and mobile when UI changed.
 - [ ] Architecture decisions were documented in `docs/adr` when the change affects data, deployment, quality gates, or service boundaries.
 

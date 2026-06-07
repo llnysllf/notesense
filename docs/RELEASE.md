@@ -76,8 +76,11 @@ After pushing:
 - Confirm the `CI` workflow succeeds.
 - Confirm the `CodeQL` workflow succeeds when it runs for the change.
 - Confirm the `Deploy Pages` workflow succeeds.
-- Confirm the live URL returns HTTP 200.
-- Confirm live HTML references `/notesense/` assets.
+- Run the live deployment verifier:
+
+```bash
+npm run deploy:verify-live
+```
 
 ## Rollback
 
@@ -86,7 +89,8 @@ If a release breaks the live app:
 1. Identify the last known good commit.
 2. Revert the risky commit with a normal Git revert.
 3. Push the revert to `main`.
-4. Confirm `CI` and `Deploy Pages` succeed.
-5. Document the cause before attempting a fix-forward.
+4. Confirm `CI`, `CodeQL`, and `Deploy Pages` succeed.
+5. Run `npm run deploy:verify-live`.
+6. Document the cause before attempting a fix-forward.
 
 Avoid force-pushing `main`; the deployment history should remain auditable.

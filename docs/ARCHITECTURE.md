@@ -18,6 +18,7 @@ NoteSense is currently a local-first React application. The product goal is to k
 - `scripts/check-licenses.mjs` owns dependency license policy enforcement.
 - `scripts/check-bundle-budget.mjs` owns the static Pages bundle budget.
 - `scripts/serve-pages-preview.mjs` serves `dist` under `/notesense/` for deployment-shape smoke tests.
+- `scripts/verify-live-pages.mjs` owns post-deploy public GitHub Pages verification.
 
 ## Quality Bar
 
@@ -81,6 +82,7 @@ An AWS version could use Cognito, API Gateway, Lambda, DynamoDB or RDS, S3, Clou
 - Keep security automation aligned with the areas where user data or future service boundaries can be affected.
 - Keep static bundle budget changes explicit and tied to user value.
 - Keep deployment base-path assumptions tested rather than relying on manual live-site checks alone.
+- Keep live deployment verification repeatable when hosting or domain assumptions change.
 - Keep architecture decisions explicit through ADRs when they affect data, deployment, quality gates, or service boundaries.
 
 ## Near-Term Product Roadmap
