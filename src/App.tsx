@@ -57,7 +57,14 @@ const IMPORT_SUCCESS = "Progress imported.";
 const IMPORT_STORAGE_WARNING = "Imported data is loaded but not saved on this device.";
 const IMPORT_READ_ERROR = "Could not read this file.";
 
+const shouldForceRenderError = () =>
+  import.meta.env.MODE === "resilience" && window.sessionStorage.getItem("notesense.forceRenderError") === "true";
+
 function App() {
+  if (shouldForceRenderError()) {
+    throw new Error("Forced NoteSense render failure");
+  }
+
   const [mode, setMode] = useState<PracticeMode>("reading");
   const [settings, setSettings] = useState<PracticeSettings>(() => loadSettings());
   const [currentReadingNote, setCurrentReadingNote] = useState<TrainingNote>(() =>

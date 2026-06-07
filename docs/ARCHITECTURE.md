@@ -9,8 +9,10 @@ NoteSense is currently a local-first React application. The product goal is to k
 - `src/storage.ts` owns persistence, normalization, migration from the original local progress shape, and versioned data import/export.
 - `src/audio.ts` owns browser audio playback.
 - `src/components` contains focused UI sections for the staff, pitch prompt, stats panel, session history, practice insights, and stat tiles.
+- `src/components/ErrorBoundary.tsx` owns the app-level recovery surface for unexpected render failures.
 - `src/App.tsx` coordinates product state, round flow, settings, storage calls, and component composition.
 - `e2e/app.spec.ts` covers the browser practice loop, accessibility, layout health, insight chart rendering, import/export behavior, and storage failure messaging.
+- `e2e/error-boundary.spec.ts` covers intentional render-failure recovery through a dedicated resilience Playwright config.
 - `e2e/pages-smoke.spec.ts` covers the GitHub Pages build at the `/notesense/` base path.
 - `.github/workflows` owns the CI, CodeQL, and Pages deployment gates.
 - `docs/adr` records architecture decisions that should survive beyond a single implementation pass.
@@ -32,6 +34,7 @@ Every feature should keep these expectations intact:
 - Coaching recommendations stay derived and deterministic until there is a service layer that can own personalization.
 - Persistence changes go through a storage boundary instead of being scattered through UI components.
 - User-visible state has a failure path, especially for save, export, auth, and sync operations.
+- Unexpected render failures should show the app-level recovery screen instead of leaving a blank product surface.
 - Accessibility is part of the feature definition, not a final cleanup step.
 - Dependency license compliance is part of supply-chain readiness.
 - Security scanning is part of release readiness, especially for dependency, import/export, auth, sync, and backend-boundary changes.
@@ -39,6 +42,7 @@ Every feature should keep these expectations intact:
 - Deployment base-path smoke coverage is part of release readiness because GitHub Pages serves the app from `/notesense/`.
 - The full `npm run check` gate must pass before a change is considered ready.
 - The full `npm run verify` release gate must pass before a change is shipped.
+- Runtime resilience coverage should stay in its own browser config so intentional crash testing does not weaken strict console/page-error checks.
 - The GitHub Pages build must be verified with the `/notesense/` base path before deployment.
 - Runtime upgrades should be intentional engineering changes, not incidental workflow edits.
 - Pull requests should use the quality checklist in [docs/QUALITY.md](QUALITY.md).
@@ -76,6 +80,7 @@ An AWS version could use Cognito, API Gateway, Lambda, DynamoDB or RDS, S3, Clou
 - Keep network calls outside the core practice engine.
 - Keep UI components focused on one product responsibility.
 - Keep browser tests tied to real user workflows rather than implementation details.
+- Keep intentional failure-mode tests isolated from the normal browser workflow suite.
 - Keep repository operations, dependency updates, and release checks documented rather than tribal.
 - Keep license policy changes explicit and reviewed when dependencies change.
 - Keep runtime version changes aligned across `.nvmrc`, package engines, CI, and docs.

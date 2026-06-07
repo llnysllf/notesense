@@ -105,6 +105,12 @@ Run the browser and accessibility test suite:
 npm run test:e2e
 ```
 
+Run the runtime resilience browser test:
+
+```bash
+npm run test:e2e:resilience
+```
+
 Run the GitHub Pages preview smoke test:
 
 ```bash
@@ -170,6 +176,7 @@ npm run deploy:verify-live
 - Save operations fail safely and surface a non-blocking status message when browser storage is unavailable.
 - Imported and exported practice data includes a schema version, timestamp, progress, and settings for local-first data portability.
 - The architecture notes document the local-first data model and the path toward sign-in, backend APIs, cloud storage, and sync.
+- An app-level React error boundary keeps unexpected render failures from blanking the whole product.
 - Keyboard answers, ARIA pressed states, live feedback, visible focus rings, and reduced-motion support are included for accessibility.
 - `.nvmrc`, package engines, and `.npmrc` keep local development, CI, deployment, and dependency maintenance on the same runtime contract.
 - `npm run compliance:licenses` checks dependency licenses from the lockfile against the project policy.
@@ -178,6 +185,7 @@ npm run deploy:verify-live
 - `npm run verify` includes a high-severity npm audit gate before release.
 - The test suite covers adaptive weighting, deterministic note selection, focus-note ranking, session summaries, session-history analytics, and progress reducers.
 - Playwright and axe-core cover the browser practice loop, responsive layout, console health, and automated accessibility violations.
+- A dedicated resilience Playwright suite proves the app renders an accessible recovery screen during an intentional render failure.
 - The Pages smoke test verifies the built app loads and starts correctly from the `/notesense/` deployment base path.
 - `npm run verify` is the single local gate before release, combining security audit, license compliance, code quality, unit/browser tests, accessibility checks, the Pages build, bundle budgets, and the Pages smoke test.
 - `npm run deploy:verify-live` checks the public GitHub Pages deployment after release.

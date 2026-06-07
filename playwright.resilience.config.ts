@@ -2,28 +2,28 @@ import { defineConfig, devices } from "@playwright/test";
 
 export default defineConfig({
   testDir: "./e2e",
-  testIgnore: ["**/error-boundary.spec.ts", "**/pages-smoke.spec.ts"],
+  testMatch: "**/error-boundary.spec.ts",
   timeout: 30_000,
   expect: {
     timeout: 5_000,
   },
   reporter: process.env.CI ? "github" : [["list"], ["html", { open: "never" }]],
   use: {
-    baseURL: "http://127.0.0.1:4173",
+    baseURL: "http://127.0.0.1:4175",
     trace: "retain-on-failure",
   },
   webServer: {
-    command: "npm run build && npm run preview -- --host 127.0.0.1",
+    command: "npm run build -- --mode resilience && npm run preview -- --host 127.0.0.1 --port 4175 --strictPort",
     reuseExistingServer: !process.env.CI,
-    url: "http://127.0.0.1:4173",
+    url: "http://127.0.0.1:4175",
   },
   projects: [
     {
-      name: "chromium",
+      name: "resilience-chromium",
       use: { ...devices["Desktop Chrome"] },
     },
     {
-      name: "mobile-chromium",
+      name: "resilience-mobile-chromium",
       use: { ...devices["Pixel 5"] },
     },
   ],

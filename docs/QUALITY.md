@@ -22,6 +22,7 @@ A change is done when:
 - High and critical npm advisories are absent or explicitly handled.
 - Dependency licenses pass the lockfile compliance policy.
 - Static bundle output stays within the documented performance budgets.
+- Intentional render-failure recovery stays covered by the runtime resilience browser test.
 - The GitHub Pages build loads from `/notesense/` and starts a drill in the Pages smoke test.
 - `npm run check` passes.
 - `npm run build:pages` passes.
@@ -52,6 +53,7 @@ For visual QA:
 - Check mobile width for text wrapping, button sizing, and horizontal overflow.
 - Confirm `dist/index.html` uses `/notesense/` asset paths after `npm run build:pages`.
 - Confirm bundle growth is intentional when `npm run perf:budget` changes or fails.
+- Confirm `npm run test:e2e:resilience` passes when app shell, error-boundary, or root rendering behavior changes.
 - Confirm `npm run test:e2e:pages` passes when deployment base path, build output, or preview behavior changes.
 
 ## Accessibility Checklist
@@ -121,3 +123,9 @@ After pushing:
 - The smoke test fails on broken asset requests, browser console errors, page errors, viewport overflow, or inability to start a drill.
 - The smoke test is intentionally narrow; full workflow coverage stays in `npm run test:e2e`.
 - `npm run deploy:verify-live` checks the public GitHub Pages URL after deployment.
+
+## Runtime Resilience
+
+- `npm run test:e2e:resilience` builds the app in Playwright-only resilience mode and forces a render failure before the practice UI mounts.
+- The resilience test verifies an accessible recovery screen instead of a blank app.
+- The normal browser suite continues to fail on unexpected console errors and page errors.

@@ -8,5 +8,5 @@
     "allowSyntheticDefaultImports": true,
     "types": ["node"]
   },
-  "include": ["vite.config.ts", "playwright.config.ts", "playwright.pages.config.ts"]
+  "include": ["vite.config.ts", "playwright.config.ts", "playwright.pages.config.ts", "playwright.resilience.config.ts"]
 }
