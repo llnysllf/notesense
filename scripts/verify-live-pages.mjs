@@ -1,5 +1,19 @@
 const DEFAULT_LIVE_URL = "https://llnysllf.github.io/notesense/";
 const EXPECTED_BASE_PATH = "/notesense/";
+const EXPECTED_SECURITY_POLICY = [
+  "default-src 'self'",
+  "base-uri 'none'",
+  "object-src 'none'",
+  "script-src 'self'",
+  "style-src 'self'",
+  "img-src 'self' data:",
+  "font-src 'self'",
+  "connect-src 'none'",
+  "media-src 'none'",
+  "worker-src 'none'",
+  "manifest-src 'self'",
+  "form-action 'none'",
+].join("; ");
 const EXPECTED_METADATA_PATHS = [
   {
     path: `${EXPECTED_BASE_PATH}site.webmanifest`,
@@ -63,6 +77,11 @@ function getAssetPaths(html) {
   return matches.filter((value) => value.startsWith(`${EXPECTED_BASE_PATH}assets/`)).sort();
 }
 
+function getSecurityPolicy(html) {
+  const match = html.match(/<meta\s+[^>]*http-equiv="Content-Security-Policy"[^>]*content="([^"]+)"[^>]*>/);
+  return match?.[1] ?? "";
+}
+
 function formatHeader(response, header) {
   return response.headers.get(header) ?? "missing";
 }
@@ -91,6 +110,11 @@ assert(
   html.includes('property="og:title" content="NoteSense | Piano Note Reading Trainer"'),
   "Live HTML is missing Open Graph title metadata",
 );
+assert(
+  getSecurityPolicy(html) === EXPECTED_SECURITY_POLICY,
+  "Live HTML Content Security Policy does not match expected policy",
+);
+console.log("- Content-Security-Policy meta tag passed");
 
 const assetPaths = getAssetPaths(html);
 assert(assetPaths.length > 0, `Live HTML does not reference ${EXPECTED_BASE_PATH}assets/`);

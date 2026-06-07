@@ -13,6 +13,7 @@ NoteSense currently releases from `main` to GitHub Pages. The release process is
 - Keep the pinned Node/npm runtime consistent across local setup, CI, deployment, and dependency maintenance.
 - Treat dependency license results as supply-chain release evidence.
 - Treat dependency audit and CodeQL results as release evidence.
+- Treat built browser security policy results as release evidence when HTML shell, Vite build, runtime APIs, or asset categories change.
 - Treat bundle budget results as performance release evidence.
 - Treat web metadata results as static product identity release evidence.
 - Treat the Pages smoke test as deployment-base release evidence.
@@ -44,6 +45,7 @@ Confirm the built client stays inside the expected runtime surface:
 
 ```bash
 npm run build:pages
+npm run security:policy
 npm run runtime:check
 ```
 
@@ -73,6 +75,7 @@ For dependency changes, inspect:
 - Whether `npm run compliance:licenses` still passes.
 - Whether any new license needs explicit policy review.
 - Whether `.nvmrc`, package engines, GitHub Actions, and docs stay aligned for runtime changes.
+- Whether `npm run security:policy` still passes after the Pages build.
 - Browser test behavior after Playwright, Vite, Vitest, ESLint, or TypeScript updates.
 
 For bundle changes, inspect:
@@ -102,6 +105,7 @@ After pushing:
 - Confirm the `CI` workflow succeeds.
 - Confirm the `CodeQL` workflow succeeds when it runs for the change.
 - Confirm the `Deploy Pages` workflow succeeds.
+- Confirm the live verifier still proves the deployed security policy when the HTML shell or build security policy changes.
 - Run the live deployment verifier:
 
 ```bash

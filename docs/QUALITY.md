@@ -24,6 +24,7 @@ A change is done when:
 - Privacy and data-handling docs stay aligned with local storage, import/export, analytics, network, auth, and sync behavior.
 - Documentation links, anchors, and documented npm script references stay resolvable.
 - Runtime surface checks pass for client network APIs, cookies, telemetry beacons, websockets, and external URLs.
+- Built HTML security policy checks pass before release.
 - High and critical npm advisories are absent or explicitly handled.
 - Dependency licenses pass the lockfile compliance policy.
 - Static bundle output stays within the documented performance budgets.
@@ -70,6 +71,7 @@ For visual QA:
 - Check the progress panel after at least one saved round.
 - Check mobile width for text wrapping, button sizing, and horizontal overflow.
 - Confirm `dist/index.html` uses `/notesense/` asset paths after `npm run build:pages`.
+- Confirm `npm run security:policy` passes when HTML shell behavior, Vite build behavior, runtime APIs, or asset categories change.
 - Confirm `npm run metadata:check` passes when HTML metadata, static public assets, hosting domain, or Pages base path changes.
 - Confirm `npm run runtime:check` passes when client runtime APIs, URLs, privacy boundaries, or build references change.
 - Confirm bundle growth is intentional when `npm run perf:budget` changes or fails.
@@ -151,8 +153,15 @@ After pushing:
 ## Security Scanning
 
 - `npm run security:audit` blocks high and critical advisories from the release gate.
+- `npm run security:policy` verifies the built HTML Content Security Policy after `npm run build:pages`.
 - CodeQL scans JavaScript and TypeScript on pushes, pull requests, and a weekly schedule.
 - Import/export parsing, storage migration, future auth, future sync, and future backend boundaries should be treated as security-sensitive areas.
+
+## Browser Security Policy
+
+- The production build injects a Content Security Policy meta tag through `vite.config.ts`.
+- The policy blocks unexpected connections, object embeds, media, workers, forms, and non-self scripts/styles while preserving local static assets and generated pitch playback.
+- Future network, analytics, sync, worker, media, third-party asset, or form behavior should update the policy check, runtime-surface check, privacy docs, architecture notes, release guide, and ADRs together.
 
 ## Performance Budget
 
@@ -177,7 +186,7 @@ After pushing:
 - `npm run test:e2e:pages` verifies the Pages build at `/notesense/`.
 - The smoke test fails on broken asset requests, browser console errors, page errors, viewport overflow, or inability to start a drill.
 - The smoke test is intentionally narrow; full workflow coverage stays in `npm run test:e2e`.
-- `npm run deploy:verify-live` checks the public GitHub Pages URL after deployment.
+- `npm run deploy:verify-live` checks the public GitHub Pages URL, deployed metadata assets, and deployed security policy after deployment.
 
 ## Runtime Resilience
 

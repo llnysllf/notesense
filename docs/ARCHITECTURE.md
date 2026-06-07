@@ -18,14 +18,16 @@ NoteSense is currently a local-first React application. The product goal is to k
 - `.github/workflows` owns the CI, CodeQL, and Pages deployment gates.
 - `docs/adr` records architecture decisions that should survive beyond a single implementation pass.
 - `.nvmrc`, package engines, and `.npmrc` define the shared Node/npm runtime for local development, CI, deployment, and dependency maintenance.
+- `vite.config.ts` injects the production Content Security Policy meta tag during build.
 - `scripts/check-licenses.mjs` owns dependency license policy enforcement.
+- `scripts/check-security-policy.mjs` owns built HTML security policy verification.
 - `scripts/check-policy-docs.mjs` owns policy document presence and alignment checks.
 - `scripts/check-doc-integrity.mjs` owns local Markdown link, anchor, and documented npm script reference checks.
 - `scripts/check-runtime-surface.mjs` owns client runtime/network surface checks against the local-first privacy boundary.
 - `scripts/check-bundle-budget.mjs` owns the static Pages bundle budget.
 - `scripts/check-web-metadata.mjs` owns built HTML, manifest, icon, robots, and sitemap verification.
 - `scripts/serve-pages-preview.mjs` serves `dist` under `/notesense/` for deployment-shape smoke tests.
-- `scripts/verify-live-pages.mjs` owns post-deploy public GitHub Pages verification.
+- `scripts/verify-live-pages.mjs` owns post-deploy public GitHub Pages, metadata asset, and security policy verification.
 - `vite.config.ts` owns Vitest configuration, including coverage thresholds for the framework-independent core modules.
 - `tsconfig.json` and `tsconfig.node.json` own the strict TypeScript contract for app code and project tooling.
 - `docs/PRIVACY.md` documents the current local-first privacy and data-handling boundary.
@@ -48,6 +50,7 @@ Every feature should keep these expectations intact:
 - Accessibility is part of the feature definition, not a final cleanup step.
 - Dependency license compliance is part of supply-chain readiness.
 - Security scanning is part of release readiness, especially for dependency, import/export, auth, sync, and backend-boundary changes.
+- The production HTML shell should carry a verified Content Security Policy before release.
 - Performance budgets are part of release readiness so the practice app stays fast as scope grows.
 - Web identity metadata is part of release readiness because static apps still need install, share, and crawler signals.
 - Deployment base-path smoke coverage is part of release readiness because GitHub Pages serves the app from `/notesense/`.
@@ -103,6 +106,7 @@ An AWS version could use Cognito, API Gateway, Lambda, DynamoDB or RDS, S3, Clou
 - Keep license policy changes explicit and reviewed when dependencies change.
 - Keep runtime version changes aligned across `.nvmrc`, package engines, CI, and docs.
 - Keep security automation aligned with the areas where user data or future service boundaries can be affected.
+- Keep the production Content Security Policy aligned with intentional scripts, styles, images, network calls, workers, media, manifests, forms, and embeds.
 - Keep static bundle budget changes explicit and tied to user value.
 - Keep web metadata paths compatible with the `/notesense/` GitHub Pages base path.
 - Keep deployment base-path assumptions tested rather than relying on manual live-site checks alone.

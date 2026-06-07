@@ -151,6 +151,13 @@ Run the dependency security audit:
 npm run security:audit
 ```
 
+Run the built browser security policy check after a Pages build:
+
+```bash
+npm run build:pages
+npm run security:policy
+```
+
 Run the dependency license compliance check:
 
 ```bash
@@ -207,6 +214,7 @@ npm run deploy:verify-live
 - An app-level React error boundary keeps unexpected render failures from blanking the whole product.
 - Keyboard answers, ARIA pressed states, live feedback, visible focus rings, and reduced-motion support are included for accessibility.
 - The HTML shell, favicon, web manifest, robots file, and sitemap are checked after the Pages build.
+- The Pages build injects and verifies a Content Security Policy meta tag that restricts scripts, styles, images, connections, workers, media, manifests, forms, base URLs, and object embeds.
 - The runtime surface check rejects unreviewed client network APIs, cookies, telemetry beacons, websockets, and unapproved external URLs.
 - `.nvmrc`, package engines, and `.npmrc` keep local development, CI, deployment, and dependency maintenance on the same runtime contract.
 - TypeScript runs with strict optional-property, indexed-access, override, and unused-code checks enabled.
@@ -215,6 +223,7 @@ npm run deploy:verify-live
 - ESLint enforces TypeScript, React hooks, React refresh, and JSX accessibility rules with zero warnings allowed.
 - Prettier formatting is enforced before the test suite runs.
 - `npm run verify` includes a high-severity npm audit gate before release.
+- `npm run security:policy` verifies the built HTML security policy before metadata, runtime surface, bundle, and Pages smoke checks run.
 - The test suite covers adaptive weighting, deterministic note selection, focus-note ranking, session summaries, session-history analytics, and progress reducers.
 - `npm run test:coverage` enforces coverage thresholds for the framework-independent practice and storage modules.
 - Playwright and axe-core cover the browser practice loop, responsive layout, console health, and automated accessibility violations.
@@ -223,7 +232,7 @@ npm run deploy:verify-live
 - `npm run metadata:check` verifies the built web identity metadata before bundle and Pages smoke checks run.
 - `npm run runtime:check` verifies the built app and source stay inside the documented local-first runtime boundary.
 - `npm run verify` is the single local gate before release, combining security audit, license compliance, code quality, unit/browser tests, accessibility checks, the Pages build, bundle budgets, and the Pages smoke test.
-- `npm run deploy:verify-live` checks the public GitHub Pages deployment after release.
+- `npm run deploy:verify-live` checks the public GitHub Pages deployment, metadata assets, and security policy after release.
 - `npm run perf:budget` keeps the static Pages output within explicit raw and gzip size budgets.
 - GitHub Actions run formatting, linting, typechecking, unit tests, and browser tests on every push and pull request.
 - CodeQL scans JavaScript and TypeScript security issues on pushes, pull requests, and a weekly schedule.

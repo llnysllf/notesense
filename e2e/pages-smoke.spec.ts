@@ -38,6 +38,10 @@ test("serves the GitHub Pages build under the /notesense/ base path", async ({ p
   await expect(page.locator('link[rel="manifest"]')).toHaveAttribute("href", "/notesense/site.webmanifest");
   await expect(page.locator('link[rel="icon"]')).toHaveAttribute("href", "/notesense/icon.svg");
   await expect(page.locator('meta[name="theme-color"]')).toHaveAttribute("content", "#1d1d1f");
+  await expect(page.locator('meta[http-equiv="Content-Security-Policy"]')).toHaveAttribute(
+    "content",
+    /connect-src 'none'/,
+  );
   await expect(page.getByRole("heading", { name: "NoteSense" })).toBeVisible();
   await expect(page.getByRole("button", { name: "Start drill" })).toBeVisible();
 

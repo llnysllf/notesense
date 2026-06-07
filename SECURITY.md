@@ -24,6 +24,7 @@ Useful details include:
 - Do not introduce secrets into the repository.
 - Keep `.env` and local environment files ignored.
 - Run `npm run compliance:licenses` before release so dependency-license drift is caught.
+- Run `npm run security:policy` after a Pages build when HTML shell, Vite build, runtime API, or asset-category behavior changes.
 - Run `npm run verify` before release so high-severity dependency advisories are caught.
 - Treat CodeQL findings as release-blocking unless they are reviewed and explicitly accepted.
 - Treat import/export parsing as an untrusted input boundary.
