@@ -410,14 +410,20 @@ export function getPracticeWeight(noteId: string, progress?: ModeProgress): numb
 }
 
 function selectPracticeNote<TNote extends { id: string }>(notes: TNote[], options: SelectNoteOptions): TNote {
+  const fallbackNote = notes[0];
+  if (!fallbackNote) {
+    throw new Error("NoteSense practice selection requires at least one note.");
+  }
+
   const availableNotes = notes.length > 1 ? notes.filter((note) => note.id !== options.previousNoteId) : notes;
+  const candidateNotes = availableNotes.length > 0 ? availableNotes : [fallbackNote];
   const rng = options.rng ?? Math.random;
 
   if (!options.useAdaptive) {
-    return availableNotes[Math.floor(rng() * availableNotes.length)];
+    return candidateNotes[Math.floor(rng() * candidateNotes.length)] ?? fallbackNote;
   }
 
-  const weightedNotes = availableNotes.map((note) => ({
+  const weightedNotes = candidateNotes.map((note) => ({
     note,
     weight: getPracticeWeight(note.id, options.progress),
   }));
@@ -431,7 +437,7 @@ function selectPracticeNote<TNote extends { id: string }>(notes: TNote[], option
     }
   }
 
-  return weightedNotes[weightedNotes.length - 1].note;
+  return weightedNotes.at(-1)?.note ?? fallbackNote;
 }
 
 export function selectReadingNote(options: SelectNoteOptions = {}): TrainingNote {
@@ -459,13 +465,18 @@ export function createSessionSummary(
         ? `Next: spend one short round on ${focusItem}.`
         : "Next: keep the same range and try to beat this score.";
 
-  return {
+  const summary: SessionSummary = {
     mode,
     score,
     attempts,
     accuracy,
     bestStreak,
-    focusItem,
     suggestion,
   };
+
+  if (focusItem !== undefined) {
+    summary.focusItem = focusItem;
+  }
+
+  return summary;
 }

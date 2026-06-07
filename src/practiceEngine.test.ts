@@ -38,6 +38,15 @@ function freshProgress(): PracticeProgress {
   return structuredClone(emptyProgress);
 }
 
+function fixtureItem<T>(items: T[], index: number): T {
+  const item = items[index];
+  if (item === undefined) {
+    throw new Error(`Missing test fixture item at index ${index}.`);
+  }
+
+  return item;
+}
+
 function session(overrides: Partial<PracticeSessionRecord> = {}): PracticeSessionRecord {
   return {
     id: "session-1",
@@ -111,12 +120,12 @@ describe("practiceEngine", () => {
 
   it("avoids immediately repeating the previous reading note when possible", () => {
     const note = selectReadingNote({
-      previousNoteId: STARTER_NOTES[0].id,
+      previousNoteId: fixtureItem(STARTER_NOTES, 0).id,
       rng: () => 0,
       useAdaptive: false,
     });
 
-    expect(note.id).toBe(STARTER_NOTES[1].id);
+    expect(note.id).toBe(fixtureItem(STARTER_NOTES, 1).id);
   });
 
   it("selects pitch notes deterministically with an injected random source", () => {
@@ -125,7 +134,7 @@ describe("practiceEngine", () => {
       useAdaptive: false,
     });
 
-    expect(note.id).toBe(PITCH_NOTES[PITCH_NOTES.length - 1].id);
+    expect(note.id).toBe(fixtureItem(PITCH_NOTES, PITCH_NOTES.length - 1).id);
   });
 
   it("selects bass clef reading notes when the bass range is active", () => {
@@ -135,7 +144,7 @@ describe("practiceEngine", () => {
       useAdaptive: false,
     });
 
-    expect(note.id).toBe(BASS_STARTER_NOTES[BASS_STARTER_NOTES.length - 1].id);
+    expect(note.id).toBe(fixtureItem(BASS_STARTER_NOTES, BASS_STARTER_NOTES.length - 1).id);
     expect(note.clef).toBe("bass");
   });
 
@@ -213,12 +222,14 @@ describe("practiceEngine", () => {
     const progress = freshProgress();
     progress.reading.noteStats.C4 = { attempts: 5, correct: 5 };
 
-    expect(createSessionSummary("reading", progress, 5, 5, 4)).toMatchObject({
+    const summary = createSessionSummary("reading", progress, 5, 5, 4);
+
+    expect(summary).toMatchObject({
       accuracy: 100,
       bestStreak: 4,
-      focusItem: undefined,
       suggestion: "Next: keep the same range and try to beat this score.",
     });
+    expect("focusItem" in summary).toBe(false);
   });
 
   it("creates summaries that recommend genuinely weak notes", () => {
@@ -470,8 +481,8 @@ describe("practiceEngine", () => {
 describe("storage progress reducers", () => {
   it("records reading and pitch attempts independently", () => {
     let progress = freshProgress();
-    progress = recordReadingAttempt(progress, STARTER_NOTES[0], "C");
-    progress = recordPitchAttempt(progress, PITCH_NOTES[4], "C");
+    progress = recordReadingAttempt(progress, fixtureItem(STARTER_NOTES, 0), "C");
+    progress = recordPitchAttempt(progress, fixtureItem(PITCH_NOTES, 4), "C");
 
     expect(progress.reading).toMatchObject({ totalAttempts: 1, totalCorrect: 1 });
     expect(progress.pitch).toMatchObject({ totalAttempts: 1, totalCorrect: 0 });
@@ -505,7 +516,7 @@ describe("storage progress reducers", () => {
     );
 
     expect(progress.history).toHaveLength(SESSION_HISTORY_LIMIT);
-    expect(progress.history[0].id).toBe(`session-${SESSION_HISTORY_LIMIT + 1}`);
+    expect(progress.history.at(0)?.id).toBe(`session-${SESSION_HISTORY_LIMIT + 1}`);
     expect(progress.history.at(-1)?.id).toBe("session-2");
   });
 
@@ -672,7 +683,7 @@ describe("storage progress reducers", () => {
       exportedAt: "2026-06-05T10:00:00.000Z",
       settings: defaultSettings,
     });
-    expect(exportData.progress.history[0].id).toBe("export-session");
+    expect(exportData.progress.history.at(0)?.id).toBe("export-session");
     expect(JSON.parse(serializedExport)).toMatchObject(exportData);
   });
 
@@ -699,7 +710,7 @@ describe("storage progress reducers", () => {
       exportedAt: "2026-06-05T10:00:00.000Z",
       settings: defaultSettings,
     });
-    expect(importResult.data.progress.history[0].id).toBe("import-session");
+    expect(importResult.data.progress.history.at(0)?.id).toBe("import-session");
   });
 
   it("normalizes imported practice data defensively", () => {

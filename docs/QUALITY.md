@@ -20,6 +20,7 @@ A change is done when:
 - Pure practice, analytics, and data-shape logic has unit coverage.
 - Core practice and storage modules meet the configured Vitest coverage thresholds.
 - User workflows have browser coverage when UI, persistence, import/export, or accessibility-sensitive behavior changes.
+- TypeScript strictness flags stay enabled for optional properties, indexed access, overrides, and unused code.
 - High and critical npm advisories are absent or explicitly handled.
 - Dependency licenses pass the lockfile compliance policy.
 - Static bundle output stays within the documented performance budgets.
@@ -73,6 +74,13 @@ For visual QA:
 - SVGs that communicate data have useful labels.
 - Decorative SVG/text is hidden from assistive technology.
 - Motion respects `prefers-reduced-motion`.
+
+## TypeScript Checklist
+
+- Keep `strict`, `exactOptionalPropertyTypes`, `noUncheckedIndexedAccess`, `noImplicitOverride`, `noUnusedLocals`, and `noUnusedParameters` enabled.
+- Model optional data by omitting absent properties or by explicitly allowing `undefined` in the type.
+- Treat array indexing and record lookup as fallible unless the code proves a fallback.
+- Use `override` on class members that intentionally replace base-class behavior.
 
 ## Data And Persistence Checklist
 

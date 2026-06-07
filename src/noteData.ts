@@ -190,6 +190,17 @@ export const PITCH_NOTES: PitchNote[] = [
   },
 ];
 
+function getDefaultReadingRangeConfig(): ReadingRangeConfig {
+  const rangeConfig = READING_RANGES.find((range) => range.id === DEFAULT_READING_RANGE);
+  if (!rangeConfig) {
+    throw new Error(`Missing NoteSense reading range: ${DEFAULT_READING_RANGE}`);
+  }
+
+  return rangeConfig;
+}
+
+const defaultReadingRangeConfig = getDefaultReadingRangeConfig();
+
 function createEmptyModeProgress(notes: Array<{ id: string }>): ModeProgress {
   return {
     totalAttempts: 0,
@@ -208,7 +219,7 @@ export function isReadingRange(value: unknown): value is ReadingRange {
 }
 
 export function getReadingRange(range: ReadingRange): ReadingRangeConfig {
-  return READING_RANGES.find((rangeConfig) => rangeConfig.id === range) ?? READING_RANGES[0];
+  return READING_RANGES.find((rangeConfig) => rangeConfig.id === range) ?? defaultReadingRangeConfig;
 }
 
 export function getReadingNotes(range: ReadingRange = DEFAULT_READING_RANGE): TrainingNote[] {

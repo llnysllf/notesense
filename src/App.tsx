@@ -256,20 +256,22 @@ function App() {
   }
 
   function getNextReadingNote(previousNoteId?: string, nextProgress = progress) {
-    return selectReadingNote({
-      previousNoteId,
+    const options = {
       progress: nextProgress.reading,
       readingRange: settings.readingRange,
       useAdaptive: settings.adaptivePractice,
-    });
+    };
+
+    return selectReadingNote(previousNoteId === undefined ? options : { ...options, previousNoteId });
   }
 
   function getNextPitchNote(previousNoteId?: string, nextProgress = progress) {
-    return selectPitchNote({
-      previousNoteId,
+    const options = {
       progress: nextProgress.pitch,
       useAdaptive: settings.adaptivePractice,
-    });
+    };
+
+    return selectPitchNote(previousNoteId === undefined ? options : { ...options, previousNoteId });
   }
 
   function setPracticeMode(nextMode: PracticeMode) {

@@ -22,6 +22,7 @@ NoteSense is currently a local-first React application. The product goal is to k
 - `scripts/serve-pages-preview.mjs` serves `dist` under `/notesense/` for deployment-shape smoke tests.
 - `scripts/verify-live-pages.mjs` owns post-deploy public GitHub Pages verification.
 - `vite.config.ts` owns Vitest configuration, including coverage thresholds for the framework-independent core modules.
+- `tsconfig.json` and `tsconfig.node.json` own the strict TypeScript contract for app code and project tooling.
 
 ## Quality Bar
 
@@ -44,6 +45,7 @@ Every feature should keep these expectations intact:
 - The full `npm run check` gate must pass before a change is considered ready.
 - The full `npm run verify` release gate must pass before a change is shipped.
 - Core unit coverage thresholds should protect the practice engine and storage contracts without pretending to replace browser workflow tests.
+- TypeScript strictness should make optional values, array access, overrides, and unused code explicit.
 - Runtime resilience coverage should stay in its own browser config so intentional crash testing does not weaken strict console/page-error checks.
 - The GitHub Pages build must be verified with the `/notesense/` base path before deployment.
 - Runtime upgrades should be intentional engineering changes, not incidental workflow edits.
@@ -80,6 +82,7 @@ An AWS version could use Cognito, API Gateway, Lambda, DynamoDB or RDS, S3, Clou
 - Keep browser storage behind adapter-style functions.
 - Keep export/import schemas versioned.
 - Keep coverage thresholds focused on deterministic core modules where line coverage is meaningful.
+- Keep TypeScript hardening flags enabled as the app grows toward service-backed data.
 - Keep network calls outside the core practice engine.
 - Keep UI components focused on one product responsibility.
 - Keep browser tests tied to real user workflows rather than implementation details.

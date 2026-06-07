@@ -185,6 +185,7 @@ npm run deploy:verify-live
 - An app-level React error boundary keeps unexpected render failures from blanking the whole product.
 - Keyboard answers, ARIA pressed states, live feedback, visible focus rings, and reduced-motion support are included for accessibility.
 - `.nvmrc`, package engines, and `.npmrc` keep local development, CI, deployment, and dependency maintenance on the same runtime contract.
+- TypeScript runs with strict optional-property, indexed-access, override, and unused-code checks enabled.
 - `npm run compliance:licenses` checks dependency licenses from the lockfile against the project policy.
 - ESLint enforces TypeScript, React hooks, React refresh, and JSX accessibility rules with zero warnings allowed.
 - Prettier formatting is enforced before the test suite runs.

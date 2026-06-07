@@ -9,7 +9,7 @@ type ErrorBoundaryState = {
 };
 
 export default class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
-  state: ErrorBoundaryState = {
+  override state: ErrorBoundaryState = {
     hasError: false,
   };
 
@@ -17,7 +17,7 @@ export default class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBo
     return { hasError: true };
   }
 
-  componentDidCatch(error: Error, errorInfo: ErrorInfo) {
+  override componentDidCatch(error: Error, errorInfo: ErrorInfo) {
     console.error("NoteSense render failure", error, errorInfo);
   }
 
@@ -25,7 +25,7 @@ export default class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBo
     window.location.reload();
   };
 
-  render() {
+  override render() {
     if (this.state.hasError) {
       return (
         <main className="app-shell error-shell" aria-labelledby="error-title">
