@@ -18,6 +18,7 @@ A change is done when:
 
 - The behavior is implemented in the smallest responsible area of the codebase.
 - Pure practice, analytics, and data-shape logic has unit coverage.
+- Core practice and storage modules meet the configured Vitest coverage thresholds.
 - User workflows have browser coverage when UI, persistence, import/export, or accessibility-sensitive behavior changes.
 - High and critical npm advisories are absent or explicitly handled.
 - Dependency licenses pass the lockfile compliance policy.
@@ -45,6 +46,12 @@ npm run format:write
 npm run verify
 ```
 
+For focused unit coverage feedback:
+
+```bash
+npm run test:coverage
+```
+
 For visual QA:
 
 - Start the app with `npm run dev`.
@@ -53,6 +60,7 @@ For visual QA:
 - Check mobile width for text wrapping, button sizing, and horizontal overflow.
 - Confirm `dist/index.html` uses `/notesense/` asset paths after `npm run build:pages`.
 - Confirm bundle growth is intentional when `npm run perf:budget` changes or fails.
+- Confirm `npm run test:coverage` passes when practice-engine, analytics, or storage behavior changes.
 - Confirm `npm run test:e2e:resilience` passes when app shell, error-boundary, or root rendering behavior changes.
 - Confirm `npm run test:e2e:pages` passes when deployment base path, build output, or preview behavior changes.
 
@@ -116,6 +124,12 @@ After pushing:
 - `npm run perf:budget` checks raw and gzip sizes for built JavaScript, CSS, and HTML.
 - The budget runs after `npm run build:pages` inside `npm run verify`.
 - Budget increases should be intentional, reviewed, and documented in the same change that needs them.
+
+## Unit Coverage
+
+- `npm run test:coverage` measures the framework-independent practice and storage modules.
+- Coverage thresholds live in `vite.config.ts` and are included in `npm run check`.
+- UI coverage stays workflow-based through Playwright and axe-core rather than line-based component coverage.
 
 ## Deployment Smoke
 

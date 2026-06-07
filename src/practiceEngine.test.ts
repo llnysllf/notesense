@@ -23,9 +23,11 @@ import {
   createPracticeDataExport,
   defaultSettings,
   loadProgress,
+  loadSettings,
   parsePracticeDataImport,
   recordPitchAttempt,
   recordReadingAttempt,
+  resetProgress,
   saveProgress,
   saveSettings,
   serializePracticeDataExport,
@@ -67,6 +69,19 @@ function stubLocalStorage(initialState: Record<string, string>, shouldFailWrites
   });
 
   return store;
+}
+
+function stubFailingLocalStorage() {
+  vi.stubGlobal("window", {
+    localStorage: {
+      getItem: () => {
+        throw new DOMException("Storage unavailable", "SecurityError");
+      },
+      setItem: () => {
+        throw new DOMException("Storage unavailable", "SecurityError");
+      },
+    },
+  });
 }
 
 afterEach(() => {
@@ -516,12 +531,47 @@ describe("storage progress reducers", () => {
     expect(progress.pitch.totalAttempts).toBe(0);
   });
 
+  it("loads legacy v1 progress from the original storage key", () => {
+    stubLocalStorage({
+      "notesense.progress.v1": JSON.stringify({
+        totalAttempts: 6,
+        totalCorrect: 4,
+        bestRoundScore: 3,
+        sessionsCompleted: 2,
+        noteStats: {
+          D4: { attempts: 6, correct: 4 },
+        },
+      }),
+    });
+
+    const progress = loadProgress();
+
+    expect(progress.reading).toMatchObject({
+      totalAttempts: 6,
+      totalCorrect: 4,
+      bestRoundScore: 3,
+      sessionsCompleted: 2,
+    });
+    expect(progress.reading.noteStats.D4).toEqual({ attempts: 6, correct: 4 });
+    expect(progress.pitch.totalAttempts).toBe(0);
+    expect(progress.history).toEqual([]);
+  });
+
+  it("falls back to empty progress when progress storage is missing or unreadable", () => {
+    stubLocalStorage({});
+    expect(loadProgress()).toEqual(emptyProgress);
+
+    stubFailingLocalStorage();
+    expect(loadProgress()).toEqual(emptyProgress);
+  });
+
   it("normalizes stored session history defensively", () => {
     stubLocalStorage({
       "notesense.progress.v2": JSON.stringify({
         reading: {},
         pitch: {},
         history: [
+          null,
           session({ id: "old", completedAt: "2026-06-05T08:00:00.000Z", score: 1, attempts: 4, accuracy: 100 }),
           session({
             id: "new",
@@ -543,6 +593,52 @@ describe("storage progress reducers", () => {
     expect(progress.history[1]).toMatchObject({ accuracy: 25, mode: "reading" });
   });
 
+  it("ignores malformed note-stat records while preserving defaults", () => {
+    stubLocalStorage({
+      "notesense.progress.v2": JSON.stringify({
+        reading: {
+          totalAttempts: 2,
+          totalCorrect: 1,
+          noteStats: {
+            C4: null,
+            D4: { attempts: 2, correct: 1 },
+          },
+        },
+        pitch: {},
+        history: [],
+      }),
+    });
+
+    const progress = loadProgress();
+
+    expect(progress.reading.noteStats.C4).toEqual({ attempts: 0, correct: 0 });
+    expect(progress.reading.noteStats.D4).toEqual({ attempts: 2, correct: 1 });
+  });
+
+  it("loads settings with defaults for missing, invalid, or unsafe values", () => {
+    stubLocalStorage({});
+    expect(loadSettings()).toEqual(defaultSettings);
+
+    stubLocalStorage({
+      "notesense.settings.v3": JSON.stringify({
+        roundLength: 45,
+        readingRange: "wide-range",
+        adaptivePractice: false,
+        autoPlayPitch: false,
+        revealPitchAfterAnswer: false,
+      }),
+    });
+    expect(loadSettings()).toEqual({
+      ...defaultSettings,
+      adaptivePractice: false,
+      autoPlayPitch: false,
+      revealPitchAfterAnswer: false,
+    });
+
+    stubFailingLocalStorage();
+    expect(loadSettings()).toEqual(defaultSettings);
+  });
+
   it("reports storage write failures without throwing", () => {
     stubLocalStorage({}, true);
 
@@ -557,6 +653,10 @@ describe("storage progress reducers", () => {
     expect(saveSettings(defaultSettings)).toBe(true);
     expect(store.has("notesense.progress.v2")).toBe(true);
     expect(store.has("notesense.settings.v3")).toBe(true);
+  });
+
+  it("resets progress to the empty local-first baseline", () => {
+    expect(resetProgress()).toEqual(emptyProgress);
   });
 
   it("creates versioned practice data exports", () => {

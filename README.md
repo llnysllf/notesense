@@ -99,6 +99,12 @@ Run the test suite:
 npm test
 ```
 
+Run the unit coverage gate for core practice and storage logic:
+
+```bash
+npm run test:coverage
+```
+
 Run the browser and accessibility test suite:
 
 ```bash
@@ -184,6 +190,7 @@ npm run deploy:verify-live
 - Prettier formatting is enforced before the test suite runs.
 - `npm run verify` includes a high-severity npm audit gate before release.
 - The test suite covers adaptive weighting, deterministic note selection, focus-note ranking, session summaries, session-history analytics, and progress reducers.
+- `npm run test:coverage` enforces coverage thresholds for the framework-independent practice and storage modules.
 - Playwright and axe-core cover the browser practice loop, responsive layout, console health, and automated accessibility violations.
 - A dedicated resilience Playwright suite proves the app renders an accessible recovery screen during an intentional render failure.
 - The Pages smoke test verifies the built app loads and starts correctly from the `/notesense/` deployment base path.
