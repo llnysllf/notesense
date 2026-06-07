@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title desc">
+  <title id="title">NoteSense icon</title>
+  <desc id="desc">A dark music note on a calm green practice tile.</desc>
+  <rect width="512" height="512" rx="96" fill="#f6f7f1" />
+  <path
+    d="M130 328h228M130 274h228M130 220h228M130 166h228"
+    fill="none"
+    stroke="#8d9a88"
+    stroke-linecap="round"
+    stroke-width="12"
+  />
+  <path d="M320 119v229" fill="none" stroke="#1d1d1f" stroke-linecap="round" stroke-width="28" />
+  <path
+    d="M309 333c0 31-35 56-79 56s-79-25-79-56 35-56 79-56 79 25 79 56Z"
+    fill="#1d1d1f"
+  />
+  <path d="M320 119c32 20 58 23 78 11" fill="none" stroke="#1d1d1f" stroke-linecap="round" stroke-width="28" />
+</svg>

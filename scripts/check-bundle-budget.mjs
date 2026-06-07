@@ -3,7 +3,7 @@ import { extname, join, relative } from "node:path";
 import { gzipSync } from "node:zlib";
 
 const DIST_DIR = "dist";
-const TRACKED_EXTENSIONS = new Set([".css", ".html", ".js"]);
+const TRACKED_EXTENSIONS = new Set([".css", ".html", ".js", ".svg", ".txt", ".webmanifest", ".xml"]);
 const KIB = 1024;
 
 const budgets = [
@@ -22,8 +22,14 @@ const budgets = [
   {
     name: "HTML shell",
     matches: (file) => file === "index.html",
-    rawBytes: 2 * KIB,
+    rawBytes: 4 * KIB,
     gzipBytes: 1 * KIB,
+  },
+  {
+    name: "web metadata asset",
+    matches: (file) => ["icon.svg", "robots.txt", "site.webmanifest", "sitemap.xml"].includes(file),
+    rawBytes: 6 * KIB,
+    gzipBytes: 3 * KIB,
   },
 ];
 

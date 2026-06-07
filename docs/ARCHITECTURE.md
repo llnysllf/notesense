@@ -11,6 +11,7 @@ NoteSense is currently a local-first React application. The product goal is to k
 - `src/components` contains focused UI sections for the staff, pitch prompt, stats panel, session history, practice insights, and stat tiles.
 - `src/components/ErrorBoundary.tsx` owns the app-level recovery surface for unexpected render failures.
 - `src/App.tsx` coordinates product state, round flow, settings, storage calls, and component composition.
+- `public` contains static web identity assets: favicon, web manifest, robots file, and sitemap.
 - `e2e/app.spec.ts` covers the browser practice loop, accessibility, layout health, insight chart rendering, import/export behavior, and storage failure messaging.
 - `e2e/error-boundary.spec.ts` covers intentional render-failure recovery through a dedicated resilience Playwright config.
 - `e2e/pages-smoke.spec.ts` covers the GitHub Pages build at the `/notesense/` base path.
@@ -19,6 +20,7 @@ NoteSense is currently a local-first React application. The product goal is to k
 - `.nvmrc`, package engines, and `.npmrc` define the shared Node/npm runtime for local development, CI, deployment, and dependency maintenance.
 - `scripts/check-licenses.mjs` owns dependency license policy enforcement.
 - `scripts/check-bundle-budget.mjs` owns the static Pages bundle budget.
+- `scripts/check-web-metadata.mjs` owns built HTML, manifest, icon, robots, and sitemap verification.
 - `scripts/serve-pages-preview.mjs` serves `dist` under `/notesense/` for deployment-shape smoke tests.
 - `scripts/verify-live-pages.mjs` owns post-deploy public GitHub Pages verification.
 - `vite.config.ts` owns Vitest configuration, including coverage thresholds for the framework-independent core modules.
@@ -41,6 +43,7 @@ Every feature should keep these expectations intact:
 - Dependency license compliance is part of supply-chain readiness.
 - Security scanning is part of release readiness, especially for dependency, import/export, auth, sync, and backend-boundary changes.
 - Performance budgets are part of release readiness so the practice app stays fast as scope grows.
+- Web identity metadata is part of release readiness because static apps still need install, share, and crawler signals.
 - Deployment base-path smoke coverage is part of release readiness because GitHub Pages serves the app from `/notesense/`.
 - The full `npm run check` gate must pass before a change is considered ready.
 - The full `npm run verify` release gate must pass before a change is shipped.
@@ -92,6 +95,7 @@ An AWS version could use Cognito, API Gateway, Lambda, DynamoDB or RDS, S3, Clou
 - Keep runtime version changes aligned across `.nvmrc`, package engines, CI, and docs.
 - Keep security automation aligned with the areas where user data or future service boundaries can be affected.
 - Keep static bundle budget changes explicit and tied to user value.
+- Keep web metadata paths compatible with the `/notesense/` GitHub Pages base path.
 - Keep deployment base-path assumptions tested rather than relying on manual live-site checks alone.
 - Keep live deployment verification repeatable when hosting or domain assumptions change.
 - Keep architecture decisions explicit through ADRs when they affect data, deployment, quality gates, or service boundaries.

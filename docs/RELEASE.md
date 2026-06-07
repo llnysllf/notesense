@@ -11,6 +11,7 @@ NoteSense currently releases from `main` to GitHub Pages. The release process is
 - Treat dependency license results as supply-chain release evidence.
 - Treat dependency audit and CodeQL results as release evidence.
 - Treat bundle budget results as performance release evidence.
+- Treat web metadata results as static product identity release evidence.
 - Treat the Pages smoke test as deployment-base release evidence.
 - Treat accessibility, import/export, persistence, and deployment changes as release risks.
 - Do not ship generated files such as `dist`, `playwright-report`, or `test-results`.
@@ -61,11 +62,17 @@ For bundle changes, inspect:
 - Whether raw or gzip growth is expected for the change.
 - Whether a budget increase is justified by product value.
 
+For web metadata changes, inspect:
+
+- Whether `npm run metadata:check` passes after the Pages build.
+- Whether canonical, manifest, robots, and sitemap URLs still match the deployed location.
+- Whether icon and manifest paths work from `/notesense/`.
+
 For deployment-path changes, inspect:
 
 - Whether `npm run test:e2e:pages` passes.
 - Whether the app loads from `/notesense/`.
-- Whether built assets are requested from `/notesense/assets/`.
+- Whether built assets and metadata are requested from `/notesense/`.
 
 ## Push And Deployment
 

@@ -24,6 +24,7 @@ A change is done when:
 - High and critical npm advisories are absent or explicitly handled.
 - Dependency licenses pass the lockfile compliance policy.
 - Static bundle output stays within the documented performance budgets.
+- Built web metadata, manifest, icon, robots, and sitemap pass the metadata check.
 - Intentional render-failure recovery stays covered by the runtime resilience browser test.
 - The GitHub Pages build loads from `/notesense/` and starts a drill in the Pages smoke test.
 - `npm run check` passes.
@@ -60,6 +61,7 @@ For visual QA:
 - Check the progress panel after at least one saved round.
 - Check mobile width for text wrapping, button sizing, and horizontal overflow.
 - Confirm `dist/index.html` uses `/notesense/` asset paths after `npm run build:pages`.
+- Confirm `npm run metadata:check` passes when HTML metadata, static public assets, hosting domain, or Pages base path changes.
 - Confirm bundle growth is intentional when `npm run perf:budget` changes or fails.
 - Confirm `npm run test:coverage` passes when practice-engine, analytics, or storage behavior changes.
 - Confirm `npm run test:e2e:resilience` passes when app shell, error-boundary, or root rendering behavior changes.
@@ -132,6 +134,12 @@ After pushing:
 - `npm run perf:budget` checks raw and gzip sizes for built JavaScript, CSS, and HTML.
 - The budget runs after `npm run build:pages` inside `npm run verify`.
 - Budget increases should be intentional, reviewed, and documented in the same change that needs them.
+
+## Web Metadata
+
+- `npm run metadata:check` verifies built HTML metadata and copied public assets after `npm run build:pages`.
+- The check covers the favicon, web manifest, robots file, sitemap, canonical URL, theme color, Open Graph tags, and Twitter summary tags.
+- Metadata paths should remain compatible with the `/notesense/` GitHub Pages base path.
 
 ## Unit Coverage
 
