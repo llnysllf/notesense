@@ -11,6 +11,7 @@ Live demo: [https://llnysllf.github.io/notesense/](https://llnysllf.github.io/no
 Architecture notes: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)
 Quality runbook: [docs/QUALITY.md](docs/QUALITY.md)
 Release guide: [docs/RELEASE.md](docs/RELEASE.md)
+Privacy and data handling: [docs/PRIVACY.md](docs/PRIVACY.md)
 Contributing guide: [CONTRIBUTING.md](CONTRIBUTING.md)
 Security policy: [SECURITY.md](SECURITY.md)
 
@@ -149,6 +150,12 @@ Run the dependency license compliance check:
 npm run compliance:licenses
 ```
 
+Run the policy documentation check:
+
+```bash
+npm run docs:check
+```
+
 Run the bundle performance budget check after a Pages build:
 
 ```bash
@@ -189,11 +196,13 @@ npm run deploy:verify-live
 - Save operations fail safely and surface a non-blocking status message when browser storage is unavailable.
 - Imported and exported practice data includes a schema version, timestamp, progress, and settings for local-first data portability.
 - The architecture notes document the local-first data model and the path toward sign-in, backend APIs, cloud storage, and sync.
+- The privacy notes document the current local storage, import/export, no-tracking, and future sync boundaries.
 - An app-level React error boundary keeps unexpected render failures from blanking the whole product.
 - Keyboard answers, ARIA pressed states, live feedback, visible focus rings, and reduced-motion support are included for accessibility.
 - The HTML shell, favicon, web manifest, robots file, and sitemap are checked after the Pages build.
 - `.nvmrc`, package engines, and `.npmrc` keep local development, CI, deployment, and dependency maintenance on the same runtime contract.
 - TypeScript runs with strict optional-property, indexed-access, override, and unused-code checks enabled.
+- `npm run docs:check` verifies that privacy, security, release, architecture, and contribution docs stay linked and aligned.
 - `npm run compliance:licenses` checks dependency licenses from the lockfile against the project policy.
 - ESLint enforces TypeScript, React hooks, React refresh, and JSX accessibility rules with zero warnings allowed.
 - Prettier formatting is enforced before the test suite runs.

@@ -11,6 +11,7 @@
 - [ ] `npm run verify` passes locally.
 - [ ] Dependency license changes are intentional and explained.
 - [ ] Security impact was considered for dependency, import/export, storage, future auth, future sync, and workflow changes.
+- [ ] Privacy/data handling impact was considered for storage, import/export, analytics, future auth, future sync, and network behavior.
 - [ ] Bundle budget changes are intentional and explained.
 - [ ] Pages base-path behavior was considered when build, preview, routing, or deployment config changed.
 - [ ] Live deployment verification impact was considered for hosting, domain, or Pages config changes.

@@ -21,6 +21,7 @@ A change is done when:
 - Core practice and storage modules meet the configured Vitest coverage thresholds.
 - User workflows have browser coverage when UI, persistence, import/export, or accessibility-sensitive behavior changes.
 - TypeScript strictness flags stay enabled for optional properties, indexed access, overrides, and unused code.
+- Privacy and data-handling docs stay aligned with local storage, import/export, analytics, network, auth, and sync behavior.
 - High and critical npm advisories are absent or explicitly handled.
 - Dependency licenses pass the lockfile compliance policy.
 - Static bundle output stays within the documented performance budgets.
@@ -52,6 +53,12 @@ For focused unit coverage feedback:
 
 ```bash
 npm run test:coverage
+```
+
+For policy documentation feedback:
+
+```bash
+npm run docs:check
 ```
 
 For visual QA:
@@ -93,6 +100,13 @@ When touching progress, settings, history, import, or export:
 - Keep export schemas versioned.
 - Preserve a path for anonymous local users to migrate into a future account.
 - Surface storage failures without crashing the practice loop.
+- Update `docs/PRIVACY.md` if stored fields, export contents, network behavior, analytics, account migration, or sync behavior changes.
+
+## Policy Docs
+
+- `npm run docs:check` verifies that policy and governance docs remain linked and aligned.
+- Privacy docs must describe current browser storage keys, import/export boundaries, tracking behavior, and future account or sync expectations.
+- Security and release docs must keep privacy-impacting changes visible during review and release.
 
 ## Release Checklist
 

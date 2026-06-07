@@ -29,6 +29,7 @@ For UI changes, also verify the app manually at desktop and mobile widths. Check
 - Keep bundle growth intentional; budget increases need a clear reason in the PR.
 - Prefer small, shippable changes with clear user value or clear maintainability value.
 - Do not add network services, auth, or cloud storage without preserving the current local-first practice loop.
+- Update [docs/PRIVACY.md](docs/PRIVACY.md) when a change affects account data, sync, storage, import/export, analytics, or network behavior.
 - Keep runtime changes explicit: update `.nvmrc`, `package.json` engines, GitHub Actions behavior, and ADRs together.
 - Record meaningful architecture decisions in `docs/adr` when a change affects data ownership, deployment, quality gates, or future backend boundaries.
 

@@ -2,6 +2,8 @@
 
 NoteSense is currently a static, local-first web app. It does not store data on a server, and saved progress stays in the user's browser unless the user exports it.
 
+Privacy and data handling expectations live in [docs/PRIVACY.md](docs/PRIVACY.md).
+
 ## Supported Version
 
 The `main` branch and the GitHub Pages deployment are the supported version.
