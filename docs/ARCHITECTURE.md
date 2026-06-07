@@ -20,6 +20,7 @@ NoteSense is currently a local-first React application. The product goal is to k
 - `.nvmrc`, package engines, and `.npmrc` define the shared Node/npm runtime for local development, CI, deployment, and dependency maintenance.
 - `scripts/check-licenses.mjs` owns dependency license policy enforcement.
 - `scripts/check-policy-docs.mjs` owns policy document presence and alignment checks.
+- `scripts/check-runtime-surface.mjs` owns client runtime/network surface checks against the local-first privacy boundary.
 - `scripts/check-bundle-budget.mjs` owns the static Pages bundle budget.
 - `scripts/check-web-metadata.mjs` owns built HTML, manifest, icon, robots, and sitemap verification.
 - `scripts/serve-pages-preview.mjs` serves `dist` under `/notesense/` for deployment-shape smoke tests.
@@ -40,6 +41,7 @@ Every feature should keep these expectations intact:
 - Coaching recommendations stay derived and deterministic until there is a service layer that can own personalization.
 - Persistence changes go through a storage boundary instead of being scattered through UI components.
 - Privacy expectations must stay aligned with local storage, import/export, future auth, sync, analytics, and network behavior.
+- Client runtime surface checks should reject network, tracking, cookie, websocket, or external URL drift unless the change is intentional and documented.
 - User-visible state has a failure path, especially for save, export, auth, and sync operations.
 - Unexpected render failures should show the app-level recovery screen instead of leaving a blank product surface.
 - Accessibility is part of the feature definition, not a final cleanup step.
@@ -88,6 +90,7 @@ An AWS version could use Cognito, API Gateway, Lambda, DynamoDB or RDS, S3, Clou
 - Keep browser storage behind adapter-style functions.
 - Keep export/import schemas versioned.
 - Keep privacy documentation updated when data fields, storage keys, export content, tracking behavior, network calls, auth, or sync changes.
+- Keep the runtime-surface gate updated with any intentional external URLs, network APIs, auth, analytics, telemetry, or sync behavior.
 - Keep coverage thresholds focused on deterministic core modules where line coverage is meaningful.
 - Keep TypeScript hardening flags enabled as the app grows toward service-backed data.
 - Keep network calls outside the core practice engine.

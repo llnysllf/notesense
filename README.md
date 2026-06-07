@@ -131,6 +131,13 @@ npm run build:pages
 npm run metadata:check
 ```
 
+Run the runtime privacy/network surface check after a Pages build:
+
+```bash
+npm run build:pages
+npm run runtime:check
+```
+
 Run static code-quality checks:
 
 ```bash
@@ -200,6 +207,7 @@ npm run deploy:verify-live
 - An app-level React error boundary keeps unexpected render failures from blanking the whole product.
 - Keyboard answers, ARIA pressed states, live feedback, visible focus rings, and reduced-motion support are included for accessibility.
 - The HTML shell, favicon, web manifest, robots file, and sitemap are checked after the Pages build.
+- The runtime surface check rejects unreviewed client network APIs, cookies, telemetry beacons, websockets, and unapproved external URLs.
 - `.nvmrc`, package engines, and `.npmrc` keep local development, CI, deployment, and dependency maintenance on the same runtime contract.
 - TypeScript runs with strict optional-property, indexed-access, override, and unused-code checks enabled.
 - `npm run docs:check` verifies that privacy, security, release, architecture, and contribution docs stay linked and aligned.
@@ -213,6 +221,7 @@ npm run deploy:verify-live
 - A dedicated resilience Playwright suite proves the app renders an accessible recovery screen during an intentional render failure.
 - The Pages smoke test verifies the built app loads and starts correctly from the `/notesense/` deployment base path.
 - `npm run metadata:check` verifies the built web identity metadata before bundle and Pages smoke checks run.
+- `npm run runtime:check` verifies the built app and source stay inside the documented local-first runtime boundary.
 - `npm run verify` is the single local gate before release, combining security audit, license compliance, code quality, unit/browser tests, accessibility checks, the Pages build, bundle budgets, and the Pages smoke test.
 - `npm run deploy:verify-live` checks the public GitHub Pages deployment after release.
 - `npm run perf:budget` keeps the static Pages output within explicit raw and gzip size budgets.

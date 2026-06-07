@@ -22,6 +22,7 @@ A change is done when:
 - User workflows have browser coverage when UI, persistence, import/export, or accessibility-sensitive behavior changes.
 - TypeScript strictness flags stay enabled for optional properties, indexed access, overrides, and unused code.
 - Privacy and data-handling docs stay aligned with local storage, import/export, analytics, network, auth, and sync behavior.
+- Runtime surface checks pass for client network APIs, cookies, telemetry beacons, websockets, and external URLs.
 - High and critical npm advisories are absent or explicitly handled.
 - Dependency licenses pass the lockfile compliance policy.
 - Static bundle output stays within the documented performance budgets.
@@ -69,6 +70,7 @@ For visual QA:
 - Check mobile width for text wrapping, button sizing, and horizontal overflow.
 - Confirm `dist/index.html` uses `/notesense/` asset paths after `npm run build:pages`.
 - Confirm `npm run metadata:check` passes when HTML metadata, static public assets, hosting domain, or Pages base path changes.
+- Confirm `npm run runtime:check` passes when client runtime APIs, URLs, privacy boundaries, or build references change.
 - Confirm bundle growth is intentional when `npm run perf:budget` changes or fails.
 - Confirm `npm run test:coverage` passes when practice-engine, analytics, or storage behavior changes.
 - Confirm `npm run test:e2e:resilience` passes when app shell, error-boundary, or root rendering behavior changes.
@@ -107,6 +109,13 @@ When touching progress, settings, history, import, or export:
 - `npm run docs:check` verifies that policy and governance docs remain linked and aligned.
 - Privacy docs must describe current browser storage keys, import/export boundaries, tracking behavior, and future account or sync expectations.
 - Security and release docs must keep privacy-impacting changes visible during review and release.
+
+## Runtime Surface
+
+- `npm run runtime:check` scans client source and built Pages HTML after `npm run build:pages`.
+- The check blocks accidental client `fetch`, XHR, telemetry beacons, websockets, event streams, cookies, and worker script imports.
+- The check only allows approved external URLs for the GitHub Pages canonical/sitemap metadata and XML/SVG namespaces.
+- Future network, auth, analytics, telemetry, sync, or third-party script work should update the runtime-surface check, privacy docs, architecture notes, and ADRs together.
 
 ## Release Checklist
 

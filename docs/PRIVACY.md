@@ -21,6 +21,7 @@ The app stores data in the learner's browser:
 ## Network And Tracking
 
 - No analytics, telemetry, advertising pixels, or third-party tracking scripts are included.
+- `npm run runtime:check` rejects unreviewed client network APIs, cookies, telemetry beacons, websockets, and unapproved external URLs.
 - No microphone recording is used.
 - Web Audio is used only for generated pitch playback in the browser.
 - GitHub Pages serves the static app files; hosting access logs, if any, are controlled by GitHub rather than this app.

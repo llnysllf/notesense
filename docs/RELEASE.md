@@ -8,6 +8,7 @@ NoteSense currently releases from `main` to GitHub Pages. The release process is
 - Keep learner-facing behavior intentional and documented.
 - Preserve the local-first data model unless a migration plan exists.
 - Treat privacy and data-handling docs as release evidence when storage, import/export, analytics, network, account, or sync behavior changes.
+- Treat runtime surface results as release evidence when client APIs, URLs, analytics, network, auth, or sync behavior changes.
 - Keep the pinned Node/npm runtime consistent across local setup, CI, deployment, and dependency maintenance.
 - Treat dependency license results as supply-chain release evidence.
 - Treat dependency audit and CodeQL results as release evidence.
@@ -38,6 +39,13 @@ Confirm policy docs remain aligned:
 npm run docs:check
 ```
 
+Confirm the built client stays inside the expected runtime surface:
+
+```bash
+npm run build:pages
+npm run runtime:check
+```
+
 For UI changes, manually inspect:
 
 - Desktop layout.
@@ -54,6 +62,7 @@ For data changes, manually inspect:
 - Imported data is normalized or rejected safely.
 - Storage failures stay non-blocking.
 - Whether `npm run docs:check` passes.
+- Whether `npm run runtime:check` passes after a Pages build.
 - Whether `docs/PRIVACY.md` still reflects storage keys, export contents, tracking behavior, and future migration expectations.
 
 For dependency changes, inspect:
