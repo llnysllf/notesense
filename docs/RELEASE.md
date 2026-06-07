@@ -8,6 +8,7 @@ NoteSense currently releases from `main` to GitHub Pages. The release process is
 - Keep learner-facing behavior intentional and documented.
 - Preserve the local-first data model unless a migration plan exists.
 - Treat privacy and data-handling docs as release evidence when storage, import/export, analytics, network, account, or sync behavior changes.
+- Treat documentation integrity results as release evidence when docs, file paths, anchors, or npm scripts change.
 - Treat runtime surface results as release evidence when client APIs, URLs, analytics, network, auth, or sync behavior changes.
 - Keep the pinned Node/npm runtime consistent across local setup, CI, deployment, and dependency maintenance.
 - Treat dependency license results as supply-chain release evidence.
@@ -33,7 +34,7 @@ git status --short
 git diff --check
 ```
 
-Confirm policy docs remain aligned:
+Confirm policy docs and documentation integrity remain aligned:
 
 ```bash
 npm run docs:check

@@ -17,7 +17,7 @@ const requiredSnippets = [
     snippets: [
       "Privacy and data handling: [docs/PRIVACY.md](docs/PRIVACY.md)",
       "Security policy: [SECURITY.md](SECURITY.md)",
-      "`npm run docs:check` verifies that privacy, security, release, architecture, and contribution docs stay linked and aligned.",
+      "`npm run docs:check` verifies that privacy, security, release, architecture, and contribution docs stay linked and aligned, and that local Markdown links plus documented npm scripts still resolve.",
       "`npm run runtime:check` verifies the built app and source stay inside the documented local-first runtime boundary.",
     ],
   },
@@ -61,8 +61,10 @@ const requiredSnippets = [
     file: "docs/QUALITY.md",
     snippets: [
       "Privacy and data-handling docs stay aligned with local storage, import/export, analytics, network, auth, and sync behavior.",
+      "Documentation links, anchors, and documented npm script references stay resolvable.",
       "Runtime surface checks pass for client network APIs, cookies, telemetry beacons, websockets, and external URLs.",
       "`npm run docs:check` verifies that policy and governance docs remain linked and aligned.",
+      "`npm run docs:check` also validates local Markdown links, anchors, and documented npm script references.",
       "`npm run runtime:check` scans client source and built Pages HTML after `npm run build:pages`.",
     ],
   },
@@ -70,6 +72,7 @@ const requiredSnippets = [
     file: "docs/RELEASE.md",
     snippets: [
       "Treat privacy and data-handling docs as release evidence when storage, import/export, analytics, network, account, or sync behavior changes.",
+      "Treat documentation integrity results as release evidence when docs, file paths, anchors, or npm scripts change.",
       "Treat runtime surface results as release evidence when client APIs, URLs, analytics, network, auth, or sync behavior changes.",
       "Whether `npm run docs:check` passes.",
       "Whether `npm run runtime:check` passes after a Pages build.",
@@ -80,6 +83,7 @@ const requiredSnippets = [
     snippets: [
       "`docs/PRIVACY.md` documents the current local-first privacy and data-handling boundary.",
       "Privacy expectations must stay aligned with local storage, import/export, future auth, sync, analytics, and network behavior.",
+      "`scripts/check-doc-integrity.mjs` owns local Markdown link, anchor, and documented npm script reference checks.",
       "`scripts/check-runtime-surface.mjs` owns client runtime/network surface checks against the local-first privacy boundary.",
       "Client runtime surface checks should reject network, tracking, cookie, websocket, or external URL drift unless the change is intentional and documented.",
     ],

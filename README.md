@@ -157,7 +157,7 @@ Run the dependency license compliance check:
 npm run compliance:licenses
 ```
 
-Run the policy documentation check:
+Run the policy and documentation integrity check:
 
 ```bash
 npm run docs:check
@@ -210,7 +210,7 @@ npm run deploy:verify-live
 - The runtime surface check rejects unreviewed client network APIs, cookies, telemetry beacons, websockets, and unapproved external URLs.
 - `.nvmrc`, package engines, and `.npmrc` keep local development, CI, deployment, and dependency maintenance on the same runtime contract.
 - TypeScript runs with strict optional-property, indexed-access, override, and unused-code checks enabled.
-- `npm run docs:check` verifies that privacy, security, release, architecture, and contribution docs stay linked and aligned.
+- `npm run docs:check` verifies that privacy, security, release, architecture, and contribution docs stay linked and aligned, and that local Markdown links plus documented npm scripts still resolve.
 - `npm run compliance:licenses` checks dependency licenses from the lockfile against the project policy.
 - ESLint enforces TypeScript, React hooks, React refresh, and JSX accessibility rules with zero warnings allowed.
 - Prettier formatting is enforced before the test suite runs.

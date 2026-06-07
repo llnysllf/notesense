@@ -22,6 +22,7 @@ A change is done when:
 - User workflows have browser coverage when UI, persistence, import/export, or accessibility-sensitive behavior changes.
 - TypeScript strictness flags stay enabled for optional properties, indexed access, overrides, and unused code.
 - Privacy and data-handling docs stay aligned with local storage, import/export, analytics, network, auth, and sync behavior.
+- Documentation links, anchors, and documented npm script references stay resolvable.
 - Runtime surface checks pass for client network APIs, cookies, telemetry beacons, websockets, and external URLs.
 - High and critical npm advisories are absent or explicitly handled.
 - Dependency licenses pass the lockfile compliance policy.
@@ -107,6 +108,7 @@ When touching progress, settings, history, import, or export:
 ## Policy Docs
 
 - `npm run docs:check` verifies that policy and governance docs remain linked and aligned.
+- `npm run docs:check` also validates local Markdown links, anchors, and documented npm script references.
 - Privacy docs must describe current browser storage keys, import/export boundaries, tracking behavior, and future account or sync expectations.
 - Security and release docs must keep privacy-impacting changes visible during review and release.
 

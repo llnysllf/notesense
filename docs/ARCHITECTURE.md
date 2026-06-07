@@ -20,6 +20,7 @@ NoteSense is currently a local-first React application. The product goal is to k
 - `.nvmrc`, package engines, and `.npmrc` define the shared Node/npm runtime for local development, CI, deployment, and dependency maintenance.
 - `scripts/check-licenses.mjs` owns dependency license policy enforcement.
 - `scripts/check-policy-docs.mjs` owns policy document presence and alignment checks.
+- `scripts/check-doc-integrity.mjs` owns local Markdown link, anchor, and documented npm script reference checks.
 - `scripts/check-runtime-surface.mjs` owns client runtime/network surface checks against the local-first privacy boundary.
 - `scripts/check-bundle-budget.mjs` owns the static Pages bundle budget.
 - `scripts/check-web-metadata.mjs` owns built HTML, manifest, icon, robots, and sitemap verification.
@@ -98,6 +99,7 @@ An AWS version could use Cognito, API Gateway, Lambda, DynamoDB or RDS, S3, Clou
 - Keep browser tests tied to real user workflows rather than implementation details.
 - Keep intentional failure-mode tests isolated from the normal browser workflow suite.
 - Keep repository operations, dependency updates, and release checks documented rather than tribal.
+- Keep documentation links, anchors, and referenced package scripts verifiable as the repo grows.
 - Keep license policy changes explicit and reviewed when dependencies change.
 - Keep runtime version changes aligned across `.nvmrc`, package engines, CI, and docs.
 - Keep security automation aligned with the areas where user data or future service boundaries can be affected.
