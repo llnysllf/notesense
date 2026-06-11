@@ -33,7 +33,7 @@ jobs:
         run: npm ci
 
       - name: Install browser dependencies
-        run: npx playwright install --with-deps chromium
+        run: npx playwright install --with-deps chromium firefox webkit
 
       - name: Run release verification gate
         run: npm run verify

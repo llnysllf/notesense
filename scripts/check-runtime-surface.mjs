@@ -2,7 +2,7 @@ import { existsSync, readdirSync, readFileSync, statSync } from "node:fs";
 import { extname, join } from "node:path";
 
 const DIST_DIR = "dist";
-const SOURCE_ROOTS = ["src", "public"];
+const SOURCE_ROOTS = ["src", "shared/src", "public"];
 const SOURCE_FILES = ["index.html"];
 const CLIENT_EXTENSIONS = new Set([".css", ".html", ".svg", ".ts", ".tsx", ".txt", ".webmanifest", ".xml"]);
 const ALLOWED_ABSOLUTE_URLS = new Set([

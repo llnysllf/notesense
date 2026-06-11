@@ -15,6 +15,7 @@ NoteSense currently releases from `main` to GitHub Pages. The release process is
 - Treat dependency audit and CodeQL results as release evidence.
 - Treat built browser security policy results as release evidence when HTML shell, Vite build, runtime APIs, or asset categories change.
 - Treat bundle budget results as performance release evidence.
+- Treat Lighthouse results as deploy-shape performance, accessibility, best-practice, and SEO release evidence.
 - Treat web metadata results as static product identity release evidence.
 - Treat the Pages smoke test as deployment-base release evidence.
 - Treat accessibility, import/export, persistence, and deployment changes as release risks.
@@ -46,6 +47,7 @@ Confirm the built client stays inside the expected runtime surface:
 ```bash
 npm run build:pages
 npm run security:policy
+npm run pwa:check
 npm run runtime:check
 ```
 
@@ -83,6 +85,14 @@ For bundle changes, inspect:
 - Whether `npm run perf:budget` passes after the Pages build.
 - Whether raw or gzip growth is expected for the change.
 - Whether a budget increase is justified by product value.
+- Whether the `Lighthouse` workflow still passes or produces only understood warnings.
+
+For PWA/offline changes, inspect:
+
+- Whether the generated service worker still precaches only reviewed static assets.
+- Whether `npm run pwa:check` passes after the Pages build.
+- Whether the Content Security Policy still allows only the intended self-hosted worker behavior.
+- Whether Lighthouse performance, accessibility, best-practice, and SEO results remain understood and tracked.
 
 For web metadata changes, inspect:
 
@@ -105,6 +115,7 @@ After pushing:
 - Confirm the `CI` workflow succeeds.
 - Confirm the `CodeQL` workflow succeeds when it runs for the change.
 - Confirm the `Deploy Pages` workflow succeeds.
+- Confirm the `Lighthouse` workflow succeeds when it runs for the change.
 - Confirm the live verifier still proves the deployed security policy when the HTML shell or build security policy changes.
 - Run the live deployment verifier:
 

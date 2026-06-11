@@ -7,7 +7,9 @@ NoteSense is currently a local-first React application. The product goal is to k
 - `src/practiceEngine.ts` owns scoring, adaptive weighting, daily goals, session summaries, trend summaries, mastery states, practice-plan recommendations, and analytics helpers. It is pure TypeScript and does not depend on React or browser storage.
 - `src/noteData.ts` owns structured note ranges for treble reading, bass reading, and pitch training.
 - `src/storage.ts` owns persistence, normalization, migration from the original local progress shape, and versioned data import/export.
+- `shared/src` owns framework-agnostic practice data normalization, import/export, and merge contracts that can be reused by a future sync backend.
 - `src/audio.ts` owns browser audio playback.
+- `src/hooks` contains focused React state orchestration for settings, progress, session flow, and data portability.
 - `src/components` contains focused UI sections for the staff, pitch prompt, stats panel, session history, practice insights, and stat tiles.
 - `src/components/ErrorBoundary.tsx` owns the app-level recovery surface for unexpected render failures.
 - `src/App.tsx` coordinates product state, round flow, settings, storage calls, and component composition.
@@ -16,13 +18,16 @@ NoteSense is currently a local-first React application. The product goal is to k
 - `e2e/error-boundary.spec.ts` covers intentional render-failure recovery through a dedicated resilience Playwright config.
 - `e2e/pages-smoke.spec.ts` covers the GitHub Pages build at the `/notesense/` base path.
 - `.github/workflows` owns the CI, CodeQL, and Pages deployment gates.
+- `.github/workflows/lighthouse.yml` owns Lighthouse scoring for the deployment-shaped Pages build.
 - `docs/adr` records architecture decisions that should survive beyond a single implementation pass.
 - `.nvmrc`, package engines, and `.npmrc` define the shared Node/npm runtime for local development, CI, deployment, and dependency maintenance.
 - `vite.config.ts` injects the production Content Security Policy meta tag during build.
+- `vite.config.ts` also owns PWA service worker generation and Vitest browser-like component-test setup.
 - `scripts/check-licenses.mjs` owns dependency license policy enforcement.
 - `scripts/check-security-policy.mjs` owns built HTML security policy verification.
 - `scripts/check-policy-docs.mjs` owns policy document presence and alignment checks.
 - `scripts/check-doc-integrity.mjs` owns local Markdown link, anchor, and documented npm script reference checks.
+- `scripts/check-pwa-artifacts.mjs` owns generated service worker and static precache verification.
 - `scripts/check-runtime-surface.mjs` owns client runtime/network surface checks against the local-first privacy boundary.
 - `scripts/check-bundle-budget.mjs` owns the static Pages bundle budget.
 - `scripts/check-web-metadata.mjs` owns built HTML, manifest, icon, robots, and sitemap verification.
@@ -43,6 +48,7 @@ Every feature should keep these expectations intact:
 - Mastery state remains range-aware so treble, bass, pitch, and future expanded ranges do not leak progress into each other.
 - Coaching recommendations stay derived and deterministic until there is a service layer that can own personalization.
 - Persistence changes go through a storage boundary instead of being scattered through UI components.
+- Cross-device or sync-ready data-shape changes should happen in `shared/src` before UI or backend adapters consume them.
 - Privacy expectations must stay aligned with local storage, import/export, future auth, sync, analytics, and network behavior.
 - Client runtime surface checks should reject network, tracking, cookie, websocket, or external URL drift unless the change is intentional and documented.
 - User-visible state has a failure path, especially for save, export, auth, and sync operations.
@@ -52,11 +58,13 @@ Every feature should keep these expectations intact:
 - Security scanning is part of release readiness, especially for dependency, import/export, auth, sync, and backend-boundary changes.
 - The production HTML shell should carry a verified Content Security Policy before release.
 - Performance budgets are part of release readiness so the practice app stays fast as scope grows.
+- Lighthouse scores are part of release readiness for user-visible performance, accessibility, best-practice, SEO, and PWA drift.
 - Web identity metadata is part of release readiness because static apps still need install, share, and crawler signals.
 - Deployment base-path smoke coverage is part of release readiness because GitHub Pages serves the app from `/notesense/`.
 - The full `npm run check` gate must pass before a change is considered ready.
 - The full `npm run verify` release gate must pass before a change is shipped.
 - Core unit coverage thresholds should protect the practice engine and storage contracts without pretending to replace browser workflow tests.
+- Component tests should cover reusable UI states that are awkward to exercise through full browser workflows.
 - TypeScript strictness should make optional values, array access, overrides, and unused code explicit.
 - Runtime resilience coverage should stay in its own browser config so intentional crash testing does not weaken strict console/page-error checks.
 - The GitHub Pages build must be verified with the `/notesense/` base path before deployment.
@@ -92,6 +100,7 @@ An AWS version could use Cognito, API Gateway, Lambda, DynamoDB or RDS, S3, Clou
 
 - Keep `practiceEngine` framework-independent.
 - Keep browser storage behind adapter-style functions.
+- Keep shared import/export and merge logic framework-agnostic so future backend sync can reuse it.
 - Keep export/import schemas versioned.
 - Keep privacy documentation updated when data fields, storage keys, export content, tracking behavior, network calls, auth, or sync changes.
 - Keep the runtime-surface gate updated with any intentional external URLs, network APIs, auth, analytics, telemetry, or sync behavior.
@@ -100,6 +109,7 @@ An AWS version could use Cognito, API Gateway, Lambda, DynamoDB or RDS, S3, Clou
 - Keep network calls outside the core practice engine.
 - Keep UI components focused on one product responsibility.
 - Keep browser tests tied to real user workflows rather than implementation details.
+- Keep component tests focused on accessibility labels, rendering contracts, and reusable presentation states.
 - Keep intentional failure-mode tests isolated from the normal browser workflow suite.
 - Keep repository operations, dependency updates, and release checks documented rather than tribal.
 - Keep documentation links, anchors, and referenced package scripts verifiable as the repo grows.
@@ -108,6 +118,7 @@ An AWS version could use Cognito, API Gateway, Lambda, DynamoDB or RDS, S3, Clou
 - Keep security automation aligned with the areas where user data or future service boundaries can be affected.
 - Keep the production Content Security Policy aligned with intentional scripts, styles, images, network calls, workers, media, manifests, forms, and embeds.
 - Keep static bundle budget changes explicit and tied to user value.
+- Keep offline/PWA behavior limited to generated static assets until account sync creates an explicit backend boundary.
 - Keep web metadata paths compatible with the `/notesense/` GitHub Pages base path.
 - Keep deployment base-path assumptions tested rather than relying on manual live-site checks alone.
 - Keep live deployment verification repeatable when hosting or domain assumptions change.

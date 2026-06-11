@@ -1,9 +1,22 @@
-export type NoteName = "C" | "D" | "E" | "F" | "G" | "A" | "B";
-export type ReadingNoteName = "C" | "D" | "E" | "F" | "G";
-export type PracticeMode = "reading" | "pitch";
-export type RoundLength = 30 | 60 | 90;
+import type { NoteName, PracticeMode, PracticeSessionRecord, ReadingNoteName } from "@notesense/shared";
+
+// Re-export the framework-agnostic data contract so existing `./types` imports keep working.
+export type {
+  AttemptProgress,
+  ModeProgress,
+  NoteName,
+  PracticeDataExport,
+  PracticeDataImportResult,
+  PracticeMode,
+  PracticeProgress,
+  PracticeSessionRecord,
+  PracticeSettings,
+  ReadingNoteName,
+  ReadingRange,
+  RoundLength,
+} from "@notesense/shared";
+
 export type StaffClef = "treble" | "bass";
-export type ReadingRange = "treble-starter" | "bass-starter";
 
 export type TrainingNote = {
   id: string;
@@ -24,50 +37,6 @@ export type PitchNote = {
   keyboardShortcut: string;
 };
 
-export type AttemptProgress = {
-  attempts: number;
-  correct: number;
-};
-
-export type ModeProgress = {
-  totalAttempts: number;
-  totalCorrect: number;
-  bestRoundScore: number;
-  noteStats: Record<string, AttemptProgress>;
-  sessionsCompleted: number;
-};
-
-export type PracticeProgress = {
-  reading: ModeProgress;
-  pitch: ModeProgress;
-  history: PracticeSessionRecord[];
-};
-
-export type PracticeSettings = {
-  roundLength: RoundLength;
-  readingRange: ReadingRange;
-  adaptivePractice: boolean;
-  autoPlayPitch: boolean;
-  revealPitchAfterAnswer: boolean;
-};
-
-export type PracticeDataExport = {
-  schemaVersion: 1;
-  exportedAt: string;
-  progress: PracticeProgress;
-  settings: PracticeSettings;
-};
-
-export type PracticeDataImportResult =
-  | {
-      ok: true;
-      data: PracticeDataExport;
-    }
-  | {
-      ok: false;
-      error: string;
-    };
-
 export type DataStatus = {
   message: string;
   tone: "success" | "warning";
@@ -81,17 +50,6 @@ export type SessionSummary = {
   bestStreak: number;
   focusItem?: string;
   suggestion: string;
-};
-
-export type PracticeSessionRecord = {
-  id: string;
-  mode: PracticeMode;
-  completedAt: string;
-  durationSeconds: number;
-  score: number;
-  attempts: number;
-  accuracy: number;
-  bestStreak: number;
 };
 
 export type SessionHistorySummary = {

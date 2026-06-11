@@ -1,6 +1,10 @@
+import { fileURLToPath } from "node:url";
 import react from "@vitejs/plugin-react";
 import type { Plugin } from "vite";
+import { VitePWA } from "vite-plugin-pwa";
 import { defineConfig } from "vitest/config";
+
+const sharedEntry = fileURLToPath(new URL("./shared/src/index.ts", import.meta.url));
 
 export const CONTENT_SECURITY_POLICY = [
   "default-src 'self'",
@@ -12,7 +16,7 @@ export const CONTENT_SECURITY_POLICY = [
   "font-src 'self'",
   "connect-src 'none'",
   "media-src 'none'",
-  "worker-src 'none'",
+  "worker-src 'self'",
   "manifest-src 'self'",
   "form-action 'none'",
 ].join("; ");
@@ -31,14 +35,35 @@ function notesenseSecurityPolicyPlugin(): Plugin {
 }
 
 export default defineConfig({
-  plugins: [react(), notesenseSecurityPolicyPlugin()],
+  resolve: {
+    alias: {
+      "@notesense/shared": sharedEntry,
+    },
+  },
+  plugins: [
+    react(),
+    VitePWA({
+      registerType: "autoUpdate",
+      injectRegister: null,
+      manifest: false,
+      workbox: {
+        globPatterns: ["**/*.{js,css,html,svg,webmanifest,txt,xml}"],
+        navigateFallback: null,
+      },
+      devOptions: { enabled: false },
+    }),
+    notesenseSecurityPolicyPlugin(),
+  ],
   test: {
-    include: ["src/**/*.test.ts", "src/**/*.test.tsx"],
+    environment: "jsdom",
+    globals: true,
+    setupFiles: ["./src/test-setup.ts"],
+    include: ["src/**/*.test.ts", "src/**/*.test.tsx", "shared/**/*.test.ts"],
     coverage: {
       provider: "v8",
       reporter: ["text", "json-summary"],
       reportsDirectory: "coverage",
-      include: ["src/practiceEngine.ts", "src/storage.ts"],
+      include: ["src/practiceEngine.ts", "src/storage.ts", "shared/src/practiceData.ts", "shared/src/merge.ts"],
       thresholds: {
         perFile: true,
         statements: 85,

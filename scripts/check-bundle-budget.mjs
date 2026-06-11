@@ -31,11 +31,23 @@ const budgets = [
     rawBytes: 6 * KIB,
     gzipBytes: 3 * KIB,
   },
+  {
+    name: "service worker",
+    matches: (file) => file === "sw.js",
+    rawBytes: 8 * KIB,
+    gzipBytes: 4 * KIB,
+  },
+  {
+    name: "Workbox runtime",
+    matches: (file) => file.startsWith("workbox-") && file.endsWith(".js"),
+    rawBytes: 32 * KIB,
+    gzipBytes: 12 * KIB,
+  },
 ];
 
 const totalBudget = {
-  rawBytes: 300 * KIB,
-  gzipBytes: 96 * KIB,
+  rawBytes: 320 * KIB,
+  gzipBytes: 100 * KIB,
 };
 
 function collectFiles(directory) {

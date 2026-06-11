@@ -20,7 +20,11 @@
     "isolatedModules": true,
     "noEmit": true,
     "jsx": "react-jsx",
-    "types": []
+    "types": ["vitest/globals"],
+    "baseUrl": ".",
+    "paths": {
+      "@notesense/shared": ["./shared/src/index.ts"]
+    }
   },
-  "include": ["src"]
+  "include": ["src", "shared"]
 }

@@ -50,6 +50,39 @@
   text-rendering: optimizeLegibility;
 }
 
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-text: #e8eae6;
+    --color-ink: #f0f2ee;
+    --color-muted: #9aa39c;
+    --color-muted-strong: #b6bdb6;
+    --color-brand: #8fb398;
+    --color-brand-strong: #cfe3d3;
+    --color-brand-wash: #19211b;
+    --color-canvas: #0f1311;
+    --color-canvas-top: #141815;
+    --color-canvas-soft: #0c100e;
+    --color-surface: #171b18;
+    --color-surface-raised: rgba(28, 33, 29, 0.92);
+    --color-surface-warm: #1a1d18;
+    --color-control: #232925;
+    --color-control-soft: #1f241f;
+    --color-feedback: #b7c4ba;
+    --color-meter: #2a302b;
+    --color-border: rgba(255, 255, 255, 0.12);
+    --color-border-strong: rgba(255, 255, 255, 0.2);
+    --color-focus: #5aa6ff;
+    --color-success: #8fdca0;
+    --color-success-bg: #15301c;
+    --color-danger: #ff9f87;
+    --color-danger-bg: #3a1c12;
+    --shadow-panel: 0 24px 60px rgba(0, 0, 0, 0.55);
+    --shadow-control: 0 8px 18px rgba(0, 0, 0, 0.45);
+    --shadow-action: 0 12px 24px rgba(0, 0, 0, 0.5);
+    --shadow-sound-ring: inset 0 0 0 18px rgba(143, 179, 152, 0.12);
+  }
+}
+
 * {
   box-sizing: border-box;
 }
@@ -1028,6 +1061,39 @@ h3 {
 .range-card p {
   margin-bottom: 0;
   color: var(--color-muted);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-text: #e8eae7;
+    --color-ink: #f0f2ef;
+    --color-muted: #8a9189;
+    --color-muted-strong: #9ba39a;
+    --color-brand: #7aaa82;
+    --color-brand-strong: #a8cead;
+    --color-brand-wash: #1a2b1d;
+    --color-canvas: #111412;
+    --color-canvas-top: #181b17;
+    --color-canvas-soft: #161a15;
+    --color-surface: #1e2320;
+    --color-surface-raised: rgba(30, 35, 32, 0.92);
+    --color-surface-warm: #1c1f1b;
+    --color-control: #2a302b;
+    --color-control-soft: #252b26;
+    --color-feedback: #a8bcab;
+    --color-meter: #2e342f;
+    --color-border: rgba(232, 234, 231, 0.1);
+    --color-border-strong: rgba(232, 234, 231, 0.14);
+    --color-focus: #4da3ff;
+    --color-success: #5dbf70;
+    --color-success-bg: #0f2e14;
+    --color-danger: #e07a5f;
+    --color-danger-bg: #2e1510;
+    --shadow-panel: 0 24px 60px rgba(0, 0, 0, 0.4);
+    --shadow-control: 0 8px 18px rgba(0, 0, 0, 0.3);
+    --shadow-action: 0 12px 24px rgba(0, 0, 0, 0.5);
+    --shadow-sound-ring: inset 0 0 0 18px rgba(122, 170, 130, 0.08);
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

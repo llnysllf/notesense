@@ -10,7 +10,7 @@ const requiredHtmlSnippets = [
   '<meta name="description" content="NoteSense is a focused piano note-reading trainer for beginner musicians.',
   '<meta name="application-name" content="NoteSense"',
   '<meta name="theme-color" content="#1d1d1f"',
-  '<meta name="color-scheme" content="light"',
+  '<meta name="color-scheme" content="light dark"',
   `<link rel="canonical" href="${LIVE_URL}"`,
   `<link rel="icon" type="image/svg+xml" href="${EXPECTED_BASE_PATH}icon.svg"`,
   `<link rel="manifest" href="${EXPECTED_BASE_PATH}site.webmanifest"`,
