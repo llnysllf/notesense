@@ -10,7 +10,7 @@ const EXPECTED_SECURITY_POLICY = [
   "font-src 'self'",
   "connect-src 'none'",
   "media-src 'none'",
-  "worker-src 'none'",
+  "worker-src 'self'",
   "manifest-src 'self'",
   "form-action 'none'",
 ].join("; ");
