@@ -16,6 +16,7 @@
 - [ ] Pages base-path behavior was considered when build, preview, routing, or deployment config changed.
 - [ ] Live deployment verification impact was considered for hosting, domain, or Pages config changes.
 - [ ] Visual QA was done for desktop and mobile when UI changed.
+- [ ] Visual-regression baselines were updated and reviewed when UI changes intentionally changed protected screenshots.
 - [ ] Architecture decisions were documented in `docs/adr` when the change affects data, deployment, quality gates, or service boundaries.
 
 ## Risk Notes

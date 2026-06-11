@@ -17,9 +17,14 @@ NoteSense is currently a local-first React application. The product goal is to k
 - `e2e/app.spec.ts` covers the browser practice loop, accessibility, layout health, insight chart rendering, import/export behavior, and storage failure messaging.
 - `e2e/error-boundary.spec.ts` covers intentional render-failure recovery through a dedicated resilience Playwright config.
 - `e2e/pages-smoke.spec.ts` covers the GitHub Pages build at the `/notesense/` base path.
+- `e2e/visual.spec.ts` covers visual regression for the note-reading and pitch-training shells across desktop/mobile and light/dark themes.
+- Playwright workflow configs block service workers so UI behavior tests are not coupled to cache lifecycle timing; PWA correctness is verified by generated-artifact and live-deployment checks.
 - `.github/workflows` owns the CI, CodeQL, and Pages deployment gates.
+- `.github/workflows/visual-regression.yml` owns the macOS Chromium visual-regression gate so screenshot baselines use the same platform family as the committed snapshots.
 - `.github/workflows/lighthouse.yml` owns Lighthouse scoring for the deployment-shaped Pages build.
 - `docs/adr` records architecture decisions that should survive beyond a single implementation pass.
+- `docs/THREAT_MODEL.md` documents current and future security boundaries before account or sync work begins.
+- `docs/BACKEND_READINESS.md` documents the service, API, data-model, sync, and PostgreSQL path for future backend work.
 - `.nvmrc`, package engines, and `.npmrc` define the shared Node/npm runtime for local development, CI, deployment, and dependency maintenance.
 - `vite.config.ts` injects the production Content Security Policy meta tag during build.
 - `vite.config.ts` also owns PWA service worker generation and Vitest browser-like component-test setup.
@@ -32,7 +37,7 @@ NoteSense is currently a local-first React application. The product goal is to k
 - `scripts/check-bundle-budget.mjs` owns the static Pages bundle budget.
 - `scripts/check-web-metadata.mjs` owns built HTML, manifest, icon, robots, and sitemap verification.
 - `scripts/serve-pages-preview.mjs` serves `dist` under `/notesense/` for deployment-shape smoke tests.
-- `scripts/verify-live-pages.mjs` owns post-deploy public GitHub Pages, metadata asset, and security policy verification.
+- `scripts/verify-live-pages.mjs` owns post-deploy public GitHub Pages, metadata asset, service worker, Workbox runtime, and security policy verification.
 - `vite.config.ts` owns Vitest configuration, including coverage thresholds for the framework-independent core modules.
 - `tsconfig.json` and `tsconfig.node.json` own the strict TypeScript contract for app code and project tooling.
 - `docs/PRIVACY.md` documents the current local-first privacy and data-handling boundary.
@@ -59,7 +64,9 @@ Every feature should keep these expectations intact:
 - The production HTML shell should carry a verified Content Security Policy before release.
 - Performance budgets are part of release readiness so the practice app stays fast as scope grows.
 - Lighthouse scores are part of release readiness for user-visible performance, accessibility, best-practice, SEO, and PWA drift.
+- Visual-regression baselines are part of review readiness for protected shell states, especially across desktop/mobile and light/dark themes.
 - Web identity metadata is part of release readiness because static apps still need install, share, and crawler signals.
+- Live deployment verification should prove deployed HTML, metadata assets, static app assets, the generated service worker, and the local Workbox runtime after release.
 - Deployment base-path smoke coverage is part of release readiness because GitHub Pages serves the app from `/notesense/`.
 - The full `npm run check` gate must pass before a change is considered ready.
 - The full `npm run verify` release gate must pass before a change is shipped.
@@ -96,6 +103,8 @@ The likely service-backed version should introduce these pieces in order:
 
 An AWS version could use Cognito, API Gateway, Lambda, DynamoDB or RDS, S3, CloudFront, and CloudWatch. That choice should happen when the backend feature set is clearer, not before the local product proves the learning loop.
 
+PostgreSQL should sit behind a backend API, never behind direct browser access. It becomes useful when NoteSense needs accounts, cross-device sync, relational practice analytics, data export/deletion workflows, and operational backups.
+
 ## Boundaries To Preserve
 
 - Keep `practiceEngine` framework-independent.
@@ -119,9 +128,10 @@ An AWS version could use Cognito, API Gateway, Lambda, DynamoDB or RDS, S3, Clou
 - Keep the production Content Security Policy aligned with intentional scripts, styles, images, network calls, workers, media, manifests, forms, and embeds.
 - Keep static bundle budget changes explicit and tied to user value.
 - Keep offline/PWA behavior limited to generated static assets until account sync creates an explicit backend boundary.
+- Keep future database access behind reviewed backend APIs; do not expose database credentials or direct SQL access to the browser.
 - Keep web metadata paths compatible with the `/notesense/` GitHub Pages base path.
 - Keep deployment base-path assumptions tested rather than relying on manual live-site checks alone.
-- Keep live deployment verification repeatable when hosting or domain assumptions change.
+- Keep live deployment verification repeatable when hosting, domain, PWA, or Workbox assumptions change.
 - Keep architecture decisions explicit through ADRs when they affect data, deployment, quality gates, or service boundaries.
 
 ## Near-Term Product Roadmap

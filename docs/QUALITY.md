@@ -22,8 +22,10 @@ A change is done when:
 - Shared data contract modules meet the configured Vitest coverage thresholds when they change.
 - Reusable UI components have focused component coverage for accessibility labels and state rendering where browser workflows would be too broad.
 - User workflows have browser coverage when UI, persistence, import/export, or accessibility-sensitive behavior changes.
+- Protected shell states have visual-regression coverage for desktop/mobile and light/dark when UI changes intentionally affect layout or appearance.
 - TypeScript strictness flags stay enabled for optional properties, indexed access, overrides, and unused code.
 - Privacy and data-handling docs stay aligned with local storage, import/export, analytics, network, auth, and sync behavior.
+- Threat model and backend-readiness docs stay aligned before account, API, database, sync, or cloud infrastructure work begins.
 - Documentation links, anchors, and documented npm script references stay resolvable.
 - Runtime surface checks pass for client network APIs, cookies, telemetry beacons, websockets, and external URLs.
 - Built HTML security policy checks pass before release.
@@ -35,10 +37,11 @@ A change is done when:
 - Built web metadata, manifest, icon, robots, and sitemap pass the metadata check.
 - Intentional render-failure recovery stays covered by the runtime resilience browser test.
 - The GitHub Pages build loads from `/notesense/` and starts a drill in the Pages smoke test.
-- Offline/PWA changes prove the generated service worker and Workbox runtime stay within bundle budgets and Lighthouse expectations.
+- Offline/PWA changes prove the generated and deployed service worker and Workbox runtime stay within bundle budgets, live verifier checks, and Lighthouse expectations.
 - `npm run check` passes.
 - `npm run build:pages` passes.
 - UI changes have been visually checked at desktop and mobile widths.
+- Intentional UI changes refresh and review `npm run test:e2e:visual:update` baselines.
 - Documentation is updated when product scope, architecture, quality gates, or data contracts change.
 
 ## Local Validation
@@ -85,6 +88,7 @@ For visual QA:
 - Confirm `npm run test:coverage` passes when shared data contracts or reusable UI component states change.
 - Confirm `npm run test:e2e:resilience` passes when app shell, error-boundary, or root rendering behavior changes.
 - Confirm `npm run test:e2e:pages` passes when deployment base path, build output, or preview behavior changes.
+- Confirm `npm run test:e2e:visual` passes when protected shell layout, color, spacing, typography, or component appearance changes.
 
 ## Accessibility Checklist
 
@@ -113,6 +117,7 @@ When touching progress, settings, history, import, or export:
 - Preserve a path for anonymous local users to migrate into a future account.
 - Surface storage failures without crashing the practice loop.
 - Update `docs/PRIVACY.md` if stored fields, export contents, network behavior, analytics, account migration, or sync behavior changes.
+- Update `docs/THREAT_MODEL.md` and `docs/BACKEND_READINESS.md` before introducing auth, API calls, PostgreSQL, AWS services, or cloud sync.
 
 ## Policy Docs
 
@@ -135,6 +140,7 @@ When touching progress, settings, history, import, or export:
 - The generated service worker should precache reviewed static Pages assets and avoid custom runtime API caching, background sync, push notifications, analytics, and practice-data storage.
 - Service worker and Workbox files count toward `npm run perf:budget`.
 - PWA behavior is covered by `npm run pwa:check`; Lighthouse covers complementary performance, accessibility, best-practice, and SEO signals.
+- `npm run deploy:verify-live` also checks the deployed service worker, local Workbox runtime, and static precache entries after release.
 
 ## Release Checklist
 
@@ -147,6 +153,7 @@ Before pushing to `main`:
 After pushing:
 
 - Confirm the `CI` workflow succeeds.
+- Confirm the `Visual Regression` workflow succeeds when UI, CSS, screenshots, Playwright, or browser rendering behavior changes.
 - Confirm the `CodeQL` workflow succeeds for changes that affect source, workflows, or security-sensitive paths.
 - Confirm the `Deploy Pages` workflow succeeds.
 - Confirm the `Lighthouse` workflow succeeds when UI, PWA, metadata, bundle, or deployment-shape behavior changes.
@@ -204,12 +211,21 @@ After pushing:
 - `@testing-library/react` component tests run in jsdom for reusable UI contracts that do not need the full Playwright workflow.
 - UI coverage stays workflow-based through Playwright and axe-core rather than line-based component coverage.
 
+## Visual Regression
+
+- `npm run test:e2e:visual` checks committed Playwright screenshot baselines for note-reading and pitch-training shells.
+- Browser workflow tests block service workers so functional UI checks stay deterministic; PWA behavior is covered by `npm run pwa:check`, `npm run deploy:verify-live`, and Lighthouse.
+- The visual-regression workflow runs on macOS with Chromium so local baseline updates and remote checks use the same platform family.
+- Baselines cover desktop, mobile, light theme, and dark theme.
+- Intentional UI changes should update the baselines with `npm run test:e2e:visual:update` and review the resulting images before commit.
+- Visual regression complements, but does not replace, axe checks, keyboard checks, and manual product judgment.
+
 ## Deployment Smoke
 
 - `npm run test:e2e:pages` verifies the Pages build at `/notesense/`.
 - The smoke test fails on broken asset requests, browser console errors, page errors, viewport overflow, or inability to start a drill.
 - The smoke test is intentionally narrow; full workflow coverage stays in `npm run test:e2e`.
-- `npm run deploy:verify-live` checks the public GitHub Pages URL, deployed metadata assets, and deployed security policy after deployment.
+- `npm run deploy:verify-live` checks the public GitHub Pages URL, deployed metadata assets, deployed service worker, deployed Workbox runtime, and deployed security policy after deployment.
 
 ## Runtime Resilience
 

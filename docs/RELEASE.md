@@ -8,6 +8,7 @@ NoteSense currently releases from `main` to GitHub Pages. The release process is
 - Keep learner-facing behavior intentional and documented.
 - Preserve the local-first data model unless a migration plan exists.
 - Treat privacy and data-handling docs as release evidence when storage, import/export, analytics, network, account, or sync behavior changes.
+- Treat threat-model and backend-readiness docs as release evidence before auth, API, database, sync, PostgreSQL, or cloud infrastructure changes.
 - Treat documentation integrity results as release evidence when docs, file paths, anchors, or npm scripts change.
 - Treat runtime surface results as release evidence when client APIs, URLs, analytics, network, auth, or sync behavior changes.
 - Keep the pinned Node/npm runtime consistent across local setup, CI, deployment, and dependency maintenance.
@@ -16,7 +17,9 @@ NoteSense currently releases from `main` to GitHub Pages. The release process is
 - Treat built browser security policy results as release evidence when HTML shell, Vite build, runtime APIs, or asset categories change.
 - Treat bundle budget results as performance release evidence.
 - Treat Lighthouse results as deploy-shape performance, accessibility, best-practice, and SEO release evidence.
+- Treat visual-regression results as UI release evidence when layout, color, spacing, typography, screenshots, or component appearance changes.
 - Treat web metadata results as static product identity release evidence.
+- Treat live deployment verification as public-release evidence for deployed HTML, metadata assets, static app assets, service worker, Workbox runtime, and security policy.
 - Treat the Pages smoke test as deployment-base release evidence.
 - Treat accessibility, import/export, persistence, and deployment changes as release risks.
 - Do not ship generated files such as `dist`, `playwright-report`, or `test-results`.
@@ -59,6 +62,7 @@ For UI changes, manually inspect:
 - Focus visibility.
 - Text wrapping.
 - Reduced-motion behavior when animation changes.
+- Whether `npm run test:e2e:visual` passes or baselines were intentionally updated and reviewed.
 
 For data changes, manually inspect:
 
@@ -69,6 +73,7 @@ For data changes, manually inspect:
 - Whether `npm run docs:check` passes.
 - Whether `npm run runtime:check` passes after a Pages build.
 - Whether `docs/PRIVACY.md` still reflects storage keys, export contents, tracking behavior, and future migration expectations.
+- Whether `docs/THREAT_MODEL.md` and `docs/BACKEND_READINESS.md` still reflect future account, sync, API, database, and cloud boundaries.
 
 For dependency changes, inspect:
 
@@ -92,6 +97,7 @@ For PWA/offline changes, inspect:
 - Whether the generated service worker still precaches only reviewed static assets.
 - Whether `npm run pwa:check` passes after the Pages build.
 - Whether the Content Security Policy still allows only the intended self-hosted worker behavior.
+- Whether `npm run deploy:verify-live` still proves the deployed service worker and Workbox runtime after release.
 - Whether Lighthouse performance, accessibility, best-practice, and SEO results remain understood and tracked.
 
 For web metadata changes, inspect:
@@ -113,10 +119,11 @@ Push to `main` only after the local gate passes.
 After pushing:
 
 - Confirm the `CI` workflow succeeds.
+- Confirm the `Visual Regression` workflow succeeds when UI, CSS, screenshots, browser, or Playwright behavior changes.
 - Confirm the `CodeQL` workflow succeeds when it runs for the change.
 - Confirm the `Deploy Pages` workflow succeeds.
 - Confirm the `Lighthouse` workflow succeeds when it runs for the change.
-- Confirm the live verifier still proves the deployed security policy when the HTML shell or build security policy changes.
+- Confirm the live verifier still proves the deployed security policy, service worker, and Workbox runtime when the HTML shell, build security policy, or PWA behavior changes.
 - Run the live deployment verifier:
 
 ```bash

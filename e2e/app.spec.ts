@@ -16,7 +16,7 @@ test.beforeEach(async ({ page }) => {
 });
 
 test("loads with no automated accessibility violations", async ({ page }) => {
-  await page.goto("/");
+  await page.goto("/", { waitUntil: "domcontentloaded" });
 
   await expect(page.getByRole("heading", { name: "NoteSense" })).toBeVisible();
   await expect(page.getByRole("button", { name: "Start drill" })).toBeVisible();
@@ -32,7 +32,7 @@ test("loads with no automated accessibility violations", async ({ page }) => {
 });
 
 test("runs the note-reading practice loop", async ({ page }) => {
-  await page.goto("/");
+  await page.goto("/", { waitUntil: "domcontentloaded" });
 
   await expect(page.getByRole("button", { name: "Answer C" })).toBeDisabled();
   await page.getByRole("button", { name: "Start drill" }).click();
@@ -51,12 +51,12 @@ test("runs the note-reading practice loop", async ({ page }) => {
   const postRoundAccessibilityScanResults = await new AxeBuilder({ page }).analyze();
   expect(postRoundAccessibilityScanResults.violations).toEqual([]);
 
-  await page.reload();
+  await page.reload({ waitUntil: "domcontentloaded" });
   await expect(page.getByRole("listitem", { name: /Note reading session/ })).toBeVisible();
 });
 
 test("switches to bass clef reading practice", async ({ page }) => {
-  await page.goto("/");
+  await page.goto("/", { waitUntil: "domcontentloaded" });
 
   await page.getByRole("button", { name: "Bass" }).click();
   await expect(page.getByText("Adaptive | Bass clef C3-G3")).toBeVisible();
@@ -65,13 +65,13 @@ test("switches to bass clef reading practice", async ({ page }) => {
   await page.getByRole("button", { name: "Start drill" }).click();
   await expect(page.getByRole("button", { name: "Answer C" })).toBeEnabled();
 
-  await page.reload();
+  await page.reload({ waitUntil: "domcontentloaded" });
   await expect(page.getByRole("button", { name: "Bass" })).toHaveAttribute("aria-pressed", "true");
   await expect(page.getByLabel(/Bass staff note [C-G]3/)).toBeVisible();
 });
 
 test("keeps the selected reading range after switching during feedback", async ({ page }) => {
-  await page.goto("/");
+  await page.goto("/", { waitUntil: "domcontentloaded" });
 
   await page.getByRole("button", { name: "Start drill" }).click();
   await page.getByRole("button", { name: "Answer C" }).click();
@@ -85,7 +85,7 @@ test("keeps the selected reading range after switching during feedback", async (
 });
 
 test("exports local practice data", async ({ page }) => {
-  await page.goto("/");
+  await page.goto("/", { waitUntil: "domcontentloaded" });
 
   const downloadPromise = page.waitForEvent("download");
   await page.getByRole("button", { name: "Export data" }).click();
@@ -95,7 +95,7 @@ test("exports local practice data", async ({ page }) => {
 });
 
 test("imports local practice data", async ({ page }) => {
-  await page.goto("/");
+  await page.goto("/", { waitUntil: "domcontentloaded" });
 
   await page.locator('input[type="file"]').setInputFiles({
     name: "notesense-progress.json",
@@ -187,14 +187,14 @@ test("imports local practice data", async ({ page }) => {
     progressPanel.getByRole("listitem", { name: "Note reading session 8 out of 10, 80% accuracy" }),
   ).toBeVisible();
 
-  await page.reload();
+  await page.reload({ waitUntil: "domcontentloaded" });
   await expect(progressPanel.getByText("12")).toBeVisible();
   await expect(page.getByRole("button", { name: "30s" })).toHaveAttribute("aria-pressed", "true");
   await expect(page.getByRole("button", { name: "Bass" })).toHaveAttribute("aria-pressed", "true");
 });
 
 test("rejects invalid imported practice data", async ({ page }) => {
-  await page.goto("/");
+  await page.goto("/", { waitUntil: "domcontentloaded" });
 
   await page.locator('input[type="file"]').setInputFiles({
     name: "broken-notesense-progress.json",
@@ -219,7 +219,7 @@ test("surfaces storage failures without crashing", async ({ page }) => {
     };
   });
 
-  await page.goto("/");
+  await page.goto("/", { waitUntil: "domcontentloaded" });
   await page.getByRole("button", { name: "Start drill" }).click();
   await page.getByRole("button", { name: "Answer C" }).click();
 
@@ -227,7 +227,7 @@ test("surfaces storage failures without crashing", async ({ page }) => {
 });
 
 test("runs the pitch-training practice loop", async ({ page }) => {
-  await page.goto("/");
+  await page.goto("/", { waitUntil: "domcontentloaded" });
 
   await page.getByRole("button", { name: "Pitch training" }).click();
   await expect(page.getByLabel("Hidden pitch note")).toBeVisible();
@@ -240,7 +240,7 @@ test("runs the pitch-training practice loop", async ({ page }) => {
 });
 
 test("keeps the responsive layout inside the viewport", async ({ page }) => {
-  await page.goto("/");
+  await page.goto("/", { waitUntil: "domcontentloaded" });
 
   await expect
     .poll(() => page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth))

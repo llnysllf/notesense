@@ -9,6 +9,8 @@ const requiredFiles = [
   "docs/PRIVACY.md",
   "docs/QUALITY.md",
   "docs/RELEASE.md",
+  "docs/THREAT_MODEL.md",
+  "docs/BACKEND_READINESS.md",
 ];
 
 const requiredSnippets = [
@@ -16,6 +18,8 @@ const requiredSnippets = [
     file: "README.md",
     snippets: [
       "Privacy and data handling: [docs/PRIVACY.md](docs/PRIVACY.md)",
+      "Threat model: [docs/THREAT_MODEL.md](docs/THREAT_MODEL.md)",
+      "Backend readiness: [docs/BACKEND_READINESS.md](docs/BACKEND_READINESS.md)",
       "Security policy: [SECURITY.md](SECURITY.md)",
       "`npm run docs:check` verifies that privacy, security, release, architecture, and contribution docs stay linked and aligned, and that local Markdown links plus documented npm scripts still resolve.",
       "`npm run runtime:check` verifies the built app and source stay inside the documented local-first runtime boundary.",
@@ -25,8 +29,10 @@ const requiredSnippets = [
     file: "SECURITY.md",
     snippets: [
       "Privacy and data handling expectations live in [docs/PRIVACY.md](docs/PRIVACY.md).",
+      "Future account, sync, and backend work should also follow [docs/THREAT_MODEL.md](docs/THREAT_MODEL.md) and [docs/BACKEND_READINESS.md](docs/BACKEND_READINESS.md).",
       "Treat import/export parsing as an untrusted input boundary.",
       "Treat future account, sync, and backend features as security-sensitive changes requiring tests and review.",
+      "Do not connect the browser app directly to a database; future persistence must go through a reviewed backend API.",
       "Run `npm run security:policy` after a Pages build when HTML shell, Vite build, runtime API, or asset-category behavior changes.",
     ],
   },
@@ -35,6 +41,7 @@ const requiredSnippets = [
     snippets: [
       "Run the full local gate:",
       "npm run verify",
+      "Do not add sign-in, sync, PostgreSQL, or AWS services without updating the threat model and backend-readiness docs first.",
       "Update [docs/PRIVACY.md](docs/PRIVACY.md) when a change affects account data, sync, storage, import/export, analytics, or network behavior.",
     ],
   },
@@ -64,6 +71,7 @@ const requiredSnippets = [
     file: "docs/QUALITY.md",
     snippets: [
       "Privacy and data-handling docs stay aligned with local storage, import/export, analytics, network, auth, and sync behavior.",
+      "Threat model and backend-readiness docs stay aligned before account, API, database, sync, or cloud infrastructure work begins.",
       "Documentation links, anchors, and documented npm script references stay resolvable.",
       "Runtime surface checks pass for client network APIs, cookies, telemetry beacons, websockets, and external URLs.",
       "Built HTML security policy checks pass before release.",
@@ -77,6 +85,7 @@ const requiredSnippets = [
     file: "docs/RELEASE.md",
     snippets: [
       "Treat privacy and data-handling docs as release evidence when storage, import/export, analytics, network, account, or sync behavior changes.",
+      "Treat threat-model and backend-readiness docs as release evidence before auth, API, database, sync, PostgreSQL, or cloud infrastructure changes.",
       "Treat documentation integrity results as release evidence when docs, file paths, anchors, or npm scripts change.",
       "Treat runtime surface results as release evidence when client APIs, URLs, analytics, network, auth, or sync behavior changes.",
       "Treat built browser security policy results as release evidence when HTML shell, Vite build, runtime APIs, or asset categories change.",
@@ -89,14 +98,32 @@ const requiredSnippets = [
     file: "docs/ARCHITECTURE.md",
     snippets: [
       "`docs/PRIVACY.md` documents the current local-first privacy and data-handling boundary.",
+      "`docs/THREAT_MODEL.md` documents current and future security boundaries before account or sync work begins.",
+      "`docs/BACKEND_READINESS.md` documents the service, API, data-model, sync, and PostgreSQL path for future backend work.",
       "Privacy expectations must stay aligned with local storage, import/export, future auth, sync, analytics, and network behavior.",
       "`vite.config.ts` injects the production Content Security Policy meta tag during build.",
       "`scripts/check-security-policy.mjs` owns built HTML security policy verification.",
-      "`scripts/verify-live-pages.mjs` owns post-deploy public GitHub Pages, metadata asset, and security policy verification.",
+      "`scripts/verify-live-pages.mjs` owns post-deploy public GitHub Pages, metadata asset, service worker, Workbox runtime, and security policy verification.",
       "`scripts/check-doc-integrity.mjs` owns local Markdown link, anchor, and documented npm script reference checks.",
       "`scripts/check-pwa-artifacts.mjs` owns generated service worker and static precache verification.",
       "`scripts/check-runtime-surface.mjs` owns client runtime/network surface checks against the local-first privacy boundary.",
       "Client runtime surface checks should reject network, tracking, cookie, websocket, or external URL drift unless the change is intentional and documented.",
+    ],
+  },
+  {
+    file: "docs/THREAT_MODEL.md",
+    snippets: [
+      "The browser app must never connect directly to PostgreSQL or any other database.",
+      "Future account or cloud sync work must address:",
+      "No direct browser connection to PostgreSQL or any database.",
+    ],
+  },
+  {
+    file: "docs/BACKEND_READINESS.md",
+    snippets: [
+      "React app -> Backend API -> Database",
+      "PostgreSQL is a good future fit if NoteSense needs relational history, analytics, exports, deletion workflows, and durable backups.",
+      "All endpoints must require authorization once accounts exist.",
     ],
   },
 ];

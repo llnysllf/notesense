@@ -2,7 +2,7 @@
 
 NoteSense is currently a static, local-first web app. It does not store data on a server, and saved progress stays in the user's browser unless the user exports it.
 
-Privacy and data handling expectations live in [docs/PRIVACY.md](docs/PRIVACY.md).
+Privacy and data handling expectations live in [docs/PRIVACY.md](docs/PRIVACY.md). Future account, sync, and backend work should also follow [docs/THREAT_MODEL.md](docs/THREAT_MODEL.md) and [docs/BACKEND_READINESS.md](docs/BACKEND_READINESS.md).
 
 ## Supported Version
 
@@ -29,3 +29,4 @@ Useful details include:
 - Treat CodeQL findings as release-blocking unless they are reviewed and explicitly accepted.
 - Treat import/export parsing as an untrusted input boundary.
 - Treat future account, sync, and backend features as security-sensitive changes requiring tests and review.
+- Do not connect the browser app directly to a database; future persistence must go through a reviewed backend API.

@@ -19,6 +19,8 @@
     "test:e2e": "playwright test",
     "test:e2e:pages": "playwright test --config=playwright.pages.config.ts",
     "test:e2e:resilience": "playwright test --config=playwright.resilience.config.ts",
+    "test:e2e:visual": "playwright test --config=playwright.visual.config.ts",
+    "test:e2e:visual:update": "playwright test --config=playwright.visual.config.ts --update-snapshots",
     "test:watch": "vitest",
     "docs:policy": "node scripts/check-policy-docs.mjs",
     "docs:integrity": "node scripts/check-doc-integrity.mjs",

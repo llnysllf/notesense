@@ -6,6 +6,10 @@ All notable changes to NoteSense are documented here. The format follows [Keep a
 
 ### Added
 
+- Live deployment verifier now checks the deployed service worker, Workbox runtime, and static precache contract after release
+- Visual regression workflow for desktop/mobile and light/dark note-reading and pitch-training shells
+- Threat model and backend-readiness docs for future sign-in, API, PostgreSQL, and cloud sync work
+- Playwright workflow suites now block service workers, keeping UI behavior tests deterministic while PWA behavior remains covered by artifact and live deployment gates
 - Dark mode via `prefers-color-scheme: dark` — all design tokens now adapt to the system preference
 - Service worker and offline support — the app is now installable as a PWA and works without a network connection after the first load
 - Component tests for `MusicStaff`, `DailyGoal`, and `MasteryMap` using `@testing-library/react`
