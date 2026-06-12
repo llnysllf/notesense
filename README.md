@@ -179,6 +179,12 @@ npm run format:check
 npm run lint
 ```
 
+Run the repository hygiene check:
+
+```bash
+npm run repo:hygiene
+```
+
 Run the dependency security audit:
 
 ```bash
@@ -264,6 +270,7 @@ npm run ops:repository
 - The Pages build injects and verifies a Content Security Policy meta tag that restricts scripts, styles, images, connections, workers, media, manifests, forms, base URLs, and object embeds.
 - The runtime surface check rejects unreviewed client network APIs, cookies, telemetry beacons, websockets, and unapproved external URLs.
 - `.nvmrc`, package engines, and `.npmrc` keep local development, CI, deployment, and dependency maintenance on the same runtime contract.
+- `npm run repo:hygiene` verifies required repository configuration and blocks generated, dependency, secret, and local artifact files from being tracked.
 - TypeScript runs with strict optional-property, indexed-access, override, and unused-code checks enabled.
 - `npm run docs:check` verifies that privacy, security, release, architecture, and contribution docs stay linked and aligned, and that local Markdown links plus documented npm scripts still resolve.
 - `npm run compliance:licenses` checks dependency licenses from the lockfile against the project policy.

@@ -27,6 +27,7 @@ A change is done when:
 - Privacy and data-handling docs stay aligned with local storage, import/export, analytics, network, auth, and sync behavior.
 - Threat model and backend-readiness docs stay aligned before account, API, database, sync, or cloud infrastructure work begins.
 - Documentation links, anchors, and documented npm script references stay resolvable.
+- Repository hygiene checks pass so required configuration files stay present and generated, dependency, secret, or local artifact files stay untracked.
 - Runtime surface checks pass for client network APIs, cookies, telemetry beacons, websockets, and external URLs.
 - Built HTML security policy checks pass before release.
 - High and critical npm advisories are absent or explicitly handled.
@@ -85,6 +86,7 @@ For visual QA:
 - Confirm `npm run security:policy` passes when HTML shell behavior, Vite build behavior, runtime APIs, or asset categories change.
 - Confirm `npm run metadata:check` passes when HTML metadata, static public assets, hosting domain, or Pages base path changes.
 - Confirm `npm run pwa:check` passes when service worker generation, static assets, or offline behavior changes.
+- Confirm `npm run repo:hygiene` passes when root config, ignore files, runtime config, generated outputs, or local artifact handling changes.
 - Confirm `npm run runtime:check` passes when client runtime APIs, URLs, privacy boundaries, or build references change.
 - Confirm bundle growth is intentional when `npm run perf:budget` changes or fails.
 - Confirm `npm run test:coverage` passes when practice-engine, analytics, or storage behavior changes.
@@ -129,6 +131,13 @@ When touching progress, settings, history, import, or export:
 - `npm run docs:check` also validates local Markdown links, anchors, and documented npm script references.
 - Privacy docs must describe current browser storage keys, import/export boundaries, tracking behavior, and future account or sync expectations.
 - Security and release docs must keep privacy-impacting changes visible during review and release.
+
+## Repository Hygiene
+
+- `npm run repo:hygiene` verifies required root configuration files stay present.
+- The check verifies `.gitignore` and `.prettierignore` keep generated outputs, dependency installs, logs, build-info files, and local artifacts out of normal review paths.
+- The check verifies `.nvmrc`, package engines, `packageManager`, and `.npmrc` stay aligned with the pinned runtime policy.
+- Tracked `dist`, `coverage`, `.lighthouseci`, `playwright-report`, `test-results`, `node_modules`, `.env`, logs, TypeScript build-info files, and generated Vite config artifacts fail the gate.
 
 ## Runtime Surface
 
