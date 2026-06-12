@@ -184,6 +184,12 @@ Run the dependency security audit:
 npm run security:audit
 ```
 
+Run the GitHub Actions workflow policy check:
+
+```bash
+npm run security:workflows
+```
+
 Run the built browser security policy check after a Pages build:
 
 ```bash
@@ -257,6 +263,7 @@ npm run deploy:verify-live
 - ESLint enforces TypeScript, React hooks, React refresh, and JSX accessibility rules with zero warnings allowed.
 - Prettier formatting is enforced before the test suite runs.
 - `npm run verify` includes a high-severity npm audit gate before release.
+- `npm run security:workflows` verifies that GitHub Actions references are pinned to immutable commit SHAs with source-version comments.
 - `npm run security:policy` verifies the built HTML security policy before metadata, runtime surface, bundle, and Pages smoke checks run.
 - `npm run pwa:check` verifies the generated service worker precaches reviewed static assets only.
 - The test suite covers adaptive weighting, deterministic note selection, focus-note ranking, session summaries, session-history analytics, and progress reducers.
