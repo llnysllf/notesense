@@ -6,10 +6,7 @@ on:
     branches:
       - main
 
-permissions:
-  contents: read
-  id-token: write
-  pages: write
+permissions: {}
 
 concurrency:
   group: pages-${{ github.ref }}
@@ -20,6 +17,8 @@ jobs:
     name: Build static site
     runs-on: ubuntu-latest
     timeout-minutes: 15
+    permissions:
+      contents: read
 
     steps:
       - name: Check out repository
@@ -50,6 +49,9 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     timeout-minutes: 10
+    permissions:
+      id-token: write
+      pages: write
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}

@@ -23,7 +23,7 @@ const requiredSnippets = [
       "Security policy: [SECURITY.md](SECURITY.md)",
       "`npm run docs:check` verifies that privacy, security, release, architecture, and contribution docs stay linked and aligned, and that local Markdown links plus documented npm scripts still resolve.",
       "`npm run runtime:check` verifies the built app and source stay inside the documented local-first runtime boundary.",
-      "`npm run security:workflows` verifies that GitHub Actions references are pinned to immutable commit SHAs with source-version comments.",
+      "`npm run security:workflows` verifies that GitHub Actions references are pinned to immutable commit SHAs and that workflow token permissions stay least-privilege.",
     ],
   },
   {
@@ -31,7 +31,7 @@ const requiredSnippets = [
     snippets: [
       "Privacy and data handling expectations live in [docs/PRIVACY.md](docs/PRIVACY.md).",
       "Future account, sync, and backend work should also follow [docs/THREAT_MODEL.md](docs/THREAT_MODEL.md) and [docs/BACKEND_READINESS.md](docs/BACKEND_READINESS.md).",
-      "Keep GitHub Actions pinned to reviewed commit SHAs; run `npm run security:workflows` after workflow edits.",
+      "Keep GitHub Actions pinned to reviewed commit SHAs with least-privilege token permissions; run `npm run security:workflows` after workflow edits.",
       "Treat import/export parsing as an untrusted input boundary.",
       "Treat future account, sync, and backend features as security-sensitive changes requiring tests and review.",
       "Do not connect the browser app directly to a database; future persistence must go through a reviewed backend API.",
@@ -43,7 +43,7 @@ const requiredSnippets = [
     snippets: [
       "Run the full local gate:",
       "npm run verify",
-      "Keep workflow action refs pinned to full commit SHAs and document the source version tag in a comment.",
+      "Keep workflow action refs pinned to full commit SHAs, document the source version tag in a comment, and keep workflow token permissions least-privilege.",
       "Do not add sign-in, sync, PostgreSQL, or AWS services without updating the threat model and backend-readiness docs first.",
       "Update [docs/PRIVACY.md](docs/PRIVACY.md) when a change affects account data, sync, storage, import/export, analytics, or network behavior.",
     ],
@@ -78,7 +78,7 @@ const requiredSnippets = [
       "Documentation links, anchors, and documented npm script references stay resolvable.",
       "Runtime surface checks pass for client network APIs, cookies, telemetry beacons, websockets, and external URLs.",
       "Built HTML security policy checks pass before release.",
-      "GitHub Actions workflow references are pinned to full commit SHAs with source-version comments.",
+      "GitHub Actions workflow references are pinned to full commit SHAs with source-version comments, and workflow token permissions stay least-privilege.",
       "`npm run docs:check` verifies that policy and governance docs remain linked and aligned.",
       "`npm run docs:check` also validates local Markdown links, anchors, and documented npm script references.",
       "`npm run security:policy` verifies the built HTML Content Security Policy after `npm run build:pages`.",
@@ -90,7 +90,7 @@ const requiredSnippets = [
     snippets: [
       "Treat privacy and data-handling docs as release evidence when storage, import/export, analytics, network, account, or sync behavior changes.",
       "Treat threat-model and backend-readiness docs as release evidence before auth, API, database, sync, PostgreSQL, or cloud infrastructure changes.",
-      "Treat workflow action pinning results as supply-chain release evidence when GitHub Actions workflows change.",
+      "Treat workflow action pinning and token-permission results as supply-chain release evidence when GitHub Actions workflows change.",
       "Treat documentation integrity results as release evidence when docs, file paths, anchors, or npm scripts change.",
       "Treat runtime surface results as release evidence when client APIs, URLs, analytics, network, auth, or sync behavior changes.",
       "Treat built browser security policy results as release evidence when HTML shell, Vite build, runtime APIs, or asset categories change.",
@@ -108,6 +108,7 @@ const requiredSnippets = [
       "Privacy expectations must stay aligned with local storage, import/export, future auth, sync, analytics, and network behavior.",
       "`vite.config.ts` injects the production Content Security Policy meta tag during build.",
       "`scripts/check-workflow-actions.mjs` owns GitHub Actions reference pinning policy enforcement.",
+      "`scripts/check-workflow-permissions.mjs` owns GitHub Actions token-permission policy enforcement.",
       "`scripts/check-security-policy.mjs` owns built HTML security policy verification.",
       "`scripts/verify-live-pages.mjs` owns post-deploy public GitHub Pages, metadata asset, service worker, Workbox runtime, and security policy verification.",
       "`scripts/check-doc-integrity.mjs` owns local Markdown link, anchor, and documented npm script reference checks.",

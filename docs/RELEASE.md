@@ -13,7 +13,7 @@ NoteSense currently releases from `main` to GitHub Pages. The release process is
 - Treat runtime surface results as release evidence when client APIs, URLs, analytics, network, auth, or sync behavior changes.
 - Keep the pinned Node/npm runtime consistent across local setup, CI, deployment, and dependency maintenance.
 - Treat dependency license results as supply-chain release evidence.
-- Treat workflow action pinning results as supply-chain release evidence when GitHub Actions workflows change.
+- Treat workflow action pinning and token-permission results as supply-chain release evidence when GitHub Actions workflows change.
 - Treat dependency audit and CodeQL results as release evidence.
 - Treat built browser security policy results as release evidence when HTML shell, Vite build, runtime APIs, or asset categories change.
 - Treat bundle budget results as performance release evidence.

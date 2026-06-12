@@ -23,7 +23,7 @@ Useful details include:
 
 - Do not introduce secrets into the repository.
 - Keep `.env` and local environment files ignored.
-- Keep GitHub Actions pinned to reviewed commit SHAs; run `npm run security:workflows` after workflow edits.
+- Keep GitHub Actions pinned to reviewed commit SHAs with least-privilege token permissions; run `npm run security:workflows` after workflow edits.
 - Run `npm run compliance:licenses` before release so dependency-license drift is caught.
 - Run `npm run security:policy` after a Pages build when HTML shell, Vite build, runtime API, or asset-category behavior changes.
 - Run `npm run verify` before release so high-severity dependency advisories are caught.

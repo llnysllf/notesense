@@ -31,7 +31,7 @@ A change is done when:
 - Built HTML security policy checks pass before release.
 - High and critical npm advisories are absent or explicitly handled.
 - Dependency licenses pass the lockfile compliance policy.
-- GitHub Actions workflow references are pinned to full commit SHAs with source-version comments.
+- GitHub Actions workflow references are pinned to full commit SHAs with source-version comments, and workflow token permissions stay least-privilege.
 - Static bundle output stays within the documented performance budgets.
 - Generated PWA artifacts pass the static-asset-only service worker check.
 - Lighthouse CI stays within the documented performance, accessibility, best-practice, and SEO thresholds for the Pages-shaped build.
@@ -167,7 +167,7 @@ After pushing:
 - Node/npm runtime upgrades should update `.nvmrc`, package engines, workflow behavior, docs, and ADRs together.
 - Dependency PRs are not ready to merge until `npm run verify` and remote CodeQL checks pass on the branch.
 - Dependency PRs that introduce new licenses should explain why the license is acceptable before updating the policy.
-- GitHub Actions updates should preserve full-SHA pinning and update the source-version comment in the same change.
+- GitHub Actions updates should preserve full-SHA pinning, update the source-version comment, and keep token permissions least-privilege in the same change.
 
 ## License Compliance
 
@@ -178,7 +178,7 @@ After pushing:
 ## Security Scanning
 
 - `npm run security:audit` blocks high and critical advisories from the release gate.
-- `npm run security:workflows` blocks floating GitHub Actions refs in workflow files.
+- `npm run security:workflows` blocks floating GitHub Actions refs and unreviewed token-permission drift in workflow files.
 - `npm run security:policy` verifies the built HTML Content Security Policy after `npm run build:pages`.
 - CodeQL scans JavaScript and TypeScript on pushes, pull requests, and a weekly schedule.
 - Import/export parsing, storage migration, future auth, future sync, and future backend boundaries should be treated as security-sensitive areas.

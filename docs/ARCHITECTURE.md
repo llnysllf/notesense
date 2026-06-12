@@ -42,6 +42,7 @@ NoteSense is currently a local-first React application. The product goal is to k
 - `tsconfig.json` and `tsconfig.node.json` own the strict TypeScript contract for app code and project tooling.
 - `docs/PRIVACY.md` documents the current local-first privacy and data-handling boundary.
 - `scripts/check-workflow-actions.mjs` owns GitHub Actions reference pinning policy enforcement.
+- `scripts/check-workflow-permissions.mjs` owns GitHub Actions token-permission policy enforcement.
 
 ## Quality Bar
 
@@ -61,7 +62,7 @@ Every feature should keep these expectations intact:
 - Unexpected render failures should show the app-level recovery screen instead of leaving a blank product surface.
 - Accessibility is part of the feature definition, not a final cleanup step.
 - Dependency license compliance is part of supply-chain readiness.
-- Workflow action pinning is part of supply-chain readiness; action refs should use full commit SHAs with source-version comments.
+- Workflow action pinning and least-privilege token permissions are part of supply-chain readiness; action refs should use full commit SHAs with source-version comments.
 - Security scanning is part of release readiness, especially for dependency, import/export, auth, sync, and backend-boundary changes.
 - The production HTML shell should carry a verified Content Security Policy before release.
 - Performance budgets are part of release readiness so the practice app stays fast as scope grows.
