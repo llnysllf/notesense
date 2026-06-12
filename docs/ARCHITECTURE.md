@@ -19,7 +19,7 @@ NoteSense is currently a local-first React application. The product goal is to k
 - `e2e/pages-smoke.spec.ts` covers the GitHub Pages build at the `/notesense/` base path.
 - `e2e/visual.spec.ts` covers visual regression for the note-reading and pitch-training shells across desktop/mobile and light/dark themes.
 - Playwright workflow configs block service workers so UI behavior tests are not coupled to cache lifecycle timing; PWA correctness is verified by generated-artifact and live-deployment checks.
-- `.github/workflows` owns the CI, CodeQL, and Pages deployment gates.
+- `.github/workflows` owns the CI, CodeQL, Dependency Review, and Pages deployment gates.
 - `.github/workflows/visual-regression.yml` owns the macOS Chromium visual-regression gate so screenshot baselines use the same platform family as the committed snapshots.
 - `.github/workflows/lighthouse.yml` owns Lighthouse scoring for the deployment-shaped Pages build.
 - `docs/adr` records architecture decisions that should survive beyond a single implementation pass.
@@ -62,6 +62,7 @@ Every feature should keep these expectations intact:
 - Unexpected render failures should show the app-level recovery screen instead of leaving a blank product surface.
 - Accessibility is part of the feature definition, not a final cleanup step.
 - Dependency license compliance is part of supply-chain readiness.
+- Dependency Review is part of pull-request supply-chain readiness for dependency and lockfile changes.
 - Workflow action pinning and least-privilege token permissions are part of supply-chain readiness; action refs should use full commit SHAs with source-version comments.
 - Security scanning is part of release readiness, especially for dependency, import/export, auth, sync, and backend-boundary changes.
 - The production HTML shell should carry a verified Content Security Policy before release.

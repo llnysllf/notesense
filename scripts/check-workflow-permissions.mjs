@@ -11,6 +11,10 @@ const EXPECTED_PERMISSIONS = {
     jobs: {},
     topLevel: { actions: "read", contents: "read", "security-events": "write" },
   },
+  ".github/workflows/dependency-review.yml": {
+    jobs: {},
+    topLevel: { contents: "read" },
+  },
   ".github/workflows/deploy-pages.yml": {
     jobs: {
       build: { contents: "read" },

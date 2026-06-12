@@ -28,6 +28,7 @@ Useful details include:
 - Run `npm run security:policy` after a Pages build when HTML shell, Vite build, runtime API, or asset-category behavior changes.
 - Run `npm run verify` before release so high-severity dependency advisories are caught.
 - Treat CodeQL findings as release-blocking unless they are reviewed and explicitly accepted.
+- Treat Dependency Review failures as release-blocking for pull requests that change dependencies.
 - Treat import/export parsing as an untrusted input boundary.
 - Treat future account, sync, and backend features as security-sensitive changes requiring tests and review.
 - Do not connect the browser app directly to a database; future persistence must go through a reviewed backend API.

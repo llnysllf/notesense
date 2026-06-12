@@ -24,6 +24,7 @@ const requiredSnippets = [
       "`npm run docs:check` verifies that privacy, security, release, architecture, and contribution docs stay linked and aligned, and that local Markdown links plus documented npm scripts still resolve.",
       "`npm run runtime:check` verifies the built app and source stay inside the documented local-first runtime boundary.",
       "`npm run security:workflows` verifies that GitHub Actions references are pinned to immutable commit SHAs and that workflow token permissions stay least-privilege.",
+      "Dependency Review scans pull requests for high-severity vulnerable dependency changes and invalid license changes before merge.",
     ],
   },
   {
@@ -32,6 +33,7 @@ const requiredSnippets = [
       "Privacy and data handling expectations live in [docs/PRIVACY.md](docs/PRIVACY.md).",
       "Future account, sync, and backend work should also follow [docs/THREAT_MODEL.md](docs/THREAT_MODEL.md) and [docs/BACKEND_READINESS.md](docs/BACKEND_READINESS.md).",
       "Keep GitHub Actions pinned to reviewed commit SHAs with least-privilege token permissions; run `npm run security:workflows` after workflow edits.",
+      "Treat Dependency Review failures as release-blocking for pull requests that change dependencies.",
       "Treat import/export parsing as an untrusted input boundary.",
       "Treat future account, sync, and backend features as security-sensitive changes requiring tests and review.",
       "Do not connect the browser app directly to a database; future persistence must go through a reviewed backend API.",
@@ -43,6 +45,7 @@ const requiredSnippets = [
     snippets: [
       "Run the full local gate:",
       "npm run verify",
+      "Keep dependency changes passing Dependency Review before merge.",
       "Keep workflow action refs pinned to full commit SHAs, document the source version tag in a comment, and keep workflow token permissions least-privilege.",
       "Do not add sign-in, sync, PostgreSQL, or AWS services without updating the threat model and backend-readiness docs first.",
       "Update [docs/PRIVACY.md](docs/PRIVACY.md) when a change affects account data, sync, storage, import/export, analytics, or network behavior.",
@@ -78,6 +81,7 @@ const requiredSnippets = [
       "Documentation links, anchors, and documented npm script references stay resolvable.",
       "Runtime surface checks pass for client network APIs, cookies, telemetry beacons, websockets, and external URLs.",
       "Built HTML security policy checks pass before release.",
+      "Dependency Review passes for pull requests that introduce dependency or lockfile changes.",
       "GitHub Actions workflow references are pinned to full commit SHAs with source-version comments, and workflow token permissions stay least-privilege.",
       "`npm run docs:check` verifies that policy and governance docs remain linked and aligned.",
       "`npm run docs:check` also validates local Markdown links, anchors, and documented npm script references.",
@@ -90,6 +94,7 @@ const requiredSnippets = [
     snippets: [
       "Treat privacy and data-handling docs as release evidence when storage, import/export, analytics, network, account, or sync behavior changes.",
       "Treat threat-model and backend-readiness docs as release evidence before auth, API, database, sync, PostgreSQL, or cloud infrastructure changes.",
+      "Treat Dependency Review results as pull-request supply-chain release evidence when dependencies or lockfiles change.",
       "Treat workflow action pinning and token-permission results as supply-chain release evidence when GitHub Actions workflows change.",
       "Treat documentation integrity results as release evidence when docs, file paths, anchors, or npm scripts change.",
       "Treat runtime surface results as release evidence when client APIs, URLs, analytics, network, auth, or sync behavior changes.",
@@ -106,6 +111,7 @@ const requiredSnippets = [
       "`docs/THREAT_MODEL.md` documents current and future security boundaries before account or sync work begins.",
       "`docs/BACKEND_READINESS.md` documents the service, API, data-model, sync, and PostgreSQL path for future backend work.",
       "Privacy expectations must stay aligned with local storage, import/export, future auth, sync, analytics, and network behavior.",
+      "Dependency Review is part of pull-request supply-chain readiness for dependency and lockfile changes.",
       "`vite.config.ts` injects the production Content Security Policy meta tag during build.",
       "`scripts/check-workflow-actions.mjs` owns GitHub Actions reference pinning policy enforcement.",
       "`scripts/check-workflow-permissions.mjs` owns GitHub Actions token-permission policy enforcement.",

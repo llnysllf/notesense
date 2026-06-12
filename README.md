@@ -4,6 +4,7 @@
 [![Visual Regression](https://github.com/llnysllf/notesense/actions/workflows/visual-regression.yml/badge.svg)](https://github.com/llnysllf/notesense/actions/workflows/visual-regression.yml)
 [![Deploy Pages](https://github.com/llnysllf/notesense/actions/workflows/deploy-pages.yml/badge.svg)](https://github.com/llnysllf/notesense/actions/workflows/deploy-pages.yml)
 [![CodeQL](https://github.com/llnysllf/notesense/actions/workflows/codeql.yml/badge.svg)](https://github.com/llnysllf/notesense/actions/workflows/codeql.yml)
+[![Dependency Review](https://github.com/llnysllf/notesense/actions/workflows/dependency-review.yml/badge.svg)](https://github.com/llnysllf/notesense/actions/workflows/dependency-review.yml)
 
 NoteSense is a small piano sight-reading and ear-training app for beginner musicians. It focuses on two practical habits: reading notes on starter treble and bass staffs and recognizing natural piano pitches by ear, then adapts practice toward weak notes and pitches.
 
@@ -260,6 +261,7 @@ npm run deploy:verify-live
 - TypeScript runs with strict optional-property, indexed-access, override, and unused-code checks enabled.
 - `npm run docs:check` verifies that privacy, security, release, architecture, and contribution docs stay linked and aligned, and that local Markdown links plus documented npm scripts still resolve.
 - `npm run compliance:licenses` checks dependency licenses from the lockfile against the project policy.
+- Dependency Review scans pull requests for high-severity vulnerable dependency changes and invalid license changes before merge.
 - ESLint enforces TypeScript, React hooks, React refresh, and JSX accessibility rules with zero warnings allowed.
 - Prettier formatting is enforced before the test suite runs.
 - `npm run verify` includes a high-severity npm audit gate before release.
@@ -283,6 +285,7 @@ npm run deploy:verify-live
 - `npm run perf:budget` keeps the static Pages output within explicit raw and gzip size budgets.
 - GitHub Actions run formatting, linting, typechecking, unit tests, and browser tests on every push and pull request.
 - CodeQL scans JavaScript and TypeScript security issues on pushes, pull requests, and a weekly schedule.
+- Dependency Review scans dependency changes on pull requests before they can merge.
 - Pull requests also build the GitHub Pages artifact and upload browser failure artifacts for debugging.
 - Dependabot keeps npm minor/patch updates and GitHub Actions dependencies on a weekly maintenance cadence; major npm upgrades are handled as intentional engineering tasks.
 - CODEOWNERS, issue templates, ADRs, and the release guide keep review, planning, and deployment expectations explicit.
