@@ -14,7 +14,7 @@ NoteSense currently releases from `main` to GitHub Pages. The release process is
 - Keep the pinned Node/npm runtime consistent across local setup, CI, deployment, and dependency maintenance.
 - Treat dependency license results as supply-chain release evidence.
 - Treat Dependency Review results as pull-request supply-chain release evidence when dependencies or lockfiles change.
-- Treat workflow action pinning and token-permission results as supply-chain release evidence when GitHub Actions workflows change.
+- Treat workflow action pinning, token-permission, timeout, concurrency, and artifact-retention results as supply-chain and operations release evidence when GitHub Actions workflows change.
 - Treat repository governance results as operational release evidence when branch protection, required checks, repository security settings, Pages, or workflow activation changes.
 - Treat dependency audit and CodeQL results as release evidence.
 - Treat built browser security policy results as release evidence when HTML shell, Vite build, runtime APIs, or asset categories change.
@@ -85,6 +85,7 @@ For dependency changes, inspect:
 - Whether the `Dependency Review` workflow passed on the pull request.
 - Whether `npm run compliance:licenses` still passes.
 - Whether `npm run security:workflows` still passes after workflow changes.
+- Whether workflow artifact retention remains short enough for debugging without keeping browser traces longer than needed.
 - Whether `npm run ops:repository` still passes after branch protection, required-check, repository security, Pages, or workflow-activation changes.
 - Whether any new license needs explicit policy review.
 - Whether `.nvmrc`, package engines, GitHub Actions, and docs stay aligned for runtime changes.

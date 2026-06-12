@@ -33,6 +33,7 @@ A change is done when:
 - Dependency licenses pass the lockfile compliance policy.
 - Dependency Review passes for pull requests that introduce dependency or lockfile changes.
 - GitHub Actions workflow references are pinned to full commit SHAs with source-version comments, and workflow token permissions stay least-privilege.
+- GitHub Actions workflows keep reviewed concurrency, timeout, and artifact-retention controls.
 - GitHub repository governance checks pass after branch protection, repository security, Pages, required-check, or workflow-activation changes.
 - Static bundle output stays within the documented performance budgets.
 - Generated PWA artifacts pass the static-asset-only service worker check.
@@ -87,6 +88,7 @@ For visual QA:
 - Confirm `npm run pwa:check` passes when service worker generation, static assets, or offline behavior changes.
 - Confirm `npm run runtime:check` passes when client runtime APIs, URLs, privacy boundaries, or build references change.
 - Confirm bundle growth is intentional when `npm run perf:budget` changes or fails.
+- Confirm `npm run security:workflows` passes after workflow action, permission, timeout, concurrency, or artifact-retention changes.
 - Confirm `npm run test:coverage` passes when practice-engine, analytics, or storage behavior changes.
 - Confirm `npm run test:coverage` passes when shared data contracts or reusable UI component states change.
 - Confirm `npm run test:e2e:resilience` passes when app shell, error-boundary, or root rendering behavior changes.
@@ -172,7 +174,7 @@ After pushing:
 - Node/npm runtime upgrades should update `.nvmrc`, package engines, workflow behavior, docs, and ADRs together.
 - Dependency PRs are not ready to merge until `npm run verify`, Dependency Review, and remote CodeQL checks pass on the branch.
 - Dependency PRs that introduce new licenses should explain why the license is acceptable before updating the policy.
-- GitHub Actions updates should preserve full-SHA pinning, update the source-version comment, and keep token permissions least-privilege in the same change.
+- GitHub Actions updates should preserve full-SHA pinning, update the source-version comment, keep token permissions least-privilege, and retain reviewed operational controls in the same change.
 
 ## License Compliance
 
@@ -183,7 +185,7 @@ After pushing:
 ## Security Scanning
 
 - `npm run security:audit` blocks high and critical advisories from the release gate.
-- `npm run security:workflows` blocks floating GitHub Actions refs and unreviewed token-permission drift in workflow files.
+- `npm run security:workflows` blocks floating GitHub Actions refs, unreviewed token-permission drift, missing concurrency controls, unbounded job runtimes, and excessive artifact retention in workflow files.
 - `npm run security:policy` verifies the built HTML Content Security Policy after `npm run build:pages`.
 - Dependency Review blocks high-severity vulnerable dependency additions and invalid dependency licenses on pull requests.
 - CodeQL scans JavaScript and TypeScript on pushes, pull requests, and a weekly schedule.
@@ -195,6 +197,13 @@ After pushing:
 - The check covers public visibility, the default branch, Pages, secret scanning, push protection, Dependabot security updates, vulnerability alerts, branch protection, required checks, review policy, and active workflows.
 - This check is intentionally separate from `npm run verify` because it requires GitHub authentication and network access.
 - Run it after branch protection, required status checks, repository security settings, Pages settings, or workflow activation changes.
+
+## Workflow Operations
+
+- `npm run security:workflow-operations` verifies GitHub Actions workflows have a top-level concurrency policy with cancellation enabled.
+- Every workflow job must declare `timeout-minutes` between 1 and 20.
+- Debug artifact uploads through `actions/upload-artifact` must use `if-no-files-found: ignore` and retention of 14 days or less.
+- Workflow operational policy changes should be reviewed with the same care as token permissions because they affect cost, queue health, and failure-data retention.
 
 ## Browser Security Policy
 
