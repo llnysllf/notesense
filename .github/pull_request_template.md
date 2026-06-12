@@ -12,6 +12,7 @@
 - [ ] Dependency license changes are intentional and explained.
 - [ ] Dependency Review impact was considered for dependency and lockfile changes.
 - [ ] Workflow changes keep action refs pinned to full commit SHAs and token permissions least-privilege.
+- [ ] Repository governance impact was considered for branch protection, security settings, Pages, required checks, and workflow activation.
 - [ ] Security impact was considered for dependency, import/export, storage, future auth, future sync, and workflow changes.
 - [ ] Privacy/data handling impact was considered for storage, import/export, analytics, future auth, future sync, and network behavior.
 - [ ] Bundle budget changes are intentional and explained.

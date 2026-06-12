@@ -7,6 +7,7 @@ All notable changes to NoteSense are documented here. The format follows [Keep a
 ### Added
 
 - GitHub Actions workflow policy gates that require immutable action references and least-privilege token permissions
+- GitHub repository governance check for branch protection, required checks, repository security settings, vulnerability alerts, Pages, and active workflows
 - Dependency Review workflow for pull requests that introduce dependency or lockfile changes
 - Live deployment verifier now checks the deployed service worker, Workbox runtime, and static precache contract after release
 - Visual regression workflow for desktop/mobile and light/dark note-reading and pitch-training shells

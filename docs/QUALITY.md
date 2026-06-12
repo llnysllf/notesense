@@ -33,6 +33,7 @@ A change is done when:
 - Dependency licenses pass the lockfile compliance policy.
 - Dependency Review passes for pull requests that introduce dependency or lockfile changes.
 - GitHub Actions workflow references are pinned to full commit SHAs with source-version comments, and workflow token permissions stay least-privilege.
+- GitHub repository governance checks pass after branch protection, repository security, Pages, required-check, or workflow-activation changes.
 - Static bundle output stays within the documented performance budgets.
 - Generated PWA artifacts pass the static-asset-only service worker check.
 - Lighthouse CI stays within the documented performance, accessibility, best-practice, and SEO thresholds for the Pages-shaped build.
@@ -91,6 +92,7 @@ For visual QA:
 - Confirm `npm run test:e2e:resilience` passes when app shell, error-boundary, or root rendering behavior changes.
 - Confirm `npm run test:e2e:pages` passes when deployment base path, build output, or preview behavior changes.
 - Confirm `npm run test:e2e:visual` passes when protected shell layout, color, spacing, typography, or component appearance changes.
+- Confirm `npm run ops:repository` passes after branch protection, repository security, Pages, required-check, or workflow-activation changes.
 
 ## Accessibility Checklist
 
@@ -161,6 +163,7 @@ After pushing:
 - Confirm the `Deploy Pages` workflow succeeds.
 - Confirm the `Lighthouse` workflow succeeds when UI, PWA, metadata, bundle, or deployment-shape behavior changes.
 - Run `npm run deploy:verify-live`.
+- Run `npm run ops:repository` after repository governance changes.
 
 ## Dependency Maintenance
 
@@ -185,6 +188,13 @@ After pushing:
 - Dependency Review blocks high-severity vulnerable dependency additions and invalid dependency licenses on pull requests.
 - CodeQL scans JavaScript and TypeScript on pushes, pull requests, and a weekly schedule.
 - Import/export parsing, storage migration, future auth, future sync, and future backend boundaries should be treated as security-sensitive areas.
+
+## Repository Governance
+
+- `npm run ops:repository` verifies GitHub repository settings through `gh`.
+- The check covers public visibility, the default branch, Pages, secret scanning, push protection, Dependabot security updates, vulnerability alerts, branch protection, required checks, review policy, and active workflows.
+- This check is intentionally separate from `npm run verify` because it requires GitHub authentication and network access.
+- Run it after branch protection, required status checks, repository security settings, Pages settings, or workflow activation changes.
 
 ## Browser Security Policy
 

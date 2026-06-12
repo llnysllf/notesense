@@ -34,6 +34,7 @@ npm run test:e2e:visual:update
 - Keep dependency license changes intentional; explain new licenses before updating the allowlist.
 - Keep dependency changes passing Dependency Review before merge.
 - Keep workflow action refs pinned to full commit SHAs, document the source version tag in a comment, and keep workflow token permissions least-privilege.
+- Run `npm run ops:repository` after branch protection, repository security, Pages, required-check, or workflow-activation changes.
 - Keep bundle growth intentional; budget increases need a clear reason in the PR.
 - Prefer small, shippable changes with clear user value or clear maintainability value.
 - Do not add network services, auth, or cloud storage without preserving the current local-first practice loop.

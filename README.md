@@ -235,6 +235,12 @@ Verify the live GitHub Pages deployment after pushing:
 npm run deploy:verify-live
 ```
 
+Verify GitHub repository governance after branch protection, workflow, or security-setting changes:
+
+```bash
+npm run ops:repository
+```
+
 ## Engineering Notes
 
 - Practice selection and summary logic live in `src/practiceEngine.ts` so the learning behavior can be tested outside React.
@@ -262,6 +268,7 @@ npm run deploy:verify-live
 - `npm run docs:check` verifies that privacy, security, release, architecture, and contribution docs stay linked and aligned, and that local Markdown links plus documented npm scripts still resolve.
 - `npm run compliance:licenses` checks dependency licenses from the lockfile against the project policy.
 - Dependency Review scans pull requests for high-severity vulnerable dependency changes and invalid license changes before merge.
+- `npm run ops:repository` verifies branch protection, required checks, repository security settings, vulnerability alerts, Pages, and active workflows against the reviewed governance policy.
 - ESLint enforces TypeScript, React hooks, React refresh, and JSX accessibility rules with zero warnings allowed.
 - Prettier formatting is enforced before the test suite runs.
 - `npm run verify` includes a high-severity npm audit gate before release.
@@ -288,7 +295,7 @@ npm run deploy:verify-live
 - Dependency Review scans dependency changes on pull requests before they can merge.
 - Pull requests also build the GitHub Pages artifact and upload browser failure artifacts for debugging.
 - Dependabot keeps npm minor/patch updates and GitHub Actions dependencies on a weekly maintenance cadence; major npm upgrades are handled as intentional engineering tasks.
-- CODEOWNERS, issue templates, ADRs, and the release guide keep review, planning, and deployment expectations explicit.
+- CODEOWNERS, issue templates, ADRs, repository governance checks, and the release guide keep review, planning, and deployment expectations explicit.
 - The `main` branch publishes a static production build to GitHub Pages.
 
 ## Current Scope
