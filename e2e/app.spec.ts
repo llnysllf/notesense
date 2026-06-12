@@ -55,6 +55,23 @@ test("runs the note-reading practice loop", async ({ page }) => {
   await expect(page.getByRole("listitem", { name: /Note reading session/ })).toBeVisible();
 });
 
+test("answers with keyboard shortcuts in both practice modes", async ({ page }) => {
+  await page.goto("/", { waitUntil: "domcontentloaded" });
+
+  const roundTile = page.locator(".round-strip .stat-tile").filter({ hasText: "Round" });
+
+  await page.getByRole("button", { name: "Start drill" }).click();
+  await page.keyboard.press("1");
+  await expect(page.getByTestId("practice-feedback")).not.toHaveText("Listening");
+  await expect(roundTile).toContainText("/1");
+
+  await page.getByRole("button", { name: "Pitch training" }).click();
+  await page.getByRole("button", { name: "Start drill" }).click();
+  await page.keyboard.press("7");
+  await expect(page.getByTestId("practice-feedback")).not.toHaveText("Listening");
+  await expect(roundTile).toContainText("/1");
+});
+
 test("switches to bass clef reading practice", async ({ page }) => {
   await page.goto("/", { waitUntil: "domcontentloaded" });
 
