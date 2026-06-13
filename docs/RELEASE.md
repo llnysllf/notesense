@@ -21,6 +21,7 @@ NoteSense currently releases from `main` to GitHub Pages. The release process is
 - Treat workflow action pinning, token-permission, timeout, concurrency, and artifact-retention results as supply-chain and operations release evidence when GitHub Actions workflows change.
 - Treat repository governance results as operational release evidence when branch protection, required checks, repository security settings, Pages, or workflow activation changes.
 - Treat operations docs as release evidence when release-health signals, incident response, deployment ownership, monitoring, telemetry, or support expectations change.
+- Treat release notes as release evidence when user-visible behavior, architecture boundaries, quality gates, dependencies, security posture, operations, or package version metadata change.
 - Treat dependency audit and CodeQL results as release evidence.
 - Treat built browser security policy results as release evidence when HTML shell, Vite build, runtime APIs, or asset categories change.
 - Treat bundle budget results as performance release evidence.
@@ -52,6 +53,7 @@ Confirm policy docs and documentation integrity remain aligned:
 ```bash
 npm run repo:hygiene
 npm run docs:check
+npm run release:notes
 ```
 
 Confirm the built client stays inside the expected runtime surface:
@@ -98,6 +100,7 @@ For dependency changes, inspect:
 - Whether `npm run ops:repository` still passes after branch protection, required-check, repository security, Pages, or workflow-activation changes.
 - Whether any new license needs explicit policy review.
 - Whether `.nvmrc`, package engines, GitHub Actions, and docs stay aligned for runtime changes.
+- Whether `CHANGELOG.md` explains release-relevant dependency, runtime, or tooling changes.
 - Whether `npm run security:policy` still passes after the Pages build.
 - Browser test behavior after Playwright, Vite, Vitest, ESLint, or TypeScript updates.
 
@@ -131,6 +134,8 @@ For deployment-path changes, inspect:
 ## Push And Deployment
 
 Push to `main` only after the local gate passes.
+
+Before cutting a release, move relevant `[Unreleased]` entries in `CHANGELOG.md` into a dated version section that matches `package.json`.
 
 After pushing:
 

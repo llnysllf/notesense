@@ -51,6 +51,7 @@ npm run test:e2e:visual:update
 - Do not add sign-in, sync, PostgreSQL, or AWS services without updating the threat model and backend-readiness docs first.
 - Update [docs/PRIVACY.md](docs/PRIVACY.md) when a change affects account data, sync, storage, import/export, analytics, or network behavior.
 - Keep runtime changes explicit: update `.nvmrc`, `package.json` engines, GitHub Actions behavior, and ADRs together.
+- Keep release notes aligned with user-visible, architecture, release, security, dependency, and operations changes; run `npm run release:notes` after editing `CHANGELOG.md` or `package.json` version metadata.
 - Record meaningful architecture decisions in `docs/adr` when a change affects data ownership, deployment, quality gates, or future backend boundaries.
 
 ## Pull Request Shape

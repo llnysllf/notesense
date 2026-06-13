@@ -30,6 +30,7 @@ A change is done when:
 - Threat model and backend-readiness docs stay aligned before account, API, database, sync, or cloud infrastructure work begins.
 - Documentation links, anchors, and documented npm script references stay resolvable.
 - Operations docs stay aligned when release-health signals, incident response, deployment ownership, monitoring, telemetry, or support expectations change.
+- Release notes pass `npm run release:notes` when `CHANGELOG.md`, package version metadata, or release-relevant behavior changes.
 - Repository hygiene checks pass so required configuration files stay present and generated, dependency, secret, or local artifact files stay untracked.
 - Runtime surface checks pass for client network APIs, cookies, telemetry beacons, websockets, and external URLs.
 - Built HTML security policy checks pass before release.
@@ -85,6 +86,12 @@ For policy documentation feedback:
 
 ```bash
 npm run docs:check
+```
+
+For release-note feedback:
+
+```bash
+npm run release:notes
 ```
 
 For visual QA:
@@ -192,6 +199,7 @@ Before pushing to `main`:
 
 - `npm run verify`
 - Review the diff for unrelated churn.
+- Confirm `npm run release:notes` passes when release notes or package version metadata change.
 - Confirm generated folders such as `dist`, `playwright-report`, and `test-results` remain untracked.
 
 After pushing:

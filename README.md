@@ -123,6 +123,12 @@ Run the architecture-boundary contract check:
 npm run architecture:check
 ```
 
+Run the release-notes contract check:
+
+```bash
+npm run release:notes
+```
+
 Run the unit coverage gate for core practice and storage logic:
 
 ```bash
@@ -301,6 +307,7 @@ npm run ops:repository
 - `npm run repo:hygiene` verifies required repository configuration and blocks generated, dependency, secret, and local artifact files from being tracked.
 - TypeScript runs with strict optional-property, indexed-access, override, and unused-code checks enabled.
 - `npm run docs:check` verifies that privacy, security, release, architecture, design-system, and contribution docs stay linked and aligned, and that local Markdown links plus documented npm scripts still resolve.
+- `npm run release:notes` verifies that `CHANGELOG.md` stays aligned with `package.json` versioning and the Keep a Changelog release structure.
 - `npm run compliance:licenses` checks dependency licenses from the lockfile against the project policy.
 - `npm run security:lockfile` verifies the committed npm lockfile uses registry HTTPS tarballs, `sha512` integrity hashes, aligned root metadata, and the expected npm lockfile version.
 - Dependency Review scans pull requests for high-severity vulnerable dependency changes and invalid license changes before merge.
