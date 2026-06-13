@@ -10,6 +10,7 @@ const requiredFiles = [
   "docs/QUALITY.md",
   "docs/DESIGN_SYSTEM.md",
   "docs/RELEASE.md",
+  "docs/OPERATIONS.md",
   "docs/THREAT_MODEL.md",
   "docs/BACKEND_READINESS.md",
 ];
@@ -20,6 +21,7 @@ const requiredSnippets = [
     snippets: [
       "Privacy and data handling: [docs/PRIVACY.md](docs/PRIVACY.md)",
       "Design system: [docs/DESIGN_SYSTEM.md](docs/DESIGN_SYSTEM.md)",
+      "Operations runbook: [docs/OPERATIONS.md](docs/OPERATIONS.md)",
       "Threat model: [docs/THREAT_MODEL.md](docs/THREAT_MODEL.md)",
       "Backend readiness: [docs/BACKEND_READINESS.md](docs/BACKEND_READINESS.md)",
       "Security policy: [SECURITY.md](SECURITY.md)",
@@ -30,11 +32,13 @@ const requiredSnippets = [
       "`npm run security:workflows` verifies that GitHub Actions references are pinned to immutable commit SHAs, workflow token permissions stay least-privilege, and workflow operations keep concurrency, timeout, and artifact-retention controls.",
       "Dependency Review scans pull requests for high-severity vulnerable dependency changes and invalid license changes before merge.",
       "`npm run ops:repository` verifies branch protection, required checks, repository security settings, vulnerability alerts, Pages, and active workflows against the reviewed governance policy.",
+      "`docs/OPERATIONS.md` defines release-health signals, post-release verification, incident triggers, triage, rollback, evidence handling, and future observability expectations.",
     ],
   },
   {
     file: "SECURITY.md",
     snippets: [
+      "Operational health and incident-response expectations live in [docs/OPERATIONS.md](docs/OPERATIONS.md).",
       "Privacy and data handling expectations live in [docs/PRIVACY.md](docs/PRIVACY.md).",
       "Future account, sync, and backend work should also follow [docs/THREAT_MODEL.md](docs/THREAT_MODEL.md) and [docs/BACKEND_READINESS.md](docs/BACKEND_READINESS.md).",
       "Keep GitHub Actions pinned to reviewed commit SHAs with least-privilege token permissions, bounded runtimes, concurrency cancellation, and reviewed artifact retention; run `npm run security:workflows` after workflow edits.",
@@ -56,6 +60,7 @@ const requiredSnippets = [
       "Keep workflow action refs pinned to full commit SHAs, document the source version tag in a comment, and keep workflow token permissions least-privilege.",
       "Run `npm run ops:repository` after branch protection, repository security, Pages, required-check, or workflow-activation changes.",
       "Keep shared contracts, practice logic, storage, hooks, and components inside the documented import boundaries; run `npm run architecture:check` after moving source responsibilities.",
+      "Update [docs/OPERATIONS.md](docs/OPERATIONS.md) when a change affects release-health signals, incident response, deployment ownership, monitoring, telemetry, or support expectations.",
       "Do not add sign-in, sync, PostgreSQL, or AWS services without updating the threat model and backend-readiness docs first.",
       "Update [docs/PRIVACY.md](docs/PRIVACY.md) when a change affects account data, sync, storage, import/export, analytics, or network behavior.",
     ],
@@ -64,6 +69,7 @@ const requiredSnippets = [
     file: ".github/pull_request_template.md",
     snippets: [
       "Privacy/data handling impact was considered for storage, import/export, analytics, future auth, future sync, and network behavior.",
+      "Operations impact was considered for release-health signals, incident response, monitoring, telemetry, support, and rollback expectations.",
     ],
   },
   {
@@ -89,6 +95,7 @@ const requiredSnippets = [
       "Source import boundaries pass `npm run architecture:check` when shared contracts, practice logic, storage, hooks, components, or app-shell responsibilities change.",
       "Threat model and backend-readiness docs stay aligned before account, API, database, sync, or cloud infrastructure work begins.",
       "Documentation links, anchors, and documented npm script references stay resolvable.",
+      "Operations docs stay aligned when release-health signals, incident response, deployment ownership, monitoring, telemetry, or support expectations change.",
       "Design-system docs and `npm run design:check` stay aligned when layout, color, spacing, typography, or component states change.",
       "Repository hygiene checks pass so required configuration files stay present and generated, dependency, secret, or local artifact files stay untracked.",
       "Runtime surface checks pass for client network APIs, cookies, telemetry beacons, websockets, and external URLs.",
@@ -112,6 +119,7 @@ const requiredSnippets = [
       "Treat Dependency Review results as pull-request supply-chain release evidence when dependencies or lockfiles change.",
       "Treat workflow action pinning, token-permission, timeout, concurrency, and artifact-retention results as supply-chain and operations release evidence when GitHub Actions workflows change.",
       "Treat repository governance results as operational release evidence when branch protection, required checks, repository security settings, Pages, or workflow activation changes.",
+      "Treat operations docs as release evidence when release-health signals, incident response, deployment ownership, monitoring, telemetry, or support expectations change.",
       "Treat documentation integrity results as release evidence when docs, file paths, anchors, or npm scripts change.",
       "Treat design-system results as UI release evidence when tokens, component states, responsive behavior, typography, or visual-regression coverage changes.",
       "Treat runtime surface results as release evidence when client APIs, URLs, analytics, network, auth, or sync behavior changes.",
@@ -128,6 +136,7 @@ const requiredSnippets = [
       "`docs/THREAT_MODEL.md` documents current and future security boundaries before account or sync work begins.",
       "`docs/BACKEND_READINESS.md` documents the service, API, data-model, sync, and PostgreSQL path for future backend work.",
       "`docs/DESIGN_SYSTEM.md` documents the design-token, component-state, accessibility, and visual-regression contract for UI changes.",
+      "`docs/OPERATIONS.md` documents release-health signals, incident response, rollback, evidence handling, and future observability expectations.",
       "Privacy expectations must stay aligned with local storage, import/export, future auth, sync, analytics, and network behavior.",
       "`scripts/check-repository-hygiene.mjs` owns required root configuration, ignore-policy, runtime-policy, and tracked-artifact hygiene checks.",
       "`scripts/check-architecture-boundaries.mjs` owns source import-boundary checks for shared contracts, practice logic, storage, hooks, and UI components.",
@@ -152,6 +161,7 @@ const requiredSnippets = [
       "The browser app must never connect directly to PostgreSQL or any other database.",
       "Future account or cloud sync work must address:",
       "No direct browser connection to PostgreSQL or any database.",
+      "Observability plan for API errors, latency, and release health, aligned with [OPERATIONS.md](OPERATIONS.md).",
     ],
   },
   {
@@ -160,6 +170,23 @@ const requiredSnippets = [
       "React app -> Backend API -> Database",
       "PostgreSQL is a good future fit if NoteSense needs relational history, analytics, exports, deletion workflows, and durable backups.",
       "All endpoints must require authorization once accounts exist.",
+      "Extend the operations runbook with backend observability, rollback, and incident response details.",
+    ],
+  },
+  {
+    file: "docs/OPERATIONS.md",
+    snippets: [
+      "# Operations Runbook",
+      "## Supported Surface",
+      "## Health Signals",
+      "## Post-Release Verification",
+      "## Incident Triggers",
+      "## Triage Flow",
+      "## Rollback And Fix-Forward",
+      "## Current Observability Boundary",
+      "## Artifact And Evidence Handling",
+      "## Review Cadence",
+      "Do not add telemetry, monitoring SDKs, backend APIs, or third-party services without updating privacy, security, runtime-surface, release, threat-model, backend-readiness, and operations docs together.",
     ],
   },
 ];

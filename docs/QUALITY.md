@@ -29,6 +29,7 @@ A change is done when:
 - Privacy and data-handling docs stay aligned with local storage, import/export, analytics, network, auth, and sync behavior.
 - Threat model and backend-readiness docs stay aligned before account, API, database, sync, or cloud infrastructure work begins.
 - Documentation links, anchors, and documented npm script references stay resolvable.
+- Operations docs stay aligned when release-health signals, incident response, deployment ownership, monitoring, telemetry, or support expectations change.
 - Repository hygiene checks pass so required configuration files stay present and generated, dependency, secret, or local artifact files stay untracked.
 - Runtime surface checks pass for client network APIs, cookies, telemetry beacons, websockets, and external URLs.
 - Built HTML security policy checks pass before release.
@@ -244,6 +245,13 @@ After pushing:
 - The check covers public visibility, the default branch, Pages, secret scanning, push protection, Dependabot security updates, vulnerability alerts, branch protection, required checks, review policy, and active workflows.
 - This check is intentionally separate from `npm run verify` because it requires GitHub authentication and network access.
 - Run it after branch protection, required status checks, repository security settings, Pages settings, or workflow activation changes.
+
+## Operations Readiness
+
+- `docs/OPERATIONS.md` defines the supported production surface, release-health signals, post-release verification, incident triggers, triage flow, rollback expectations, current observability boundary, and future observability requirements.
+- Current operations rely on deterministic checks, GitHub Actions, public deployment verification, repository governance, and user reports rather than analytics or telemetry.
+- Update the runbook when release, deployment, PWA, repository-governance, security, privacy, backend-readiness, monitoring, telemetry, or support assumptions change.
+- Before accounts, sync, APIs, or managed storage ship, operations docs must cover client error reporting, service metrics, structured logs, alerts, data-workflow monitoring, rollback, and migration monitoring.
 
 ## Workflow Operations
 

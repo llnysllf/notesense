@@ -43,6 +43,7 @@ npm run test:e2e:visual:update
 - Keep durable UI patterns documented in [docs/DESIGN_SYSTEM.md](docs/DESIGN_SYSTEM.md) instead of adding one-off styles.
 - Keep workflow action refs pinned to full commit SHAs, document the source version tag in a comment, and keep workflow token permissions least-privilege.
 - Run `npm run ops:repository` after branch protection, repository security, Pages, required-check, or workflow-activation changes.
+- Update [docs/OPERATIONS.md](docs/OPERATIONS.md) when a change affects release-health signals, incident response, deployment ownership, monitoring, telemetry, or support expectations.
 - Keep bundle growth intentional; budget increases need a clear reason in the PR.
 - Keep generated outputs, dependency installs, local environment files, logs, and TypeScript build-info files untracked.
 - Prefer small, shippable changes with clear user value or clear maintainability value.

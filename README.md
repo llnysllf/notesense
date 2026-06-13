@@ -14,6 +14,7 @@ Architecture notes: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)
 Quality runbook: [docs/QUALITY.md](docs/QUALITY.md)
 Design system: [docs/DESIGN_SYSTEM.md](docs/DESIGN_SYSTEM.md)
 Release guide: [docs/RELEASE.md](docs/RELEASE.md)
+Operations runbook: [docs/OPERATIONS.md](docs/OPERATIONS.md)
 Privacy and data handling: [docs/PRIVACY.md](docs/PRIVACY.md)
 Threat model: [docs/THREAT_MODEL.md](docs/THREAT_MODEL.md)
 Backend readiness: [docs/BACKEND_READINESS.md](docs/BACKEND_READINESS.md)
@@ -324,6 +325,7 @@ npm run ops:repository
 - `npm run runtime:check` verifies the built app and source stay inside the documented local-first runtime boundary.
 - `npm run verify` is the single local gate before release, combining supply-chain policy checks, code quality, unit/browser tests, accessibility checks, the Pages build, PWA checks, bundle budgets, and the Pages smoke test.
 - `npm run deploy:verify-live` checks the public GitHub Pages deployment, metadata assets, service worker, Workbox runtime, and security policy after release.
+- `docs/OPERATIONS.md` defines release-health signals, post-release verification, incident triggers, triage, rollback, evidence handling, and future observability expectations.
 - `npm run perf:budget` keeps the static Pages output within explicit raw and gzip size budgets.
 - GitHub Actions run formatting, linting, typechecking, unit tests, and browser tests on every push and pull request.
 - CodeQL scans JavaScript and TypeScript security issues on pushes, pull requests, and a weekly schedule.

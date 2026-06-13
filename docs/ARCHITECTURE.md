@@ -26,6 +26,7 @@ NoteSense is currently a local-first React application. The product goal is to k
 - `docs/DESIGN_SYSTEM.md` documents the design-token, component-state, accessibility, and visual-regression contract for UI changes.
 - `docs/THREAT_MODEL.md` documents current and future security boundaries before account or sync work begins.
 - `docs/BACKEND_READINESS.md` documents the service, API, data-model, sync, and PostgreSQL path for future backend work.
+- `docs/OPERATIONS.md` documents release-health signals, incident response, rollback, evidence handling, and future observability expectations.
 - `.nvmrc`, package engines, and `.npmrc` define the shared Node/npm runtime for local development, CI, deployment, and dependency maintenance.
 - `vite.config.ts` injects the production Content Security Policy meta tag during build.
 - `vite.config.ts` also owns PWA service worker generation and Vitest browser-like component-test setup.
@@ -136,6 +137,7 @@ PostgreSQL should sit behind a backend API, never behind direct browser access. 
 - Keep component tests focused on accessibility labels, rendering contracts, and reusable presentation states.
 - Keep intentional failure-mode tests isolated from the normal browser workflow suite.
 - Keep repository operations, dependency updates, and release checks documented rather than tribal.
+- Keep operational runbooks aligned when release health, incident response, observability, support, or deployment ownership changes.
 - Keep documentation links, anchors, and referenced package scripts verifiable as the repo grows.
 - Keep license policy changes explicit and reviewed when dependencies change.
 - Keep runtime version changes aligned across `.nvmrc`, package engines, CI, and docs.

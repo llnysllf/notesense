@@ -7,6 +7,7 @@ Privacy and data handling expectations live in [docs/PRIVACY.md](docs/PRIVACY.md
 ## Supported Version
 
 The `main` branch and the GitHub Pages deployment are the supported version.
+Operational health and incident-response expectations live in [docs/OPERATIONS.md](docs/OPERATIONS.md).
 
 ## Reporting a Vulnerability
 
