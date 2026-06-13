@@ -18,6 +18,7 @@ Add a dependency license compliance gate:
 
 The current allowlist covers the licenses present in the lockfile:
 
+- 0BSD
 - Apache-2.0
 - BlueOak-1.0.0
 - BSD-2-Clause
@@ -26,6 +27,7 @@ The current allowlist covers the licenses present in the lockfile:
 - CC0-1.0
 - ISC
 - MIT
+- MIT-0
 - MPL-2.0
 - Python-2.0
 

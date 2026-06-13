@@ -3,6 +3,7 @@ import { readFileSync } from "node:fs";
 const LOCKFILE_PATH = "package-lock.json";
 
 const allowedLicenses = new Set([
+  "0BSD",
   "Apache-2.0",
   "BlueOak-1.0.0",
   "BSD-2-Clause",
