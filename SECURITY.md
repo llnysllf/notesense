@@ -23,7 +23,7 @@ Useful details include:
 
 - Do not introduce secrets into the repository.
 - Keep `.env` and local environment files ignored.
-- Keep GitHub Actions pinned to reviewed commit SHAs with least-privilege token permissions; run `npm run security:workflows` after workflow edits.
+- Keep GitHub Actions pinned to reviewed commit SHAs with least-privilege token permissions, bounded runtimes, concurrency cancellation, and reviewed artifact retention; run `npm run security:workflows` after workflow edits.
 - Keep `package-lock.json` committed from the pinned npm runtime; run `npm run security:lockfile` after dependency or runtime changes.
 - Run `npm run compliance:licenses` before release so dependency-license drift is caught.
 - Run `npm run security:policy` after a Pages build when HTML shell, Vite build, runtime API, or asset-category behavior changes.

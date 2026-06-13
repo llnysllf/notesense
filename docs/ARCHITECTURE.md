@@ -28,6 +28,7 @@ NoteSense is currently a local-first React application. The product goal is to k
 - `.nvmrc`, package engines, and `.npmrc` define the shared Node/npm runtime for local development, CI, deployment, and dependency maintenance.
 - `vite.config.ts` injects the production Content Security Policy meta tag during build.
 - `vite.config.ts` also owns PWA service worker generation and Vitest browser-like component-test setup.
+- `scripts/check-repository-hygiene.mjs` owns required root configuration, ignore-policy, runtime-policy, and tracked-artifact hygiene checks.
 - `scripts/check-licenses.mjs` owns dependency license policy enforcement.
 - `scripts/check-security-policy.mjs` owns built HTML security policy verification.
 - `scripts/check-policy-docs.mjs` owns policy document presence and alignment checks.
@@ -43,6 +44,7 @@ NoteSense is currently a local-first React application. The product goal is to k
 - `docs/PRIVACY.md` documents the current local-first privacy and data-handling boundary.
 - `scripts/check-workflow-actions.mjs` owns GitHub Actions reference pinning policy enforcement.
 - `scripts/check-workflow-permissions.mjs` owns GitHub Actions token-permission policy enforcement.
+- `scripts/check-workflow-operations.mjs` owns GitHub Actions concurrency, timeout, and artifact-retention policy enforcement.
 - `scripts/check-github-repository.mjs` owns GitHub repository governance drift detection for branch protection, required checks, security settings, Pages, vulnerability alerts, and active workflows.
 
 ## Quality Bar

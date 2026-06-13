@@ -179,6 +179,12 @@ npm run format:check
 npm run lint
 ```
 
+Run the repository hygiene check:
+
+```bash
+npm run repo:hygiene
+```
+
 Run the dependency security audit:
 
 ```bash
@@ -276,6 +282,7 @@ npm run ops:repository
 - The Pages build injects and verifies a Content Security Policy meta tag that restricts scripts, styles, images, connections, workers, media, manifests, forms, base URLs, and object embeds.
 - The runtime surface check rejects unreviewed client network APIs, cookies, telemetry beacons, websockets, and unapproved external URLs.
 - `.nvmrc`, package engines, and `.npmrc` keep local development, CI, deployment, and dependency maintenance on the same runtime contract.
+- `npm run repo:hygiene` verifies required repository configuration and blocks generated, dependency, secret, and local artifact files from being tracked.
 - TypeScript runs with strict optional-property, indexed-access, override, and unused-code checks enabled.
 - `npm run docs:check` verifies that privacy, security, release, architecture, and contribution docs stay linked and aligned, and that local Markdown links plus documented npm scripts still resolve.
 - `npm run compliance:licenses` checks dependency licenses from the lockfile against the project policy.
@@ -285,7 +292,7 @@ npm run ops:repository
 - ESLint enforces TypeScript, React hooks, React refresh, and JSX accessibility rules with zero warnings allowed.
 - Prettier formatting is enforced before the test suite runs.
 - `npm run verify` includes the full local supply-chain gate before release.
-- `npm run security:workflows` verifies that GitHub Actions references are pinned to immutable commit SHAs and that workflow token permissions stay least-privilege.
+- `npm run security:workflows` verifies that GitHub Actions references are pinned to immutable commit SHAs, workflow token permissions stay least-privilege, and workflow operations keep concurrency, timeout, and artifact-retention controls.
 - `npm run security:policy` verifies the built HTML security policy before metadata, runtime surface, bundle, and Pages smoke checks run.
 - `npm run pwa:check` verifies the generated service worker precaches reviewed static assets only.
 - The test suite covers adaptive weighting, deterministic note selection, focus-note ranking, session summaries, session-history analytics, and progress reducers.

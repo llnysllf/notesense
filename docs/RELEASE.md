@@ -9,13 +9,14 @@ NoteSense currently releases from `main` to GitHub Pages. The release process is
 - Preserve the local-first data model unless a migration plan exists.
 - Treat privacy and data-handling docs as release evidence when storage, import/export, analytics, network, account, or sync behavior changes.
 - Treat threat-model and backend-readiness docs as release evidence before auth, API, database, sync, PostgreSQL, or cloud infrastructure changes.
+- Treat repository hygiene results as release evidence when root configuration, ignore policy, runtime configuration, or generated artifact handling changes.
 - Treat documentation integrity results as release evidence when docs, file paths, anchors, or npm scripts change.
 - Treat runtime surface results as release evidence when client APIs, URLs, analytics, network, auth, or sync behavior changes.
 - Keep the pinned Node/npm runtime consistent across local setup, CI, deployment, and dependency maintenance.
 - Treat lockfile supply-chain results as release evidence when dependencies, lockfiles, Node, or npm runtime settings change.
 - Treat dependency license results as supply-chain release evidence.
 - Treat Dependency Review results as pull-request supply-chain release evidence when dependencies or lockfiles change.
-- Treat workflow action pinning and token-permission results as supply-chain release evidence when GitHub Actions workflows change.
+- Treat workflow action pinning, token-permission, timeout, concurrency, and artifact-retention results as supply-chain and operations release evidence when GitHub Actions workflows change.
 - Treat repository governance results as operational release evidence when branch protection, required checks, repository security settings, Pages, or workflow activation changes.
 - Treat dependency audit and CodeQL results as release evidence.
 - Treat built browser security policy results as release evidence when HTML shell, Vite build, runtime APIs, or asset categories change.
@@ -46,6 +47,7 @@ git diff --check
 Confirm policy docs and documentation integrity remain aligned:
 
 ```bash
+npm run repo:hygiene
 npm run docs:check
 ```
 
@@ -87,6 +89,7 @@ For dependency changes, inspect:
 - Whether `npm run compliance:licenses` still passes.
 - Whether `npm run security:lockfile` still passes.
 - Whether `npm run security:workflows` still passes after workflow changes.
+- Whether workflow artifact retention remains short enough for debugging without keeping browser traces longer than needed.
 - Whether `npm run ops:repository` still passes after branch protection, required-check, repository security, Pages, or workflow-activation changes.
 - Whether any new license needs explicit policy review.
 - Whether `.nvmrc`, package engines, GitHub Actions, and docs stay aligned for runtime changes.
