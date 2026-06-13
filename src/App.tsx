@@ -129,6 +129,9 @@ function App() {
 
   const feedbackClass = feedback ? (feedback.isCorrect ? "correct" : "wrong") : "";
   const shouldRevealPitch = Boolean(feedback) && settings.revealPitchAfterAnswer;
+  const sessionStateLabel = isRunning ? "Live round" : lastSummary?.mode === mode ? "Round saved" : "Ready";
+  const sessionStateTone = isRunning ? "live" : lastSummary?.mode === mode ? "saved" : "";
+  const replayButtonLabel = mode === "reading" ? "Play note" : "Replay pitch";
 
   function getFeedbackText() {
     if (!feedback) return isRunning ? "Listening" : "Ready";
@@ -141,13 +144,20 @@ function App() {
     <main className="app-shell">
       <section className="practice-panel" aria-labelledby="app-title">
         <header className="topbar">
-          <div>
+          <div className="brand-lockup">
             <p className="eyebrow">Adaptive sight reading + ear training</p>
             <h1 id="app-title">NoteSense</h1>
+            <p className="app-subtitle">{mode === "reading" ? readingRange.detail : "Natural notes C4-B4"}</p>
           </div>
-          <button className="secondary-button" type="button" onClick={playCurrentNote}>
-            {mode === "reading" ? "Play note" : "Replay pitch"}
-          </button>
+          <div className="topbar-actions">
+            <span className={`session-pill ${sessionStateTone}`} aria-live="polite">
+              <span aria-hidden="true" />
+              {sessionStateLabel}
+            </span>
+            <button className="secondary-button" type="button" onClick={playCurrentNote}>
+              {replayButtonLabel}
+            </button>
+          </div>
         </header>
 
         <div className="mode-switch" aria-label="Practice mode">
