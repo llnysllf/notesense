@@ -11,6 +11,7 @@ All notable changes to NoteSense are documented here. The format follows [Keep a
 - Architecture-boundary check with `npm run architecture:check` to keep shared contracts, practice logic, storage, hooks, and components in clear source layers
 - Operations runbook documenting release-health signals, incident triggers, triage, rollback, evidence handling, and future observability expectations
 - Release-notes contract with `npm run release:notes` to keep `CHANGELOG.md` aligned with `package.json` and release structure
+- Data-contract documentation and `npm run data:check` for LocalStorage keys, export schema, import normalization, privacy docs, and browser coverage
 - GitHub Actions workflow policy gates that require immutable action references and least-privilege token permissions
 - GitHub repository governance check for branch protection, required checks, repository security settings, vulnerability alerts, Pages, and active workflows
 - Dependency Review workflow for pull requests that introduce dependency or lockfile changes
