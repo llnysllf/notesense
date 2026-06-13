@@ -31,6 +31,7 @@ A change is done when:
 - Runtime surface checks pass for client network APIs, cookies, telemetry beacons, websockets, and external URLs.
 - Built HTML security policy checks pass before release.
 - High and critical npm advisories are absent or explicitly handled.
+- The npm lockfile stays on the expected format and resolves dependencies only from registry HTTPS tarballs with `sha512` integrity metadata.
 - Dependency licenses pass the lockfile compliance policy.
 - Dependency Review passes for pull requests that introduce dependency or lockfile changes.
 - GitHub Actions workflow references are pinned to full commit SHAs with source-version comments, and workflow token permissions stay least-privilege.
@@ -95,6 +96,7 @@ For visual QA:
 - Confirm `npm run test:e2e:pages` passes when deployment base path, build output, or preview behavior changes.
 - Confirm `npm run test:e2e:visual` passes when protected shell layout, color, spacing, typography, or component appearance changes.
 - Confirm `npm run ops:repository` passes after branch protection, repository security, Pages, required-check, or workflow-activation changes.
+- Confirm `npm run security:lockfile` passes after dependency, lockfile, Node, or npm runtime changes.
 
 ## Accessibility Checklist
 
@@ -183,6 +185,14 @@ After pushing:
 - Dependency PRs that introduce new licenses should explain why the license is acceptable before updating the policy.
 - GitHub Actions updates should preserve full-SHA pinning, update the source-version comment, and keep token permissions least-privilege in the same change.
 
+## Lockfile Supply Chain
+
+- `npm run security:lockfile` verifies `package-lock.json` uses the expected npm lockfile version.
+- The check verifies lockfile root package metadata stays aligned with `package.json`.
+- Package entries must resolve from `https://registry.npmjs.org/` tarballs and include `sha512` integrity metadata.
+- Link dependencies, non-`node_modules` package paths, non-registry tarballs, and missing integrity hashes fail the gate.
+- Run this check after dependency, lockfile, Node, or npm runtime changes.
+
 ## License Compliance
 
 - `npm run compliance:licenses` checks installed dependency licenses from `package-lock.json`.
@@ -192,6 +202,8 @@ After pushing:
 ## Security Scanning
 
 - `npm run security:audit` blocks high and critical advisories from the release gate.
+- `npm run security:lockfile` blocks unreviewed lockfile source, integrity, package-manager, and root-metadata drift.
+- `npm run security:supply-chain` combines audit, lockfile, license, and workflow policy checks.
 - `npm run security:workflows` blocks floating GitHub Actions refs and unreviewed token-permission drift in workflow files.
 - `npm run security:policy` verifies the built HTML Content Security Policy after `npm run build:pages`.
 - Dependency Review blocks high-severity vulnerable dependency additions and invalid dependency licenses on pull requests.

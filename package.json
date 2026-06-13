@@ -29,9 +29,11 @@
     "docs:screenshots": "npm run build && node scripts/capture-screenshots.mjs",
     "compliance:licenses": "node scripts/check-licenses.mjs",
     "security:audit": "npm audit --audit-level=high",
+    "security:lockfile": "node scripts/check-lockfile-supply-chain.mjs",
     "security:workflow-actions": "node scripts/check-workflow-actions.mjs",
     "security:workflow-permissions": "node scripts/check-workflow-permissions.mjs",
     "security:workflows": "npm run security:workflow-actions && npm run security:workflow-permissions",
+    "security:supply-chain": "npm run security:audit && npm run security:lockfile && npm run compliance:licenses && npm run security:workflows",
     "security:policy": "node scripts/check-security-policy.mjs",
     "metadata:check": "node scripts/check-web-metadata.mjs",
     "pwa:check": "node scripts/check-pwa-artifacts.mjs",
@@ -41,7 +43,7 @@
     "ops:check": "npm run ops:repository",
     "deploy:verify-live": "node scripts/verify-live-pages.mjs",
     "check": "npm run format:check && npm run repo:hygiene && npm run docs:check && npm run lint && npm run typecheck && npm run test && npm run test:coverage && npm run test:e2e",
-    "verify": "npm run security:audit && npm run compliance:licenses && npm run security:workflows && npm run check && npm run test:e2e:resilience && npm run build:pages && npm run security:policy && npm run metadata:check && npm run pwa:check && npm run runtime:check && npm run perf:budget && npm run test:e2e:pages",
+    "verify": "npm run security:supply-chain && npm run check && npm run test:e2e:resilience && npm run build:pages && npm run security:policy && npm run metadata:check && npm run pwa:check && npm run runtime:check && npm run perf:budget && npm run test:e2e:pages",
     "build": "tsc -b && vite build",
     "build:pages": "npm run typecheck && vite build --base=/notesense/",
     "preview": "vite preview"
@@ -70,7 +72,7 @@
     "prettier": "^3.8.4",
     "typescript": "^5.9.3",
     "typescript-eslint": "^8.61.0",
-    "vite": "^7.1.12",
+    "vite": "^8.0.16",
     "vite-plugin-pwa": "^1.3.0",
     "vitest": "^4.1.8"
   }

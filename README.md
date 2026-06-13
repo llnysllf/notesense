@@ -191,6 +191,12 @@ Run the dependency security audit:
 npm run security:audit
 ```
 
+Run the lockfile supply-chain policy check:
+
+```bash
+npm run security:lockfile
+```
+
 Run the GitHub Actions workflow policy checks:
 
 ```bash
@@ -208,6 +214,12 @@ Run the dependency license compliance check:
 
 ```bash
 npm run compliance:licenses
+```
+
+Run the full local supply-chain gate:
+
+```bash
+npm run security:supply-chain
 ```
 
 Run the policy and documentation integrity check:
@@ -274,11 +286,12 @@ npm run ops:repository
 - TypeScript runs with strict optional-property, indexed-access, override, and unused-code checks enabled.
 - `npm run docs:check` verifies that privacy, security, release, architecture, and contribution docs stay linked and aligned, and that local Markdown links plus documented npm scripts still resolve.
 - `npm run compliance:licenses` checks dependency licenses from the lockfile against the project policy.
+- `npm run security:lockfile` verifies the committed npm lockfile uses registry HTTPS tarballs, `sha512` integrity hashes, aligned root metadata, and the expected npm lockfile version.
 - Dependency Review scans pull requests for high-severity vulnerable dependency changes and invalid license changes before merge.
 - `npm run ops:repository` verifies branch protection, required checks, repository security settings, vulnerability alerts, Pages, and active workflows against the reviewed governance policy.
 - ESLint enforces TypeScript, React hooks, React refresh, and JSX accessibility rules with zero warnings allowed.
 - Prettier formatting is enforced before the test suite runs.
-- `npm run verify` includes a high-severity npm audit gate before release.
+- `npm run verify` includes the full local supply-chain gate before release.
 - `npm run security:workflows` verifies that GitHub Actions references are pinned to immutable commit SHAs and that workflow token permissions stay least-privilege.
 - `npm run security:policy` verifies the built HTML security policy before metadata, runtime surface, bundle, and Pages smoke checks run.
 - `npm run pwa:check` verifies the generated service worker precaches reviewed static assets only.
@@ -294,7 +307,7 @@ npm run ops:repository
 - The Pages smoke test verifies the built app loads and starts correctly from the `/notesense/` deployment base path.
 - `npm run metadata:check` verifies the built web identity metadata before bundle and Pages smoke checks run.
 - `npm run runtime:check` verifies the built app and source stay inside the documented local-first runtime boundary.
-- `npm run verify` is the single local gate before release, combining security audit, license compliance, code quality, unit/browser tests, accessibility checks, the Pages build, PWA checks, bundle budgets, and the Pages smoke test.
+- `npm run verify` is the single local gate before release, combining supply-chain policy checks, code quality, unit/browser tests, accessibility checks, the Pages build, PWA checks, bundle budgets, and the Pages smoke test.
 - `npm run deploy:verify-live` checks the public GitHub Pages deployment, metadata assets, service worker, Workbox runtime, and security policy after release.
 - `npm run perf:budget` keeps the static Pages output within explicit raw and gzip size budgets.
 - GitHub Actions run formatting, linting, typechecking, unit tests, and browser tests on every push and pull request.
