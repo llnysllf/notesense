@@ -35,7 +35,7 @@ The backend API owns authentication, authorization, validation, rate limiting, d
 7. Add completed-session upload.
 8. Add sync reconciliation.
 9. Add account export/delete workflows.
-10. Add observability, rollback, and incident runbooks.
+10. Extend the operations runbook with backend observability, rollback, and incident response details.
 
 ## Candidate Data Model
 
@@ -95,6 +95,7 @@ Before backend launch, define:
 - Database migration logs.
 - Client error-reporting rules that avoid unnecessary practice-content capture.
 - Release rollback steps.
+- Updates to [OPERATIONS.md](OPERATIONS.md) for service health signals, incident response, evidence handling, and escalation paths.
 
 ## Go/No-Go Checklist For Backend Launch
 

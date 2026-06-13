@@ -78,7 +78,7 @@ Future account or cloud sync work must address:
 - Secret-management plan.
 - Client privacy doc update explaining what leaves the browser and why.
 - Security tests for import, auth, authorization, sync, and migration.
-- Observability plan for API errors, latency, and release health.
+- Observability plan for API errors, latency, and release health, aligned with [OPERATIONS.md](OPERATIONS.md).
 - Rollback plan for database and API migrations.
 
 ## Explicit Non-Goals Today

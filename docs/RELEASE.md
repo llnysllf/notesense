@@ -7,10 +7,12 @@ NoteSense currently releases from `main` to GitHub Pages. The release process is
 - Prefer small releases with one clear product or engineering purpose.
 - Keep learner-facing behavior intentional and documented.
 - Preserve the local-first data model unless a migration plan exists.
+- Treat architecture-boundary results as release evidence when shared contracts, practice logic, storage, hooks, components, or app-shell responsibilities change.
 - Treat privacy and data-handling docs as release evidence when storage, import/export, analytics, network, account, or sync behavior changes.
 - Treat threat-model and backend-readiness docs as release evidence before auth, API, database, sync, PostgreSQL, or cloud infrastructure changes.
 - Treat repository hygiene results as release evidence when root configuration, ignore policy, runtime configuration, or generated artifact handling changes.
 - Treat documentation integrity results as release evidence when docs, file paths, anchors, or npm scripts change.
+- Treat design-system results as UI release evidence when tokens, component states, responsive behavior, typography, or visual-regression coverage changes.
 - Treat runtime surface results as release evidence when client APIs, URLs, analytics, network, auth, or sync behavior changes.
 - Keep the pinned Node/npm runtime consistent across local setup, CI, deployment, and dependency maintenance.
 - Treat lockfile supply-chain results as release evidence when dependencies, lockfiles, Node, or npm runtime settings change.
@@ -18,6 +20,8 @@ NoteSense currently releases from `main` to GitHub Pages. The release process is
 - Treat Dependency Review results as pull-request supply-chain release evidence when dependencies or lockfiles change.
 - Treat workflow action pinning, token-permission, timeout, concurrency, and artifact-retention results as supply-chain and operations release evidence when GitHub Actions workflows change.
 - Treat repository governance results as operational release evidence when branch protection, required checks, repository security settings, Pages, or workflow activation changes.
+- Treat operations docs as release evidence when release-health signals, incident response, deployment ownership, monitoring, telemetry, or support expectations change.
+- Treat release notes as release evidence when user-visible behavior, architecture boundaries, quality gates, dependencies, security posture, operations, or package version metadata change.
 - Treat dependency audit and CodeQL results as release evidence.
 - Treat built browser security policy results as release evidence when HTML shell, Vite build, runtime APIs, or asset categories change.
 - Treat bundle budget results as performance release evidence.
@@ -49,6 +53,7 @@ Confirm policy docs and documentation integrity remain aligned:
 ```bash
 npm run repo:hygiene
 npm run docs:check
+npm run release:notes
 ```
 
 Confirm the built client stays inside the expected runtime surface:
@@ -68,6 +73,7 @@ For UI changes, manually inspect:
 - Focus visibility.
 - Text wrapping.
 - Reduced-motion behavior when animation changes.
+- Whether `npm run design:check` passes when tokens, layout, component states, or visual-regression coverage change.
 - Whether `npm run test:e2e:visual` passes or baselines were intentionally updated and reviewed.
 
 For data changes, manually inspect:
@@ -76,6 +82,7 @@ For data changes, manually inspect:
 - Exported data includes the expected schema version.
 - Imported data is normalized or rejected safely.
 - Storage failures stay non-blocking.
+- Whether `npm run architecture:check` still proves source responsibilities stay in the expected layers.
 - Whether `npm run docs:check` passes.
 - Whether `npm run runtime:check` passes after a Pages build.
 - Whether `docs/PRIVACY.md` still reflects storage keys, export contents, tracking behavior, and future migration expectations.
@@ -93,6 +100,7 @@ For dependency changes, inspect:
 - Whether `npm run ops:repository` still passes after branch protection, required-check, repository security, Pages, or workflow-activation changes.
 - Whether any new license needs explicit policy review.
 - Whether `.nvmrc`, package engines, GitHub Actions, and docs stay aligned for runtime changes.
+- Whether `CHANGELOG.md` explains release-relevant dependency, runtime, or tooling changes.
 - Whether `npm run security:policy` still passes after the Pages build.
 - Browser test behavior after Playwright, Vite, Vitest, ESLint, or TypeScript updates.
 
@@ -127,6 +135,8 @@ For deployment-path changes, inspect:
 
 Push to `main` only after the local gate passes.
 
+Before cutting a release, move relevant `[Unreleased]` entries in `CHANGELOG.md` into a dated version section that matches `package.json`.
+
 After pushing:
 
 - Confirm the `CI` workflow succeeds.
@@ -136,6 +146,7 @@ After pushing:
 - Confirm the `Deploy Pages` workflow succeeds.
 - Confirm the `Lighthouse` workflow succeeds when it runs for the change.
 - Confirm the live verifier still proves the deployed security policy, service worker, and Workbox runtime when the HTML shell, build security policy, or PWA behavior changes.
+- Confirm [OPERATIONS.md](OPERATIONS.md) still reflects release-health, incident-response, rollback, evidence-handling, and observability expectations.
 - Run `npm run ops:repository` after repository governance changes.
 - Run the live deployment verifier:
 

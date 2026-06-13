@@ -12,7 +12,9 @@ Live demo: [https://llnysllf.github.io/notesense/](https://llnysllf.github.io/no
 
 Architecture notes: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)
 Quality runbook: [docs/QUALITY.md](docs/QUALITY.md)
+Design system: [docs/DESIGN_SYSTEM.md](docs/DESIGN_SYSTEM.md)
 Release guide: [docs/RELEASE.md](docs/RELEASE.md)
+Operations runbook: [docs/OPERATIONS.md](docs/OPERATIONS.md)
 Privacy and data handling: [docs/PRIVACY.md](docs/PRIVACY.md)
 Threat model: [docs/THREAT_MODEL.md](docs/THREAT_MODEL.md)
 Backend readiness: [docs/BACKEND_READINESS.md](docs/BACKEND_READINESS.md)
@@ -115,6 +117,18 @@ Run the test suite:
 npm test
 ```
 
+Run the architecture-boundary contract check:
+
+```bash
+npm run architecture:check
+```
+
+Run the release-notes contract check:
+
+```bash
+npm run release:notes
+```
+
 Run the unit coverage gate for core practice and storage logic:
 
 ```bash
@@ -143,6 +157,12 @@ Run the visual regression suite:
 
 ```bash
 npm run test:e2e:visual
+```
+
+Run the design-system contract check:
+
+```bash
+npm run design:check
 ```
 
 Refresh visual regression baselines after an intentional UI change:
@@ -262,6 +282,7 @@ npm run ops:repository
 ## Engineering Notes
 
 - Practice selection and summary logic live in `src/practiceEngine.ts` so the learning behavior can be tested outside React.
+- `npm run architecture:check` verifies that shared contracts, practice logic, storage, hooks, and components keep their documented boundaries as the app grows.
 - Practice-plan recommendations are derived in `src/practiceEngine.ts`, keeping the coaching layer deterministic and ready for a future service boundary.
 - Mastery map state is derived in `src/practiceEngine.ts` from the active range, note attempts, and accuracy thresholds.
 - Daily goal and streak state is derived from completed session history, keeping habit analytics independent from browser storage.
@@ -270,6 +291,7 @@ npm run ops:repository
 - `PracticeStatsPanel` and `SessionHistory` isolate the progress sidebar from the drill loop, which keeps product analytics UI easier to evolve.
 - `PracticeInsights` renders tested trend data from `practiceEngine.ts` as an accessible SVG chart.
 - CSS custom properties define shared color, spacing, radius, and shadow tokens so the interface can be tuned consistently.
+- The design-system contract in `docs/DESIGN_SYSTEM.md` and `npm run design:check` keep core tokens, component states, accessibility affordances, and visual-regression coverage aligned.
 - Progress, history, and settings are normalized when loaded from LocalStorage, including migration from the original V1 progress shape.
 - Save operations fail safely and surface a non-blocking status message when browser storage is unavailable.
 - Imported and exported practice data includes a schema version, timestamp, progress, and settings for local-first data portability.
@@ -284,7 +306,8 @@ npm run ops:repository
 - `.nvmrc`, package engines, and `.npmrc` keep local development, CI, deployment, and dependency maintenance on the same runtime contract.
 - `npm run repo:hygiene` verifies required repository configuration and blocks generated, dependency, secret, and local artifact files from being tracked.
 - TypeScript runs with strict optional-property, indexed-access, override, and unused-code checks enabled.
-- `npm run docs:check` verifies that privacy, security, release, architecture, and contribution docs stay linked and aligned, and that local Markdown links plus documented npm scripts still resolve.
+- `npm run docs:check` verifies that privacy, security, release, architecture, design-system, and contribution docs stay linked and aligned, and that local Markdown links plus documented npm scripts still resolve.
+- `npm run release:notes` verifies that `CHANGELOG.md` stays aligned with `package.json` versioning and the Keep a Changelog release structure.
 - `npm run compliance:licenses` checks dependency licenses from the lockfile against the project policy.
 - `npm run security:lockfile` verifies the committed npm lockfile uses registry HTTPS tarballs, `sha512` integrity hashes, aligned root metadata, and the expected npm lockfile version.
 - Dependency Review scans pull requests for high-severity vulnerable dependency changes and invalid license changes before merge.
@@ -309,6 +332,7 @@ npm run ops:repository
 - `npm run runtime:check` verifies the built app and source stay inside the documented local-first runtime boundary.
 - `npm run verify` is the single local gate before release, combining supply-chain policy checks, code quality, unit/browser tests, accessibility checks, the Pages build, PWA checks, bundle budgets, and the Pages smoke test.
 - `npm run deploy:verify-live` checks the public GitHub Pages deployment, metadata assets, service worker, Workbox runtime, and security policy after release.
+- `docs/OPERATIONS.md` defines release-health signals, post-release verification, incident triggers, triage, rollback, evidence handling, and future observability expectations.
 - `npm run perf:budget` keeps the static Pages output within explicit raw and gzip size budgets.
 - GitHub Actions run formatting, linting, typechecking, unit tests, and browser tests on every push and pull request.
 - CodeQL scans JavaScript and TypeScript security issues on pushes, pull requests, and a weekly schedule.

@@ -23,12 +23,16 @@ NoteSense is currently a local-first React application. The product goal is to k
 - `.github/workflows/visual-regression.yml` owns the macOS Chromium visual-regression gate so screenshot baselines use the same platform family as the committed snapshots.
 - `.github/workflows/lighthouse.yml` owns Lighthouse scoring for the deployment-shaped Pages build.
 - `docs/adr` records architecture decisions that should survive beyond a single implementation pass.
+- `docs/DESIGN_SYSTEM.md` documents the design-token, component-state, accessibility, and visual-regression contract for UI changes.
 - `docs/THREAT_MODEL.md` documents current and future security boundaries before account or sync work begins.
 - `docs/BACKEND_READINESS.md` documents the service, API, data-model, sync, and PostgreSQL path for future backend work.
+- `docs/OPERATIONS.md` documents release-health signals, incident response, rollback, evidence handling, and future observability expectations.
 - `.nvmrc`, package engines, and `.npmrc` define the shared Node/npm runtime for local development, CI, deployment, and dependency maintenance.
 - `vite.config.ts` injects the production Content Security Policy meta tag during build.
 - `vite.config.ts` also owns PWA service worker generation and Vitest browser-like component-test setup.
 - `scripts/check-repository-hygiene.mjs` owns required root configuration, ignore-policy, runtime-policy, and tracked-artifact hygiene checks.
+- `scripts/check-architecture-boundaries.mjs` owns source import-boundary checks for shared contracts, practice logic, storage, hooks, and UI components.
+- `scripts/check-design-system.mjs` owns the lightweight design-system contract for CSS tokens, shell states, accessibility affordances, responsive guards, and visual-regression coverage.
 - `scripts/check-licenses.mjs` owns dependency license policy enforcement.
 - `scripts/check-security-policy.mjs` owns built HTML security policy verification.
 - `scripts/check-policy-docs.mjs` owns policy document presence and alignment checks.
@@ -52,6 +56,7 @@ NoteSense is currently a local-first React application. The product goal is to k
 Every feature should keep these expectations intact:
 
 - Practice logic remains testable outside React.
+- Source import boundaries stay enforced by `npm run architecture:check` so shared contracts, practice logic, storage, hooks, and components keep clear responsibilities.
 - New note ranges should be added as data first, then wired through tested selection and settings paths.
 - Product analytics and chart inputs are derived in pure functions before rendering.
 - Habit analytics are derived from completed sessions so future sync can reconcile daily goals from server history.
@@ -64,6 +69,7 @@ Every feature should keep these expectations intact:
 - User-visible state has a failure path, especially for save, export, auth, and sync operations.
 - Unexpected render failures should show the app-level recovery screen instead of leaving a blank product surface.
 - Accessibility is part of the feature definition, not a final cleanup step.
+- Design-system changes should preserve the documented token layers, component states, responsive behavior, focus behavior, and protected visual surfaces.
 - Dependency license compliance is part of supply-chain readiness.
 - Dependency Review is part of pull-request supply-chain readiness for dependency and lockfile changes.
 - Workflow action pinning and least-privilege token permissions are part of supply-chain readiness; action refs should use full commit SHAs with source-version comments.
@@ -118,6 +124,7 @@ PostgreSQL should sit behind a backend API, never behind direct browser access. 
 - Keep `practiceEngine` framework-independent.
 - Keep browser storage behind adapter-style functions.
 - Keep shared import/export and merge logic framework-agnostic so future backend sync can reuse it.
+- Keep UI components from owning persistence, network, audio, or hook orchestration; pass behavior through props from the app shell and hooks.
 - Keep export/import schemas versioned.
 - Keep privacy documentation updated when data fields, storage keys, export content, tracking behavior, network calls, auth, or sync changes.
 - Keep the runtime-surface gate updated with any intentional external URLs, network APIs, auth, analytics, telemetry, or sync behavior.
@@ -125,10 +132,12 @@ PostgreSQL should sit behind a backend API, never behind direct browser access. 
 - Keep TypeScript hardening flags enabled as the app grows toward service-backed data.
 - Keep network calls outside the core practice engine.
 - Keep UI components focused on one product responsibility.
+- Keep UI styling aligned with `docs/DESIGN_SYSTEM.md`; new durable visual patterns should update the design-system contract and its checker.
 - Keep browser tests tied to real user workflows rather than implementation details.
 - Keep component tests focused on accessibility labels, rendering contracts, and reusable presentation states.
 - Keep intentional failure-mode tests isolated from the normal browser workflow suite.
 - Keep repository operations, dependency updates, and release checks documented rather than tribal.
+- Keep operational runbooks aligned when release health, incident response, observability, support, or deployment ownership changes.
 - Keep documentation links, anchors, and referenced package scripts verifiable as the repo grows.
 - Keep license policy changes explicit and reviewed when dependencies change.
 - Keep runtime version changes aligned across `.nvmrc`, package engines, CI, and docs.

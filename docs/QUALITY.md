@@ -17,16 +17,20 @@ Avoid adding features just to make the project larger.
 A change is done when:
 
 - The behavior is implemented in the smallest responsible area of the codebase.
+- Source import boundaries pass `npm run architecture:check` when shared contracts, practice logic, storage, hooks, components, or app-shell responsibilities change.
 - Pure practice, analytics, and data-shape logic has unit coverage.
 - Core practice and storage modules meet the configured Vitest coverage thresholds.
 - Shared data contract modules meet the configured Vitest coverage thresholds when they change.
 - Reusable UI components have focused component coverage for accessibility labels and state rendering where browser workflows would be too broad.
 - User workflows have browser coverage when UI, persistence, import/export, or accessibility-sensitive behavior changes.
+- Design-system docs and `npm run design:check` stay aligned when layout, color, spacing, typography, or component states change.
 - Protected shell states have visual-regression coverage for desktop/mobile and light/dark when UI changes intentionally affect layout or appearance.
 - TypeScript strictness flags stay enabled for optional properties, indexed access, overrides, and unused code.
 - Privacy and data-handling docs stay aligned with local storage, import/export, analytics, network, auth, and sync behavior.
 - Threat model and backend-readiness docs stay aligned before account, API, database, sync, or cloud infrastructure work begins.
 - Documentation links, anchors, and documented npm script references stay resolvable.
+- Operations docs stay aligned when release-health signals, incident response, deployment ownership, monitoring, telemetry, or support expectations change.
+- Release notes pass `npm run release:notes` when `CHANGELOG.md`, package version metadata, or release-relevant behavior changes.
 - Repository hygiene checks pass so required configuration files stay present and generated, dependency, secret, or local artifact files stay untracked.
 - Runtime surface checks pass for client network APIs, cookies, telemetry beacons, websockets, and external URLs.
 - Built HTML security policy checks pass before release.
@@ -72,10 +76,22 @@ For focused unit coverage feedback:
 npm run test:coverage
 ```
 
+For source-boundary feedback:
+
+```bash
+npm run architecture:check
+```
+
 For policy documentation feedback:
 
 ```bash
 npm run docs:check
+```
+
+For release-note feedback:
+
+```bash
+npm run release:notes
 ```
 
 For visual QA:
@@ -84,6 +100,7 @@ For visual QA:
 - Check the primary practice path.
 - Check the progress panel after at least one saved round.
 - Check mobile width for text wrapping, button sizing, and horizontal overflow.
+- Confirm `npm run design:check` passes when tokens, layout, component states, or visual-regression coverage change.
 - Confirm `dist/index.html` uses `/notesense/` asset paths after `npm run build:pages`.
 - Confirm `npm run security:policy` passes when HTML shell behavior, Vite build behavior, runtime APIs, or asset categories change.
 - Confirm `npm run metadata:check` passes when HTML metadata, static public assets, hosting domain, or Pages base path changes.
@@ -110,12 +127,29 @@ For visual QA:
 - Decorative SVG/text is hidden from assistive technology.
 - Motion respects `prefers-reduced-motion`.
 
+## Design System
+
+- `docs/DESIGN_SYSTEM.md` defines the product posture, token layers, component states, accessibility expectations, protected visual surface, and UI change process.
+- `npm run design:check` verifies that the design-system document, CSS token/state contract, visual-regression tests, and committed baselines stay aligned.
+- Durable UI patterns should become documented tokens or states instead of one-off values.
+- UI changes that affect layout, color, spacing, typography, or component appearance should run `npm run design:check` and `npm run test:e2e:visual`.
+
 ## TypeScript Checklist
 
 - Keep `strict`, `exactOptionalPropertyTypes`, `noUncheckedIndexedAccess`, `noImplicitOverride`, `noUnusedLocals`, and `noUnusedParameters` enabled.
 - Model optional data by omitting absent properties or by explicitly allowing `undefined` in the type.
 - Treat array indexing and record lookup as fallible unless the code proves a fallback.
 - Use `override` on class members that intentionally replace base-class behavior.
+
+## Architecture Boundaries
+
+- `shared/src` owns framework-agnostic data contracts and merge logic.
+- `src/practiceEngine.ts` and `src/noteData.ts` stay pure, deterministic, and independent of React, storage, browser globals, audio, hooks, and UI components.
+- `src/storage.ts` owns LocalStorage persistence, normalization, migration, import, and export.
+- `src/hooks` owns React state orchestration and should not depend on presentation components.
+- `src/components` stays presentation-focused and receives persistence, audio, and session behavior through props.
+- `src/App.tsx` remains the product coordinator that composes hooks, storage actions, and components.
+- `npm run architecture:check` enforces these boundaries before CI review.
 
 ## Data And Persistence Checklist
 
@@ -165,6 +199,7 @@ Before pushing to `main`:
 
 - `npm run verify`
 - Review the diff for unrelated churn.
+- Confirm `npm run release:notes` passes when release notes or package version metadata change.
 - Confirm generated folders such as `dist`, `playwright-report`, and `test-results` remain untracked.
 
 After pushing:
@@ -218,6 +253,13 @@ After pushing:
 - The check covers public visibility, the default branch, Pages, secret scanning, push protection, Dependabot security updates, vulnerability alerts, branch protection, required checks, review policy, and active workflows.
 - This check is intentionally separate from `npm run verify` because it requires GitHub authentication and network access.
 - Run it after branch protection, required status checks, repository security settings, Pages settings, or workflow activation changes.
+
+## Operations Readiness
+
+- `docs/OPERATIONS.md` defines the supported production surface, release-health signals, post-release verification, incident triggers, triage flow, rollback expectations, current observability boundary, and future observability requirements.
+- Current operations rely on deterministic checks, GitHub Actions, public deployment verification, repository governance, and user reports rather than analytics or telemetry.
+- Update the runbook when release, deployment, PWA, repository-governance, security, privacy, backend-readiness, monitoring, telemetry, or support assumptions change.
+- Before accounts, sync, APIs, or managed storage ship, operations docs must cover client error reporting, service metrics, structured logs, alerts, data-workflow monitoring, rollback, and migration monitoring.
 
 ## Workflow Operations
 
