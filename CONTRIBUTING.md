@@ -36,6 +36,7 @@ npm run test:e2e:visual:update
 - Keep workflow action refs pinned to full commit SHAs, document the source version tag in a comment, and keep workflow token permissions least-privilege.
 - Run `npm run ops:repository` after branch protection, repository security, Pages, required-check, or workflow-activation changes.
 - Keep bundle growth intentional; budget increases need a clear reason in the PR.
+- Keep generated outputs, dependency installs, local environment files, logs, and TypeScript build-info files untracked.
 - Prefer small, shippable changes with clear user value or clear maintainability value.
 - Do not add network services, auth, or cloud storage without preserving the current local-first practice loop.
 - Do not add sign-in, sync, PostgreSQL, or AWS services without updating the threat model and backend-readiness docs first.
