@@ -20,6 +20,12 @@ npm run verify
 
 For UI changes, also verify the app manually at desktop and mobile widths. Check that text fits, keyboard focus is visible, controls are reachable without a mouse, and automated axe checks still pass.
 
+For token, layout, component-state, or visual-regression changes, keep [docs/DESIGN_SYSTEM.md](docs/DESIGN_SYSTEM.md) aligned and run the design-system contract check:
+
+```bash
+npm run design:check
+```
+
 For intentional visual changes, refresh and review the screenshot baselines:
 
 ```bash
@@ -33,6 +39,7 @@ npm run test:e2e:visual:update
 - Add or update tests for new behavior, migrations, accessibility-sensitive UI, and practice analytics.
 - Keep dependency license changes intentional; explain new licenses before updating the allowlist.
 - Keep dependency changes passing Dependency Review before merge.
+- Keep durable UI patterns documented in [docs/DESIGN_SYSTEM.md](docs/DESIGN_SYSTEM.md) instead of adding one-off styles.
 - Keep workflow action refs pinned to full commit SHAs, document the source version tag in a comment, and keep workflow token permissions least-privilege.
 - Run `npm run ops:repository` after branch protection, repository security, Pages, required-check, or workflow-activation changes.
 - Keep bundle growth intentional; budget increases need a clear reason in the PR.

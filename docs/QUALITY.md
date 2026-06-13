@@ -22,6 +22,7 @@ A change is done when:
 - Shared data contract modules meet the configured Vitest coverage thresholds when they change.
 - Reusable UI components have focused component coverage for accessibility labels and state rendering where browser workflows would be too broad.
 - User workflows have browser coverage when UI, persistence, import/export, or accessibility-sensitive behavior changes.
+- Design-system docs and `npm run design:check` stay aligned when layout, color, spacing, typography, or component states change.
 - Protected shell states have visual-regression coverage for desktop/mobile and light/dark when UI changes intentionally affect layout or appearance.
 - TypeScript strictness flags stay enabled for optional properties, indexed access, overrides, and unused code.
 - Privacy and data-handling docs stay aligned with local storage, import/export, analytics, network, auth, and sync behavior.
@@ -84,6 +85,7 @@ For visual QA:
 - Check the primary practice path.
 - Check the progress panel after at least one saved round.
 - Check mobile width for text wrapping, button sizing, and horizontal overflow.
+- Confirm `npm run design:check` passes when tokens, layout, component states, or visual-regression coverage change.
 - Confirm `dist/index.html` uses `/notesense/` asset paths after `npm run build:pages`.
 - Confirm `npm run security:policy` passes when HTML shell behavior, Vite build behavior, runtime APIs, or asset categories change.
 - Confirm `npm run metadata:check` passes when HTML metadata, static public assets, hosting domain, or Pages base path changes.
@@ -109,6 +111,13 @@ For visual QA:
 - SVGs that communicate data have useful labels.
 - Decorative SVG/text is hidden from assistive technology.
 - Motion respects `prefers-reduced-motion`.
+
+## Design System
+
+- `docs/DESIGN_SYSTEM.md` defines the product posture, token layers, component states, accessibility expectations, protected visual surface, and UI change process.
+- `npm run design:check` verifies that the design-system document, CSS token/state contract, visual-regression tests, and committed baselines stay aligned.
+- Durable UI patterns should become documented tokens or states instead of one-off values.
+- UI changes that affect layout, color, spacing, typography, or component appearance should run `npm run design:check` and `npm run test:e2e:visual`.
 
 ## TypeScript Checklist
 

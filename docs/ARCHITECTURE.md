@@ -23,12 +23,14 @@ NoteSense is currently a local-first React application. The product goal is to k
 - `.github/workflows/visual-regression.yml` owns the macOS Chromium visual-regression gate so screenshot baselines use the same platform family as the committed snapshots.
 - `.github/workflows/lighthouse.yml` owns Lighthouse scoring for the deployment-shaped Pages build.
 - `docs/adr` records architecture decisions that should survive beyond a single implementation pass.
+- `docs/DESIGN_SYSTEM.md` documents the design-token, component-state, accessibility, and visual-regression contract for UI changes.
 - `docs/THREAT_MODEL.md` documents current and future security boundaries before account or sync work begins.
 - `docs/BACKEND_READINESS.md` documents the service, API, data-model, sync, and PostgreSQL path for future backend work.
 - `.nvmrc`, package engines, and `.npmrc` define the shared Node/npm runtime for local development, CI, deployment, and dependency maintenance.
 - `vite.config.ts` injects the production Content Security Policy meta tag during build.
 - `vite.config.ts` also owns PWA service worker generation and Vitest browser-like component-test setup.
 - `scripts/check-repository-hygiene.mjs` owns required root configuration, ignore-policy, runtime-policy, and tracked-artifact hygiene checks.
+- `scripts/check-design-system.mjs` owns the lightweight design-system contract for CSS tokens, shell states, accessibility affordances, responsive guards, and visual-regression coverage.
 - `scripts/check-licenses.mjs` owns dependency license policy enforcement.
 - `scripts/check-security-policy.mjs` owns built HTML security policy verification.
 - `scripts/check-policy-docs.mjs` owns policy document presence and alignment checks.
@@ -64,6 +66,7 @@ Every feature should keep these expectations intact:
 - User-visible state has a failure path, especially for save, export, auth, and sync operations.
 - Unexpected render failures should show the app-level recovery screen instead of leaving a blank product surface.
 - Accessibility is part of the feature definition, not a final cleanup step.
+- Design-system changes should preserve the documented token layers, component states, responsive behavior, focus behavior, and protected visual surfaces.
 - Dependency license compliance is part of supply-chain readiness.
 - Dependency Review is part of pull-request supply-chain readiness for dependency and lockfile changes.
 - Workflow action pinning and least-privilege token permissions are part of supply-chain readiness; action refs should use full commit SHAs with source-version comments.
@@ -125,6 +128,7 @@ PostgreSQL should sit behind a backend API, never behind direct browser access. 
 - Keep TypeScript hardening flags enabled as the app grows toward service-backed data.
 - Keep network calls outside the core practice engine.
 - Keep UI components focused on one product responsibility.
+- Keep UI styling aligned with `docs/DESIGN_SYSTEM.md`; new durable visual patterns should update the design-system contract and its checker.
 - Keep browser tests tied to real user workflows rather than implementation details.
 - Keep component tests focused on accessibility labels, rendering contracts, and reusable presentation states.
 - Keep intentional failure-mode tests isolated from the normal browser workflow suite.
