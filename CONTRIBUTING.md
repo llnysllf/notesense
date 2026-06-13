@@ -36,6 +36,7 @@ npm run test:e2e:visual:update
 
 - Keep practice logic in pure TypeScript where possible, especially in `src/practiceEngine.ts`.
 - Keep persistence and import/export changes behind `src/storage.ts`.
+- Keep [docs/DATA_CONTRACT.md](docs/DATA_CONTRACT.md) aligned with storage keys, export schema, import normalization, and future sync assumptions; run `npm run data:check` after data-shape changes.
 - Keep shared contracts, practice logic, storage, hooks, and components inside the documented import boundaries; run `npm run architecture:check` after moving source responsibilities.
 - Add or update tests for new behavior, migrations, accessibility-sensitive UI, and practice analytics.
 - Keep dependency license changes intentional; explain new licenses before updating the allowlist.

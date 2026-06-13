@@ -1,0 +1,72 @@
+# Data Contract
+
+NoteSense is local-first today. This contract names the browser storage keys, export shape, normalization rules, and future sync constraints that must stay explicit as the product grows.
+
+## Current Storage Keys
+
+The browser app owns these LocalStorage keys through `src/storage.ts`:
+
+- `notesense.progress.v2`: current practice progress, note stats, pitch stats, and capped session history.
+- `notesense.settings.v3`: current practice settings.
+- `notesense.progress.v1`: legacy progress key that may be read and normalized during migration.
+
+No other browser storage key is part of the supported app contract.
+
+## Export Schema
+
+Exported JSON is created only through a learner action. The current export schema version is `1` and includes:
+
+- `schemaVersion`
+- `exportedAt`
+- `progress`
+- `settings`
+
+The export filename follows `notesense-progress-YYYY-MM-DD.json`.
+
+## Progress Shape
+
+Progress contains:
+
+- `reading` mode totals, best round score, completed sessions, and note stats.
+- `pitch` mode totals, best round score, completed sessions, and note stats.
+- `history`, capped by `SESSION_HISTORY_LIMIT`.
+
+Session history records include `id`, `mode`, `completedAt`, `durationSeconds`, `score`, `attempts`, `accuracy`, and `bestStreak`.
+
+## Settings Shape
+
+Settings include:
+
+- `roundLength`
+- `readingRange`
+- `adaptivePractice`
+- `autoPlayPitch`
+- `revealPitchAfterAnswer`
+
+Settings are normalized through shared data-contract code before they are used.
+
+## Import Rules
+
+Imported files are untrusted input:
+
+- JSON parsing failures return the invalid-import message.
+- Unsupported `schemaVersion` values are rejected.
+- Progress counters are clamped to safe whole numbers.
+- Session history is normalized, sorted newest first, and capped by `SESSION_HISTORY_LIMIT`.
+- Settings fall back to defaults when imported values are missing or unsupported.
+
+## Privacy Boundary
+
+- Practice data stays in the current browser profile unless the learner exports it.
+- The service worker caches static app assets only; it must not cache practice progress, exported files, or imported files.
+- No analytics, telemetry, cookies, beacons, websockets, or background sync are part of the current data contract.
+- Future account, sync, analytics, API, or hosted-storage work must update this contract, privacy docs, threat model, backend readiness, runtime-surface checks, and release guidance together.
+
+## Verification
+
+`npm run data:check` verifies that:
+
+- storage keys in `src/storage.ts` are documented
+- shared export schema constants and TypeScript fields remain present
+- privacy, architecture, and threat-model docs describe the current data boundary
+- browser tests still cover export, import, invalid import, and storage-failure behavior

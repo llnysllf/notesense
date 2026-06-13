@@ -27,6 +27,7 @@ A change is done when:
 - Protected shell states have visual-regression coverage for desktop/mobile and light/dark when UI changes intentionally affect layout or appearance.
 - TypeScript strictness flags stay enabled for optional properties, indexed access, overrides, and unused code.
 - Privacy and data-handling docs stay aligned with local storage, import/export, analytics, network, auth, and sync behavior.
+- Data-contract docs and `npm run data:check` stay aligned when storage keys, export schema, import normalization, or future sync assumptions change.
 - Threat model and backend-readiness docs stay aligned before account, API, database, sync, or cloud infrastructure work begins.
 - Documentation links, anchors, and documented npm script references stay resolvable.
 - Operations docs stay aligned when release-health signals, incident response, deployment ownership, monitoring, telemetry, or support expectations change.
@@ -80,6 +81,12 @@ For source-boundary feedback:
 
 ```bash
 npm run architecture:check
+```
+
+For data-contract feedback:
+
+```bash
+npm run data:check
 ```
 
 For policy documentation feedback:
@@ -167,6 +174,7 @@ When touching progress, settings, history, import, or export:
 
 - `npm run docs:check` verifies that policy and governance docs remain linked and aligned.
 - `npm run docs:check` also validates local Markdown links, anchors, and documented npm script references.
+- `npm run data:check` verifies that storage keys, export schema, import normalization, privacy docs, and browser coverage stay aligned.
 - Privacy docs must describe current browser storage keys, import/export boundaries, tracking behavior, and future account or sync expectations.
 - Security and release docs must keep privacy-impacting changes visible during review and release.
 

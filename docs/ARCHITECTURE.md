@@ -27,10 +27,12 @@ NoteSense is currently a local-first React application. The product goal is to k
 - `docs/THREAT_MODEL.md` documents current and future security boundaries before account or sync work begins.
 - `docs/BACKEND_READINESS.md` documents the service, API, data-model, sync, and PostgreSQL path for future backend work.
 - `docs/OPERATIONS.md` documents release-health signals, incident response, rollback, evidence handling, and future observability expectations.
+- `docs/DATA_CONTRACT.md` documents browser storage keys, export schema, import normalization, and future sync constraints.
 - `.nvmrc`, package engines, and `.npmrc` define the shared Node/npm runtime for local development, CI, deployment, and dependency maintenance.
 - `vite.config.ts` injects the production Content Security Policy meta tag during build.
 - `vite.config.ts` also owns PWA service worker generation and Vitest browser-like component-test setup.
 - `scripts/check-repository-hygiene.mjs` owns required root configuration, ignore-policy, runtime-policy, and tracked-artifact hygiene checks.
+- `scripts/check-data-contracts.mjs` owns data-contract drift checks for storage keys, shared export shape, privacy docs, and browser coverage.
 - `scripts/check-architecture-boundaries.mjs` owns source import-boundary checks for shared contracts, practice logic, storage, hooks, and UI components.
 - `scripts/check-design-system.mjs` owns the lightweight design-system contract for CSS tokens, shell states, accessibility affordances, responsive guards, and visual-regression coverage.
 - `scripts/check-licenses.mjs` owns dependency license policy enforcement.
@@ -65,6 +67,7 @@ Every feature should keep these expectations intact:
 - Persistence changes go through a storage boundary instead of being scattered through UI components.
 - Cross-device or sync-ready data-shape changes should happen in `shared/src` before UI or backend adapters consume them.
 - Privacy expectations must stay aligned with local storage, import/export, future auth, sync, analytics, and network behavior.
+- Data-contract changes should keep storage keys, export schema, import normalization, privacy docs, and browser coverage aligned.
 - Client runtime surface checks should reject network, tracking, cookie, websocket, or external URL drift unless the change is intentional and documented.
 - User-visible state has a failure path, especially for save, export, auth, and sync operations.
 - Unexpected render failures should show the app-level recovery screen instead of leaving a blank product surface.

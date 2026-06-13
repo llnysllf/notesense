@@ -13,6 +13,7 @@ Live demo: [https://llnysllf.github.io/notesense/](https://llnysllf.github.io/no
 Architecture notes: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)
 Quality runbook: [docs/QUALITY.md](docs/QUALITY.md)
 Design system: [docs/DESIGN_SYSTEM.md](docs/DESIGN_SYSTEM.md)
+Data contract: [docs/DATA_CONTRACT.md](docs/DATA_CONTRACT.md)
 Release guide: [docs/RELEASE.md](docs/RELEASE.md)
 Operations runbook: [docs/OPERATIONS.md](docs/OPERATIONS.md)
 Privacy and data handling: [docs/PRIVACY.md](docs/PRIVACY.md)
@@ -121,6 +122,12 @@ Run the architecture-boundary contract check:
 
 ```bash
 npm run architecture:check
+```
+
+Run the data-contract check:
+
+```bash
+npm run data:check
 ```
 
 Run the release-notes contract check:
@@ -293,6 +300,7 @@ npm run ops:repository
 - CSS custom properties define shared color, spacing, radius, and shadow tokens so the interface can be tuned consistently.
 - The design-system contract in `docs/DESIGN_SYSTEM.md` and `npm run design:check` keep core tokens, component states, accessibility affordances, and visual-regression coverage aligned.
 - Progress, history, and settings are normalized when loaded from LocalStorage, including migration from the original V1 progress shape.
+- The data contract in `docs/DATA_CONTRACT.md` and `npm run data:check` keep storage keys, export schema, import normalization, privacy docs, and browser coverage aligned.
 - Save operations fail safely and surface a non-blocking status message when browser storage is unavailable.
 - Imported and exported practice data includes a schema version, timestamp, progress, and settings for local-first data portability.
 - The architecture notes document the local-first data model and the path toward sign-in, backend APIs, cloud storage, and sync.
