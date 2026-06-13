@@ -17,6 +17,7 @@ Avoid adding features just to make the project larger.
 A change is done when:
 
 - The behavior is implemented in the smallest responsible area of the codebase.
+- Source import boundaries pass `npm run architecture:check` when shared contracts, practice logic, storage, hooks, components, or app-shell responsibilities change.
 - Pure practice, analytics, and data-shape logic has unit coverage.
 - Core practice and storage modules meet the configured Vitest coverage thresholds.
 - Shared data contract modules meet the configured Vitest coverage thresholds when they change.
@@ -73,6 +74,12 @@ For focused unit coverage feedback:
 npm run test:coverage
 ```
 
+For source-boundary feedback:
+
+```bash
+npm run architecture:check
+```
+
 For policy documentation feedback:
 
 ```bash
@@ -125,6 +132,16 @@ For visual QA:
 - Model optional data by omitting absent properties or by explicitly allowing `undefined` in the type.
 - Treat array indexing and record lookup as fallible unless the code proves a fallback.
 - Use `override` on class members that intentionally replace base-class behavior.
+
+## Architecture Boundaries
+
+- `shared/src` owns framework-agnostic data contracts and merge logic.
+- `src/practiceEngine.ts` and `src/noteData.ts` stay pure, deterministic, and independent of React, storage, browser globals, audio, hooks, and UI components.
+- `src/storage.ts` owns LocalStorage persistence, normalization, migration, import, and export.
+- `src/hooks` owns React state orchestration and should not depend on presentation components.
+- `src/components` stays presentation-focused and receives persistence, audio, and session behavior through props.
+- `src/App.tsx` remains the product coordinator that composes hooks, storage actions, and components.
+- `npm run architecture:check` enforces these boundaries before CI review.
 
 ## Data And Persistence Checklist
 

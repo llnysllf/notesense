@@ -116,6 +116,12 @@ Run the test suite:
 npm test
 ```
 
+Run the architecture-boundary contract check:
+
+```bash
+npm run architecture:check
+```
+
 Run the unit coverage gate for core practice and storage logic:
 
 ```bash
@@ -269,6 +275,7 @@ npm run ops:repository
 ## Engineering Notes
 
 - Practice selection and summary logic live in `src/practiceEngine.ts` so the learning behavior can be tested outside React.
+- `npm run architecture:check` verifies that shared contracts, practice logic, storage, hooks, and components keep their documented boundaries as the app grows.
 - Practice-plan recommendations are derived in `src/practiceEngine.ts`, keeping the coaching layer deterministic and ready for a future service boundary.
 - Mastery map state is derived in `src/practiceEngine.ts` from the active range, note attempts, and accuracy thresholds.
 - Daily goal and streak state is derived from completed session history, keeping habit analytics independent from browser storage.

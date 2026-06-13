@@ -30,6 +30,7 @@ NoteSense is currently a local-first React application. The product goal is to k
 - `vite.config.ts` injects the production Content Security Policy meta tag during build.
 - `vite.config.ts` also owns PWA service worker generation and Vitest browser-like component-test setup.
 - `scripts/check-repository-hygiene.mjs` owns required root configuration, ignore-policy, runtime-policy, and tracked-artifact hygiene checks.
+- `scripts/check-architecture-boundaries.mjs` owns source import-boundary checks for shared contracts, practice logic, storage, hooks, and UI components.
 - `scripts/check-design-system.mjs` owns the lightweight design-system contract for CSS tokens, shell states, accessibility affordances, responsive guards, and visual-regression coverage.
 - `scripts/check-licenses.mjs` owns dependency license policy enforcement.
 - `scripts/check-security-policy.mjs` owns built HTML security policy verification.
@@ -54,6 +55,7 @@ NoteSense is currently a local-first React application. The product goal is to k
 Every feature should keep these expectations intact:
 
 - Practice logic remains testable outside React.
+- Source import boundaries stay enforced by `npm run architecture:check` so shared contracts, practice logic, storage, hooks, and components keep clear responsibilities.
 - New note ranges should be added as data first, then wired through tested selection and settings paths.
 - Product analytics and chart inputs are derived in pure functions before rendering.
 - Habit analytics are derived from completed sessions so future sync can reconcile daily goals from server history.
@@ -121,6 +123,7 @@ PostgreSQL should sit behind a backend API, never behind direct browser access. 
 - Keep `practiceEngine` framework-independent.
 - Keep browser storage behind adapter-style functions.
 - Keep shared import/export and merge logic framework-agnostic so future backend sync can reuse it.
+- Keep UI components from owning persistence, network, audio, or hook orchestration; pass behavior through props from the app shell and hooks.
 - Keep export/import schemas versioned.
 - Keep privacy documentation updated when data fields, storage keys, export content, tracking behavior, network calls, auth, or sync changes.
 - Keep the runtime-surface gate updated with any intentional external URLs, network APIs, auth, analytics, telemetry, or sync behavior.
