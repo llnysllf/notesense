@@ -25,6 +25,7 @@ A change is done when:
 - User workflows have browser coverage when UI, persistence, import/export, or accessibility-sensitive behavior changes.
 - Design-system docs and `npm run design:check` stay aligned when layout, color, spacing, typography, or component states change.
 - Accessibility contract docs and `npm run accessibility:check` stay aligned when keyboard, screen reader, focus, contrast, motion, or automated accessibility coverage changes.
+- Testing contract docs and `npm run testing:check` stay aligned when package scripts, coverage thresholds, browser configs, CI quality gates, or test ownership changes.
 - Protected shell states have visual-regression coverage for desktop/mobile and light/dark when UI changes intentionally affect layout or appearance.
 - TypeScript strictness flags stay enabled for optional properties, indexed access, overrides, and unused code.
 - Privacy and data-handling docs stay aligned with local storage, import/export, analytics, network, auth, and sync behavior.
@@ -96,6 +97,12 @@ For accessibility-contract feedback:
 npm run accessibility:check
 ```
 
+For testing-contract feedback:
+
+```bash
+npm run testing:check
+```
+
 For policy documentation feedback:
 
 ```bash
@@ -156,6 +163,14 @@ For visual QA:
 - Model optional data by omitting absent properties or by explicitly allowing `undefined` in the type.
 - Treat array indexing and record lookup as fallible unless the code proves a fallback.
 - Use `override` on class members that intentionally replace base-class behavior.
+
+## Testing Strategy
+
+- `docs/TESTING.md` defines test ownership, change routing, determinism, coverage, CI, review, and verification expectations.
+- `npm run testing:check` verifies that package scripts, coverage thresholds, browser configs, workflow specs, and CI evidence stay aligned.
+- Put pure practice, data, and merge behavior in Vitest when possible.
+- Use browser tests for workflows, accessibility-sensitive behavior, persistence, import/export, responsive behavior, and deployment shape.
+- Use visual-regression tests only for intentional protected-shell appearance changes.
 
 ## Architecture Boundaries
 

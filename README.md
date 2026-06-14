@@ -14,6 +14,7 @@ Architecture notes: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)
 Quality runbook: [docs/QUALITY.md](docs/QUALITY.md)
 Design system: [docs/DESIGN_SYSTEM.md](docs/DESIGN_SYSTEM.md)
 Accessibility contract: [docs/ACCESSIBILITY.md](docs/ACCESSIBILITY.md)
+Testing strategy: [docs/TESTING.md](docs/TESTING.md)
 Data contract: [docs/DATA_CONTRACT.md](docs/DATA_CONTRACT.md)
 Release guide: [docs/RELEASE.md](docs/RELEASE.md)
 Operations runbook: [docs/OPERATIONS.md](docs/OPERATIONS.md)
@@ -179,6 +180,12 @@ Run the accessibility contract check:
 npm run accessibility:check
 ```
 
+Run the testing contract check:
+
+```bash
+npm run testing:check
+```
+
 Refresh visual regression baselines after an intentional UI change:
 
 ```bash
@@ -307,6 +314,7 @@ npm run ops:repository
 - CSS custom properties define shared color, spacing, radius, and shadow tokens so the interface can be tuned consistently.
 - The design-system contract in `docs/DESIGN_SYSTEM.md` and `npm run design:check` keep core tokens, component states, accessibility affordances, and visual-regression coverage aligned.
 - `npm run accessibility:check` verifies keyboard, screen reader, focus, motion, axe, cross-browser, and Lighthouse accessibility coverage stay connected.
+- `npm run testing:check` verifies that the test ownership matrix, package scripts, Vitest coverage thresholds, Playwright configs, browser specs, and CI quality gate stay aligned.
 - Progress, history, and settings are normalized when loaded from LocalStorage, including migration from the original V1 progress shape.
 - The data contract in `docs/DATA_CONTRACT.md` and `npm run data:check` keep storage keys, export schema, import normalization, privacy docs, and browser coverage aligned.
 - Save operations fail safely and surface a non-blocking status message when browser storage is unavailable.
@@ -322,7 +330,7 @@ npm run ops:repository
 - `.nvmrc`, package engines, and `.npmrc` keep local development, CI, deployment, and dependency maintenance on the same runtime contract.
 - `npm run repo:hygiene` verifies required repository configuration and blocks generated, dependency, secret, and local artifact files from being tracked.
 - TypeScript runs with strict optional-property, indexed-access, override, and unused-code checks enabled.
-- `npm run docs:check` verifies that privacy, accessibility, security, release, architecture, design-system, and contribution docs stay linked and aligned, and that local Markdown links plus documented npm scripts still resolve.
+- `npm run docs:check` verifies that privacy, accessibility, testing, security, release, architecture, design-system, and contribution docs stay linked and aligned, and that local Markdown links plus documented npm scripts still resolve.
 - `npm run release:notes` verifies that `CHANGELOG.md` stays aligned with `package.json` versioning and the Keep a Changelog release structure.
 - `npm run compliance:licenses` checks dependency licenses from the lockfile against the project policy.
 - `npm run security:lockfile` verifies the committed npm lockfile uses registry HTTPS tarballs, `sha512` integrity hashes, aligned root metadata, and the expected npm lockfile version.

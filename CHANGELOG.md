@@ -13,6 +13,7 @@ All notable changes to NoteSense are documented here. The format follows [Keep a
 - Release-notes contract with `npm run release:notes` to keep `CHANGELOG.md` aligned with `package.json` and release structure
 - Data-contract documentation and `npm run data:check` for LocalStorage keys, export schema, import normalization, privacy docs, and browser coverage
 - Accessibility contract with `docs/ACCESSIBILITY.md` and `npm run accessibility:check` for keyboard, screen reader, focus, motion, axe, cross-browser, and Lighthouse coverage
+- Testing contract with `docs/TESTING.md` and `npm run testing:check` for test ownership, coverage thresholds, Playwright configs, browser specs, and CI evidence
 - GitHub Actions workflow policy gates that require immutable action references and least-privilege token permissions
 - GitHub repository governance check for branch protection, required checks, repository security settings, vulnerability alerts, Pages, and active workflows
 - Dependency Review workflow for pull requests that introduce dependency or lockfile changes

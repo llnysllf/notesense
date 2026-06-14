@@ -32,6 +32,12 @@ For accessibility-sensitive UI, style, copy, Playwright, Lighthouse, or recovery
 npm run accessibility:check
 ```
 
+For test ownership, coverage, Playwright config, CI quality-gate, or workflow evidence changes, keep [docs/TESTING.md](docs/TESTING.md) aligned and run the testing contract check:
+
+```bash
+npm run testing:check
+```
+
 For intentional visual changes, refresh and review the screenshot baselines:
 
 ```bash
@@ -46,6 +52,7 @@ npm run test:e2e:visual:update
 - Keep shared contracts, practice logic, storage, hooks, and components inside the documented import boundaries; run `npm run architecture:check` after moving source responsibilities.
 - Add or update tests for new behavior, migrations, accessibility-sensitive UI, and practice analytics.
 - Keep [docs/ACCESSIBILITY.md](docs/ACCESSIBILITY.md) aligned with keyboard, screen reader, focus, contrast, motion, and automated coverage expectations; run `npm run accessibility:check` after accessibility-sensitive changes.
+- Keep [docs/TESTING.md](docs/TESTING.md) aligned with package scripts, coverage thresholds, Playwright configs, CI quality gates, and test ownership; run `npm run testing:check` after test-system changes.
 - Keep dependency license changes intentional; explain new licenses before updating the allowlist.
 - Keep dependency changes passing Dependency Review before merge.
 - Keep durable UI patterns documented in [docs/DESIGN_SYSTEM.md](docs/DESIGN_SYSTEM.md) instead of adding one-off styles.

@@ -44,7 +44,7 @@ requireSnippets("docs/ACCESSIBILITY.md", [
 
 requireSnippets("package.json", [
   '"accessibility:check": "node scripts/check-accessibility-contracts.mjs"',
-  "npm run design:check && npm run accessibility:check && npm run release:notes",
+  "npm run design:check && npm run accessibility:check && npm run testing:check && npm run release:notes",
   '"@axe-core/playwright"',
   '"eslint-plugin-jsx-a11y"',
 ]);
