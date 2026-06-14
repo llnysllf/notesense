@@ -11,8 +11,16 @@ NoteSense is a small piano sight-reading and ear-training app for beginner music
 Live demo: [https://llnysllf.github.io/notesense/](https://llnysllf.github.io/notesense/)
 
 Architecture notes: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)
+Architecture decision records: [docs/adr/README.md](docs/adr/README.md)
+Product scope: [docs/PRODUCT_SCOPE.md](docs/PRODUCT_SCOPE.md)
+Review process: [docs/REVIEW_PROCESS.md](docs/REVIEW_PROCESS.md)
+Dependency maintenance: [docs/DEPENDENCY_MAINTENANCE.md](docs/DEPENDENCY_MAINTENANCE.md)
 Quality runbook: [docs/QUALITY.md](docs/QUALITY.md)
 Design system: [docs/DESIGN_SYSTEM.md](docs/DESIGN_SYSTEM.md)
+Accessibility contract: [docs/ACCESSIBILITY.md](docs/ACCESSIBILITY.md)
+Testing strategy: [docs/TESTING.md](docs/TESTING.md)
+Browser support: [docs/BROWSER_SUPPORT.md](docs/BROWSER_SUPPORT.md)
+Performance contract: [docs/PERFORMANCE.md](docs/PERFORMANCE.md)
 Data contract: [docs/DATA_CONTRACT.md](docs/DATA_CONTRACT.md)
 Release guide: [docs/RELEASE.md](docs/RELEASE.md)
 Operations runbook: [docs/OPERATIONS.md](docs/OPERATIONS.md)
@@ -124,6 +132,30 @@ Run the architecture-boundary contract check:
 npm run architecture:check
 ```
 
+Run the ADR governance check:
+
+```bash
+npm run adr:check
+```
+
+Run the product-scope contract check:
+
+```bash
+npm run product:check
+```
+
+Run the review/intake contract check:
+
+```bash
+npm run review:check
+```
+
+Run the dependency-maintenance contract check:
+
+```bash
+npm run dependencies:check
+```
+
 Run the data-contract check:
 
 ```bash
@@ -170,6 +202,30 @@ Run the design-system contract check:
 
 ```bash
 npm run design:check
+```
+
+Run the accessibility contract check:
+
+```bash
+npm run accessibility:check
+```
+
+Run the testing contract check:
+
+```bash
+npm run testing:check
+```
+
+Run the browser-support contract check:
+
+```bash
+npm run browsers:check
+```
+
+Run the performance contract check:
+
+```bash
+npm run performance:check
 ```
 
 Refresh visual regression baselines after an intentional UI change:
@@ -290,6 +346,10 @@ npm run ops:repository
 
 - Practice selection and summary logic live in `src/practiceEngine.ts` so the learning behavior can be tested outside React.
 - `npm run architecture:check` verifies that shared contracts, practice logic, storage, hooks, and components keep their documented boundaries as the app grows.
+- `npm run adr:check` verifies that ADR filenames, headings, statuses, required sections, and index links stay aligned.
+- `npm run product:check` verifies that current scope, explicit non-goals, contributor guidance, review guidance, and foundation-first expectations stay aligned before features are added.
+- `npm run review:check` verifies CODEOWNERS, issue templates, PR review evidence, security-report routing, and triage guidance stay aligned.
+- `npm run dependencies:check` verifies Dependabot cadence, dependency review evidence, lockfile policy, license policy, supply-chain gates, and workflow-update expectations stay aligned.
 - Practice-plan recommendations are derived in `src/practiceEngine.ts`, keeping the coaching layer deterministic and ready for a future service boundary.
 - Mastery map state is derived in `src/practiceEngine.ts` from the active range, note attempts, and accuracy thresholds.
 - Daily goal and streak state is derived from completed session history, keeping habit analytics independent from browser storage.
@@ -299,6 +359,10 @@ npm run ops:repository
 - `PracticeInsights` renders tested trend data from `practiceEngine.ts` as an accessible SVG chart.
 - CSS custom properties define shared color, spacing, radius, and shadow tokens so the interface can be tuned consistently.
 - The design-system contract in `docs/DESIGN_SYSTEM.md` and `npm run design:check` keep core tokens, component states, accessibility affordances, and visual-regression coverage aligned.
+- `npm run accessibility:check` verifies keyboard, screen reader, focus, motion, axe, cross-browser, and Lighthouse accessibility coverage stay connected.
+- `npm run testing:check` verifies that the test ownership matrix, package scripts, Vitest coverage thresholds, Playwright configs, browser specs, and CI quality gate stay aligned.
+- `npm run browsers:check` verifies Playwright browser projects, Pages/mobile support, visual-regression profiles, PWA/runtime boundaries, and browser-support docs stay aligned.
+- `npm run performance:check` verifies bundle budgets, Lighthouse thresholds, metadata/PWA/runtime checks, Pages smoke coverage, and performance-review guidance stay aligned.
 - Progress, history, and settings are normalized when loaded from LocalStorage, including migration from the original V1 progress shape.
 - The data contract in `docs/DATA_CONTRACT.md` and `npm run data:check` keep storage keys, export schema, import normalization, privacy docs, and browser coverage aligned.
 - Save operations fail safely and surface a non-blocking status message when browser storage is unavailable.
@@ -314,7 +378,7 @@ npm run ops:repository
 - `.nvmrc`, package engines, and `.npmrc` keep local development, CI, deployment, and dependency maintenance on the same runtime contract.
 - `npm run repo:hygiene` verifies required repository configuration and blocks generated, dependency, secret, and local artifact files from being tracked.
 - TypeScript runs with strict optional-property, indexed-access, override, and unused-code checks enabled.
-- `npm run docs:check` verifies that privacy, security, release, architecture, design-system, and contribution docs stay linked and aligned, and that local Markdown links plus documented npm scripts still resolve.
+- `npm run docs:check` verifies that privacy, accessibility, testing, security, release, architecture, design-system, and contribution docs stay linked and aligned, and that local Markdown links plus documented npm scripts still resolve.
 - `npm run release:notes` verifies that `CHANGELOG.md` stays aligned with `package.json` versioning and the Keep a Changelog release structure.
 - `npm run compliance:licenses` checks dependency licenses from the lockfile against the project policy.
 - `npm run security:lockfile` verifies the committed npm lockfile uses registry HTTPS tarballs, `sha512` integrity hashes, aligned root metadata, and the expected npm lockfile version.
@@ -347,7 +411,7 @@ npm run ops:repository
 - Dependency Review scans dependency changes on pull requests before they can merge.
 - Pull requests also build the GitHub Pages artifact and upload browser failure artifacts for debugging.
 - Dependabot keeps npm minor/patch updates and GitHub Actions dependencies on a weekly maintenance cadence; major npm upgrades are handled as intentional engineering tasks.
-- CODEOWNERS, issue templates, ADRs, repository governance checks, and the release guide keep review, planning, and deployment expectations explicit.
+- CODEOWNERS, issue templates, indexed ADRs, repository governance checks, and the release guide keep review, planning, and deployment expectations explicit.
 - The `main` branch publishes a static production build to GitHub Pages.
 
 ## Current Scope

@@ -6,6 +6,7 @@ NoteSense currently releases from `main` to GitHub Pages. The release process is
 
 - Prefer small releases with one clear product or engineering purpose.
 - Keep learner-facing behavior intentional and documented.
+- Treat product-scope results as release evidence when supported scope, explicit non-goals, roadmap language, or feature-intake expectations change.
 - Preserve the local-first data model unless a migration plan exists.
 - Treat architecture-boundary results as release evidence when shared contracts, practice logic, storage, hooks, components, or app-shell responsibilities change.
 - Treat data-contract results as release evidence when storage keys, export schema, import normalization, privacy boundaries, or future sync assumptions change.
@@ -13,12 +14,19 @@ NoteSense currently releases from `main` to GitHub Pages. The release process is
 - Treat threat-model and backend-readiness docs as release evidence before auth, API, database, sync, PostgreSQL, or cloud infrastructure changes.
 - Treat repository hygiene results as release evidence when root configuration, ignore policy, runtime configuration, or generated artifact handling changes.
 - Treat documentation integrity results as release evidence when docs, file paths, anchors, or npm scripts change.
+- Treat ADR governance results as release evidence when architecture decisions are added, renamed, removed, or moved between statuses.
+- Treat review/intake results as release evidence when CODEOWNERS, issue templates, PR templates, labels, triage routing, or review evidence expectations change.
 - Treat design-system results as UI release evidence when tokens, component states, responsive behavior, typography, or visual-regression coverage changes.
+- Treat accessibility-contract results as release evidence when keyboard behavior, screen reader semantics, focus visibility, contrast, motion, or automated accessibility coverage changes.
+- Treat testing-contract results as release evidence when test ownership, package scripts, coverage thresholds, browser configs, CI quality gates, or workflow evidence changes.
+- Treat browser-support results as release evidence when supported browsers, Playwright projects, device profiles, Pages base path, Web Audio behavior, LocalStorage behavior, responsive support, color-scheme support, PWA/offline behavior, runtime-surface policy, or browser verification evidence changes.
+- Treat performance-contract results as release evidence when bundle budgets, tracked asset categories, Lighthouse thresholds, Lighthouse workflow behavior, metadata checks, PWA artifact checks, runtime-surface checks, Pages smoke behavior, or performance review expectations change.
 - Treat runtime surface results as release evidence when client APIs, URLs, analytics, network, auth, or sync behavior changes.
 - Keep the pinned Node/npm runtime consistent across local setup, CI, deployment, and dependency maintenance.
 - Treat lockfile supply-chain results as release evidence when dependencies, lockfiles, Node, or npm runtime settings change.
 - Treat dependency license results as supply-chain release evidence.
 - Treat Dependency Review results as pull-request supply-chain release evidence when dependencies or lockfiles change.
+- Treat dependency-maintenance results as release evidence when Dependabot cadence, dependency grouping, ignored update types, package manager policy, lockfile policy, license policy, or workflow-update policy changes.
 - Treat workflow action pinning, token-permission, timeout, concurrency, and artifact-retention results as supply-chain and operations release evidence when GitHub Actions workflows change.
 - Treat repository governance results as operational release evidence when branch protection, required checks, repository security settings, Pages, or workflow activation changes.
 - Treat operations docs as release evidence when release-health signals, incident response, deployment ownership, monitoring, telemetry, or support expectations change.
@@ -54,6 +62,7 @@ Confirm policy docs and documentation integrity remain aligned:
 ```bash
 npm run repo:hygiene
 npm run docs:check
+npm run adr:check
 npm run release:notes
 ```
 
@@ -75,6 +84,12 @@ For UI changes, manually inspect:
 - Text wrapping.
 - Reduced-motion behavior when animation changes.
 - Whether `npm run design:check` passes when tokens, layout, component states, or visual-regression coverage change.
+- Whether `npm run accessibility:check` still proves keyboard, screen reader, focus, motion, axe, cross-browser, and Lighthouse coverage are aligned.
+- Whether `npm run testing:check` still proves package scripts, coverage thresholds, Playwright configs, browser specs, and CI evidence are aligned.
+- Whether `npm run browsers:check` still proves supported engines, mobile viewports, Pages base path, visual-regression profiles, PWA/runtime boundaries, and browser-support docs are aligned.
+- Whether `npm run performance:check` still proves bundle budgets, Lighthouse thresholds, metadata/PWA/runtime checks, Pages smoke coverage, and performance-review guidance are aligned.
+- Whether `npm run product:check` still proves README scope, explicit non-goals, contributor guidance, review guidance, and foundation-first expectations are aligned.
+- Whether `npm run review:check` still proves CODEOWNERS, issue templates, PR template, security routing, and review evidence stay aligned.
 - Whether `npm run test:e2e:visual` passes or baselines were intentionally updated and reviewed.
 
 For data changes, manually inspect:
@@ -95,6 +110,7 @@ For dependency changes, inspect:
 - Whether the update is a routine minor/patch update or a deliberate major upgrade.
 - Peer dependency warnings from `npm ci`.
 - Whether the `Dependency Review` workflow passed on the pull request.
+- Whether `npm run dependencies:check` still proves Dependabot cadence, dependency review evidence, lockfile policy, license policy, supply-chain gates, and workflow-update expectations are aligned.
 - Whether `npm run compliance:licenses` still passes.
 - Whether `npm run security:lockfile` still passes.
 - Whether `npm run security:workflows` still passes after workflow changes.

@@ -1,0 +1,51 @@
+# Review And Intake Contract
+
+NoteSense is small, but changes should still enter the project through a clear path. This contract keeps bugs, product ideas, engineering work, security reports, ownership, and pull-request review evidence consistent while the foundation is being strengthened.
+
+## Ownership
+
+- `.github/CODEOWNERS` owns default review routing.
+- Pull requests should remain reviewable by the repository owner before merge.
+- Ownership changes should update repository governance docs and `npm run ops:repository` expectations when branch protection or required review behavior changes.
+
+## Intake Paths
+
+- Bug reports use `.github/ISSUE_TEMPLATE/bug_report.yml`.
+- Product proposals use `.github/ISSUE_TEMPLATE/feature_proposal.yml`.
+- Engineering tasks use `.github/ISSUE_TEMPLATE/engineering_task.yml`.
+- Public blank issues stay disabled so incoming work has enough structure.
+- Security reports follow `SECURITY.md` instead of public issue details.
+
+## Triage Rules
+
+- Bugs should include area, current behavior, expected behavior, reproduction steps, browser or viewport context, and evidence when available.
+- Product proposals should start with learner problem and desired outcome before implementation details.
+- Engineering tasks should state the quality bar being raised, acceptance evidence, and risk notes.
+- Feature proposals that expand current scope should update `docs/PRODUCT_SCOPE.md` before implementation starts.
+- Security-sensitive work should follow `SECURITY.md`, `docs/THREAT_MODEL.md`, and `docs/BACKEND_READINESS.md`.
+
+## Pull Request Evidence
+
+Every PR should include:
+
+- a concise summary
+- relevant local validation, preferably `npm run verify` for release-ready work
+- product-scope, accessibility, testing, ADR, data, privacy, security, operations, dependency, workflow, bundle, Pages, and visual-regression impact notes when relevant
+- screenshots or visual-regression evidence when UI intentionally changes
+- risk notes for migrations, deployment, privacy, security, accessibility, or future backend boundaries
+
+## Change Rules
+
+- Update this contract when CODEOWNERS, issue templates, PR template, review routing, triage labels, security-report routing, or review evidence expectations change.
+- Run `npm run review:check` after review, intake, issue-template, PR-template, CODEOWNERS, or triage-process changes.
+- Keep product-scope, quality, release, operations, security, and repository-governance docs aligned when the review process changes.
+
+## Verification
+
+`npm run review:check` verifies that:
+
+- CODEOWNERS still routes default ownership
+- bug, product proposal, and engineering task templates keep required labels and evidence fields
+- blank public issues stay disabled and security reports route through the security policy
+- the pull request template keeps summary, quality checklist, risk notes, validation, and foundation-impact prompts
+- README, contributing, quality, release, architecture, operations, product-scope, testing, and ADR docs stay connected to review and intake governance

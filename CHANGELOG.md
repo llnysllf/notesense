@@ -12,6 +12,14 @@ All notable changes to NoteSense are documented here. The format follows [Keep a
 - Operations runbook documenting release-health signals, incident triggers, triage, rollback, evidence handling, and future observability expectations
 - Release-notes contract with `npm run release:notes` to keep `CHANGELOG.md` aligned with `package.json` and release structure
 - Data-contract documentation and `npm run data:check` for LocalStorage keys, export schema, import normalization, privacy docs, and browser coverage
+- Accessibility contract with `docs/ACCESSIBILITY.md` and `npm run accessibility:check` for keyboard, screen reader, focus, motion, axe, cross-browser, and Lighthouse coverage
+- Testing contract with `docs/TESTING.md` and `npm run testing:check` for test ownership, coverage thresholds, Playwright configs, browser specs, and CI evidence
+- ADR governance with `docs/adr/README.md` and `npm run adr:check` for decision numbering, status, required sections, and index links
+- Product-scope contract with `docs/PRODUCT_SCOPE.md` and `npm run product:check` for current scope, explicit non-goals, feature intake, and foundation-first expectations
+- Review/intake contract with `docs/REVIEW_PROCESS.md` and `npm run review:check` for CODEOWNERS, issue templates, PR evidence, security-report routing, and triage guidance
+- Dependency-maintenance contract with `docs/DEPENDENCY_MAINTENANCE.md` and `npm run dependencies:check` for Dependabot cadence, lockfile policy, license policy, supply-chain gates, and workflow-update expectations
+- Browser-support contract with `docs/BROWSER_SUPPORT.md` and `npm run browsers:check` for supported engines, mobile viewports, Pages base path, visual-regression profiles, PWA/runtime boundaries, and browser verification evidence
+- Performance contract with `docs/PERFORMANCE.md` and `npm run performance:check` for bundle budgets, Lighthouse thresholds, metadata/PWA/runtime checks, Pages smoke coverage, and performance-review guidance
 - GitHub Actions workflow policy gates that require immutable action references and least-privilege token permissions
 - GitHub repository governance check for branch protection, required checks, repository security settings, vulnerability alerts, Pages, and active workflows
 - Dependency Review workflow for pull requests that introduce dependency or lockfile changes

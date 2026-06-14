@@ -17,6 +17,7 @@ Avoid adding features just to make the project larger.
 A change is done when:
 
 - The behavior is implemented in the smallest responsible area of the codebase.
+- Product-scope docs and `npm run product:check` stay aligned when supported scope, explicit non-goals, roadmap language, or feature-intake expectations change.
 - Source import boundaries pass `npm run architecture:check` when shared contracts, practice logic, storage, hooks, components, or app-shell responsibilities change.
 - Pure practice, analytics, and data-shape logic has unit coverage.
 - Core practice and storage modules meet the configured Vitest coverage thresholds.
@@ -24,12 +25,18 @@ A change is done when:
 - Reusable UI components have focused component coverage for accessibility labels and state rendering where browser workflows would be too broad.
 - User workflows have browser coverage when UI, persistence, import/export, or accessibility-sensitive behavior changes.
 - Design-system docs and `npm run design:check` stay aligned when layout, color, spacing, typography, or component states change.
+- Accessibility contract docs and `npm run accessibility:check` stay aligned when keyboard, screen reader, focus, contrast, motion, or automated accessibility coverage changes.
+- Testing contract docs and `npm run testing:check` stay aligned when package scripts, coverage thresholds, browser configs, CI quality gates, or test ownership changes.
+- Browser-support docs and `npm run browsers:check` stay aligned when supported browsers, Playwright projects, device profiles, Pages base path, Web Audio behavior, LocalStorage behavior, responsive support, color-scheme support, PWA/offline behavior, runtime-surface policy, or browser verification evidence changes.
+- Performance docs and `npm run performance:check` stay aligned when bundle budgets, tracked asset categories, Lighthouse thresholds, Lighthouse workflow behavior, metadata checks, PWA artifact checks, runtime-surface checks, Pages smoke behavior, or performance review expectations change.
 - Protected shell states have visual-regression coverage for desktop/mobile and light/dark when UI changes intentionally affect layout or appearance.
 - TypeScript strictness flags stay enabled for optional properties, indexed access, overrides, and unused code.
 - Privacy and data-handling docs stay aligned with local storage, import/export, analytics, network, auth, and sync behavior.
 - Data-contract docs and `npm run data:check` stay aligned when storage keys, export schema, import normalization, or future sync assumptions change.
 - Threat model and backend-readiness docs stay aligned before account, API, database, sync, or cloud infrastructure work begins.
 - Documentation links, anchors, and documented npm script references stay resolvable.
+- ADR index and `npm run adr:check` stay aligned when decision records are added, renamed, removed, or moved between statuses.
+- Review/intake docs and `npm run review:check` stay aligned when CODEOWNERS, issue templates, PR templates, labels, triage routing, or review evidence expectations change.
 - Operations docs stay aligned when release-health signals, incident response, deployment ownership, monitoring, telemetry, or support expectations change.
 - Release notes pass `npm run release:notes` when `CHANGELOG.md`, package version metadata, or release-relevant behavior changes.
 - Repository hygiene checks pass so required configuration files stay present and generated, dependency, secret, or local artifact files stay untracked.
@@ -41,6 +48,7 @@ A change is done when:
 - Dependency Review passes for pull requests that introduce dependency or lockfile changes.
 - GitHub Actions workflow references are pinned to full commit SHAs with source-version comments, and workflow token permissions stay least-privilege.
 - GitHub Actions workflows keep reviewed concurrency, timeout, and artifact-retention controls.
+- Dependency-maintenance docs and `npm run dependencies:check` stay aligned when Dependabot cadence, dependency grouping, ignored update types, package manager policy, lockfile policy, license policy, or workflow-update policy changes.
 - GitHub repository governance checks pass after branch protection, repository security, Pages, required-check, or workflow-activation changes.
 - Static bundle output stays within the documented performance budgets.
 - Generated PWA artifacts pass the static-asset-only service worker check.
@@ -89,10 +97,58 @@ For data-contract feedback:
 npm run data:check
 ```
 
+For accessibility-contract feedback:
+
+```bash
+npm run accessibility:check
+```
+
+For testing-contract feedback:
+
+```bash
+npm run testing:check
+```
+
+For browser-support feedback:
+
+```bash
+npm run browsers:check
+```
+
+For performance feedback:
+
+```bash
+npm run performance:check
+```
+
 For policy documentation feedback:
 
 ```bash
 npm run docs:check
+```
+
+For ADR governance feedback:
+
+```bash
+npm run adr:check
+```
+
+For product-scope feedback:
+
+```bash
+npm run product:check
+```
+
+For review/intake feedback:
+
+```bash
+npm run review:check
+```
+
+For dependency-maintenance feedback:
+
+```bash
+npm run dependencies:check
 ```
 
 For release-note feedback:
@@ -126,6 +182,8 @@ For visual QA:
 
 ## Accessibility Checklist
 
+- `docs/ACCESSIBILITY.md` defines the product accessibility standard, keyboard and focus rules, screen reader semantics, visual and motion rules, automated coverage, manual review expectations, and change process.
+- `npm run accessibility:check` verifies that source semantics, styles, browser tests, lint rules, and docs stay aligned.
 - All interactive controls are keyboard reachable.
 - Focus rings are visible and not clipped.
 - Button and status text fits at mobile widths.
@@ -147,6 +205,44 @@ For visual QA:
 - Model optional data by omitting absent properties or by explicitly allowing `undefined` in the type.
 - Treat array indexing and record lookup as fallible unless the code proves a fallback.
 - Use `override` on class members that intentionally replace base-class behavior.
+
+## Testing Strategy
+
+- `docs/TESTING.md` defines test ownership, change routing, determinism, coverage, CI, review, and verification expectations.
+- `npm run testing:check` verifies that package scripts, coverage thresholds, browser configs, workflow specs, and CI evidence stay aligned.
+- Put pure practice, data, and merge behavior in Vitest when possible.
+- Use browser tests for workflows, accessibility-sensitive behavior, persistence, import/export, responsive behavior, and deployment shape.
+- Use visual-regression tests only for intentional protected-shell appearance changes.
+
+## Browser Support
+
+- `docs/BROWSER_SUPPORT.md` defines supported engines, device shapes, runtime assumptions, unsupported surfaces, and browser verification evidence.
+- `npm run browsers:check` verifies Playwright browser projects, Pages/mobile support, visual-regression profiles, PWA/runtime boundaries, and browser-support docs stay aligned.
+- Browser-support changes should keep accessibility, testing, release, runtime-surface, PWA, and PR review guidance aligned.
+
+## Performance
+
+- `docs/PERFORMANCE.md` defines the product performance standard, bundle budgets, Lighthouse signal, static asset boundaries, and performance verification evidence.
+- `npm run performance:check` verifies bundle budgets, Lighthouse thresholds, metadata/PWA/runtime checks, Pages smoke coverage, and performance-review guidance stay aligned.
+- Performance changes should keep browser support, dependency maintenance, release, runtime-surface, PWA, Pages, and PR review guidance aligned.
+
+## Decision Records
+
+- `docs/adr/README.md` indexes durable architecture decisions and documents the ADR process.
+- `npm run adr:check` verifies ADR filenames, headings, statuses, required sections, sequential numbering, and index links.
+- Add an ADR when a change affects data ownership, deployment, quality gates, runtime policy, security posture, release process, service boundaries, or future backend direction.
+
+## Product Scope
+
+- `docs/PRODUCT_SCOPE.md` defines the product promise, current supported scope, explicit non-goals, foundation-first rule, feature-intake expectations, and scope-change process.
+- `npm run product:check` verifies README scope, explicit non-goals, contributor guidance, review guidance, and foundation-first expectations stay aligned.
+- New features should start from a learner problem and product-scope update, not directly from UI code.
+
+## Review And Intake
+
+- `docs/REVIEW_PROCESS.md` defines ownership, issue intake, triage, PR evidence, and review-process verification.
+- `npm run review:check` verifies CODEOWNERS, issue templates, PR template, security routing, and review evidence stay aligned.
+- Product proposals should start from learner problem and scope before implementation.
 
 ## Architecture Boundaries
 
@@ -223,6 +319,8 @@ After pushing:
 
 ## Dependency Maintenance
 
+- `docs/DEPENDENCY_MAINTENANCE.md` defines dependency sources, Dependabot policy, update classes, review evidence, and dependency-maintenance verification.
+- `npm run dependencies:check` verifies Dependabot cadence, dependency review evidence, lockfile policy, license policy, supply-chain gates, and workflow-update expectations stay aligned.
 - Dependabot opens routine npm minor/patch updates and GitHub Actions updates weekly.
 - Major npm upgrades should be tracked as engineering tasks because they can affect peer dependencies, test tooling, bundling, or browser coverage.
 - Node/npm runtime upgrades should update `.nvmrc`, package engines, workflow behavior, docs, and ADRs together.

@@ -2,7 +2,7 @@
 
 NoteSense is currently a static, local-first web app. It does not store data on a server, and saved progress stays in the user's browser unless the user exports it.
 
-Privacy and data handling expectations live in [docs/PRIVACY.md](docs/PRIVACY.md). Future account, sync, and backend work should also follow [docs/THREAT_MODEL.md](docs/THREAT_MODEL.md) and [docs/BACKEND_READINESS.md](docs/BACKEND_READINESS.md).
+Privacy and data handling expectations live in [docs/PRIVACY.md](docs/PRIVACY.md). Dependency maintenance expectations live in [docs/DEPENDENCY_MAINTENANCE.md](docs/DEPENDENCY_MAINTENANCE.md). Future account, sync, and backend work should also follow [docs/THREAT_MODEL.md](docs/THREAT_MODEL.md) and [docs/BACKEND_READINESS.md](docs/BACKEND_READINESS.md).
 
 ## Supported Version
 
@@ -26,6 +26,7 @@ Useful details include:
 - Keep `.env` and local environment files ignored.
 - Keep GitHub Actions pinned to reviewed commit SHAs with least-privilege token permissions, bounded runtimes, concurrency cancellation, and reviewed artifact retention; run `npm run security:workflows` after workflow edits.
 - Keep `package-lock.json` committed from the pinned npm runtime; run `npm run security:lockfile` after dependency or runtime changes.
+- Run `npm run dependencies:check` after Dependabot, dependency-maintenance, lockfile-policy, license-policy, package manager, or workflow-update-policy changes.
 - Run `npm run compliance:licenses` before release so dependency-license drift is caught.
 - Run `npm run security:policy` after a Pages build when HTML shell, Vite build, runtime API, or asset-category behavior changes.
 - Run `npm run verify` before release so supply-chain policy, high-severity dependency advisories, and release gates are caught.
