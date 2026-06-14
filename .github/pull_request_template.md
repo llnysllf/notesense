@@ -10,6 +10,7 @@
 - [ ] Testing impact was considered for unit, component, browser, resilience, Pages, visual, coverage, and CI evidence.
 - [ ] ADR impact was considered for decision numbering, status, index links, and required sections.
 - [ ] Product-scope impact was considered for current scope, explicit non-goals, feature intake, and foundation-first expectations.
+- [ ] Review/intake impact was considered for CODEOWNERS, issue templates, PR evidence, labels, and triage routing.
 - [ ] Persistence/import/export behavior is unchanged or has a tested migration path.
 - [ ] Data-contract impact was considered for storage keys, export schema, import normalization, privacy docs, and future sync assumptions.
 - [ ] Runtime changes keep `.nvmrc`, package engines, GitHub Actions, docs, and ADRs aligned.

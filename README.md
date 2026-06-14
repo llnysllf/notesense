@@ -13,6 +13,7 @@ Live demo: [https://llnysllf.github.io/notesense/](https://llnysllf.github.io/no
 Architecture notes: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)
 Architecture decision records: [docs/adr/README.md](docs/adr/README.md)
 Product scope: [docs/PRODUCT_SCOPE.md](docs/PRODUCT_SCOPE.md)
+Review process: [docs/REVIEW_PROCESS.md](docs/REVIEW_PROCESS.md)
 Quality runbook: [docs/QUALITY.md](docs/QUALITY.md)
 Design system: [docs/DESIGN_SYSTEM.md](docs/DESIGN_SYSTEM.md)
 Accessibility contract: [docs/ACCESSIBILITY.md](docs/ACCESSIBILITY.md)
@@ -138,6 +139,12 @@ Run the product-scope contract check:
 
 ```bash
 npm run product:check
+```
+
+Run the review/intake contract check:
+
+```bash
+npm run review:check
 ```
 
 Run the data-contract check:
@@ -320,6 +327,7 @@ npm run ops:repository
 - `npm run architecture:check` verifies that shared contracts, practice logic, storage, hooks, and components keep their documented boundaries as the app grows.
 - `npm run adr:check` verifies that ADR filenames, headings, statuses, required sections, and index links stay aligned.
 - `npm run product:check` verifies that current scope, explicit non-goals, contributor guidance, review guidance, and foundation-first expectations stay aligned before features are added.
+- `npm run review:check` verifies CODEOWNERS, issue templates, PR review evidence, security-report routing, and triage guidance stay aligned.
 - Practice-plan recommendations are derived in `src/practiceEngine.ts`, keeping the coaching layer deterministic and ready for a future service boundary.
 - Mastery map state is derived in `src/practiceEngine.ts` from the active range, note attempts, and accuracy thresholds.
 - Daily goal and streak state is derived from completed session history, keeping habit analytics independent from browser storage.

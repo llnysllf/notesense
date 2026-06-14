@@ -34,12 +34,14 @@ requireSnippets("docs/PRODUCT_SCOPE.md", [
   "## Verification",
   "Avoid adding features only to make the project look larger.",
   "Foundation-only changes are valid when they make the product easier to evolve without expanding the supported learner surface.",
+  "Product proposals should use the product proposal issue template before implementation.",
+  "Keep review/intake docs aligned when feature intake changes.",
   "Run `npm run product:check` after scope, roadmap, feature-intake, or product-positioning changes.",
 ]);
 
 requireSnippets("package.json", [
   '"product:check": "node scripts/check-product-scope.mjs"',
-  "npm run docs:check && npm run adr:check && npm run product:check && npm run data:check",
+  "npm run docs:check && npm run adr:check && npm run product:check && npm run review:check && npm run data:check",
 ]);
 
 requireSnippets("README.md", [

@@ -52,3 +52,4 @@ Architecture Decision Records document durable product and engineering decisions
 - [ADR 0035: Add Testing Contract Check](0035-add-testing-contract-check.md) - Accepted
 - [ADR 0036: Add ADR Governance Check](0036-add-adr-governance-check.md) - Accepted
 - [ADR 0037: Add Product Scope Contract](0037-add-product-scope-contract.md) - Accepted
+- [ADR 0038: Add Review And Intake Contract](0038-add-review-intake-contract.md) - Accepted

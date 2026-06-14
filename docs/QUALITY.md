@@ -34,6 +34,7 @@ A change is done when:
 - Threat model and backend-readiness docs stay aligned before account, API, database, sync, or cloud infrastructure work begins.
 - Documentation links, anchors, and documented npm script references stay resolvable.
 - ADR index and `npm run adr:check` stay aligned when decision records are added, renamed, removed, or moved between statuses.
+- Review/intake docs and `npm run review:check` stay aligned when CODEOWNERS, issue templates, PR templates, labels, triage routing, or review evidence expectations change.
 - Operations docs stay aligned when release-health signals, incident response, deployment ownership, monitoring, telemetry, or support expectations change.
 - Release notes pass `npm run release:notes` when `CHANGELOG.md`, package version metadata, or release-relevant behavior changes.
 - Repository hygiene checks pass so required configuration files stay present and generated, dependency, secret, or local artifact files stay untracked.
@@ -123,6 +124,12 @@ For product-scope feedback:
 npm run product:check
 ```
 
+For review/intake feedback:
+
+```bash
+npm run review:check
+```
+
 For release-note feedback:
 
 ```bash
@@ -197,6 +204,12 @@ For visual QA:
 - `docs/PRODUCT_SCOPE.md` defines the product promise, current supported scope, explicit non-goals, foundation-first rule, feature-intake expectations, and scope-change process.
 - `npm run product:check` verifies README scope, explicit non-goals, contributor guidance, review guidance, and foundation-first expectations stay aligned.
 - New features should start from a learner problem and product-scope update, not directly from UI code.
+
+## Review And Intake
+
+- `docs/REVIEW_PROCESS.md` defines ownership, issue intake, triage, PR evidence, and review-process verification.
+- `npm run review:check` verifies CODEOWNERS, issue templates, PR template, security routing, and review evidence stay aligned.
+- Product proposals should start from learner problem and scope before implementation.
 
 ## Architecture Boundaries
 

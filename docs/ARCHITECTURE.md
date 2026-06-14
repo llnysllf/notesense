@@ -25,6 +25,7 @@ NoteSense is currently a local-first React application. The product goal is to k
 - `docs/adr` records architecture decisions that should survive beyond a single implementation pass.
 - `docs/adr/README.md` indexes ADRs and documents decision-record process expectations.
 - `docs/PRODUCT_SCOPE.md` documents the supported learner surface, explicit non-goals, foundation-first rule, and feature-intake expectations.
+- `docs/REVIEW_PROCESS.md` documents ownership, issue intake, triage, pull-request evidence, and review-process verification.
 - `docs/DESIGN_SYSTEM.md` documents the design-token, component-state, accessibility, and visual-regression contract for UI changes.
 - `docs/ACCESSIBILITY.md` documents the keyboard, screen reader, focus, contrast, motion, and automated accessibility coverage contract.
 - `docs/TESTING.md` documents test ownership, change routing, determinism, coverage, CI, and review expectations.
@@ -38,6 +39,7 @@ NoteSense is currently a local-first React application. The product goal is to k
 - `scripts/check-repository-hygiene.mjs` owns required root configuration, ignore-policy, runtime-policy, and tracked-artifact hygiene checks.
 - `scripts/check-adr-contracts.mjs` owns ADR numbering, status, required-section, and index-link checks.
 - `scripts/check-product-scope.mjs` owns product-scope drift checks for README scope, explicit non-goals, contributor guidance, review guidance, and release docs.
+- `scripts/check-review-process.mjs` owns review/intake drift checks for CODEOWNERS, issue templates, PR template, security routing, and review evidence.
 - `scripts/check-data-contracts.mjs` owns data-contract drift checks for storage keys, shared export shape, privacy docs, and browser coverage.
 - `scripts/check-architecture-boundaries.mjs` owns source import-boundary checks for shared contracts, practice logic, storage, hooks, and UI components.
 - `scripts/check-design-system.mjs` owns the lightweight design-system contract for CSS tokens, shell states, accessibility affordances, responsive guards, and visual-regression coverage.
@@ -84,6 +86,7 @@ Every feature should keep these expectations intact:
 - Testing-contract changes should keep package scripts, coverage thresholds, browser configs, CI workflow evidence, and release guidance aligned.
 - ADR changes should keep numbering, status, required sections, index links, release guidance, and contributor guidance aligned.
 - Product-scope changes should keep README current scope, explicit non-goals, feature-intake expectations, foundation-first guidance, release guidance, and ADRs aligned.
+- Review-process changes should keep CODEOWNERS, issue templates, PR evidence, security routing, product-scope guidance, release guidance, and contributor guidance aligned.
 - Design-system changes should preserve the documented token layers, component states, responsive behavior, focus behavior, and protected visual surfaces.
 - Dependency license compliance is part of supply-chain readiness.
 - Dependency Review is part of pull-request supply-chain readiness for dependency and lockfile changes.

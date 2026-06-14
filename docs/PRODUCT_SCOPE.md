@@ -59,10 +59,13 @@ New features should not start as code. A feature proposal should first explain:
 - whether the feature changes backend-readiness, threat-model, or product-scope docs
 - how the feature can be validated without weakening the existing practice loop
 
+Product proposals should use the product proposal issue template before implementation.
+
 ## Change Rules
 
 - Update this contract when current scope, out-of-scope boundaries, feature-intake expectations, or foundation-first rules change.
 - Update README current scope when the supported learner surface changes.
+- Keep review/intake docs aligned when feature intake changes.
 - Update privacy, threat-model, backend-readiness, data-contract, accessibility, design-system, testing, release, and operations docs when scope changes affect their boundaries.
 - Add or update ADRs for durable scope changes.
 - Run `npm run product:check` after scope, roadmap, feature-intake, or product-positioning changes.
