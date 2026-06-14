@@ -33,12 +33,14 @@ requireSnippets("docs/BROWSER_SUPPORT.md", [
   "## Verification",
   "Evergreen desktop Chromium, Firefox, and WebKit/Safari-engine browsers are covered by the main Playwright workflow.",
   "Mobile Chromium viewport behavior is covered by the main Playwright workflow.",
+  "Performance expectations live in [PERFORMANCE.md](PERFORMANCE.md).",
   "Run `npm run browsers:check` after browser-support, Playwright project, Pages smoke, visual-regression, PWA, runtime-surface, Lighthouse, or browser-support documentation changes.",
+  "Run `npm run performance:check` when browser changes affect bundle budgets, Lighthouse, metadata, PWA, runtime-surface, or Pages smoke evidence.",
 ]);
 
 requireSnippets("package.json", [
   '"browsers:check": "node scripts/check-browser-support.mjs"',
-  "npm run accessibility:check && npm run testing:check && npm run browsers:check && npm run release:notes",
+  "npm run accessibility:check && npm run testing:check && npm run browsers:check && npm run performance:check && npm run release:notes",
   '"test:e2e": "playwright test"',
   '"test:e2e:pages": "playwright test --config=playwright.pages.config.ts"',
   '"test:e2e:visual": "playwright test --config=playwright.visual.config.ts"',

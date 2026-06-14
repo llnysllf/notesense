@@ -28,6 +28,7 @@ A change is done when:
 - Accessibility contract docs and `npm run accessibility:check` stay aligned when keyboard, screen reader, focus, contrast, motion, or automated accessibility coverage changes.
 - Testing contract docs and `npm run testing:check` stay aligned when package scripts, coverage thresholds, browser configs, CI quality gates, or test ownership changes.
 - Browser-support docs and `npm run browsers:check` stay aligned when supported browsers, Playwright projects, device profiles, Pages base path, Web Audio behavior, LocalStorage behavior, responsive support, color-scheme support, PWA/offline behavior, runtime-surface policy, or browser verification evidence changes.
+- Performance docs and `npm run performance:check` stay aligned when bundle budgets, tracked asset categories, Lighthouse thresholds, Lighthouse workflow behavior, metadata checks, PWA artifact checks, runtime-surface checks, Pages smoke behavior, or performance review expectations change.
 - Protected shell states have visual-regression coverage for desktop/mobile and light/dark when UI changes intentionally affect layout or appearance.
 - TypeScript strictness flags stay enabled for optional properties, indexed access, overrides, and unused code.
 - Privacy and data-handling docs stay aligned with local storage, import/export, analytics, network, auth, and sync behavior.
@@ -112,6 +113,12 @@ For browser-support feedback:
 
 ```bash
 npm run browsers:check
+```
+
+For performance feedback:
+
+```bash
+npm run performance:check
 ```
 
 For policy documentation feedback:
@@ -212,6 +219,12 @@ For visual QA:
 - `docs/BROWSER_SUPPORT.md` defines supported engines, device shapes, runtime assumptions, unsupported surfaces, and browser verification evidence.
 - `npm run browsers:check` verifies Playwright browser projects, Pages/mobile support, visual-regression profiles, PWA/runtime boundaries, and browser-support docs stay aligned.
 - Browser-support changes should keep accessibility, testing, release, runtime-surface, PWA, and PR review guidance aligned.
+
+## Performance
+
+- `docs/PERFORMANCE.md` defines the product performance standard, bundle budgets, Lighthouse signal, static asset boundaries, and performance verification evidence.
+- `npm run performance:check` verifies bundle budgets, Lighthouse thresholds, metadata/PWA/runtime checks, Pages smoke coverage, and performance-review guidance stay aligned.
+- Performance changes should keep browser support, dependency maintenance, release, runtime-surface, PWA, Pages, and PR review guidance aligned.
 
 ## Decision Records
 

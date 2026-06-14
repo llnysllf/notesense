@@ -2,6 +2,8 @@
 
 NoteSense is a browser-based practice tool, so the supported surface must stay explicit as the app grows. This contract defines the browser engines, device shapes, runtime APIs, and verification evidence that protect the current local-first product.
 
+Performance expectations live in [PERFORMANCE.md](PERFORMANCE.md).
+
 ## Supported Surface
 
 - Evergreen desktop Chromium, Firefox, and WebKit/Safari-engine browsers are covered by the main Playwright workflow.
@@ -39,6 +41,7 @@ NoteSense is a browser-based practice tool, so the supported surface must stay e
 
 - Update this contract when supported browsers, Playwright projects, device profiles, Pages base path, Web Audio behavior, LocalStorage behavior, responsive support, color-scheme support, PWA/offline behavior, runtime-surface policy, or browser verification evidence changes.
 - Run `npm run browsers:check` after browser-support, Playwright project, Pages smoke, visual-regression, PWA, runtime-surface, Lighthouse, or browser-support documentation changes.
+- Run `npm run performance:check` when browser changes affect bundle budgets, Lighthouse, metadata, PWA, runtime-surface, or Pages smoke evidence.
 - Run the relevant browser suite when behavior changes: `npm run test:e2e`, `npm run test:e2e:pages`, `npm run test:e2e:visual`, or `npm run pwa:check`.
 - Keep accessibility, testing, quality, release, architecture, operations, privacy, and PR review guidance aligned when browser support changes.
 

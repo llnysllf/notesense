@@ -20,6 +20,7 @@ Design system: [docs/DESIGN_SYSTEM.md](docs/DESIGN_SYSTEM.md)
 Accessibility contract: [docs/ACCESSIBILITY.md](docs/ACCESSIBILITY.md)
 Testing strategy: [docs/TESTING.md](docs/TESTING.md)
 Browser support: [docs/BROWSER_SUPPORT.md](docs/BROWSER_SUPPORT.md)
+Performance contract: [docs/PERFORMANCE.md](docs/PERFORMANCE.md)
 Data contract: [docs/DATA_CONTRACT.md](docs/DATA_CONTRACT.md)
 Release guide: [docs/RELEASE.md](docs/RELEASE.md)
 Operations runbook: [docs/OPERATIONS.md](docs/OPERATIONS.md)
@@ -221,6 +222,12 @@ Run the browser-support contract check:
 npm run browsers:check
 ```
 
+Run the performance contract check:
+
+```bash
+npm run performance:check
+```
+
 Refresh visual regression baselines after an intentional UI change:
 
 ```bash
@@ -355,6 +362,7 @@ npm run ops:repository
 - `npm run accessibility:check` verifies keyboard, screen reader, focus, motion, axe, cross-browser, and Lighthouse accessibility coverage stay connected.
 - `npm run testing:check` verifies that the test ownership matrix, package scripts, Vitest coverage thresholds, Playwright configs, browser specs, and CI quality gate stay aligned.
 - `npm run browsers:check` verifies Playwright browser projects, Pages/mobile support, visual-regression profiles, PWA/runtime boundaries, and browser-support docs stay aligned.
+- `npm run performance:check` verifies bundle budgets, Lighthouse thresholds, metadata/PWA/runtime checks, Pages smoke coverage, and performance-review guidance stay aligned.
 - Progress, history, and settings are normalized when loaded from LocalStorage, including migration from the original V1 progress shape.
 - The data contract in `docs/DATA_CONTRACT.md` and `npm run data:check` keep storage keys, export schema, import normalization, privacy docs, and browser coverage aligned.
 - Save operations fail safely and surface a non-blocking status message when browser storage is unavailable.

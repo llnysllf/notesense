@@ -44,6 +44,12 @@ For browser-support, Playwright project, Pages smoke, visual-regression, PWA, ru
 npm run browsers:check
 ```
 
+For performance-budget, Lighthouse, metadata, PWA, runtime-surface, Pages smoke, dependency, browser-support, or performance-doc changes, keep [docs/PERFORMANCE.md](docs/PERFORMANCE.md) aligned and run the performance contract check:
+
+```bash
+npm run performance:check
+```
+
 For architecture decision changes, keep [docs/adr/README.md](docs/adr/README.md) aligned and run the ADR governance check:
 
 ```bash
@@ -84,6 +90,7 @@ npm run test:e2e:visual:update
 - Keep [docs/ACCESSIBILITY.md](docs/ACCESSIBILITY.md) aligned with keyboard, screen reader, focus, contrast, motion, and automated coverage expectations; run `npm run accessibility:check` after accessibility-sensitive changes.
 - Keep [docs/TESTING.md](docs/TESTING.md) aligned with package scripts, coverage thresholds, Playwright configs, CI quality gates, and test ownership; run `npm run testing:check` after test-system changes.
 - Keep [docs/BROWSER_SUPPORT.md](docs/BROWSER_SUPPORT.md) aligned when changing supported browsers, Playwright projects, device profiles, Pages base path, Web Audio behavior, LocalStorage behavior, responsive support, color-scheme support, PWA/offline behavior, or browser verification evidence; run `npm run browsers:check` after browser-support changes.
+- Keep [docs/PERFORMANCE.md](docs/PERFORMANCE.md) aligned when changing bundle budgets, tracked asset categories, Lighthouse thresholds, Lighthouse workflow behavior, metadata checks, PWA artifact checks, runtime-surface checks, Pages smoke behavior, or performance review expectations; run `npm run performance:check` after performance-sensitive changes.
 - Keep [docs/adr/README.md](docs/adr/README.md) aligned when adding, renaming, removing, or changing ADR status; run `npm run adr:check` after ADR changes.
 - Keep [docs/PRODUCT_SCOPE.md](docs/PRODUCT_SCOPE.md) aligned when changing supported product scope, explicit non-goals, roadmap language, or feature-intake expectations; run `npm run product:check` after product-scope changes.
 - Keep [docs/REVIEW_PROCESS.md](docs/REVIEW_PROCESS.md) aligned when changing CODEOWNERS, issue templates, PR template, review routing, labels, or triage expectations; run `npm run review:check` after review-process changes.
