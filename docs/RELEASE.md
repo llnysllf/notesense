@@ -6,6 +6,7 @@ NoteSense currently releases from `main` to GitHub Pages. The release process is
 
 - Prefer small releases with one clear product or engineering purpose.
 - Keep learner-facing behavior intentional and documented.
+- Treat product-scope results as release evidence when supported scope, explicit non-goals, roadmap language, or feature-intake expectations change.
 - Preserve the local-first data model unless a migration plan exists.
 - Treat architecture-boundary results as release evidence when shared contracts, practice logic, storage, hooks, components, or app-shell responsibilities change.
 - Treat data-contract results as release evidence when storage keys, export schema, import normalization, privacy boundaries, or future sync assumptions change.
@@ -81,6 +82,7 @@ For UI changes, manually inspect:
 - Whether `npm run design:check` passes when tokens, layout, component states, or visual-regression coverage change.
 - Whether `npm run accessibility:check` still proves keyboard, screen reader, focus, motion, axe, cross-browser, and Lighthouse coverage are aligned.
 - Whether `npm run testing:check` still proves package scripts, coverage thresholds, Playwright configs, browser specs, and CI evidence are aligned.
+- Whether `npm run product:check` still proves README scope, explicit non-goals, contributor guidance, review guidance, and foundation-first expectations are aligned.
 - Whether `npm run test:e2e:visual` passes or baselines were intentionally updated and reviewed.
 
 For data changes, manually inspect:

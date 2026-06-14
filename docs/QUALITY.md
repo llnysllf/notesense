@@ -17,6 +17,7 @@ Avoid adding features just to make the project larger.
 A change is done when:
 
 - The behavior is implemented in the smallest responsible area of the codebase.
+- Product-scope docs and `npm run product:check` stay aligned when supported scope, explicit non-goals, roadmap language, or feature-intake expectations change.
 - Source import boundaries pass `npm run architecture:check` when shared contracts, practice logic, storage, hooks, components, or app-shell responsibilities change.
 - Pure practice, analytics, and data-shape logic has unit coverage.
 - Core practice and storage modules meet the configured Vitest coverage thresholds.
@@ -116,6 +117,12 @@ For ADR governance feedback:
 npm run adr:check
 ```
 
+For product-scope feedback:
+
+```bash
+npm run product:check
+```
+
 For release-note feedback:
 
 ```bash
@@ -184,6 +191,12 @@ For visual QA:
 - `docs/adr/README.md` indexes durable architecture decisions and documents the ADR process.
 - `npm run adr:check` verifies ADR filenames, headings, statuses, required sections, sequential numbering, and index links.
 - Add an ADR when a change affects data ownership, deployment, quality gates, runtime policy, security posture, release process, service boundaries, or future backend direction.
+
+## Product Scope
+
+- `docs/PRODUCT_SCOPE.md` defines the product promise, current supported scope, explicit non-goals, foundation-first rule, feature-intake expectations, and scope-change process.
+- `npm run product:check` verifies README scope, explicit non-goals, contributor guidance, review guidance, and foundation-first expectations stay aligned.
+- New features should start from a learner problem and product-scope update, not directly from UI code.
 
 ## Architecture Boundaries
 

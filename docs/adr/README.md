@@ -51,3 +51,4 @@ Architecture Decision Records document durable product and engineering decisions
 - [ADR 0034: Add Accessibility Contract Check](0034-add-accessibility-contract-check.md) - Accepted
 - [ADR 0035: Add Testing Contract Check](0035-add-testing-contract-check.md) - Accepted
 - [ADR 0036: Add ADR Governance Check](0036-add-adr-governance-check.md) - Accepted
+- [ADR 0037: Add Product Scope Contract](0037-add-product-scope-contract.md) - Accepted

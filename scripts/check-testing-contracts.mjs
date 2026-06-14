@@ -35,6 +35,7 @@ requireSnippets("docs/TESTING.md", [
   "npm run testing:check",
   "npm run verify",
   "npm run adr:check",
+  "npm run product:check",
   "Browser tests run against production preview builds",
   "UI behavior tests block service workers",
   "Coverage thresholds are per-file",
@@ -43,8 +44,9 @@ requireSnippets("docs/TESTING.md", [
 
 requireSnippets("package.json", [
   '"adr:check": "node scripts/check-adr-contracts.mjs"',
+  '"product:check": "node scripts/check-product-scope.mjs"',
   '"testing:check": "node scripts/check-testing-contracts.mjs"',
-  "npm run docs:check && npm run adr:check && npm run data:check",
+  "npm run docs:check && npm run adr:check && npm run product:check && npm run data:check",
   "npm run accessibility:check && npm run testing:check && npm run release:notes",
   '"test": "vitest run"',
   '"test:coverage": "vitest run --coverage"',
@@ -173,6 +175,7 @@ requireSnippets("README.md", [
 
 requireSnippets("docs/QUALITY.md", [
   "ADR index and `npm run adr:check` stay aligned when decision records are added, renamed, removed, or moved between statuses.",
+  "Product-scope docs and `npm run product:check` stay aligned when supported scope, explicit non-goals, roadmap language, or feature-intake expectations change.",
   "Testing contract docs and `npm run testing:check` stay aligned when package scripts, coverage thresholds, browser configs, CI quality gates, or test ownership changes.",
   "For testing-contract feedback:",
   "npm run testing:check",
@@ -181,12 +184,14 @@ requireSnippets("docs/QUALITY.md", [
 
 requireSnippets("docs/RELEASE.md", [
   "Treat ADR governance results as release evidence when architecture decisions are added, renamed, removed, or moved between statuses.",
+  "Treat product-scope results as release evidence when supported scope, explicit non-goals, roadmap language, or feature-intake expectations change.",
   "Treat testing-contract results as release evidence when test ownership, package scripts, coverage thresholds, browser configs, CI quality gates, or workflow evidence changes.",
   "Whether `npm run testing:check` still proves package scripts, coverage thresholds, Playwright configs, browser specs, and CI evidence are aligned.",
 ]);
 
 requireSnippets("docs/ARCHITECTURE.md", [
   "`scripts/check-adr-contracts.mjs` owns ADR numbering, status, required-section, and index-link checks.",
+  "`scripts/check-product-scope.mjs` owns product-scope drift checks for README scope, explicit non-goals, contributor guidance, review guidance, and release docs.",
   "`docs/TESTING.md` documents test ownership, change routing, determinism, coverage, CI, and review expectations.",
   "`scripts/check-testing-contracts.mjs` owns testing-contract drift checks for package scripts, Vitest coverage thresholds, Playwright configs, browser specs, and CI workflow evidence.",
   "Testing-contract changes should keep package scripts, coverage thresholds, browser configs, CI workflow evidence, and release guidance aligned.",

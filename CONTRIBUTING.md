@@ -44,6 +44,12 @@ For architecture decision changes, keep [docs/adr/README.md](docs/adr/README.md)
 npm run adr:check
 ```
 
+For product-scope changes, keep [docs/PRODUCT_SCOPE.md](docs/PRODUCT_SCOPE.md) aligned and run the product-scope contract check:
+
+```bash
+npm run product:check
+```
+
 For intentional visual changes, refresh and review the screenshot baselines:
 
 ```bash
@@ -60,6 +66,7 @@ npm run test:e2e:visual:update
 - Keep [docs/ACCESSIBILITY.md](docs/ACCESSIBILITY.md) aligned with keyboard, screen reader, focus, contrast, motion, and automated coverage expectations; run `npm run accessibility:check` after accessibility-sensitive changes.
 - Keep [docs/TESTING.md](docs/TESTING.md) aligned with package scripts, coverage thresholds, Playwright configs, CI quality gates, and test ownership; run `npm run testing:check` after test-system changes.
 - Keep [docs/adr/README.md](docs/adr/README.md) aligned when adding, renaming, removing, or changing ADR status; run `npm run adr:check` after ADR changes.
+- Keep [docs/PRODUCT_SCOPE.md](docs/PRODUCT_SCOPE.md) aligned when changing supported product scope, explicit non-goals, roadmap language, or feature-intake expectations; run `npm run product:check` after product-scope changes.
 - Keep dependency license changes intentional; explain new licenses before updating the allowlist.
 - Keep dependency changes passing Dependency Review before merge.
 - Keep durable UI patterns documented in [docs/DESIGN_SYSTEM.md](docs/DESIGN_SYSTEM.md) instead of adding one-off styles.
