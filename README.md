@@ -11,6 +11,7 @@ NoteSense is a small piano sight-reading and ear-training app for beginner music
 Live demo: [https://llnysllf.github.io/notesense/](https://llnysllf.github.io/notesense/)
 
 Architecture notes: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)
+Architecture decision records: [docs/adr/README.md](docs/adr/README.md)
 Quality runbook: [docs/QUALITY.md](docs/QUALITY.md)
 Design system: [docs/DESIGN_SYSTEM.md](docs/DESIGN_SYSTEM.md)
 Accessibility contract: [docs/ACCESSIBILITY.md](docs/ACCESSIBILITY.md)
@@ -124,6 +125,12 @@ Run the architecture-boundary contract check:
 
 ```bash
 npm run architecture:check
+```
+
+Run the ADR governance check:
+
+```bash
+npm run adr:check
 ```
 
 Run the data-contract check:
@@ -304,6 +311,7 @@ npm run ops:repository
 
 - Practice selection and summary logic live in `src/practiceEngine.ts` so the learning behavior can be tested outside React.
 - `npm run architecture:check` verifies that shared contracts, practice logic, storage, hooks, and components keep their documented boundaries as the app grows.
+- `npm run adr:check` verifies that ADR filenames, headings, statuses, required sections, and index links stay aligned.
 - Practice-plan recommendations are derived in `src/practiceEngine.ts`, keeping the coaching layer deterministic and ready for a future service boundary.
 - Mastery map state is derived in `src/practiceEngine.ts` from the active range, note attempts, and accuracy thresholds.
 - Daily goal and streak state is derived from completed session history, keeping habit analytics independent from browser storage.
@@ -363,7 +371,7 @@ npm run ops:repository
 - Dependency Review scans dependency changes on pull requests before they can merge.
 - Pull requests also build the GitHub Pages artifact and upload browser failure artifacts for debugging.
 - Dependabot keeps npm minor/patch updates and GitHub Actions dependencies on a weekly maintenance cadence; major npm upgrades are handled as intentional engineering tasks.
-- CODEOWNERS, issue templates, ADRs, repository governance checks, and the release guide keep review, planning, and deployment expectations explicit.
+- CODEOWNERS, issue templates, indexed ADRs, repository governance checks, and the release guide keep review, planning, and deployment expectations explicit.
 - The `main` branch publishes a static production build to GitHub Pages.
 
 ## Current Scope

@@ -5,7 +5,7 @@ NoteSense keeps a small product surface, but the testing system should still mak
 ## Test Ownership Matrix
 
 - Formatting and static analysis: `npm run format:check`, `npm run lint`, and `npm run typecheck` own code style, JSX accessibility linting, React hook rules, and strict TypeScript correctness.
-- Repository and documentation contracts: `npm run repo:hygiene`, `npm run docs:check`, `npm run architecture:check`, `npm run data:check`, `npm run design:check`, `npm run accessibility:check`, `npm run testing:check`, and `npm run release:notes` own foundation drift.
+- Repository and documentation contracts: `npm run repo:hygiene`, `npm run docs:check`, `npm run adr:check`, `npm run architecture:check`, `npm run data:check`, `npm run design:check`, `npm run accessibility:check`, `npm run testing:check`, and `npm run release:notes` own foundation drift.
 - Unit and component tests: `npm run test` owns pure practice logic, data contracts, merge behavior, storage behavior, and reusable UI component states.
 - Coverage: `npm run test:coverage` owns per-file thresholds for the framework-independent practice, storage, and shared data modules.
 - Browser workflow tests: `npm run test:e2e` owns the production-preview practice loop, keyboard answers, import/export, storage failures, responsive overflow, axe scans, and cross-browser behavior.
@@ -23,6 +23,7 @@ NoteSense keeps a small product surface, but the testing system should still mak
 - Add or update Pages smoke tests when build output, base-path behavior, metadata, CSP, static assets, or preview serving changes.
 - Add or update visual-regression baselines when intentional UI changes affect layout, color, spacing, typography, or protected component appearance.
 - Add or update contract checks when a quality policy, documentation promise, source boundary, data contract, design contract, accessibility contract, or release rule changes.
+- Add or update ADR checks when a durable decision is added, renamed, removed, re-statused, or moved in the index.
 
 ## Determinism Rules
 
@@ -62,6 +63,7 @@ NoteSense keeps a small product surface, but the testing system should still mak
 
 - this testing contract keeps ownership, routing, determinism, coverage, CI, review, and verification sections
 - package scripts keep the documented testing gates available
+- ADR governance stays part of the foundation contract gate
 - Vitest coverage thresholds remain per-file for core modules
 - Playwright configs keep service workers blocked, traces retained on failure, and expected browser projects
 - browser specs continue to cover accessibility, keyboard, import/export, storage failure, responsive, resilience, Pages, and visual-regression behavior

@@ -13,6 +13,7 @@ NoteSense currently releases from `main` to GitHub Pages. The release process is
 - Treat threat-model and backend-readiness docs as release evidence before auth, API, database, sync, PostgreSQL, or cloud infrastructure changes.
 - Treat repository hygiene results as release evidence when root configuration, ignore policy, runtime configuration, or generated artifact handling changes.
 - Treat documentation integrity results as release evidence when docs, file paths, anchors, or npm scripts change.
+- Treat ADR governance results as release evidence when architecture decisions are added, renamed, removed, or moved between statuses.
 - Treat design-system results as UI release evidence when tokens, component states, responsive behavior, typography, or visual-regression coverage changes.
 - Treat accessibility-contract results as release evidence when keyboard behavior, screen reader semantics, focus visibility, contrast, motion, or automated accessibility coverage changes.
 - Treat testing-contract results as release evidence when test ownership, package scripts, coverage thresholds, browser configs, CI quality gates, or workflow evidence changes.
@@ -56,6 +57,7 @@ Confirm policy docs and documentation integrity remain aligned:
 ```bash
 npm run repo:hygiene
 npm run docs:check
+npm run adr:check
 npm run release:notes
 ```
 

@@ -32,6 +32,7 @@ A change is done when:
 - Data-contract docs and `npm run data:check` stay aligned when storage keys, export schema, import normalization, or future sync assumptions change.
 - Threat model and backend-readiness docs stay aligned before account, API, database, sync, or cloud infrastructure work begins.
 - Documentation links, anchors, and documented npm script references stay resolvable.
+- ADR index and `npm run adr:check` stay aligned when decision records are added, renamed, removed, or moved between statuses.
 - Operations docs stay aligned when release-health signals, incident response, deployment ownership, monitoring, telemetry, or support expectations change.
 - Release notes pass `npm run release:notes` when `CHANGELOG.md`, package version metadata, or release-relevant behavior changes.
 - Repository hygiene checks pass so required configuration files stay present and generated, dependency, secret, or local artifact files stay untracked.
@@ -109,6 +110,12 @@ For policy documentation feedback:
 npm run docs:check
 ```
 
+For ADR governance feedback:
+
+```bash
+npm run adr:check
+```
+
 For release-note feedback:
 
 ```bash
@@ -171,6 +178,12 @@ For visual QA:
 - Put pure practice, data, and merge behavior in Vitest when possible.
 - Use browser tests for workflows, accessibility-sensitive behavior, persistence, import/export, responsive behavior, and deployment shape.
 - Use visual-regression tests only for intentional protected-shell appearance changes.
+
+## Decision Records
+
+- `docs/adr/README.md` indexes durable architecture decisions and documents the ADR process.
+- `npm run adr:check` verifies ADR filenames, headings, statuses, required sections, sequential numbering, and index links.
+- Add an ADR when a change affects data ownership, deployment, quality gates, runtime policy, security posture, release process, service boundaries, or future backend direction.
 
 ## Architecture Boundaries
 

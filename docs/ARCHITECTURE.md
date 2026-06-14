@@ -23,6 +23,7 @@ NoteSense is currently a local-first React application. The product goal is to k
 - `.github/workflows/visual-regression.yml` owns the macOS Chromium visual-regression gate so screenshot baselines use the same platform family as the committed snapshots.
 - `.github/workflows/lighthouse.yml` owns Lighthouse scoring for the deployment-shaped Pages build.
 - `docs/adr` records architecture decisions that should survive beyond a single implementation pass.
+- `docs/adr/README.md` indexes ADRs and documents decision-record process expectations.
 - `docs/DESIGN_SYSTEM.md` documents the design-token, component-state, accessibility, and visual-regression contract for UI changes.
 - `docs/ACCESSIBILITY.md` documents the keyboard, screen reader, focus, contrast, motion, and automated accessibility coverage contract.
 - `docs/TESTING.md` documents test ownership, change routing, determinism, coverage, CI, and review expectations.
@@ -34,6 +35,7 @@ NoteSense is currently a local-first React application. The product goal is to k
 - `vite.config.ts` injects the production Content Security Policy meta tag during build.
 - `vite.config.ts` also owns PWA service worker generation and Vitest browser-like component-test setup.
 - `scripts/check-repository-hygiene.mjs` owns required root configuration, ignore-policy, runtime-policy, and tracked-artifact hygiene checks.
+- `scripts/check-adr-contracts.mjs` owns ADR numbering, status, required-section, and index-link checks.
 - `scripts/check-data-contracts.mjs` owns data-contract drift checks for storage keys, shared export shape, privacy docs, and browser coverage.
 - `scripts/check-architecture-boundaries.mjs` owns source import-boundary checks for shared contracts, practice logic, storage, hooks, and UI components.
 - `scripts/check-design-system.mjs` owns the lightweight design-system contract for CSS tokens, shell states, accessibility affordances, responsive guards, and visual-regression coverage.
@@ -78,6 +80,7 @@ Every feature should keep these expectations intact:
 - Accessibility is part of the feature definition, not a final cleanup step.
 - Accessibility-contract changes should keep source semantics, focus behavior, reduced-motion behavior, axe coverage, Lighthouse expectations, and release guidance aligned.
 - Testing-contract changes should keep package scripts, coverage thresholds, browser configs, CI workflow evidence, and release guidance aligned.
+- ADR changes should keep numbering, status, required sections, index links, release guidance, and contributor guidance aligned.
 - Design-system changes should preserve the documented token layers, component states, responsive behavior, focus behavior, and protected visual surfaces.
 - Dependency license compliance is part of supply-chain readiness.
 - Dependency Review is part of pull-request supply-chain readiness for dependency and lockfile changes.
