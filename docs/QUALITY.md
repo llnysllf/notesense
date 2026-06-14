@@ -46,6 +46,7 @@ A change is done when:
 - Dependency Review passes for pull requests that introduce dependency or lockfile changes.
 - GitHub Actions workflow references are pinned to full commit SHAs with source-version comments, and workflow token permissions stay least-privilege.
 - GitHub Actions workflows keep reviewed concurrency, timeout, and artifact-retention controls.
+- Dependency-maintenance docs and `npm run dependencies:check` stay aligned when Dependabot cadence, dependency grouping, ignored update types, package manager policy, lockfile policy, license policy, or workflow-update policy changes.
 - GitHub repository governance checks pass after branch protection, repository security, Pages, required-check, or workflow-activation changes.
 - Static bundle output stays within the documented performance budgets.
 - Generated PWA artifacts pass the static-asset-only service worker check.
@@ -128,6 +129,12 @@ For review/intake feedback:
 
 ```bash
 npm run review:check
+```
+
+For dependency-maintenance feedback:
+
+```bash
+npm run dependencies:check
 ```
 
 For release-note feedback:
@@ -286,6 +293,8 @@ After pushing:
 
 ## Dependency Maintenance
 
+- `docs/DEPENDENCY_MAINTENANCE.md` defines dependency sources, Dependabot policy, update classes, review evidence, and dependency-maintenance verification.
+- `npm run dependencies:check` verifies Dependabot cadence, dependency review evidence, lockfile policy, license policy, supply-chain gates, and workflow-update expectations stay aligned.
 - Dependabot opens routine npm minor/patch updates and GitHub Actions updates weekly.
 - Major npm upgrades should be tracked as engineering tasks because they can affect peer dependencies, test tooling, bundling, or browser coverage.
 - Node/npm runtime upgrades should update `.nvmrc`, package engines, workflow behavior, docs, and ADRs together.

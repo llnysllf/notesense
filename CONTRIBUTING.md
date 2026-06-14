@@ -56,6 +56,12 @@ For review, intake, issue-template, PR-template, CODEOWNERS, or triage-process c
 npm run review:check
 ```
 
+For dependency-maintenance, Dependabot, package manager, lockfile-policy, license-policy, or workflow-update-policy changes, keep [docs/DEPENDENCY_MAINTENANCE.md](docs/DEPENDENCY_MAINTENANCE.md) aligned and run the dependency-maintenance contract check:
+
+```bash
+npm run dependencies:check
+```
+
 For intentional visual changes, refresh and review the screenshot baselines:
 
 ```bash
@@ -74,6 +80,7 @@ npm run test:e2e:visual:update
 - Keep [docs/adr/README.md](docs/adr/README.md) aligned when adding, renaming, removing, or changing ADR status; run `npm run adr:check` after ADR changes.
 - Keep [docs/PRODUCT_SCOPE.md](docs/PRODUCT_SCOPE.md) aligned when changing supported product scope, explicit non-goals, roadmap language, or feature-intake expectations; run `npm run product:check` after product-scope changes.
 - Keep [docs/REVIEW_PROCESS.md](docs/REVIEW_PROCESS.md) aligned when changing CODEOWNERS, issue templates, PR template, review routing, labels, or triage expectations; run `npm run review:check` after review-process changes.
+- Keep [docs/DEPENDENCY_MAINTENANCE.md](docs/DEPENDENCY_MAINTENANCE.md) aligned when changing Dependabot cadence, dependency grouping, ignored update types, package manager policy, lockfile policy, license policy, or workflow-update policy; run `npm run dependencies:check` after dependency-maintenance changes.
 - Keep dependency license changes intentional; explain new licenses before updating the allowlist.
 - Keep dependency changes passing Dependency Review before merge.
 - Keep durable UI patterns documented in [docs/DESIGN_SYSTEM.md](docs/DESIGN_SYSTEM.md) instead of adding one-off styles.

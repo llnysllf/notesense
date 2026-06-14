@@ -39,7 +39,7 @@ requireSnippets("docs/REVIEW_PROCESS.md", [
 
 requireSnippets("package.json", [
   '"review:check": "node scripts/check-review-process.mjs"',
-  "npm run adr:check && npm run product:check && npm run review:check && npm run data:check",
+  "npm run adr:check && npm run product:check && npm run review:check && npm run dependencies:check && npm run data:check",
 ]);
 
 requireSnippets(".github/CODEOWNERS", ["* @llnysllf"]);
