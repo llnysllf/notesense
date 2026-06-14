@@ -2,6 +2,8 @@
 
 NoteSense is a practice tool, so the interface must stay usable without a mouse, understandable to assistive technology, comfortable in light and dark themes, and resilient when browser behavior differs across engines.
 
+Browser support expectations live in [BROWSER_SUPPORT.md](BROWSER_SUPPORT.md).
+
 ## Product Standard
 
 - Accessibility is part of the feature definition, not a final cleanup step.
@@ -63,6 +65,7 @@ When UI behavior, layout, copy, color, motion, controls, charts, prompts, or rec
 ## Change Rules
 
 - Run `npm run accessibility:check` after accessibility-sensitive UI, test, style, Playwright, Lighthouse, design-system, or release-doc changes.
+- Run `npm run browsers:check` after changing supported browsers, device profiles, responsive support, or browser verification evidence.
 - Run `npm run test:e2e` after changing core browser workflows, keyboard behavior, ARIA state, responsive layout, or axe coverage.
 - Run `npm run test:e2e:resilience` after changing the app shell, root render path, or recovery surface.
 - Run `npm run test:e2e:visual` after intentional layout, color, typography, spacing, or component-state changes.

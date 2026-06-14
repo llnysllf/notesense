@@ -54,3 +54,4 @@ Architecture Decision Records document durable product and engineering decisions
 - [ADR 0037: Add Product Scope Contract](0037-add-product-scope-contract.md) - Accepted
 - [ADR 0038: Add Review And Intake Contract](0038-add-review-intake-contract.md) - Accepted
 - [ADR 0039: Add Dependency Maintenance Contract](0039-add-dependency-maintenance-contract.md) - Accepted
+- [ADR 0040: Add Browser Support Contract](0040-add-browser-support-contract.md) - Accepted

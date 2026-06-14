@@ -19,6 +19,7 @@ NoteSense currently releases from `main` to GitHub Pages. The release process is
 - Treat design-system results as UI release evidence when tokens, component states, responsive behavior, typography, or visual-regression coverage changes.
 - Treat accessibility-contract results as release evidence when keyboard behavior, screen reader semantics, focus visibility, contrast, motion, or automated accessibility coverage changes.
 - Treat testing-contract results as release evidence when test ownership, package scripts, coverage thresholds, browser configs, CI quality gates, or workflow evidence changes.
+- Treat browser-support results as release evidence when supported browsers, Playwright projects, device profiles, Pages base path, Web Audio behavior, LocalStorage behavior, responsive support, color-scheme support, PWA/offline behavior, runtime-surface policy, or browser verification evidence changes.
 - Treat runtime surface results as release evidence when client APIs, URLs, analytics, network, auth, or sync behavior changes.
 - Keep the pinned Node/npm runtime consistent across local setup, CI, deployment, and dependency maintenance.
 - Treat lockfile supply-chain results as release evidence when dependencies, lockfiles, Node, or npm runtime settings change.
@@ -84,6 +85,7 @@ For UI changes, manually inspect:
 - Whether `npm run design:check` passes when tokens, layout, component states, or visual-regression coverage change.
 - Whether `npm run accessibility:check` still proves keyboard, screen reader, focus, motion, axe, cross-browser, and Lighthouse coverage are aligned.
 - Whether `npm run testing:check` still proves package scripts, coverage thresholds, Playwright configs, browser specs, and CI evidence are aligned.
+- Whether `npm run browsers:check` still proves supported engines, mobile viewports, Pages base path, visual-regression profiles, PWA/runtime boundaries, and browser-support docs are aligned.
 - Whether `npm run product:check` still proves README scope, explicit non-goals, contributor guidance, review guidance, and foundation-first expectations are aligned.
 - Whether `npm run review:check` still proves CODEOWNERS, issue templates, PR template, security routing, and review evidence stay aligned.
 - Whether `npm run test:e2e:visual` passes or baselines were intentionally updated and reviewed.

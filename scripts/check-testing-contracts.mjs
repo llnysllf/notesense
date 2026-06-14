@@ -38,11 +38,13 @@ requireSnippets("docs/TESTING.md", [
   "npm run product:check",
   "npm run review:check",
   "npm run dependencies:check",
+  "npm run browsers:check",
   "Browser tests run against production preview builds",
   "UI behavior tests block service workers",
   "Coverage thresholds are per-file",
   "review/intake governance stays part of the foundation contract gate",
   "dependency-maintenance governance stays part of the foundation contract gate",
+  "browser-support governance stays part of the foundation contract gate",
   "Dedicated workflows own CodeQL, Dependency Review, Lighthouse, Visual Regression, and Pages deployment evidence.",
 ]);
 
@@ -52,8 +54,9 @@ requireSnippets("package.json", [
   '"review:check": "node scripts/check-review-process.mjs"',
   '"dependencies:check": "node scripts/check-dependency-maintenance.mjs"',
   '"testing:check": "node scripts/check-testing-contracts.mjs"',
+  '"browsers:check": "node scripts/check-browser-support.mjs"',
   "npm run docs:check && npm run adr:check && npm run product:check && npm run review:check && npm run dependencies:check && npm run data:check",
-  "npm run accessibility:check && npm run testing:check && npm run release:notes",
+  "npm run accessibility:check && npm run testing:check && npm run browsers:check && npm run release:notes",
   '"test": "vitest run"',
   '"test:coverage": "vitest run --coverage"',
   '"test:e2e": "playwright test"',
@@ -185,6 +188,7 @@ requireSnippets("docs/QUALITY.md", [
   "Review/intake docs and `npm run review:check` stay aligned when CODEOWNERS, issue templates, PR templates, labels, triage routing, or review evidence expectations change.",
   "Dependency-maintenance docs and `npm run dependencies:check` stay aligned when Dependabot cadence, dependency grouping, ignored update types, package manager policy, lockfile policy, license policy, or workflow-update policy changes.",
   "Testing contract docs and `npm run testing:check` stay aligned when package scripts, coverage thresholds, browser configs, CI quality gates, or test ownership changes.",
+  "Browser-support docs and `npm run browsers:check` stay aligned when supported browsers, Playwright projects, device profiles, Pages base path, Web Audio behavior, LocalStorage behavior, responsive support, color-scheme support, PWA/offline behavior, runtime-surface policy, or browser verification evidence changes.",
   "For testing-contract feedback:",
   "npm run testing:check",
   "`npm run testing:check` verifies that package scripts, coverage thresholds, browser configs, workflow specs, and CI evidence stay aligned.",
@@ -196,6 +200,7 @@ requireSnippets("docs/RELEASE.md", [
   "Treat review/intake results as release evidence when CODEOWNERS, issue templates, PR templates, labels, triage routing, or review evidence expectations change.",
   "Treat dependency-maintenance results as release evidence when Dependabot cadence, dependency grouping, ignored update types, package manager policy, lockfile policy, license policy, or workflow-update policy changes.",
   "Treat testing-contract results as release evidence when test ownership, package scripts, coverage thresholds, browser configs, CI quality gates, or workflow evidence changes.",
+  "Treat browser-support results as release evidence when supported browsers, Playwright projects, device profiles, Pages base path, Web Audio behavior, LocalStorage behavior, responsive support, color-scheme support, PWA/offline behavior, runtime-surface policy, or browser verification evidence changes.",
   "Whether `npm run testing:check` still proves package scripts, coverage thresholds, Playwright configs, browser specs, and CI evidence are aligned.",
 ]);
 
@@ -204,6 +209,7 @@ requireSnippets("docs/ARCHITECTURE.md", [
   "`scripts/check-product-scope.mjs` owns product-scope drift checks for README scope, explicit non-goals, contributor guidance, review guidance, and release docs.",
   "`scripts/check-review-process.mjs` owns review/intake drift checks for CODEOWNERS, issue templates, PR template, security routing, and review evidence.",
   "`scripts/check-dependency-maintenance.mjs` owns dependency-maintenance drift checks for Dependabot cadence, dependency review evidence, lockfile policy, license policy, supply-chain gates, and workflow-update expectations.",
+  "`scripts/check-browser-support.mjs` owns browser-support drift checks for Playwright browser projects, Pages/mobile support, visual-regression profiles, PWA/runtime boundaries, and browser-support docs.",
   "`docs/TESTING.md` documents test ownership, change routing, determinism, coverage, CI, and review expectations.",
   "`scripts/check-testing-contracts.mjs` owns testing-contract drift checks for package scripts, Vitest coverage thresholds, Playwright configs, browser specs, and CI workflow evidence.",
   "Testing-contract changes should keep package scripts, coverage thresholds, browser configs, CI workflow evidence, and release guidance aligned.",

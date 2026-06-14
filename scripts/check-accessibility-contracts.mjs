@@ -36,6 +36,8 @@ requireSnippets("docs/ACCESSIBILITY.md", [
   "npm run test:e2e",
   "npm run test:e2e:resilience",
   "npm run test:e2e:visual",
+  "npm run browsers:check",
+  "Browser support expectations live in [BROWSER_SUPPORT.md](BROWSER_SUPPORT.md).",
   "eslint-plugin-jsx-a11y",
   "axe-core scans",
   "Lighthouse accessibility scoring",
@@ -44,7 +46,7 @@ requireSnippets("docs/ACCESSIBILITY.md", [
 
 requireSnippets("package.json", [
   '"accessibility:check": "node scripts/check-accessibility-contracts.mjs"',
-  "npm run design:check && npm run accessibility:check && npm run testing:check && npm run release:notes",
+  "npm run design:check && npm run accessibility:check && npm run testing:check && npm run browsers:check && npm run release:notes",
   '"@axe-core/playwright"',
   '"eslint-plugin-jsx-a11y"',
 ]);

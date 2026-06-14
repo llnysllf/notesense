@@ -18,6 +18,7 @@ All notable changes to NoteSense are documented here. The format follows [Keep a
 - Product-scope contract with `docs/PRODUCT_SCOPE.md` and `npm run product:check` for current scope, explicit non-goals, feature intake, and foundation-first expectations
 - Review/intake contract with `docs/REVIEW_PROCESS.md` and `npm run review:check` for CODEOWNERS, issue templates, PR evidence, security-report routing, and triage guidance
 - Dependency-maintenance contract with `docs/DEPENDENCY_MAINTENANCE.md` and `npm run dependencies:check` for Dependabot cadence, lockfile policy, license policy, supply-chain gates, and workflow-update expectations
+- Browser-support contract with `docs/BROWSER_SUPPORT.md` and `npm run browsers:check` for supported engines, mobile viewports, Pages base path, visual-regression profiles, PWA/runtime boundaries, and browser verification evidence
 - GitHub Actions workflow policy gates that require immutable action references and least-privilege token permissions
 - GitHub repository governance check for branch protection, required checks, repository security settings, vulnerability alerts, Pages, and active workflows
 - Dependency Review workflow for pull requests that introduce dependency or lockfile changes
