@@ -26,6 +26,12 @@ For token, layout, component-state, or visual-regression changes, keep [docs/DES
 npm run design:check
 ```
 
+For accessibility-sensitive UI, style, copy, Playwright, Lighthouse, or recovery-surface changes, keep [docs/ACCESSIBILITY.md](docs/ACCESSIBILITY.md) aligned and run the accessibility contract check:
+
+```bash
+npm run accessibility:check
+```
+
 For intentional visual changes, refresh and review the screenshot baselines:
 
 ```bash
@@ -39,6 +45,7 @@ npm run test:e2e:visual:update
 - Keep [docs/DATA_CONTRACT.md](docs/DATA_CONTRACT.md) aligned with storage keys, export schema, import normalization, and future sync assumptions; run `npm run data:check` after data-shape changes.
 - Keep shared contracts, practice logic, storage, hooks, and components inside the documented import boundaries; run `npm run architecture:check` after moving source responsibilities.
 - Add or update tests for new behavior, migrations, accessibility-sensitive UI, and practice analytics.
+- Keep [docs/ACCESSIBILITY.md](docs/ACCESSIBILITY.md) aligned with keyboard, screen reader, focus, contrast, motion, and automated coverage expectations; run `npm run accessibility:check` after accessibility-sensitive changes.
 - Keep dependency license changes intentional; explain new licenses before updating the allowlist.
 - Keep dependency changes passing Dependency Review before merge.
 - Keep durable UI patterns documented in [docs/DESIGN_SYSTEM.md](docs/DESIGN_SYSTEM.md) instead of adding one-off styles.

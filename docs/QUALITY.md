@@ -24,6 +24,7 @@ A change is done when:
 - Reusable UI components have focused component coverage for accessibility labels and state rendering where browser workflows would be too broad.
 - User workflows have browser coverage when UI, persistence, import/export, or accessibility-sensitive behavior changes.
 - Design-system docs and `npm run design:check` stay aligned when layout, color, spacing, typography, or component states change.
+- Accessibility contract docs and `npm run accessibility:check` stay aligned when keyboard, screen reader, focus, contrast, motion, or automated accessibility coverage changes.
 - Protected shell states have visual-regression coverage for desktop/mobile and light/dark when UI changes intentionally affect layout or appearance.
 - TypeScript strictness flags stay enabled for optional properties, indexed access, overrides, and unused code.
 - Privacy and data-handling docs stay aligned with local storage, import/export, analytics, network, auth, and sync behavior.
@@ -89,6 +90,12 @@ For data-contract feedback:
 npm run data:check
 ```
 
+For accessibility-contract feedback:
+
+```bash
+npm run accessibility:check
+```
+
 For policy documentation feedback:
 
 ```bash
@@ -126,6 +133,8 @@ For visual QA:
 
 ## Accessibility Checklist
 
+- `docs/ACCESSIBILITY.md` defines the product accessibility standard, keyboard and focus rules, screen reader semantics, visual and motion rules, automated coverage, manual review expectations, and change process.
+- `npm run accessibility:check` verifies that source semantics, styles, browser tests, lint rules, and docs stay aligned.
 - All interactive controls are keyboard reachable.
 - Focus rings are visible and not clipped.
 - Button and status text fits at mobile widths.

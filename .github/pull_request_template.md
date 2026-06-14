@@ -6,6 +6,7 @@
 
 - [ ] Product behavior is intentional and user-facing copy is polished.
 - [ ] Accessibility was considered for keyboard, screen reader, focus, color contrast, and reduced motion.
+- [ ] Accessibility-contract impact was considered for source semantics, focus behavior, axe coverage, Lighthouse, and release guidance.
 - [ ] Persistence/import/export behavior is unchanged or has a tested migration path.
 - [ ] Data-contract impact was considered for storage keys, export schema, import normalization, privacy docs, and future sync assumptions.
 - [ ] Runtime changes keep `.nvmrc`, package engines, GitHub Actions, docs, and ADRs aligned.
