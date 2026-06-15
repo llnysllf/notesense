@@ -2,7 +2,7 @@
 
 NoteSense is currently a static, local-first web app. It does not store data on a server, and saved progress stays in the user's browser unless the user exports it.
 
-Privacy and data handling expectations live in [docs/PRIVACY.md](docs/PRIVACY.md). Dependency maintenance expectations live in [docs/DEPENDENCY_MAINTENANCE.md](docs/DEPENDENCY_MAINTENANCE.md). Future account, sync, and backend work should also follow [docs/THREAT_MODEL.md](docs/THREAT_MODEL.md) and [docs/BACKEND_READINESS.md](docs/BACKEND_READINESS.md).
+Security/privacy readiness expectations live in [docs/SECURITY_PRIVACY.md](docs/SECURITY_PRIVACY.md). Privacy and data handling expectations live in [docs/PRIVACY.md](docs/PRIVACY.md). Dependency maintenance expectations live in [docs/DEPENDENCY_MAINTENANCE.md](docs/DEPENDENCY_MAINTENANCE.md). Future account, sync, and backend work should also follow [docs/THREAT_MODEL.md](docs/THREAT_MODEL.md) and [docs/BACKEND_READINESS.md](docs/BACKEND_READINESS.md).
 
 ## Supported Version
 
@@ -29,6 +29,7 @@ Useful details include:
 - Run `npm run dependencies:check` after Dependabot, dependency-maintenance, lockfile-policy, license-policy, package manager, or workflow-update-policy changes.
 - Run `npm run compliance:licenses` before release so dependency-license drift is caught.
 - Run `npm run security:policy` after a Pages build when HTML shell, Vite build, runtime API, or asset-category behavior changes.
+- Run `npm run security:privacy` after privacy, security, data-contract, runtime-surface, CSP, PWA, import/export, storage, telemetry, analytics, auth, sync, backend-readiness, threat-model, or security-doc changes.
 - Run `npm run verify` before release so supply-chain policy, high-severity dependency advisories, and release gates are caught.
 - Run `npm run ops:repository` after repository security, branch protection, required-check, Pages, or workflow-activation changes.
 - Treat CodeQL findings as release-blocking unless they are reviewed and explicitly accepted.

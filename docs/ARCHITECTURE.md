@@ -32,6 +32,7 @@ NoteSense is currently a local-first React application. The product goal is to k
 - `docs/TESTING.md` documents test ownership, change routing, determinism, coverage, CI, and review expectations.
 - `docs/BROWSER_SUPPORT.md` documents supported engines, device shapes, runtime assumptions, unsupported surfaces, and browser verification evidence.
 - `docs/PERFORMANCE.md` documents the product performance standard, bundle budgets, Lighthouse signal, static asset boundaries, and performance verification evidence.
+- `docs/SECURITY_PRIVACY.md` documents the local-first security/privacy standard, protected surface, runtime/build boundaries, future auth/sync rules, and review/release evidence.
 - `docs/THREAT_MODEL.md` documents current and future security boundaries before account or sync work begins.
 - `docs/BACKEND_READINESS.md` documents the service, API, data-model, sync, and PostgreSQL path for future backend work.
 - `docs/OPERATIONS.md` documents release-health signals, incident response, rollback, evidence handling, and future observability expectations.
@@ -45,6 +46,7 @@ NoteSense is currently a local-first React application. The product goal is to k
 - `scripts/check-review-process.mjs` owns review/intake drift checks for CODEOWNERS, issue templates, PR template, security routing, and review evidence.
 - `scripts/check-dependency-maintenance.mjs` owns dependency-maintenance drift checks for Dependabot cadence, dependency review evidence, lockfile policy, license policy, supply-chain gates, and workflow-update expectations.
 - `scripts/check-data-contracts.mjs` owns data-contract drift checks for storage keys, shared export shape, privacy docs, and browser coverage.
+- `scripts/check-security-privacy.mjs` owns security/privacy drift checks for privacy docs, security policy, threat model, backend readiness, data contract, runtime-surface, CSP, PWA, supply-chain, and review/release guidance.
 - `scripts/check-architecture-boundaries.mjs` owns source import-boundary checks for shared contracts, practice logic, storage, hooks, and UI components.
 - `scripts/check-design-system.mjs` owns the lightweight design-system contract for CSS tokens, shell states, accessibility affordances, responsive guards, and visual-regression coverage.
 - `scripts/check-accessibility-contracts.mjs` owns accessibility-contract drift checks for source semantics, styles, browser coverage, lint coverage, and release docs.
@@ -85,6 +87,7 @@ Every feature should keep these expectations intact:
 - Cross-device or sync-ready data-shape changes should happen in `shared/src` before UI or backend adapters consume them.
 - Privacy expectations must stay aligned with local storage, import/export, future auth, sync, analytics, and network behavior.
 - Data-contract changes should keep storage keys, export schema, import normalization, privacy docs, and browser coverage aligned.
+- Security/privacy changes should keep local-first privacy, import/export trust, runtime/network boundaries, CSP, PWA behavior, future auth/sync, backend readiness, operations guidance, release guidance, and PR review guidance aligned.
 - Client runtime surface checks should reject network, tracking, cookie, websocket, or external URL drift unless the change is intentional and documented.
 - User-visible state has a failure path, especially for save, export, auth, and sync operations.
 - Unexpected render failures should show the app-level recovery screen instead of leaving a blank product surface.

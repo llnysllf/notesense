@@ -21,6 +21,7 @@ All notable changes to NoteSense are documented here. The format follows [Keep a
 - Browser-support contract with `docs/BROWSER_SUPPORT.md` and `npm run browsers:check` for supported engines, mobile viewports, Pages base path, visual-regression profiles, PWA/runtime boundaries, and browser verification evidence
 - Performance contract with `docs/PERFORMANCE.md` and `npm run performance:check` for bundle budgets, Lighthouse thresholds, metadata/PWA/runtime checks, Pages smoke coverage, and performance-review guidance
 - Operations contract check with `npm run operations:check` for release-health signals, post-release verification, incident triage, rollback, evidence handling, observability boundaries, and operations-review guidance
+- Security/privacy contract with `docs/SECURITY_PRIVACY.md` and `npm run security:privacy` for local-first privacy, import/export trust, runtime/network boundaries, CSP, PWA behavior, future auth/sync, backend readiness, and review/release evidence
 - GitHub Actions workflow policy gates that require immutable action references and least-privilege token permissions
 - GitHub repository governance check for branch protection, required checks, repository security settings, vulnerability alerts, Pages, and active workflows
 - Dependency Review workflow for pull requests that introduce dependency or lockfile changes

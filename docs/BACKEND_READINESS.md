@@ -1,8 +1,10 @@
 # Backend Readiness
 
-Last reviewed: 2026-06-12
+Last reviewed: 2026-06-15
 
 NoteSense should stay local-first until account and sync work has a clear product reason. PostgreSQL, AWS, auth, and APIs belong behind a service boundary, not inside the browser app.
+
+Security/privacy readiness expectations live in [SECURITY_PRIVACY.md](SECURITY_PRIVACY.md).
 
 ## Current Backend Status
 

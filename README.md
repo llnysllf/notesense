@@ -24,6 +24,7 @@ Performance contract: [docs/PERFORMANCE.md](docs/PERFORMANCE.md)
 Data contract: [docs/DATA_CONTRACT.md](docs/DATA_CONTRACT.md)
 Release guide: [docs/RELEASE.md](docs/RELEASE.md)
 Operations runbook: [docs/OPERATIONS.md](docs/OPERATIONS.md)
+Security/privacy contract: [docs/SECURITY_PRIVACY.md](docs/SECURITY_PRIVACY.md)
 Privacy and data handling: [docs/PRIVACY.md](docs/PRIVACY.md)
 Threat model: [docs/THREAT_MODEL.md](docs/THREAT_MODEL.md)
 Backend readiness: [docs/BACKEND_READINESS.md](docs/BACKEND_READINESS.md)
@@ -160,6 +161,12 @@ Run the data-contract check:
 
 ```bash
 npm run data:check
+```
+
+Run the security/privacy contract check:
+
+```bash
+npm run security:privacy
 ```
 
 Run the release-notes contract check:
@@ -372,6 +379,7 @@ npm run ops:repository
 - `npm run operations:check` verifies release-health signals, post-release verification, incident triggers, triage, rollback, evidence handling, observability boundaries, and operations-review guidance stay aligned.
 - Progress, history, and settings are normalized when loaded from LocalStorage, including migration from the original V1 progress shape.
 - The data contract in `docs/DATA_CONTRACT.md` and `npm run data:check` keep storage keys, export schema, import normalization, privacy docs, and browser coverage aligned.
+- `npm run security:privacy` verifies privacy docs, security policy, threat model, backend readiness, data contract, runtime-surface, CSP, PWA, supply-chain, and review/release guidance stay aligned.
 - Save operations fail safely and surface a non-blocking status message when browser storage is unavailable.
 - Imported and exported practice data includes a schema version, timestamp, progress, and settings for local-first data portability.
 - The architecture notes document the local-first data model and the path toward sign-in, backend APIs, cloud storage, and sync.
