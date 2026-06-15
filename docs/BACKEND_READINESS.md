@@ -6,6 +6,8 @@ NoteSense should stay local-first until account and sync work has a clear produc
 
 Security/privacy readiness expectations live in [SECURITY_PRIVACY.md](SECURITY_PRIVACY.md).
 
+Observability and incident-learning expectations live in [OBSERVABILITY.md](OBSERVABILITY.md).
+
 ## Current Backend Status
 
 - No backend is deployed.
@@ -88,7 +90,7 @@ All endpoints must require authorization once accounts exist. Public unauthentic
 
 ## Observability Requirements
 
-Before backend launch, define:
+Before backend launch, define privacy-safe production signals, incident review ownership, SLO/SLA boundaries, and telemetry retention.
 
 - API error-rate alerting.
 - API latency target.

@@ -40,6 +40,7 @@ A change is done when:
 - Review/intake docs and `npm run review:check` stay aligned when CODEOWNERS, issue templates, PR templates, labels, triage routing, or review evidence expectations change.
 - Operations docs stay aligned when release-health signals, incident response, deployment ownership, monitoring, telemetry, or support expectations change.
 - Operations runbook and `npm run operations:check` stay aligned when release-health signals, post-release verification, incident triggers, triage flow, rollback expectations, evidence handling, observability boundaries, monitoring, telemetry, or support expectations change.
+- Observability docs and `npm run observability:check` stay aligned when production visibility, monitoring, telemetry, analytics, incident-response, postmortem-template, SLO/SLA, DORA metrics, support expectations, or production signal ownership changes.
 - Release notes pass `npm run release:notes` when `CHANGELOG.md`, package version metadata, or release-relevant behavior changes.
 - Repository hygiene checks pass so required configuration files stay present and generated, dependency, secret, or local artifact files stay untracked.
 - Runtime surface checks pass for client network APIs, cookies, telemetry beacons, websockets, and external URLs.
@@ -170,6 +171,12 @@ For operations feedback:
 
 ```bash
 npm run operations:check
+```
+
+For observability feedback:
+
+```bash
+npm run observability:check
 ```
 
 For release-note feedback:
@@ -400,6 +407,8 @@ After pushing:
 
 - `docs/OPERATIONS.md` defines the supported production surface, release-health signals, post-release verification, incident triggers, triage flow, rollback expectations, current observability boundary, and future observability requirements.
 - `npm run operations:check` verifies the runbook, release-health signals, post-release verification, incident triggers, triage flow, rollback expectations, evidence handling, observability boundaries, and operations-review guidance stay aligned.
+- `docs/OBSERVABILITY.md` defines the current production visibility boundary, future signal rules, incident-learning expectations, and SLO/SLA boundary.
+- `npm run observability:check` verifies production visibility, future telemetry rules, incident-review templates, SLO/SLA expectations, and review/release guidance stay aligned.
 - Current operations rely on deterministic checks, GitHub Actions, public deployment verification, repository governance, and user reports rather than analytics or telemetry.
 - Update the runbook when release, deployment, PWA, repository-governance, security, privacy, backend-readiness, monitoring, telemetry, or support assumptions change.
 - Before accounts, sync, APIs, or managed storage ship, operations docs must cover client error reporting, service metrics, structured logs, alerts, data-workflow monitoring, rollback, and migration monitoring.

@@ -25,6 +25,7 @@ Performance contract: [docs/PERFORMANCE.md](docs/PERFORMANCE.md)
 Data contract: [docs/DATA_CONTRACT.md](docs/DATA_CONTRACT.md)
 Release guide: [docs/RELEASE.md](docs/RELEASE.md)
 Operations runbook: [docs/OPERATIONS.md](docs/OPERATIONS.md)
+Observability and incident learning: [docs/OBSERVABILITY.md](docs/OBSERVABILITY.md)
 Security/privacy contract: [docs/SECURITY_PRIVACY.md](docs/SECURITY_PRIVACY.md)
 Privacy and data handling: [docs/PRIVACY.md](docs/PRIVACY.md)
 Threat model: [docs/THREAT_MODEL.md](docs/THREAT_MODEL.md)
@@ -248,6 +249,12 @@ Run the operations contract check:
 npm run operations:check
 ```
 
+Run the observability/incident-learning contract check:
+
+```bash
+npm run observability:check
+```
+
 Refresh visual regression baselines after an intentional UI change:
 
 ```bash
@@ -385,6 +392,7 @@ npm run ops:repository
 - `npm run browsers:check` verifies Playwright browser projects, Pages/mobile support, visual-regression profiles, PWA/runtime boundaries, and browser-support docs stay aligned.
 - `npm run performance:check` verifies bundle budgets, Lighthouse thresholds, metadata/PWA/runtime checks, Pages smoke coverage, and performance-review guidance stay aligned.
 - `npm run operations:check` verifies release-health signals, post-release verification, incident triggers, triage, rollback, evidence handling, observability boundaries, and operations-review guidance stay aligned.
+- `npm run observability:check` verifies production-visibility boundaries, future telemetry rules, incident-review templates, SLO/SLA expectations, and review/release guidance stay aligned.
 - Progress, history, and settings are normalized when loaded from LocalStorage, including migration from the original V1 progress shape.
 - The data contract in `docs/DATA_CONTRACT.md` and `npm run data:check` keep storage keys, export schema, import normalization, privacy docs, and browser coverage aligned.
 - `npm run security:privacy` verifies privacy docs, security policy, threat model, backend readiness, data contract, runtime-surface, CSP, PWA, supply-chain, and review/release guidance stay aligned.

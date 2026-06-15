@@ -4,6 +4,8 @@ NoteSense is local-first today. This contract keeps privacy, security, runtime, 
 
 Legal and licensing expectations live in [LEGAL.md](LEGAL.md).
 
+Observability and incident-learning expectations live in [OBSERVABILITY.md](OBSERVABILITY.md).
+
 ## Product Standard
 
 - The practice loop must remain usable without an account, backend API, analytics service, or hosted storage.
@@ -31,6 +33,7 @@ Legal and licensing expectations live in [LEGAL.md](LEGAL.md).
 
 - Do not connect the browser app directly to PostgreSQL or any other database.
 - Future sign-in, cloud sync, backend APIs, analytics, telemetry, or hosted storage must update privacy docs, security policy, threat model, backend readiness, data contract, runtime-surface checks, release guidance, operations guidance, and ADRs together.
+- Future telemetry, analytics, monitoring SDKs, remote logging, or error-reporting sinks must follow [OBSERVABILITY.md](OBSERVABILITY.md) before implementation.
 - Future account data must define authentication, authorization, retention, deletion, export, migration, sync conflict handling, observability, rollback, and incident-response expectations before launch.
 - Anonymous local practice should remain a usable baseline unless a product-scope decision explicitly changes that promise.
 

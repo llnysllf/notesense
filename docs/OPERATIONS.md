@@ -2,6 +2,8 @@
 
 NoteSense is currently a static, local-first app deployed to GitHub Pages. Operations are intentionally lightweight, but release health, incident response, and future service readiness should be explicit before the product grows into accounts or sync.
 
+Observability and incident-learning expectations live in [OBSERVABILITY.md](OBSERVABILITY.md).
+
 ## Supported Surface
 
 - The supported production surface is the `main` branch deployed to GitHub Pages at `https://llnysllf.github.io/notesense/`.
@@ -64,6 +66,8 @@ Open an engineering task or bug report when any of these happen:
 
 The current app intentionally has no analytics, telemetry, remote logging, or account data. Operational visibility comes from deterministic release checks, public deployment verification, GitHub Actions, and user reports.
 
+Use [POSTMORTEM_TEMPLATE.md](POSTMORTEM_TEMPLATE.md) for user-impacting production incidents and process gaps that should teach the project something durable.
+
 Before shipping accounts, sync, APIs, or managed storage, add an observability plan that covers:
 
 - client error reporting that avoids practice-data leakage
@@ -82,6 +86,7 @@ Before shipping accounts, sync, APIs, or managed storage, add an observability p
 ## Change Rules
 
 - Run `npm run operations:check` after operations-runbook, release, deployment, PWA, repository-governance, security, privacy, backend-readiness, monitoring, telemetry, support, or rollback changes.
+- Run `npm run observability:check` after observability, monitoring, telemetry, analytics, incident-response, postmortem-template, SLO/SLA, DORA-metric, support, or production-visibility changes.
 - Run `npm run ops:repository` after branch protection, required-check, repository security, Pages, or workflow-activation changes.
 - Keep `docs/RELEASE.md`, `docs/QUALITY.md`, `docs/ARCHITECTURE.md`, `SECURITY.md`, `docs/THREAT_MODEL.md`, `docs/BACKEND_READINESS.md`, and PR review guidance aligned when operational expectations change.
 - Keep the current no-telemetry boundary explicit unless a future observability design updates privacy, runtime-surface, security, backend-readiness, and release expectations together.
@@ -90,7 +95,7 @@ Before shipping accounts, sync, APIs, or managed storage, add an observability p
 
 - Review this runbook when release, deployment, PWA, repository-governance, security, privacy, backend-readiness, or observability assumptions change.
 - Review it before adding sign-in, sync, cloud storage, analytics, monitoring, or any backend service.
-- Keep `docs/RELEASE.md`, `docs/QUALITY.md`, and this runbook aligned so release evidence and incident response stay consistent.
+- Keep `docs/RELEASE.md`, `docs/QUALITY.md`, [OBSERVABILITY.md](OBSERVABILITY.md), and this runbook aligned so release evidence and incident response stay consistent.
 
 ## Verification
 

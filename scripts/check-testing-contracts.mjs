@@ -43,6 +43,7 @@ requireSnippets("docs/TESTING.md", [
   "npm run browsers:check",
   "npm run performance:check",
   "npm run operations:check",
+  "npm run observability:check",
   "Browser tests run against production preview builds",
   "UI behavior tests block service workers",
   "Coverage thresholds are per-file",
@@ -53,6 +54,7 @@ requireSnippets("docs/TESTING.md", [
   "browser-support governance stays part of the foundation contract gate",
   "performance governance stays part of the foundation contract gate",
   "operations governance stays part of the foundation contract gate",
+  "observability governance stays part of the foundation contract gate",
   "Dedicated workflows own CodeQL, Dependency Review, Lighthouse, Visual Regression, and Pages deployment evidence.",
 ]);
 
@@ -67,8 +69,9 @@ requireSnippets("package.json", [
   '"browsers:check": "node scripts/check-browser-support.mjs"',
   '"performance:check": "node scripts/check-performance-contract.mjs"',
   '"operations:check": "node scripts/check-operations-contract.mjs"',
+  '"observability:check": "node scripts/check-observability-contract.mjs"',
   "npm run dependencies:check && npm run legal:check && npm run data:check && npm run security:privacy && npm run architecture:check",
-  "npm run accessibility:check && npm run testing:check && npm run browsers:check && npm run performance:check && npm run operations:check && npm run release:notes",
+  "npm run accessibility:check && npm run testing:check && npm run browsers:check && npm run performance:check && npm run operations:check && npm run observability:check && npm run release:notes",
   '"test": "vitest run"',
   '"test:coverage": "vitest run --coverage"',
   '"test:e2e": "playwright test"',
@@ -219,6 +222,7 @@ requireSnippets("docs/RELEASE.md", [
   "Treat testing-contract results as release evidence when test ownership, package scripts, coverage thresholds, browser configs, CI quality gates, or workflow evidence changes.",
   "Treat browser-support results as release evidence when supported browsers, Playwright projects, device profiles, Pages base path, Web Audio behavior, LocalStorage behavior, responsive support, color-scheme support, PWA/offline behavior, runtime-surface policy, or browser verification evidence changes.",
   "Treat performance-contract results as release evidence when bundle budgets, tracked asset categories, Lighthouse thresholds, Lighthouse workflow behavior, metadata checks, PWA artifact checks, runtime-surface checks, Pages smoke behavior, or performance review expectations change.",
+  "Treat observability results as release evidence when production visibility, monitoring, telemetry, analytics, incident-response, postmortem-template, SLO/SLA, DORA metrics, support expectations, or production signal ownership changes.",
   "Whether `npm run testing:check` still proves package scripts, coverage thresholds, Playwright configs, browser specs, and CI evidence are aligned.",
 ]);
 
@@ -231,6 +235,7 @@ requireSnippets("docs/ARCHITECTURE.md", [
   "`scripts/check-security-privacy.mjs` owns security/privacy drift checks for privacy docs, security policy, threat model, backend readiness, data contract, runtime-surface, CSP, PWA, supply-chain, and review/release guidance.",
   "`scripts/check-browser-support.mjs` owns browser-support drift checks for Playwright browser projects, Pages/mobile support, visual-regression profiles, PWA/runtime boundaries, and browser-support docs.",
   "`scripts/check-performance-contract.mjs` owns performance-contract drift checks for bundle budgets, Lighthouse thresholds, metadata/PWA/runtime checks, Pages smoke coverage, and performance-review guidance.",
+  "`scripts/check-observability-contract.mjs` owns observability drift checks for production visibility, future telemetry rules, incident review templates, SLO/SLA boundaries, release guidance, and PR review guidance.",
   "`docs/TESTING.md` documents test ownership, change routing, determinism, coverage, CI, and review expectations.",
   "`scripts/check-testing-contracts.mjs` owns testing-contract drift checks for package scripts, Vitest coverage thresholds, Playwright configs, browser specs, and CI workflow evidence.",
   "Testing-contract changes should keep package scripts, coverage thresholds, browser configs, CI workflow evidence, and release guidance aligned.",

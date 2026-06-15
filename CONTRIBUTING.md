@@ -92,6 +92,12 @@ For release-health, incident-response, deployment ownership, monitoring, telemet
 npm run operations:check
 ```
 
+For observability, monitoring, telemetry, analytics, incident-response, postmortem-template, SLO/SLA, support, or production-visibility changes, keep [docs/OBSERVABILITY.md](docs/OBSERVABILITY.md) aligned and run the observability contract check:
+
+```bash
+npm run observability:check
+```
+
 For intentional visual changes, refresh and review the screenshot baselines:
 
 ```bash
@@ -121,6 +127,7 @@ npm run test:e2e:visual:update
 - Keep workflow action refs pinned to full commit SHAs, document the source version tag in a comment, and keep workflow token permissions least-privilege.
 - Run `npm run ops:repository` after branch protection, repository security, Pages, required-check, or workflow-activation changes.
 - Keep [docs/OPERATIONS.md](docs/OPERATIONS.md) aligned when release-health signals, post-release verification, incident triggers, triage flow, rollback expectations, evidence handling, observability boundaries, monitoring, telemetry, or support expectations change; run `npm run operations:check` after operations-sensitive changes.
+- Keep [docs/OBSERVABILITY.md](docs/OBSERVABILITY.md) aligned when changing production visibility, monitoring, telemetry, analytics, incident-response, postmortem-template, SLO/SLA, DORA metrics, support expectations, or production signal ownership; run `npm run observability:check` after observability-sensitive changes.
 - Keep bundle growth intentional; budget increases need a clear reason in the PR.
 - Keep generated outputs, dependency installs, local environment files, logs, and TypeScript build-info files untracked.
 - Prefer small, shippable changes with clear user value or clear maintainability value.

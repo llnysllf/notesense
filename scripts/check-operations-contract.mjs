@@ -38,13 +38,16 @@ requireSnippets("docs/OPERATIONS.md", [
   "## Verification",
   "GitHub Actions, repository governance checks, live deployment verification, and user-reported issues are the current operational signal.",
   "Do not add telemetry, monitoring SDKs, backend APIs, or third-party services without updating privacy, security, runtime-surface, release, threat-model, backend-readiness, and operations docs together.",
+  "Observability and incident-learning expectations live in [OBSERVABILITY.md](OBSERVABILITY.md).",
+  "Use [POSTMORTEM_TEMPLATE.md](POSTMORTEM_TEMPLATE.md) for user-impacting production incidents and process gaps that should teach the project something durable.",
   "Run `npm run operations:check` after operations-runbook, release, deployment, PWA, repository-governance, security, privacy, backend-readiness, monitoring, telemetry, support, or rollback changes.",
+  "Run `npm run observability:check` after observability, monitoring, telemetry, analytics, incident-response, postmortem-template, SLO/SLA, DORA-metric, support, or production-visibility changes.",
   "Run `npm run ops:repository` after branch protection, required-check, repository security, Pages, or workflow-activation changes.",
 ]);
 
 requireSnippets("package.json", [
   '"operations:check": "node scripts/check-operations-contract.mjs"',
-  "npm run browsers:check && npm run performance:check && npm run operations:check && npm run release:notes",
+  "npm run browsers:check && npm run performance:check && npm run operations:check && npm run observability:check && npm run release:notes",
   '"ops:repository": "node scripts/check-github-repository.mjs"',
   '"deploy:verify-live": "node scripts/verify-live-pages.mjs"',
   '"verify": "npm run security:supply-chain && npm run check && npm run test:e2e:resilience && npm run build:pages && npm run security:policy && npm run metadata:check && npm run pwa:check && npm run runtime:check && npm run perf:budget && npm run test:e2e:pages"',
