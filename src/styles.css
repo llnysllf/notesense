@@ -23,8 +23,10 @@
   --color-focus: #0a84ff;
   --color-success: #1f6d33;
   --color-success-bg: #dff4df;
+  --color-success-border: rgba(31, 109, 51, 0.24);
   --color-danger: #9a3412;
   --color-danger-bg: #ffe3dc;
+  --color-danger-border: rgba(154, 52, 18, 0.28);
   --radius-card: 8px;
   --radius-control: 6px;
   --radius-pill: 999px;
@@ -78,8 +80,10 @@
     --color-focus: #4da3ff;
     --color-success: #5dbf70;
     --color-success-bg: #0f2e14;
+    --color-success-border: rgba(93, 191, 112, 0.3);
     --color-danger: #e07a5f;
     --color-danger-bg: #2e1510;
+    --color-danger-border: rgba(224, 122, 95, 0.34);
     --shadow-panel: 0 24px 60px rgba(0, 0, 0, 0.4);
     --shadow-control: 0 8px 18px rgba(0, 0, 0, 0.3);
     --shadow-action: 0 12px 24px rgba(0, 0, 0, 0.5);
@@ -920,7 +924,7 @@ h3 {
 }
 
 .mastery-grid li.focus {
-  border-color: rgba(154, 52, 18, 0.28);
+  border-color: var(--color-danger-border);
   background: var(--color-danger-bg);
 }
 
@@ -929,7 +933,7 @@ h3 {
 }
 
 .mastery-grid li.strong {
-  border-color: rgba(31, 109, 51, 0.24);
+  border-color: var(--color-success-border);
   background: var(--color-success-bg);
 }
 

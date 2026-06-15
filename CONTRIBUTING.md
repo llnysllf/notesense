@@ -26,6 +26,8 @@ For token, layout, component-state, or visual-regression changes, keep [docs/DES
 npm run design:check
 ```
 
+Add semantic CSS custom properties before introducing new theme colors; component selectors should consume tokens instead of raw hex, RGB, or HSL values.
+
 For accessibility-sensitive UI, style, copy, Playwright, Lighthouse, or recovery-surface changes, keep [docs/ACCESSIBILITY.md](docs/ACCESSIBILITY.md) aligned and run the accessibility contract check:
 
 ```bash

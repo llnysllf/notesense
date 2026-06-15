@@ -36,6 +36,35 @@ function requireSnapshotNames(directory, expectedParts) {
   }
 }
 
+function requireTokenizedThemeColors(file) {
+  const content = readProjectFile(file);
+  const rawColorPattern = /#[0-9a-fA-F]{3,8}\b|rgba?\s*\(|hsla?\s*\(/;
+  let inThemeTokenBlock = false;
+  let blockDepth = 0;
+
+  content.split(/\r?\n/).forEach((line, index) => {
+    if (/^\s*:root\s*\{/.test(line)) {
+      inThemeTokenBlock = true;
+    }
+
+    if (rawColorPattern.test(line) && !inThemeTokenBlock) {
+      failures.push(
+        `${file}:${index + 1} uses a hard-coded theme color outside token definitions; add a CSS custom property and consume it with var(...)`,
+      );
+    }
+
+    if (inThemeTokenBlock) {
+      blockDepth += (line.match(/\{/g) ?? []).length;
+      blockDepth -= (line.match(/\}/g) ?? []).length;
+
+      if (blockDepth <= 0) {
+        inThemeTokenBlock = false;
+        blockDepth = 0;
+      }
+    }
+  });
+}
+
 console.log("Design system report");
 
 requireSnippets("docs/DESIGN_SYSTEM.md", [
@@ -58,7 +87,9 @@ requireSnippets("src/styles.css", [
   "--color-surface:",
   "--color-focus:",
   "--color-success:",
+  "--color-success-border:",
   "--color-danger:",
+  "--color-danger-border:",
   "--radius-card:",
   "--radius-control:",
   "--radius-pill:",
@@ -85,6 +116,8 @@ requireSnippets("src/styles.css", [
   "@media (max-width: 940px)",
   "@media (max-width: 640px)",
 ]);
+
+requireTokenizedThemeColors("src/styles.css");
 
 requireSnippets("e2e/visual.spec.ts", [
   'test("matches the note-reading shell"',
@@ -114,6 +147,7 @@ requireSnapshotNames("e2e/visual.spec.ts-snapshots", [
 
 console.log("- design-system documentation checked");
 console.log("- CSS token and state contract checked");
+console.log("- CSS theme color token usage checked");
 console.log("- visual-regression coverage contract checked");
 
 if (failures.length > 0) {
