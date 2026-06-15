@@ -2,6 +2,8 @@
 
 NoteSense is currently a static, local-first app. It does not require an account, and the practice loop does not send practice data to a server.
 
+Security/privacy readiness expectations live in [SECURITY_PRIVACY.md](SECURITY_PRIVACY.md).
+
 ## Current Data Boundary
 
 The app stores data in the learner's browser:
@@ -43,4 +45,4 @@ Future sign-in, cloud sync, backend APIs, or hosted storage must be designed as 
 
 Learners can remove NoteSense data by using the app's reset control or by clearing site data for `llnysllf.github.io` in the browser.
 
-Last reviewed: 2026-06-11
+Last reviewed: 2026-06-15

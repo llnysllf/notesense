@@ -1,8 +1,10 @@
 # Threat Model
 
-Last reviewed: 2026-06-12
+Last reviewed: 2026-06-15
 
 NoteSense is currently a static, local-first app. This model documents the security boundaries that exist today and the work required before future sign-in, sync, API, PostgreSQL, or cloud infrastructure changes.
+
+Security/privacy readiness expectations live in [SECURITY_PRIVACY.md](SECURITY_PRIVACY.md).
 
 ## Current Scope
 
