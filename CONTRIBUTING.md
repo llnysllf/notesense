@@ -122,6 +122,7 @@ npm run test:e2e:visual:update
 - Keep persistence and import/export changes behind `src/storage.ts`.
 - Keep [docs/DATA_CONTRACT.md](docs/DATA_CONTRACT.md) aligned with storage keys, export schema, import normalization, and future sync assumptions; run `npm run data:check` after data-shape changes.
 - Keep shared contracts, practice logic, storage, hooks, and components inside the documented import boundaries; run `npm run architecture:check` after moving source responsibilities.
+- Keep app-shell, hook, component, core, and shared-contract files inside the documented source-size budgets; split responsibilities or update the architecture decision when a budget increase is intentional.
 - Add or update tests for new behavior, migrations, accessibility-sensitive UI, and practice analytics.
 - Keep [docs/ACCESSIBILITY.md](docs/ACCESSIBILITY.md) aligned with keyboard, screen reader, focus, contrast, motion, and automated coverage expectations; run `npm run accessibility:check` after accessibility-sensitive changes.
 - Keep [docs/TESTING.md](docs/TESTING.md) aligned with package scripts, coverage thresholds, Playwright configs, CI quality gates, and test ownership; run `npm run testing:check` after test-system changes.

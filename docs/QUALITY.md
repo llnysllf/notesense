@@ -20,6 +20,7 @@ A change is done when:
 - Product-scope docs and `npm run product:check` stay aligned when supported scope, explicit non-goals, roadmap language, or feature-intake expectations change.
 - Product-learning docs and `npm run product:learning` stay aligned when feedback loops, future analytics, experiments, feature flags, support signals, product metrics, delivery metrics, DORA expectations, or roadmap validation changes.
 - Source import boundaries pass `npm run architecture:check` when shared contracts, practice logic, storage, hooks, components, or app-shell responsibilities change.
+- Source-size budgets pass `npm run architecture:check` so future features split app-shell, hook, component, core, and shared-contract responsibilities before files become too broad.
 - Pure practice, analytics, and data-shape logic has unit coverage.
 - Core practice and storage modules meet the configured Vitest coverage thresholds.
 - Shared data contract modules meet the configured Vitest coverage thresholds when they change.
@@ -300,7 +301,7 @@ For visual QA:
 - `src/hooks` owns React state orchestration and should not depend on presentation components.
 - `src/components` stays presentation-focused and receives persistence, audio, and session behavior through props.
 - `src/App.tsx` remains the product coordinator that composes hooks, storage actions, and components.
-- `npm run architecture:check` enforces these boundaries before CI review.
+- `npm run architecture:check` enforces these boundaries and source-size budgets before CI review.
 
 ## Data And Persistence Checklist
 
