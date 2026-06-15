@@ -2,6 +2,8 @@
 
 NoteSense is local-first today. This contract keeps privacy, security, runtime, import/export, PWA, and future backend expectations aligned before account, sync, analytics, or hosted storage work begins.
 
+Legal and licensing expectations live in [LEGAL.md](LEGAL.md).
+
 ## Product Standard
 
 - The practice loop must remain usable without an account, backend API, analytics service, or hosted storage.
@@ -43,6 +45,7 @@ NoteSense is local-first today. This contract keeps privacy, security, runtime, 
 - Run `npm run security:privacy` after privacy, security, data-contract, runtime-surface, CSP, PWA, import/export, storage, telemetry, analytics, auth, sync, backend-readiness, threat-model, or security-doc changes.
 - Run `npm run build:pages` before `npm run security:policy`, `npm run pwa:check`, and `npm run runtime:check`.
 - Run `npm run security:supply-chain` after dependency, lockfile, license, workflow, Node, npm, or package-manager changes.
+- Run `npm run legal:check` before adding user-facing terms, externally hosted privacy policies, contributor-community terms, production telemetry, analytics, account data, sync data, or backend logs tied to users.
 - Add an ADR when a change affects security posture, privacy posture, account data, sync, service boundaries, deployment trust boundaries, or backend readiness.
 
 ## Verification

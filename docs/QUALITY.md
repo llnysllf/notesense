@@ -51,6 +51,7 @@ A change is done when:
 - GitHub Actions workflow references are pinned to full commit SHAs with source-version comments, and workflow token permissions stay least-privilege.
 - GitHub Actions workflows keep reviewed concurrency, timeout, and artifact-retention controls.
 - Dependency-maintenance docs and `npm run dependencies:check` stay aligned when Dependabot cadence, dependency grouping, ignored update types, package manager policy, lockfile policy, license policy, or workflow-update policy changes.
+- Legal/licensing docs and `npm run legal:check` stay aligned when root license terms, package metadata, user-facing terms, privacy-policy hosting, contributor-community expectations, dependency license policy, release guidance, or PR review guidance changes.
 - GitHub repository governance checks pass after branch protection, repository security, Pages, required-check, or workflow-activation changes.
 - Static bundle output stays within the documented performance budgets.
 - Generated PWA artifacts pass the static-asset-only service worker check.
@@ -157,6 +158,12 @@ For dependency-maintenance feedback:
 
 ```bash
 npm run dependencies:check
+```
+
+For legal/licensing feedback:
+
+```bash
+npm run legal:check
 ```
 
 For operations feedback:
@@ -291,8 +298,17 @@ When touching progress, settings, history, import, or export:
 - `npm run docs:check` verifies that policy and governance docs remain linked and aligned.
 - `npm run docs:check` also validates local Markdown links, anchors, and documented npm script references.
 - `npm run data:check` verifies that storage keys, export schema, import normalization, privacy docs, and browser coverage stay aligned.
+- `docs/LEGAL.md` defines the project license boundary, user-facing legal triggers, dependency-license separation, and legal-change process.
 - Privacy docs must describe current browser storage keys, import/export boundaries, tracking behavior, and future account or sync expectations.
 - Security and release docs must keep privacy-impacting changes visible during review and release.
+
+## Legal And Licensing
+
+- The root `LICENSE` file defines the current project source-code and owned-asset permission boundary.
+- `package.json` stays private and uses `license: "UNLICENSED"` until the owner intentionally chooses another distribution model.
+- `npm run legal:check` verifies root license terms, package metadata, legal docs, dependency-license boundaries, release guidance, and PR review guidance stay aligned.
+- Dependency license compliance does not grant rights to NoteSense's own source code.
+- Add user-facing terms, externally hosted privacy-policy details, and contributor-community guidance before hosted accounts, telemetry, paid services, public sharing, support queues, or external contributor workflows need them.
 
 ## Repository Hygiene
 

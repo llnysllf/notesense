@@ -41,7 +41,7 @@ requireSnippets("docs/PRODUCT_SCOPE.md", [
 
 requireSnippets("package.json", [
   '"product:check": "node scripts/check-product-scope.mjs"',
-  "npm run docs:check && npm run adr:check && npm run product:check && npm run review:check && npm run dependencies:check && npm run data:check",
+  "npm run docs:check && npm run adr:check && npm run product:check && npm run review:check && npm run dependencies:check && npm run legal:check && npm run data:check",
 ]);
 
 requireSnippets("README.md", [

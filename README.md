@@ -15,6 +15,7 @@ Architecture decision records: [docs/adr/README.md](docs/adr/README.md)
 Product scope: [docs/PRODUCT_SCOPE.md](docs/PRODUCT_SCOPE.md)
 Review process: [docs/REVIEW_PROCESS.md](docs/REVIEW_PROCESS.md)
 Dependency maintenance: [docs/DEPENDENCY_MAINTENANCE.md](docs/DEPENDENCY_MAINTENANCE.md)
+Legal and licensing: [docs/LEGAL.md](docs/LEGAL.md)
 Quality runbook: [docs/QUALITY.md](docs/QUALITY.md)
 Design system: [docs/DESIGN_SYSTEM.md](docs/DESIGN_SYSTEM.md)
 Accessibility contract: [docs/ACCESSIBILITY.md](docs/ACCESSIBILITY.md)
@@ -155,6 +156,12 @@ Run the dependency-maintenance contract check:
 
 ```bash
 npm run dependencies:check
+```
+
+Run the legal/licensing contract check:
+
+```bash
+npm run legal:check
 ```
 
 Run the data-contract check:
@@ -363,6 +370,7 @@ npm run ops:repository
 - `npm run product:check` verifies that current scope, explicit non-goals, contributor guidance, review guidance, and foundation-first expectations stay aligned before features are added.
 - `npm run review:check` verifies CODEOWNERS, issue templates, PR review evidence, security-report routing, and triage guidance stay aligned.
 - `npm run dependencies:check` verifies Dependabot cadence, dependency review evidence, lockfile policy, license policy, supply-chain gates, and workflow-update expectations stay aligned.
+- `npm run legal:check` verifies the project license file, package metadata, legal docs, dependency-license boundaries, release guidance, and PR review guidance stay aligned.
 - Practice-plan recommendations are derived in `src/practiceEngine.ts`, keeping the coaching layer deterministic and ready for a future service boundary.
 - Mastery map state is derived in `src/practiceEngine.ts` from the active range, note attempts, and accuracy thresholds.
 - Daily goal and streak state is derived from completed session history, keeping habit analytics independent from browser storage.

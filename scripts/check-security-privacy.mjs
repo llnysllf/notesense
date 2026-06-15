@@ -40,7 +40,7 @@ requireSnippets("docs/SECURITY_PRIVACY.md", [
 
 requireSnippets("package.json", [
   '"security:privacy": "node scripts/check-security-privacy.mjs"',
-  "npm run dependencies:check && npm run data:check && npm run security:privacy && npm run architecture:check",
+  "npm run dependencies:check && npm run legal:check && npm run data:check && npm run security:privacy && npm run architecture:check",
   '"data:check": "node scripts/check-data-contracts.mjs"',
   '"runtime:check": "node scripts/check-runtime-surface.mjs"',
   '"security:policy": "node scripts/check-security-policy.mjs"',

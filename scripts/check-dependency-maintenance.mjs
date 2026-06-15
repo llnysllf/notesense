@@ -37,7 +37,7 @@ requireSnippets("docs/DEPENDENCY_MAINTENANCE.md", [
 
 requireSnippets("package.json", [
   '"dependencies:check": "node scripts/check-dependency-maintenance.mjs"',
-  "npm run product:check && npm run review:check && npm run dependencies:check && npm run data:check",
+  "npm run product:check && npm run review:check && npm run dependencies:check && npm run legal:check && npm run data:check",
   '"security:supply-chain": "npm run security:audit && npm run security:lockfile && npm run compliance:licenses && npm run security:workflows"',
   '"security:lockfile": "node scripts/check-lockfile-supply-chain.mjs"',
   '"compliance:licenses": "node scripts/check-licenses.mjs"',
