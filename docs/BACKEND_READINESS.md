@@ -8,6 +8,8 @@ Security/privacy readiness expectations live in [SECURITY_PRIVACY.md](SECURITY_P
 
 Observability and incident-learning expectations live in [OBSERVABILITY.md](OBSERVABILITY.md).
 
+Release safety and provenance expectations live in [RELEASE_SAFETY.md](RELEASE_SAFETY.md).
+
 ## Current Backend Status
 
 - No backend is deployed.
@@ -91,6 +93,8 @@ All endpoints must require authorization once accounts exist. Public unauthentic
 ## Observability Requirements
 
 Before backend launch, define privacy-safe production signals, incident review ownership, SLO/SLA boundaries, and telemetry retention.
+
+Before backend launch, define staging, migration rollback, deployment promotion, artifact provenance, and post-deploy verification expectations.
 
 - API error-rate alerting.
 - API latency target.

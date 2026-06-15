@@ -60,7 +60,7 @@ requireSnippets("docs/POSTMORTEM_TEMPLATE.md", [
 
 requireSnippets("package.json", [
   '"observability:check": "node scripts/check-observability-contract.mjs"',
-  "npm run performance:check && npm run operations:check && npm run observability:check && npm run release:notes",
+  "npm run performance:check && npm run operations:check && npm run observability:check && npm run release:safety && npm run release:notes",
 ]);
 
 requireSnippets("README.md", [

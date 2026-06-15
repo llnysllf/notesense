@@ -4,6 +4,8 @@ NoteSense is publicly visible, but visibility is not the same as permission. Thi
 
 Observability and incident-learning expectations live in [OBSERVABILITY.md](OBSERVABILITY.md).
 
+Release safety and provenance expectations live in [RELEASE_SAFETY.md](RELEASE_SAFETY.md).
+
 ## Project License
 
 - The root [LICENSE](../LICENSE) file is the source of truth for project source code and owned assets.
@@ -19,6 +21,7 @@ Observability and incident-learning expectations live in [OBSERVABILITY.md](OBSE
 - Add user-facing Terms of Service before shipping hosted accounts, payments, subscriptions, collaboration, public sharing, user-generated cloud content, or a formal support channel.
 - Add an externally hosted privacy policy before collecting production telemetry, analytics, account data, sync data, or backend logs tied to users.
 - Production telemetry, analytics, monitoring, remote logging, or support commitments must update legal, privacy, and observability expectations together before implementation.
+- SBOMs, signed artifacts, provenance attestations, or externally distributed release packages must preserve the project license boundary before publication.
 - Add a `CODE_OF_CONDUCT.md` before treating the repository as an external contributor community rather than an owner-maintained portfolio product.
 
 ## Dependency License Boundary

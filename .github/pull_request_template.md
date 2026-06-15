@@ -26,6 +26,7 @@
 - [ ] Operations impact was considered for release-health signals, incident response, monitoring, telemetry, support, and rollback expectations.
 - [ ] Operations-contract impact was considered for runbook sections, release-health signals, post-release verification, incident triage, rollback, evidence handling, and observability boundaries.
 - [ ] Observability impact was considered for production visibility, telemetry boundaries, incident learning, SLO/SLA expectations, support, and future monitoring.
+- [ ] Release-safety impact was considered for deployment, staging/canary needs, rollback, provenance, SBOM, signing, Pages artifacts, and release sign-off.
 - [ ] Security impact was considered for dependency, import/export, storage, future auth, future sync, and workflow changes.
 - [ ] Security/privacy-contract impact was considered for local-first data, import/export trust, runtime/network boundaries, CSP, PWA behavior, future auth/sync, backend readiness, and release evidence.
 - [ ] Privacy/data handling impact was considered for storage, import/export, analytics, future auth, future sync, and network behavior.

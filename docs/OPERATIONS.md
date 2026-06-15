@@ -4,6 +4,8 @@ NoteSense is currently a static, local-first app deployed to GitHub Pages. Opera
 
 Observability and incident-learning expectations live in [OBSERVABILITY.md](OBSERVABILITY.md).
 
+Release safety and provenance expectations live in [RELEASE_SAFETY.md](RELEASE_SAFETY.md).
+
 ## Supported Surface
 
 - The supported production surface is the `main` branch deployed to GitHub Pages at `https://llnysllf.github.io/notesense/`.
@@ -23,6 +25,7 @@ Treat these as the current release-health evidence:
 - `Deploy Pages`: GitHub Pages artifact publication.
 - `npm run deploy:verify-live`: public app shell, metadata assets, service worker, Workbox runtime, and Content Security Policy.
 - `npm run ops:repository`: branch protection, required checks, Pages, repository security settings, Dependabot security updates, vulnerability alerts, and active workflows.
+- `npm run release:safety`: direct-to-Pages release boundary, staging/canary triggers, rollback expectations, artifact/provenance expectations, and release sign-off guidance.
 
 ## Post-Release Verification
 
@@ -87,6 +90,7 @@ Before shipping accounts, sync, APIs, or managed storage, add an observability p
 
 - Run `npm run operations:check` after operations-runbook, release, deployment, PWA, repository-governance, security, privacy, backend-readiness, monitoring, telemetry, support, or rollback changes.
 - Run `npm run observability:check` after observability, monitoring, telemetry, analytics, incident-response, postmortem-template, SLO/SLA, DORA-metric, support, or production-visibility changes.
+- Run `npm run release:safety` after release-safety, deployment, staging, canary, progressive-rollout, rollback, provenance, SBOM, signing, artifact, Pages, workflow, or release-signoff changes.
 - Run `npm run ops:repository` after branch protection, required-check, repository security, Pages, or workflow-activation changes.
 - Keep `docs/RELEASE.md`, `docs/QUALITY.md`, `docs/ARCHITECTURE.md`, `SECURITY.md`, `docs/THREAT_MODEL.md`, `docs/BACKEND_READINESS.md`, and PR review guidance aligned when operational expectations change.
 - Keep the current no-telemetry boundary explicit unless a future observability design updates privacy, runtime-surface, security, backend-readiness, and release expectations together.
