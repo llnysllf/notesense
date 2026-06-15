@@ -40,6 +40,7 @@ requireSnippets("docs/TESTING.md", [
   "npm run dependencies:check",
   "npm run browsers:check",
   "npm run performance:check",
+  "npm run operations:check",
   "Browser tests run against production preview builds",
   "UI behavior tests block service workers",
   "Coverage thresholds are per-file",
@@ -47,6 +48,7 @@ requireSnippets("docs/TESTING.md", [
   "dependency-maintenance governance stays part of the foundation contract gate",
   "browser-support governance stays part of the foundation contract gate",
   "performance governance stays part of the foundation contract gate",
+  "operations governance stays part of the foundation contract gate",
   "Dedicated workflows own CodeQL, Dependency Review, Lighthouse, Visual Regression, and Pages deployment evidence.",
 ]);
 
@@ -58,8 +60,9 @@ requireSnippets("package.json", [
   '"testing:check": "node scripts/check-testing-contracts.mjs"',
   '"browsers:check": "node scripts/check-browser-support.mjs"',
   '"performance:check": "node scripts/check-performance-contract.mjs"',
+  '"operations:check": "node scripts/check-operations-contract.mjs"',
   "npm run docs:check && npm run adr:check && npm run product:check && npm run review:check && npm run dependencies:check && npm run data:check",
-  "npm run accessibility:check && npm run testing:check && npm run browsers:check && npm run performance:check && npm run release:notes",
+  "npm run accessibility:check && npm run testing:check && npm run browsers:check && npm run performance:check && npm run operations:check && npm run release:notes",
   '"test": "vitest run"',
   '"test:coverage": "vitest run --coverage"',
   '"test:e2e": "playwright test"',

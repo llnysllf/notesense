@@ -23,6 +23,7 @@
 - [ ] Workflow changes keep action refs pinned to full commit SHAs, token permissions least-privilege, and operational controls bounded.
 - [ ] Repository governance impact was considered for branch protection, security settings, Pages, required checks, and workflow activation.
 - [ ] Operations impact was considered for release-health signals, incident response, monitoring, telemetry, support, and rollback expectations.
+- [ ] Operations-contract impact was considered for runbook sections, release-health signals, post-release verification, incident triage, rollback, evidence handling, and observability boundaries.
 - [ ] Security impact was considered for dependency, import/export, storage, future auth, future sync, and workflow changes.
 - [ ] Privacy/data handling impact was considered for storage, import/export, analytics, future auth, future sync, and network behavior.
 - [ ] Bundle budget changes are intentional and explained.

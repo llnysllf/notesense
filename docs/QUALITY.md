@@ -38,6 +38,7 @@ A change is done when:
 - ADR index and `npm run adr:check` stay aligned when decision records are added, renamed, removed, or moved between statuses.
 - Review/intake docs and `npm run review:check` stay aligned when CODEOWNERS, issue templates, PR templates, labels, triage routing, or review evidence expectations change.
 - Operations docs stay aligned when release-health signals, incident response, deployment ownership, monitoring, telemetry, or support expectations change.
+- Operations runbook and `npm run operations:check` stay aligned when release-health signals, post-release verification, incident triggers, triage flow, rollback expectations, evidence handling, observability boundaries, monitoring, telemetry, or support expectations change.
 - Release notes pass `npm run release:notes` when `CHANGELOG.md`, package version metadata, or release-relevant behavior changes.
 - Repository hygiene checks pass so required configuration files stay present and generated, dependency, secret, or local artifact files stay untracked.
 - Runtime surface checks pass for client network APIs, cookies, telemetry beacons, websockets, and external URLs.
@@ -149,6 +150,12 @@ For dependency-maintenance feedback:
 
 ```bash
 npm run dependencies:check
+```
+
+For operations feedback:
+
+```bash
+npm run operations:check
 ```
 
 For release-note feedback:
@@ -363,6 +370,7 @@ After pushing:
 ## Operations Readiness
 
 - `docs/OPERATIONS.md` defines the supported production surface, release-health signals, post-release verification, incident triggers, triage flow, rollback expectations, current observability boundary, and future observability requirements.
+- `npm run operations:check` verifies the runbook, release-health signals, post-release verification, incident triggers, triage flow, rollback expectations, evidence handling, observability boundaries, and operations-review guidance stay aligned.
 - Current operations rely on deterministic checks, GitHub Actions, public deployment verification, repository governance, and user reports rather than analytics or telemetry.
 - Update the runbook when release, deployment, PWA, repository-governance, security, privacy, backend-readiness, monitoring, telemetry, or support assumptions change.
 - Before accounts, sync, APIs, or managed storage ship, operations docs must cover client error reporting, service metrics, structured logs, alerts, data-workflow monitoring, rollback, and migration monitoring.
