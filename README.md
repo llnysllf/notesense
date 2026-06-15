@@ -228,6 +228,12 @@ Run the performance contract check:
 npm run performance:check
 ```
 
+Run the operations contract check:
+
+```bash
+npm run operations:check
+```
+
 Refresh visual regression baselines after an intentional UI change:
 
 ```bash
@@ -363,6 +369,7 @@ npm run ops:repository
 - `npm run testing:check` verifies that the test ownership matrix, package scripts, Vitest coverage thresholds, Playwright configs, browser specs, and CI quality gate stay aligned.
 - `npm run browsers:check` verifies Playwright browser projects, Pages/mobile support, visual-regression profiles, PWA/runtime boundaries, and browser-support docs stay aligned.
 - `npm run performance:check` verifies bundle budgets, Lighthouse thresholds, metadata/PWA/runtime checks, Pages smoke coverage, and performance-review guidance stay aligned.
+- `npm run operations:check` verifies release-health signals, post-release verification, incident triggers, triage, rollback, evidence handling, observability boundaries, and operations-review guidance stay aligned.
 - Progress, history, and settings are normalized when loaded from LocalStorage, including migration from the original V1 progress shape.
 - The data contract in `docs/DATA_CONTRACT.md` and `npm run data:check` keep storage keys, export schema, import normalization, privacy docs, and browser coverage aligned.
 - Save operations fail safely and surface a non-blocking status message when browser storage is unavailable.

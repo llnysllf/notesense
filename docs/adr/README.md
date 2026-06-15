@@ -56,3 +56,4 @@ Architecture Decision Records document durable product and engineering decisions
 - [ADR 0039: Add Dependency Maintenance Contract](0039-add-dependency-maintenance-contract.md) - Accepted
 - [ADR 0040: Add Browser Support Contract](0040-add-browser-support-contract.md) - Accepted
 - [ADR 0041: Add Performance Contract](0041-add-performance-contract.md) - Accepted
+- [ADR 0042: Add Operations Contract Check](0042-add-operations-contract-check.md) - Accepted

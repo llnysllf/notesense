@@ -51,6 +51,7 @@ NoteSense is currently a local-first React application. The product goal is to k
 - `scripts/check-testing-contracts.mjs` owns testing-contract drift checks for package scripts, Vitest coverage thresholds, Playwright configs, browser specs, and CI workflow evidence.
 - `scripts/check-browser-support.mjs` owns browser-support drift checks for Playwright browser projects, Pages/mobile support, visual-regression profiles, PWA/runtime boundaries, and browser-support docs.
 - `scripts/check-performance-contract.mjs` owns performance-contract drift checks for bundle budgets, Lighthouse thresholds, metadata/PWA/runtime checks, Pages smoke coverage, and performance-review guidance.
+- `scripts/check-operations-contract.mjs` owns operations-runbook drift checks for release-health signals, post-release verification, incident triggers, triage flow, rollback expectations, evidence handling, observability boundaries, and operations-review guidance.
 - `scripts/check-licenses.mjs` owns dependency license policy enforcement.
 - `scripts/check-security-policy.mjs` owns built HTML security policy verification.
 - `scripts/check-policy-docs.mjs` owns policy document presence and alignment checks.
@@ -96,6 +97,7 @@ Every feature should keep these expectations intact:
 - Product-scope changes should keep README current scope, explicit non-goals, feature-intake expectations, foundation-first guidance, release guidance, and ADRs aligned.
 - Review-process changes should keep CODEOWNERS, issue templates, PR evidence, security routing, product-scope guidance, release guidance, and contributor guidance aligned.
 - Dependency-maintenance changes should keep Dependabot cadence, dependency review evidence, lockfile policy, license policy, supply-chain gates, release guidance, and contributor guidance aligned.
+- Operations-contract changes should keep release-health signals, post-release verification, incident triggers, triage flow, rollback expectations, evidence handling, observability boundaries, release guidance, security guidance, privacy guidance, backend-readiness guidance, and PR review guidance aligned.
 - Design-system changes should preserve the documented token layers, component states, responsive behavior, focus behavior, and protected visual surfaces.
 - Dependency license compliance is part of supply-chain readiness.
 - Dependency Review is part of pull-request supply-chain readiness for dependency and lockfile changes.

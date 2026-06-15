@@ -40,7 +40,7 @@ requireSnippets("docs/BROWSER_SUPPORT.md", [
 
 requireSnippets("package.json", [
   '"browsers:check": "node scripts/check-browser-support.mjs"',
-  "npm run accessibility:check && npm run testing:check && npm run browsers:check && npm run performance:check && npm run release:notes",
+  "npm run accessibility:check && npm run testing:check && npm run browsers:check && npm run performance:check && npm run operations:check && npm run release:notes",
   '"test:e2e": "playwright test"',
   '"test:e2e:pages": "playwright test --config=playwright.pages.config.ts"',
   '"test:e2e:visual": "playwright test --config=playwright.visual.config.ts"',

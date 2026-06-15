@@ -79,8 +79,23 @@ Before shipping accounts, sync, APIs, or managed storage, add an observability p
 - Do not upload LocalStorage exports, private user data, `.env` files, credentials, or generated reports that include secrets.
 - Keep incident notes factual: symptom, impact, commit range, evidence, root cause, fix, and prevention.
 
+## Change Rules
+
+- Run `npm run operations:check` after operations-runbook, release, deployment, PWA, repository-governance, security, privacy, backend-readiness, monitoring, telemetry, support, or rollback changes.
+- Run `npm run ops:repository` after branch protection, required-check, repository security, Pages, or workflow-activation changes.
+- Keep `docs/RELEASE.md`, `docs/QUALITY.md`, `docs/ARCHITECTURE.md`, `SECURITY.md`, `docs/THREAT_MODEL.md`, `docs/BACKEND_READINESS.md`, and PR review guidance aligned when operational expectations change.
+- Keep the current no-telemetry boundary explicit unless a future observability design updates privacy, runtime-surface, security, backend-readiness, and release expectations together.
+
 ## Review Cadence
 
 - Review this runbook when release, deployment, PWA, repository-governance, security, privacy, backend-readiness, or observability assumptions change.
 - Review it before adding sign-in, sync, cloud storage, analytics, monitoring, or any backend service.
 - Keep `docs/RELEASE.md`, `docs/QUALITY.md`, and this runbook aligned so release evidence and incident response stay consistent.
+
+## Verification
+
+`npm run operations:check` verifies that:
+
+- this runbook keeps supported-surface, health-signal, post-release-verification, incident-trigger, triage-flow, rollback, observability-boundary, evidence-handling, change-rule, review-cadence, and verification sections
+- release-health signals, live deployment verification, repository governance, incident triage, rollback, and evidence-handling expectations stay documented
+- no-telemetry, future observability, security, privacy, threat-model, backend-readiness, release, quality, architecture, testing, ADR, changelog, and PR review guidance stay connected to operations
