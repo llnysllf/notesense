@@ -115,6 +115,7 @@ For data changes, manually inspect:
 - Whether `npm run data:check` still proves storage keys, export schema, import normalization, privacy docs, and browser coverage are aligned.
 - Whether `npm run security:privacy` still proves privacy docs, security policy, threat model, backend readiness, data contract, runtime-surface, CSP, PWA, supply-chain, and review/release guidance are aligned.
 - Whether `npm run architecture:check` still proves source responsibilities stay in the expected layers.
+- Whether `npm run architecture:check` still proves source-size budgets are respected or intentionally updated with review evidence.
 - Whether `npm run docs:check` passes.
 - Whether `npm run runtime:check` passes after a Pages build.
 - Whether `docs/PRIVACY.md` still reflects storage keys, export contents, tracking behavior, and future migration expectations.

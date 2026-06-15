@@ -387,6 +387,7 @@ npm run ops:repository
 
 - Practice selection and summary logic live in `src/practiceEngine.ts` so the learning behavior can be tested outside React.
 - `npm run architecture:check` verifies that shared contracts, practice logic, storage, hooks, and components keep their documented boundaries as the app grows.
+- `npm run architecture:check` also enforces source-size budgets so future features split broad files before they become hard to review.
 - `npm run adr:check` verifies that ADR filenames, headings, statuses, required sections, and index links stay aligned.
 - `npm run product:check` verifies that current scope, explicit non-goals, contributor guidance, review guidance, and foundation-first expectations stay aligned before features are added.
 - `npm run product:learning` verifies feedback-loop boundaries, future analytics and experiment rules, feature-flag expectations, delivery-metric timing, and review/release guidance stay aligned.

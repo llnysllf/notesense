@@ -54,6 +54,7 @@ NoteSense is currently a local-first React application. The product goal is to k
 - `scripts/check-data-contracts.mjs` owns data-contract drift checks for storage keys, shared export shape, privacy docs, and browser coverage.
 - `scripts/check-security-privacy.mjs` owns security/privacy drift checks for privacy docs, security policy, threat model, backend readiness, data contract, runtime-surface, CSP, PWA, supply-chain, and review/release guidance.
 - `scripts/check-architecture-boundaries.mjs` owns source import-boundary checks for shared contracts, practice logic, storage, hooks, and UI components.
+- `scripts/check-architecture-boundaries.mjs` also owns source-size budgets for the app shell, hooks, components, core modules, and shared contracts so future feature work has an explicit split point before files become catch-all modules.
 - `scripts/check-design-system.mjs` owns the lightweight design-system contract for CSS tokens, shell states, accessibility affordances, responsive guards, and visual-regression coverage.
 - `scripts/check-accessibility-contracts.mjs` owns accessibility-contract drift checks for source semantics, styles, browser coverage, lint coverage, and release docs.
 - `scripts/check-testing-contracts.mjs` owns testing-contract drift checks for package scripts, Vitest coverage thresholds, Playwright configs, browser specs, and CI workflow evidence.
@@ -86,6 +87,7 @@ Every feature should keep these expectations intact:
 
 - Practice logic remains testable outside React.
 - Source import boundaries stay enforced by `npm run architecture:check` so shared contracts, practice logic, storage, hooks, and components keep clear responsibilities.
+- Source-size budgets stay enforced by `npm run architecture:check` so the app shell, hooks, components, core modules, and shared contracts are split before they become broad ownership buckets.
 - New note ranges should be added as data first, then wired through tested selection and settings paths.
 - Product analytics and chart inputs are derived in pure functions before rendering.
 - Habit analytics are derived from completed sessions so future sync can reconcile daily goals from server history.
@@ -194,6 +196,7 @@ PostgreSQL should sit behind a backend API, never behind direct browser access. 
 - Keep deployment base-path assumptions tested rather than relying on manual live-site checks alone.
 - Keep live deployment verification repeatable when hosting, domain, PWA, or Workbox assumptions change.
 - Keep architecture decisions explicit through ADRs when they affect data, deployment, quality gates, or service boundaries.
+- Keep source-size budget changes explicit through architecture docs and ADR review when a larger module is genuinely the clearer design.
 
 ## Near-Term Product Roadmap
 

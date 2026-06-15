@@ -4,6 +4,33 @@ import { dirname, extname, join, relative } from "node:path";
 const failures = [];
 const productionExtensions = new Set([".ts", ".tsx"]);
 const sourceRoots = ["src", "shared/src"];
+const sourceSizeBudgets = [
+  {
+    label: "app shell",
+    maxLines: 320,
+    matches: (file) => file === "src/App.tsx",
+  },
+  {
+    label: "core practice or storage module",
+    maxLines: 600,
+    matches: (file) => file === "src/practiceEngine.ts" || file === "src/noteData.ts" || file === "src/storage.ts",
+  },
+  {
+    label: "hook",
+    maxLines: 320,
+    matches: (file) => file.startsWith("src/hooks/"),
+  },
+  {
+    label: "component",
+    maxLines: 260,
+    matches: (file) => file.startsWith("src/components/"),
+  },
+  {
+    label: "shared contract",
+    maxLines: 300,
+    matches: (file) => file.startsWith("shared/src/"),
+  },
+];
 const browserGlobals = [
   { label: "window", pattern: /\bwindow(?:\.|\[|\s*\))/ },
   { label: "document", pattern: /\bdocument(?:\.|\[|\s*\))/ },
@@ -78,6 +105,10 @@ function isProductionSource(file) {
 
 function getProductionSourceFiles() {
   return sourceRoots.flatMap(listFiles).map(toProjectPath).filter(isProductionSource).sort();
+}
+
+function countLines(content) {
+  return content.trimEnd().split(/\r?\n/).length;
 }
 
 function getImportSpecifiers(content) {
@@ -223,6 +254,21 @@ function requireSharedPackageBoundary(file, specifiers) {
   }
 }
 
+function requireSourceSizeBudget(file, content) {
+  const budget = sourceSizeBudgets.find(({ matches }) => matches(file));
+
+  if (budget === undefined) {
+    return;
+  }
+
+  const lineCount = countLines(content);
+  if (lineCount > budget.maxLines) {
+    failures.push(
+      `${file} is ${lineCount} lines; split this ${budget.label} or review the ${budget.maxLines}-line architecture budget`,
+    );
+  }
+}
+
 console.log("Architecture boundary report");
 
 const productionFiles = getProductionSourceFiles();
@@ -234,6 +280,7 @@ for (const file of productionFiles) {
   const content = readText(file);
   const specifiers = getImportSpecifiers(content);
 
+  requireSourceSizeBudget(file, content);
   requireSharedPackageBoundary(file, specifiers);
 
   if (file.startsWith("shared/src/")) {
@@ -261,6 +308,7 @@ console.log(`- production source files checked: ${productionFiles.length}`);
 console.log(`- shared contract files checked: ${sharedFiles.length}`);
 console.log(`- component files checked: ${componentFiles.length}`);
 console.log(`- hook files checked: ${hookFiles.length}`);
+console.log(`- source-size budgets checked: ${sourceSizeBudgets.length}`);
 
 if (failures.length > 0) {
   console.error("\nArchitecture boundary check failed:");
