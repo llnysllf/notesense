@@ -6,6 +6,8 @@ NoteSense is currently a static, local-first app. This model documents the secur
 
 Security/privacy readiness expectations live in [SECURITY_PRIVACY.md](SECURITY_PRIVACY.md).
 
+Observability and incident-learning expectations live in [OBSERVABILITY.md](OBSERVABILITY.md).
+
 ## Current Scope
 
 - Static React app served from GitHub Pages.
@@ -70,6 +72,7 @@ Future account or cloud sync work must address:
 - Conflict resolution across devices.
 - Auditability for profile, settings, and sync changes.
 - Error reporting without collecting unnecessary practice content.
+- Future telemetry or monitoring must avoid collecting practice content, imported files, exported files, keystrokes, audio, raw LocalStorage, and unnecessary identifiers.
 - Retention and backup expectations.
 
 ## Required Before Backend Work Ships

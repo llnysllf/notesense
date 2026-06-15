@@ -12,6 +12,7 @@
 - [ ] Performance impact was considered for bundle budgets, Lighthouse thresholds, metadata/PWA/runtime checks, Pages smoke coverage, and performance-review evidence.
 - [ ] ADR impact was considered for decision numbering, status, index links, and required sections.
 - [ ] Product-scope impact was considered for current scope, explicit non-goals, feature intake, and foundation-first expectations.
+- [ ] Product-learning impact was considered for feedback loops, future analytics, experiments, feature flags, support signals, delivery metrics, and roadmap validation.
 - [ ] Review/intake impact was considered for CODEOWNERS, issue templates, PR evidence, labels, and triage routing.
 - [ ] Persistence/import/export behavior is unchanged or has a tested migration path.
 - [ ] Data-contract impact was considered for storage keys, export schema, import normalization, privacy docs, and future sync assumptions.
@@ -20,10 +21,13 @@
 - [ ] Dependency license changes are intentional and explained.
 - [ ] Dependency Review impact was considered for dependency and lockfile changes.
 - [ ] Dependency maintenance impact was considered for Dependabot cadence, lockfile policy, license policy, supply-chain gates, major upgrades, and workflow action updates.
+- [ ] Legal/licensing impact was considered for root license terms, package metadata, user-facing terms, privacy-policy hosting, contributor community expectations, and dependency license policy.
 - [ ] Workflow changes keep action refs pinned to full commit SHAs, token permissions least-privilege, and operational controls bounded.
 - [ ] Repository governance impact was considered for branch protection, security settings, Pages, required checks, and workflow activation.
 - [ ] Operations impact was considered for release-health signals, incident response, monitoring, telemetry, support, and rollback expectations.
 - [ ] Operations-contract impact was considered for runbook sections, release-health signals, post-release verification, incident triage, rollback, evidence handling, and observability boundaries.
+- [ ] Observability impact was considered for production visibility, telemetry boundaries, incident learning, SLO/SLA expectations, support, and future monitoring.
+- [ ] Release-safety impact was considered for deployment, staging/canary needs, rollback, provenance, SBOM, signing, Pages artifacts, and release sign-off.
 - [ ] Security impact was considered for dependency, import/export, storage, future auth, future sync, and workflow changes.
 - [ ] Security/privacy-contract impact was considered for local-first data, import/export trust, runtime/network boundaries, CSP, PWA behavior, future auth/sync, backend readiness, and release evidence.
 - [ ] Privacy/data handling impact was considered for storage, import/export, analytics, future auth, future sync, and network behavior.

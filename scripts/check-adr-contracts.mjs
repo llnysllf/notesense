@@ -100,7 +100,7 @@ requireSnippet("package.json", readProjectFile("package.json"), '"adr:check": "n
 requireSnippet(
   "package.json",
   readProjectFile("package.json"),
-  "npm run docs:check && npm run adr:check && npm run product:check && npm run review:check && npm run dependencies:check && npm run data:check",
+  "npm run docs:check && npm run adr:check && npm run product:check && npm run product:learning && npm run review:check && npm run dependencies:check && npm run legal:check && npm run data:check",
 );
 
 requireSnippet(

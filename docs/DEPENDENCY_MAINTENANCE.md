@@ -2,6 +2,10 @@
 
 NoteSense depends on a small client-side toolchain, but dependency changes can still affect security, browser behavior, bundle size, licensing, and release confidence. This contract keeps routine updates small and makes risky upgrades explicit.
 
+Project licensing expectations live in [LEGAL.md](LEGAL.md).
+
+Release safety and provenance expectations live in [RELEASE_SAFETY.md](RELEASE_SAFETY.md).
+
 ## Sources
 
 - npm dependencies live in `package.json` and `package-lock.json`.
@@ -25,6 +29,7 @@ NoteSense depends on a small client-side toolchain, but dependency changes can s
 - Node or npm runtime upgrades should update `.nvmrc`, package engines, `packageManager`, lockfile metadata, GitHub Actions behavior, documentation, and ADRs together.
 - GitHub Actions updates should preserve full-SHA pinning, source-version comments, least-privilege token permissions, concurrency, timeouts, and artifact-retention controls.
 - New production dependencies should explain learner value, security posture, license acceptability, bundle impact, and why the behavior should not stay in project code.
+- Dependency license compliance does not grant project source-code rights; the root project license stays governed by [LEGAL.md](LEGAL.md) and [../LICENSE](../LICENSE).
 
 ## Review Evidence
 
@@ -37,6 +42,7 @@ Dependency PRs should show:
 - `npm run verify` for release-ready dependency changes
 - passing remote Dependency Review and CodeQL checks
 - bundle-budget and Lighthouse impact when runtime dependencies affect built output
+- SBOM or provenance changes should be generated from the committed lockfile and reviewed with dependency-maintenance evidence.
 - an explanation for new licenses, new packages, major upgrades, runtime upgrades, or workflow action changes
 
 ## Change Rules

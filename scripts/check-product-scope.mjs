@@ -35,13 +35,15 @@ requireSnippets("docs/PRODUCT_SCOPE.md", [
   "Avoid adding features only to make the project look larger.",
   "Foundation-only changes are valid when they make the product easier to evolve without expanding the supported learner surface.",
   "Product proposals should use the product proposal issue template before implementation.",
+  "Product-learning expectations live in [PRODUCT_LEARNING.md](PRODUCT_LEARNING.md).",
   "Keep review/intake docs aligned when feature intake changes.",
   "Run `npm run product:check` after scope, roadmap, feature-intake, or product-positioning changes.",
+  "Run `npm run product:learning` after product-feedback, analytics, experiment, feature-flag, survey, support, product-metric, delivery-metric, DORA, roadmap, or product-learning changes.",
 ]);
 
 requireSnippets("package.json", [
   '"product:check": "node scripts/check-product-scope.mjs"',
-  "npm run docs:check && npm run adr:check && npm run product:check && npm run review:check && npm run dependencies:check && npm run data:check",
+  "npm run docs:check && npm run adr:check && npm run product:check && npm run product:learning && npm run review:check && npm run dependencies:check && npm run legal:check && npm run data:check",
 ]);
 
 requireSnippets("README.md", [

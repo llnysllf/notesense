@@ -13,8 +13,10 @@ Live demo: [https://llnysllf.github.io/notesense/](https://llnysllf.github.io/no
 Architecture notes: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)
 Architecture decision records: [docs/adr/README.md](docs/adr/README.md)
 Product scope: [docs/PRODUCT_SCOPE.md](docs/PRODUCT_SCOPE.md)
+Product learning and feedback: [docs/PRODUCT_LEARNING.md](docs/PRODUCT_LEARNING.md)
 Review process: [docs/REVIEW_PROCESS.md](docs/REVIEW_PROCESS.md)
 Dependency maintenance: [docs/DEPENDENCY_MAINTENANCE.md](docs/DEPENDENCY_MAINTENANCE.md)
+Legal and licensing: [docs/LEGAL.md](docs/LEGAL.md)
 Quality runbook: [docs/QUALITY.md](docs/QUALITY.md)
 Design system: [docs/DESIGN_SYSTEM.md](docs/DESIGN_SYSTEM.md)
 Accessibility contract: [docs/ACCESSIBILITY.md](docs/ACCESSIBILITY.md)
@@ -23,7 +25,9 @@ Browser support: [docs/BROWSER_SUPPORT.md](docs/BROWSER_SUPPORT.md)
 Performance contract: [docs/PERFORMANCE.md](docs/PERFORMANCE.md)
 Data contract: [docs/DATA_CONTRACT.md](docs/DATA_CONTRACT.md)
 Release guide: [docs/RELEASE.md](docs/RELEASE.md)
+Release safety and provenance: [docs/RELEASE_SAFETY.md](docs/RELEASE_SAFETY.md)
 Operations runbook: [docs/OPERATIONS.md](docs/OPERATIONS.md)
+Observability and incident learning: [docs/OBSERVABILITY.md](docs/OBSERVABILITY.md)
 Security/privacy contract: [docs/SECURITY_PRIVACY.md](docs/SECURITY_PRIVACY.md)
 Privacy and data handling: [docs/PRIVACY.md](docs/PRIVACY.md)
 Threat model: [docs/THREAT_MODEL.md](docs/THREAT_MODEL.md)
@@ -145,6 +149,12 @@ Run the product-scope contract check:
 npm run product:check
 ```
 
+Run the product-learning/feedback contract check:
+
+```bash
+npm run product:learning
+```
+
 Run the review/intake contract check:
 
 ```bash
@@ -155,6 +165,12 @@ Run the dependency-maintenance contract check:
 
 ```bash
 npm run dependencies:check
+```
+
+Run the legal/licensing contract check:
+
+```bash
+npm run legal:check
 ```
 
 Run the data-contract check:
@@ -173,6 +189,12 @@ Run the release-notes contract check:
 
 ```bash
 npm run release:notes
+```
+
+Run the release-safety/provenance contract check:
+
+```bash
+npm run release:safety
 ```
 
 Run the unit coverage gate for core practice and storage logic:
@@ -239,6 +261,12 @@ Run the operations contract check:
 
 ```bash
 npm run operations:check
+```
+
+Run the observability/incident-learning contract check:
+
+```bash
+npm run observability:check
 ```
 
 Refresh visual regression baselines after an intentional UI change:
@@ -361,8 +389,10 @@ npm run ops:repository
 - `npm run architecture:check` verifies that shared contracts, practice logic, storage, hooks, and components keep their documented boundaries as the app grows.
 - `npm run adr:check` verifies that ADR filenames, headings, statuses, required sections, and index links stay aligned.
 - `npm run product:check` verifies that current scope, explicit non-goals, contributor guidance, review guidance, and foundation-first expectations stay aligned before features are added.
+- `npm run product:learning` verifies feedback-loop boundaries, future analytics and experiment rules, feature-flag expectations, delivery-metric timing, and review/release guidance stay aligned.
 - `npm run review:check` verifies CODEOWNERS, issue templates, PR review evidence, security-report routing, and triage guidance stay aligned.
 - `npm run dependencies:check` verifies Dependabot cadence, dependency review evidence, lockfile policy, license policy, supply-chain gates, and workflow-update expectations stay aligned.
+- `npm run legal:check` verifies the project license file, package metadata, legal docs, dependency-license boundaries, release guidance, and PR review guidance stay aligned.
 - Practice-plan recommendations are derived in `src/practiceEngine.ts`, keeping the coaching layer deterministic and ready for a future service boundary.
 - Mastery map state is derived in `src/practiceEngine.ts` from the active range, note attempts, and accuracy thresholds.
 - Daily goal and streak state is derived from completed session history, keeping habit analytics independent from browser storage.
@@ -377,6 +407,8 @@ npm run ops:repository
 - `npm run browsers:check` verifies Playwright browser projects, Pages/mobile support, visual-regression profiles, PWA/runtime boundaries, and browser-support docs stay aligned.
 - `npm run performance:check` verifies bundle budgets, Lighthouse thresholds, metadata/PWA/runtime checks, Pages smoke coverage, and performance-review guidance stay aligned.
 - `npm run operations:check` verifies release-health signals, post-release verification, incident triggers, triage, rollback, evidence handling, observability boundaries, and operations-review guidance stay aligned.
+- `npm run observability:check` verifies production-visibility boundaries, future telemetry rules, incident-review templates, SLO/SLA expectations, and review/release guidance stay aligned.
+- `npm run release:safety` verifies direct-to-Pages release boundaries, staging/canary triggers, rollback expectations, artifact/provenance expectations, and release-review guidance stay aligned.
 - Progress, history, and settings are normalized when loaded from LocalStorage, including migration from the original V1 progress shape.
 - The data contract in `docs/DATA_CONTRACT.md` and `npm run data:check` keep storage keys, export schema, import normalization, privacy docs, and browser coverage aligned.
 - `npm run security:privacy` verifies privacy docs, security policy, threat model, backend readiness, data contract, runtime-surface, CSP, PWA, supply-chain, and review/release guidance stay aligned.

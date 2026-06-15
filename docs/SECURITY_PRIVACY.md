@@ -2,6 +2,14 @@
 
 NoteSense is local-first today. This contract keeps privacy, security, runtime, import/export, PWA, and future backend expectations aligned before account, sync, analytics, or hosted storage work begins.
 
+Legal and licensing expectations live in [LEGAL.md](LEGAL.md).
+
+Observability and incident-learning expectations live in [OBSERVABILITY.md](OBSERVABILITY.md).
+
+Product-learning and feedback expectations live in [PRODUCT_LEARNING.md](PRODUCT_LEARNING.md).
+
+Release safety and provenance expectations live in [RELEASE_SAFETY.md](RELEASE_SAFETY.md).
+
 ## Product Standard
 
 - The practice loop must remain usable without an account, backend API, analytics service, or hosted storage.
@@ -29,6 +37,9 @@ NoteSense is local-first today. This contract keeps privacy, security, runtime, 
 
 - Do not connect the browser app directly to PostgreSQL or any other database.
 - Future sign-in, cloud sync, backend APIs, analytics, telemetry, or hosted storage must update privacy docs, security policy, threat model, backend readiness, data contract, runtime-surface checks, release guidance, operations guidance, and ADRs together.
+- Future telemetry, analytics, monitoring SDKs, remote logging, or error-reporting sinks must follow [OBSERVABILITY.md](OBSERVABILITY.md) before implementation.
+- Future product analytics, experiments, surveys, support tooling, feature flags, or delivery metrics must follow [PRODUCT_LEARNING.md](PRODUCT_LEARNING.md) before implementation.
+- Future SBOM, provenance, signing, staging, canary, or automated rollback work must preserve least-privilege workflow identities and avoid exposing user-private practice data.
 - Future account data must define authentication, authorization, retention, deletion, export, migration, sync conflict handling, observability, rollback, and incident-response expectations before launch.
 - Anonymous local practice should remain a usable baseline unless a product-scope decision explicitly changes that promise.
 
@@ -43,6 +54,7 @@ NoteSense is local-first today. This contract keeps privacy, security, runtime, 
 - Run `npm run security:privacy` after privacy, security, data-contract, runtime-surface, CSP, PWA, import/export, storage, telemetry, analytics, auth, sync, backend-readiness, threat-model, or security-doc changes.
 - Run `npm run build:pages` before `npm run security:policy`, `npm run pwa:check`, and `npm run runtime:check`.
 - Run `npm run security:supply-chain` after dependency, lockfile, license, workflow, Node, npm, or package-manager changes.
+- Run `npm run legal:check` before adding user-facing terms, externally hosted privacy policies, contributor-community terms, production telemetry, analytics, account data, sync data, or backend logs tied to users.
 - Add an ADR when a change affects security posture, privacy posture, account data, sync, service boundaries, deployment trust boundaries, or backend readiness.
 
 ## Verification

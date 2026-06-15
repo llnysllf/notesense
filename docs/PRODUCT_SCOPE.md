@@ -2,6 +2,8 @@
 
 NoteSense is a focused piano sight-reading and ear-training app for beginner musicians. This contract keeps the product small, coherent, and buildable while the foundation is being strengthened.
 
+Product-learning expectations live in [PRODUCT_LEARNING.md](PRODUCT_LEARNING.md).
+
 ## Product Promise
 
 - Help a learner practice starter note reading and natural-note pitch recognition quickly.
@@ -69,6 +71,7 @@ Product proposals should use the product proposal issue template before implemen
 - Update privacy, threat-model, backend-readiness, data-contract, accessibility, design-system, testing, release, and operations docs when scope changes affect their boundaries.
 - Add or update ADRs for durable scope changes.
 - Run `npm run product:check` after scope, roadmap, feature-intake, or product-positioning changes.
+- Run `npm run product:learning` after product-feedback, analytics, experiment, feature-flag, survey, support, product-metric, delivery-metric, DORA, roadmap, or product-learning changes.
 
 ## Verification
 

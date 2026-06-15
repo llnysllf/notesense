@@ -40,7 +40,7 @@ requireSnippets("docs/PERFORMANCE.md", [
 
 requireSnippets("package.json", [
   '"performance:check": "node scripts/check-performance-contract.mjs"',
-  "npm run accessibility:check && npm run testing:check && npm run browsers:check && npm run performance:check && npm run operations:check && npm run release:notes",
+  "npm run accessibility:check && npm run testing:check && npm run browsers:check && npm run performance:check && npm run operations:check && npm run observability:check && npm run release:safety && npm run release:notes",
   '"perf:budget": "node scripts/check-bundle-budget.mjs"',
   '"metadata:check": "node scripts/check-web-metadata.mjs"',
   '"pwa:check": "node scripts/check-pwa-artifacts.mjs"',

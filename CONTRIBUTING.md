@@ -62,6 +62,12 @@ For product-scope changes, keep [docs/PRODUCT_SCOPE.md](docs/PRODUCT_SCOPE.md) a
 npm run product:check
 ```
 
+For product-feedback, analytics, experiment, feature-flag, survey, support, product-metric, delivery-metric, DORA, roadmap, or product-learning changes, keep [docs/PRODUCT_LEARNING.md](docs/PRODUCT_LEARNING.md) aligned and run the product-learning contract check:
+
+```bash
+npm run product:learning
+```
+
 For review, intake, issue-template, PR-template, CODEOWNERS, or triage-process changes, keep [docs/REVIEW_PROCESS.md](docs/REVIEW_PROCESS.md) aligned and run the review/intake contract check:
 
 ```bash
@@ -74,6 +80,12 @@ For dependency-maintenance, Dependabot, package manager, lockfile-policy, licens
 npm run dependencies:check
 ```
 
+For legal, licensing, user-facing terms, privacy-policy hosting, contributor-community, or project-license metadata changes, keep [docs/LEGAL.md](docs/LEGAL.md) aligned and run the legal contract check:
+
+```bash
+npm run legal:check
+```
+
 For security/privacy, runtime-surface, CSP, PWA, import/export, storage, telemetry, analytics, auth, sync, backend-readiness, threat-model, or security-doc changes, keep [docs/SECURITY_PRIVACY.md](docs/SECURITY_PRIVACY.md) aligned and run the security/privacy contract check:
 
 ```bash
@@ -84,6 +96,18 @@ For release-health, incident-response, deployment ownership, monitoring, telemet
 
 ```bash
 npm run operations:check
+```
+
+For observability, monitoring, telemetry, analytics, incident-response, postmortem-template, SLO/SLA, support, or production-visibility changes, keep [docs/OBSERVABILITY.md](docs/OBSERVABILITY.md) aligned and run the observability contract check:
+
+```bash
+npm run observability:check
+```
+
+For release-safety, deployment, staging, canary, progressive-rollout, rollback, provenance, SBOM, signing, artifact, Pages, or release-doc changes, keep [docs/RELEASE_SAFETY.md](docs/RELEASE_SAFETY.md) aligned and run the release-safety contract check:
+
+```bash
+npm run release:safety
 ```
 
 For intentional visual changes, refresh and review the screenshot baselines:
@@ -105,8 +129,10 @@ npm run test:e2e:visual:update
 - Keep [docs/PERFORMANCE.md](docs/PERFORMANCE.md) aligned when changing bundle budgets, tracked asset categories, Lighthouse thresholds, Lighthouse workflow behavior, metadata checks, PWA artifact checks, runtime-surface checks, Pages smoke behavior, or performance review expectations; run `npm run performance:check` after performance-sensitive changes.
 - Keep [docs/adr/README.md](docs/adr/README.md) aligned when adding, renaming, removing, or changing ADR status; run `npm run adr:check` after ADR changes.
 - Keep [docs/PRODUCT_SCOPE.md](docs/PRODUCT_SCOPE.md) aligned when changing supported product scope, explicit non-goals, roadmap language, or feature-intake expectations; run `npm run product:check` after product-scope changes.
+- Keep [docs/PRODUCT_LEARNING.md](docs/PRODUCT_LEARNING.md) aligned when changing product feedback, analytics, experiments, feature flags, surveys, support loops, product metrics, delivery metrics, DORA expectations, roadmap validation, or product-learning expectations; run `npm run product:learning` after product-learning-sensitive changes.
 - Keep [docs/REVIEW_PROCESS.md](docs/REVIEW_PROCESS.md) aligned when changing CODEOWNERS, issue templates, PR template, review routing, labels, or triage expectations; run `npm run review:check` after review-process changes.
 - Keep [docs/DEPENDENCY_MAINTENANCE.md](docs/DEPENDENCY_MAINTENANCE.md) aligned when changing Dependabot cadence, dependency grouping, ignored update types, package manager policy, lockfile policy, license policy, or workflow-update policy; run `npm run dependencies:check` after dependency-maintenance changes.
+- Keep [docs/LEGAL.md](docs/LEGAL.md) aligned when changing root license terms, package license metadata, user-facing terms, privacy-policy hosting, contributor-community expectations, dependency license policy, release guidance, or PR review guidance; run `npm run legal:check` after legal-sensitive changes.
 - Keep [docs/SECURITY_PRIVACY.md](docs/SECURITY_PRIVACY.md) aligned when privacy, security, data-contract, runtime-surface, CSP, PWA, import/export, storage, telemetry, analytics, auth, sync, backend-readiness, threat-model, or security-doc expectations change; run `npm run security:privacy` after security/privacy-sensitive changes.
 - Keep dependency license changes intentional; explain new licenses before updating the allowlist.
 - Keep dependency changes passing Dependency Review before merge.
@@ -114,6 +140,8 @@ npm run test:e2e:visual:update
 - Keep workflow action refs pinned to full commit SHAs, document the source version tag in a comment, and keep workflow token permissions least-privilege.
 - Run `npm run ops:repository` after branch protection, repository security, Pages, required-check, or workflow-activation changes.
 - Keep [docs/OPERATIONS.md](docs/OPERATIONS.md) aligned when release-health signals, post-release verification, incident triggers, triage flow, rollback expectations, evidence handling, observability boundaries, monitoring, telemetry, or support expectations change; run `npm run operations:check` after operations-sensitive changes.
+- Keep [docs/OBSERVABILITY.md](docs/OBSERVABILITY.md) aligned when changing production visibility, monitoring, telemetry, analytics, incident-response, postmortem-template, SLO/SLA, DORA metrics, support expectations, or production signal ownership; run `npm run observability:check` after observability-sensitive changes.
+- Keep [docs/RELEASE_SAFETY.md](docs/RELEASE_SAFETY.md) aligned when changing release safety, deployment, staging, canary, progressive rollout, rollback, provenance, SBOM, signing, artifact, Pages, workflow, operations, observability, security, privacy, legal, or backend-readiness expectations; run `npm run release:safety` after release-safety-sensitive changes.
 - Keep bundle growth intentional; budget increases need a clear reason in the PR.
 - Keep generated outputs, dependency installs, local environment files, logs, and TypeScript build-info files untracked.
 - Prefer small, shippable changes with clear user value or clear maintainability value.

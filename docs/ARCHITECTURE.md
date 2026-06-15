@@ -25,8 +25,10 @@ NoteSense is currently a local-first React application. The product goal is to k
 - `docs/adr` records architecture decisions that should survive beyond a single implementation pass.
 - `docs/adr/README.md` indexes ADRs and documents decision-record process expectations.
 - `docs/PRODUCT_SCOPE.md` documents the supported learner surface, explicit non-goals, foundation-first rule, and feature-intake expectations.
+- `docs/PRODUCT_LEARNING.md` documents product feedback loops, future analytics and experiment rules, feature-flag expectations, delivery-metric timing, and review cadence.
 - `docs/REVIEW_PROCESS.md` documents ownership, issue intake, triage, pull-request evidence, and review-process verification.
 - `docs/DEPENDENCY_MAINTENANCE.md` documents dependency sources, Dependabot policy, update classes, review evidence, and dependency-maintenance verification.
+- `docs/LEGAL.md` documents the project license boundary, user-facing legal triggers, dependency-license separation, and legal-change process.
 - `docs/DESIGN_SYSTEM.md` documents the design-token, component-state, accessibility, and visual-regression contract for UI changes.
 - `docs/ACCESSIBILITY.md` documents the keyboard, screen reader, focus, contrast, motion, and automated accessibility coverage contract.
 - `docs/TESTING.md` documents test ownership, change routing, determinism, coverage, CI, and review expectations.
@@ -36,6 +38,8 @@ NoteSense is currently a local-first React application. The product goal is to k
 - `docs/THREAT_MODEL.md` documents current and future security boundaries before account or sync work begins.
 - `docs/BACKEND_READINESS.md` documents the service, API, data-model, sync, and PostgreSQL path for future backend work.
 - `docs/OPERATIONS.md` documents release-health signals, incident response, rollback, evidence handling, and future observability expectations.
+- `docs/OBSERVABILITY.md` documents the production visibility boundary, future signal rules, incident-learning expectations, and SLO/SLA boundary.
+- `docs/RELEASE_SAFETY.md` documents the direct-to-Pages release boundary, rollout triggers, provenance/artifact expectations, and rollback/recovery rules.
 - `docs/DATA_CONTRACT.md` documents browser storage keys, export schema, import normalization, and future sync constraints.
 - `.nvmrc`, package engines, and `.npmrc` define the shared Node/npm runtime for local development, CI, deployment, and dependency maintenance.
 - `vite.config.ts` injects the production Content Security Policy meta tag during build.
@@ -43,8 +47,10 @@ NoteSense is currently a local-first React application. The product goal is to k
 - `scripts/check-repository-hygiene.mjs` owns required root configuration, ignore-policy, runtime-policy, and tracked-artifact hygiene checks.
 - `scripts/check-adr-contracts.mjs` owns ADR numbering, status, required-section, and index-link checks.
 - `scripts/check-product-scope.mjs` owns product-scope drift checks for README scope, explicit non-goals, contributor guidance, review guidance, and release docs.
+- `scripts/check-product-learning-contract.mjs` owns product-learning drift checks for feedback loops, future analytics, experiments, feature flags, delivery metrics, release guidance, and PR review guidance.
 - `scripts/check-review-process.mjs` owns review/intake drift checks for CODEOWNERS, issue templates, PR template, security routing, and review evidence.
 - `scripts/check-dependency-maintenance.mjs` owns dependency-maintenance drift checks for Dependabot cadence, dependency review evidence, lockfile policy, license policy, supply-chain gates, and workflow-update expectations.
+- `scripts/check-legal-contract.mjs` owns legal/licensing drift checks for the root license, package metadata, legal docs, dependency-license boundaries, release guidance, and PR review guidance.
 - `scripts/check-data-contracts.mjs` owns data-contract drift checks for storage keys, shared export shape, privacy docs, and browser coverage.
 - `scripts/check-security-privacy.mjs` owns security/privacy drift checks for privacy docs, security policy, threat model, backend readiness, data contract, runtime-surface, CSP, PWA, supply-chain, and review/release guidance.
 - `scripts/check-architecture-boundaries.mjs` owns source import-boundary checks for shared contracts, practice logic, storage, hooks, and UI components.
@@ -54,6 +60,8 @@ NoteSense is currently a local-first React application. The product goal is to k
 - `scripts/check-browser-support.mjs` owns browser-support drift checks for Playwright browser projects, Pages/mobile support, visual-regression profiles, PWA/runtime boundaries, and browser-support docs.
 - `scripts/check-performance-contract.mjs` owns performance-contract drift checks for bundle budgets, Lighthouse thresholds, metadata/PWA/runtime checks, Pages smoke coverage, and performance-review guidance.
 - `scripts/check-operations-contract.mjs` owns operations-runbook drift checks for release-health signals, post-release verification, incident triggers, triage flow, rollback expectations, evidence handling, observability boundaries, and operations-review guidance.
+- `scripts/check-observability-contract.mjs` owns observability drift checks for production visibility, future telemetry rules, incident review templates, SLO/SLA boundaries, release guidance, and PR review guidance.
+- `scripts/check-release-safety-contract.mjs` owns release-safety drift checks for deployment boundaries, staging/canary triggers, rollback expectations, artifact/provenance expectations, release guidance, and PR review guidance.
 - `scripts/check-licenses.mjs` owns dependency license policy enforcement.
 - `scripts/check-security-policy.mjs` owns built HTML security policy verification.
 - `scripts/check-policy-docs.mjs` owns policy document presence and alignment checks.
@@ -98,9 +106,13 @@ Every feature should keep these expectations intact:
 - Performance-contract changes should keep bundle budgets, Lighthouse thresholds, metadata checks, PWA checks, runtime-surface checks, Pages smoke coverage, browser-support guidance, dependency guidance, release guidance, and PR review guidance aligned.
 - ADR changes should keep numbering, status, required sections, index links, release guidance, and contributor guidance aligned.
 - Product-scope changes should keep README current scope, explicit non-goals, feature-intake expectations, foundation-first guidance, release guidance, and ADRs aligned.
+- Product-learning changes should keep feedback loops, future analytics, experiments, feature flags, support signals, delivery metrics, product scope, observability, privacy, legal, release, operations, backend-readiness, and PR review guidance aligned.
 - Review-process changes should keep CODEOWNERS, issue templates, PR evidence, security routing, product-scope guidance, release guidance, and contributor guidance aligned.
 - Dependency-maintenance changes should keep Dependabot cadence, dependency review evidence, lockfile policy, license policy, supply-chain gates, release guidance, and contributor guidance aligned.
+- Legal/licensing changes should keep root license terms, package metadata, user-facing terms, privacy-policy hosting, contributor-community expectations, dependency license policy, release guidance, and PR review guidance aligned.
 - Operations-contract changes should keep release-health signals, post-release verification, incident triggers, triage flow, rollback expectations, evidence handling, observability boundaries, release guidance, security guidance, privacy guidance, backend-readiness guidance, and PR review guidance aligned.
+- Observability changes should keep production visibility, telemetry boundaries, incident learning, SLO/SLA expectations, support, operations, privacy, security, legal, release, backend-readiness, and PR review guidance aligned.
+- Release-safety changes should keep deployment, staging, canary, rollback, provenance, SBOM, signing, artifacts, Pages, workflow, operations, observability, security, privacy, legal, backend-readiness, and PR review guidance aligned.
 - Design-system changes should preserve the documented token layers, component states, responsive behavior, focus behavior, and protected visual surfaces.
 - Dependency license compliance is part of supply-chain readiness.
 - Dependency Review is part of pull-request supply-chain readiness for dependency and lockfile changes.

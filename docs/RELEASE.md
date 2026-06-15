@@ -2,11 +2,14 @@
 
 NoteSense currently releases from `main` to GitHub Pages. The release process is intentionally lightweight, but every release should leave clear evidence that the app is safe to use and easy to maintain.
 
+Release safety and provenance expectations live in [RELEASE_SAFETY.md](RELEASE_SAFETY.md).
+
 ## Release Principles
 
 - Prefer small releases with one clear product or engineering purpose.
 - Keep learner-facing behavior intentional and documented.
 - Treat product-scope results as release evidence when supported scope, explicit non-goals, roadmap language, or feature-intake expectations change.
+- Treat product-learning results as release evidence when feedback loops, future analytics, experiments, feature flags, support signals, product metrics, delivery metrics, DORA expectations, or roadmap validation changes.
 - Preserve the local-first data model unless a migration plan exists.
 - Treat architecture-boundary results as release evidence when shared contracts, practice logic, storage, hooks, components, or app-shell responsibilities change.
 - Treat data-contract results as release evidence when storage keys, export schema, import normalization, privacy boundaries, or future sync assumptions change.
@@ -28,10 +31,13 @@ NoteSense currently releases from `main` to GitHub Pages. The release process is
 - Treat dependency license results as supply-chain release evidence.
 - Treat Dependency Review results as pull-request supply-chain release evidence when dependencies or lockfiles change.
 - Treat dependency-maintenance results as release evidence when Dependabot cadence, dependency grouping, ignored update types, package manager policy, lockfile policy, license policy, or workflow-update policy changes.
+- Treat legal/licensing results as release evidence when root license terms, package metadata, user-facing terms, privacy-policy hosting, contributor-community expectations, dependency license policy, release guidance, or PR review guidance changes.
 - Treat workflow action pinning, token-permission, timeout, concurrency, and artifact-retention results as supply-chain and operations release evidence when GitHub Actions workflows change.
 - Treat repository governance results as operational release evidence when branch protection, required checks, repository security settings, Pages, or workflow activation changes.
 - Treat operations docs as release evidence when release-health signals, incident response, deployment ownership, monitoring, telemetry, or support expectations change.
 - Treat operations-contract results as release evidence when release-health signals, post-release verification, incident triggers, triage flow, rollback expectations, evidence handling, observability boundaries, monitoring, telemetry, or support expectations change.
+- Treat observability results as release evidence when production visibility, monitoring, telemetry, analytics, incident-response, postmortem-template, SLO/SLA, DORA metrics, support expectations, or production signal ownership changes.
+- Treat release-safety results as release evidence when deployment, staging, canary, progressive rollout, rollback, provenance, SBOM, signing, artifact, Pages, workflow, or release sign-off expectations change.
 - Treat release notes as release evidence when user-visible behavior, architecture boundaries, quality gates, dependencies, security posture, operations, or package version metadata change.
 - Treat dependency audit and CodeQL results as release evidence.
 - Treat built browser security policy results as release evidence when HTML shell, Vite build, runtime APIs, or asset categories change.
@@ -65,6 +71,8 @@ Confirm policy docs and documentation integrity remain aligned:
 npm run repo:hygiene
 npm run docs:check
 npm run adr:check
+npm run product:learning
+npm run release:safety
 npm run release:notes
 ```
 
@@ -91,8 +99,11 @@ For UI changes, manually inspect:
 - Whether `npm run browsers:check` still proves supported engines, mobile viewports, Pages base path, visual-regression profiles, PWA/runtime boundaries, and browser-support docs are aligned.
 - Whether `npm run performance:check` still proves bundle budgets, Lighthouse thresholds, metadata/PWA/runtime checks, Pages smoke coverage, and performance-review guidance are aligned.
 - Whether `npm run product:check` still proves README scope, explicit non-goals, contributor guidance, review guidance, and foundation-first expectations are aligned.
+- Whether `npm run product:learning` still proves feedback-loop boundaries, future analytics and experiment rules, feature-flag expectations, delivery-metric timing, and review/release guidance are aligned.
 - Whether `npm run review:check` still proves CODEOWNERS, issue templates, PR template, security routing, and review evidence stay aligned.
 - Whether `npm run operations:check` still proves release-health signals, post-release verification, incident triggers, triage flow, rollback expectations, evidence handling, observability boundaries, and operations-review guidance are aligned.
+- Whether `npm run observability:check` still proves production-visibility boundaries, future telemetry rules, incident-review templates, SLO/SLA expectations, and review/release guidance are aligned.
+- Whether `npm run release:safety` still proves direct-to-Pages release boundaries, staging/canary triggers, rollback expectations, artifact/provenance expectations, and release-review guidance are aligned.
 - Whether `npm run test:e2e:visual` passes or baselines were intentionally updated and reviewed.
 
 For data changes, manually inspect:
@@ -115,12 +126,14 @@ For dependency changes, inspect:
 - Peer dependency warnings from `npm ci`.
 - Whether the `Dependency Review` workflow passed on the pull request.
 - Whether `npm run dependencies:check` still proves Dependabot cadence, dependency review evidence, lockfile policy, license policy, supply-chain gates, and workflow-update expectations are aligned.
+- Whether `npm run legal:check` still proves project license, package metadata, legal docs, dependency-license boundaries, release guidance, and PR review guidance are aligned.
 - Whether `npm run compliance:licenses` still passes.
 - Whether `npm run security:lockfile` still passes.
 - Whether `npm run security:workflows` still passes after workflow changes.
 - Whether workflow artifact retention remains short enough for debugging without keeping browser traces longer than needed.
 - Whether `npm run ops:repository` still passes after branch protection, required-check, repository security, Pages, or workflow-activation changes.
 - Whether any new license needs explicit policy review.
+- Whether root project license, package license metadata, user-facing terms, privacy-policy hosting, or contributor-community expectations changed intentionally and with owner approval.
 - Whether `.nvmrc`, package engines, GitHub Actions, and docs stay aligned for runtime changes.
 - Whether `CHANGELOG.md` explains release-relevant dependency, runtime, or tooling changes.
 - Whether `npm run security:policy` still passes after the Pages build.
@@ -169,6 +182,9 @@ After pushing:
 - Confirm the `Lighthouse` workflow succeeds when it runs for the change.
 - Confirm the live verifier still proves the deployed security policy, service worker, and Workbox runtime when the HTML shell, build security policy, or PWA behavior changes.
 - Confirm [OPERATIONS.md](OPERATIONS.md) still reflects release-health, incident-response, rollback, evidence-handling, and observability expectations, and run `npm run operations:check` after operations-sensitive changes.
+- Confirm [PRODUCT_LEARNING.md](PRODUCT_LEARNING.md) still reflects feedback loops, future analytics and experiment rules, feature-flag expectations, delivery-metric timing, and review cadence; run `npm run product:learning` after product-learning-sensitive changes.
+- Confirm [OBSERVABILITY.md](OBSERVABILITY.md) still reflects production visibility, future telemetry, incident learning, and SLO/SLA expectations, and run `npm run observability:check` after observability-sensitive changes.
+- Confirm [RELEASE_SAFETY.md](RELEASE_SAFETY.md) still reflects release boundary, staging/canary triggers, rollback expectations, and provenance/artifact expectations; run `npm run release:safety` after release-safety-sensitive changes.
 - Run `npm run ops:repository` after repository governance changes.
 - Run the live deployment verifier:
 
