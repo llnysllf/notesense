@@ -34,6 +34,7 @@ A change is done when:
 - Privacy and data-handling docs stay aligned with local storage, import/export, analytics, network, auth, and sync behavior.
 - Data-contract docs and `npm run data:check` stay aligned when storage keys, export schema, import normalization, or future sync assumptions change.
 - Threat model and backend-readiness docs stay aligned before account, API, database, sync, or cloud infrastructure work begins.
+- Security/privacy docs and `npm run security:privacy` stay aligned when local-first privacy, import/export trust, runtime/network boundaries, CSP, PWA behavior, future auth/sync, backend readiness, telemetry, analytics, or security posture changes.
 - Documentation links, anchors, and documented npm script references stay resolvable.
 - ADR index and `npm run adr:check` stay aligned when decision records are added, renamed, removed, or moved between statuses.
 - Review/intake docs and `npm run review:check` stay aligned when CODEOWNERS, issue templates, PR templates, labels, triage routing, or review evidence expectations change.
@@ -96,6 +97,12 @@ For data-contract feedback:
 
 ```bash
 npm run data:check
+```
+
+For security/privacy feedback:
+
+```bash
+npm run security:privacy
 ```
 
 For accessibility-contract feedback:
@@ -272,6 +279,12 @@ When touching progress, settings, history, import, or export:
 - Surface storage failures without crashing the practice loop.
 - Update `docs/PRIVACY.md` if stored fields, export contents, network behavior, analytics, account migration, or sync behavior changes.
 - Update `docs/THREAT_MODEL.md` and `docs/BACKEND_READINESS.md` before introducing auth, API calls, PostgreSQL, AWS services, or cloud sync.
+
+## Security And Privacy
+
+- `docs/SECURITY_PRIVACY.md` defines the local-first security/privacy standard, protected surface, runtime/build boundaries, future auth/sync rules, review evidence, and release evidence.
+- `npm run security:privacy` verifies privacy docs, security policy, threat model, backend readiness, data contract, runtime-surface, CSP, PWA, supply-chain, and review/release guidance stay aligned.
+- Security/privacy changes should keep product scope, data, testing, browser support, performance, operations, release, architecture, and PR review guidance aligned.
 
 ## Policy Docs
 

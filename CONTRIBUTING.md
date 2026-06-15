@@ -74,6 +74,12 @@ For dependency-maintenance, Dependabot, package manager, lockfile-policy, licens
 npm run dependencies:check
 ```
 
+For security/privacy, runtime-surface, CSP, PWA, import/export, storage, telemetry, analytics, auth, sync, backend-readiness, threat-model, or security-doc changes, keep [docs/SECURITY_PRIVACY.md](docs/SECURITY_PRIVACY.md) aligned and run the security/privacy contract check:
+
+```bash
+npm run security:privacy
+```
+
 For release-health, incident-response, deployment ownership, monitoring, telemetry, support, rollback, or operations-doc changes, keep [docs/OPERATIONS.md](docs/OPERATIONS.md) aligned and run the operations contract check:
 
 ```bash
@@ -101,6 +107,7 @@ npm run test:e2e:visual:update
 - Keep [docs/PRODUCT_SCOPE.md](docs/PRODUCT_SCOPE.md) aligned when changing supported product scope, explicit non-goals, roadmap language, or feature-intake expectations; run `npm run product:check` after product-scope changes.
 - Keep [docs/REVIEW_PROCESS.md](docs/REVIEW_PROCESS.md) aligned when changing CODEOWNERS, issue templates, PR template, review routing, labels, or triage expectations; run `npm run review:check` after review-process changes.
 - Keep [docs/DEPENDENCY_MAINTENANCE.md](docs/DEPENDENCY_MAINTENANCE.md) aligned when changing Dependabot cadence, dependency grouping, ignored update types, package manager policy, lockfile policy, license policy, or workflow-update policy; run `npm run dependencies:check` after dependency-maintenance changes.
+- Keep [docs/SECURITY_PRIVACY.md](docs/SECURITY_PRIVACY.md) aligned when privacy, security, data-contract, runtime-surface, CSP, PWA, import/export, storage, telemetry, analytics, auth, sync, backend-readiness, threat-model, or security-doc expectations change; run `npm run security:privacy` after security/privacy-sensitive changes.
 - Keep dependency license changes intentional; explain new licenses before updating the allowlist.
 - Keep dependency changes passing Dependency Review before merge.
 - Keep durable UI patterns documented in [docs/DESIGN_SYSTEM.md](docs/DESIGN_SYSTEM.md) instead of adding one-off styles.
