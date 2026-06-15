@@ -2,6 +2,8 @@
 
 NoteSense is small, but changes should still enter the project through a clear path. This contract keeps bugs, product ideas, engineering work, security reports, ownership, and pull-request review evidence consistent while the foundation is being strengthened.
 
+Product-learning expectations live in [PRODUCT_LEARNING.md](PRODUCT_LEARNING.md).
+
 ## Ownership
 
 - `.github/CODEOWNERS` owns default review routing.
@@ -20,6 +22,7 @@ NoteSense is small, but changes should still enter the project through a clear p
 
 - Bugs should include area, current behavior, expected behavior, reproduction steps, browser or viewport context, and evidence when available.
 - Product proposals should start with learner problem and desired outcome before implementation details.
+- Product proposals should include the intended learning signal before implementation.
 - Engineering tasks should state the quality bar being raised, acceptance evidence, and risk notes.
 - Feature proposals that expand current scope should update `docs/PRODUCT_SCOPE.md` before implementation starts.
 - Security-sensitive work should follow `SECURITY.md`, `docs/THREAT_MODEL.md`, and `docs/BACKEND_READINESS.md`.

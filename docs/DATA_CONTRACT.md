@@ -2,6 +2,8 @@
 
 NoteSense is local-first today. This contract names the browser storage keys, export shape, normalization rules, and future sync constraints that must stay explicit as the product grows.
 
+Product-learning and feedback expectations live in [PRODUCT_LEARNING.md](PRODUCT_LEARNING.md).
+
 ## Current Storage Keys
 
 The browser app owns these LocalStorage keys through `src/storage.ts`:
@@ -61,6 +63,7 @@ Imported files are untrusted input:
 - The service worker caches static app assets only; it must not cache practice progress, exported files, or imported files.
 - No analytics, telemetry, cookies, beacons, websockets, or background sync are part of the current data contract.
 - Future account, sync, analytics, API, or hosted-storage work must update this contract, privacy docs, threat model, backend readiness, runtime-surface checks, and release guidance together.
+- Future product analytics, experiments, surveys, support tooling, or remote feature flags must not collect practice answers, note-level progress, session history, imported/exported JSON contents, raw LocalStorage, audio recordings, keystrokes, precise location, or stable cross-site identifiers without a new product, privacy, legal, security, and data-contract decision.
 
 ## Verification
 

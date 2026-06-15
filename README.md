@@ -13,6 +13,7 @@ Live demo: [https://llnysllf.github.io/notesense/](https://llnysllf.github.io/no
 Architecture notes: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)
 Architecture decision records: [docs/adr/README.md](docs/adr/README.md)
 Product scope: [docs/PRODUCT_SCOPE.md](docs/PRODUCT_SCOPE.md)
+Product learning and feedback: [docs/PRODUCT_LEARNING.md](docs/PRODUCT_LEARNING.md)
 Review process: [docs/REVIEW_PROCESS.md](docs/REVIEW_PROCESS.md)
 Dependency maintenance: [docs/DEPENDENCY_MAINTENANCE.md](docs/DEPENDENCY_MAINTENANCE.md)
 Legal and licensing: [docs/LEGAL.md](docs/LEGAL.md)
@@ -146,6 +147,12 @@ Run the product-scope contract check:
 
 ```bash
 npm run product:check
+```
+
+Run the product-learning/feedback contract check:
+
+```bash
+npm run product:learning
 ```
 
 Run the review/intake contract check:
@@ -382,6 +389,7 @@ npm run ops:repository
 - `npm run architecture:check` verifies that shared contracts, practice logic, storage, hooks, and components keep their documented boundaries as the app grows.
 - `npm run adr:check` verifies that ADR filenames, headings, statuses, required sections, and index links stay aligned.
 - `npm run product:check` verifies that current scope, explicit non-goals, contributor guidance, review guidance, and foundation-first expectations stay aligned before features are added.
+- `npm run product:learning` verifies feedback-loop boundaries, future analytics and experiment rules, feature-flag expectations, delivery-metric timing, and review/release guidance stay aligned.
 - `npm run review:check` verifies CODEOWNERS, issue templates, PR review evidence, security-report routing, and triage guidance stay aligned.
 - `npm run dependencies:check` verifies Dependabot cadence, dependency review evidence, lockfile policy, license policy, supply-chain gates, and workflow-update expectations stay aligned.
 - `npm run legal:check` verifies the project license file, package metadata, legal docs, dependency-license boundaries, release guidance, and PR review guidance stay aligned.

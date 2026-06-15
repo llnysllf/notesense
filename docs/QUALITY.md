@@ -18,6 +18,7 @@ A change is done when:
 
 - The behavior is implemented in the smallest responsible area of the codebase.
 - Product-scope docs and `npm run product:check` stay aligned when supported scope, explicit non-goals, roadmap language, or feature-intake expectations change.
+- Product-learning docs and `npm run product:learning` stay aligned when feedback loops, future analytics, experiments, feature flags, support signals, product metrics, delivery metrics, DORA expectations, or roadmap validation changes.
 - Source import boundaries pass `npm run architecture:check` when shared contracts, practice logic, storage, hooks, components, or app-shell responsibilities change.
 - Pure practice, analytics, and data-shape logic has unit coverage.
 - Core practice and storage modules meet the configured Vitest coverage thresholds.
@@ -150,6 +151,12 @@ For product-scope feedback:
 npm run product:check
 ```
 
+For product-learning feedback:
+
+```bash
+npm run product:learning
+```
+
 For review/intake feedback:
 
 ```bash
@@ -273,6 +280,12 @@ For visual QA:
 - `npm run product:check` verifies README scope, explicit non-goals, contributor guidance, review guidance, and foundation-first expectations stay aligned.
 - New features should start from a learner problem and product-scope update, not directly from UI code.
 
+## Product Learning
+
+- `docs/PRODUCT_LEARNING.md` defines the current no-analytics learning boundary, feedback inputs, future analytics/experiment rules, feature-flag expectations, delivery-metric timing, and review cadence.
+- `npm run product:learning` verifies feedback-loop boundaries, future analytics and experiment rules, feature-flag expectations, delivery-metric timing, and review/release guidance stay aligned.
+- Product decisions should name the learner problem and intended learning signal before implementation.
+
 ## Review And Intake
 
 - `docs/REVIEW_PROCESS.md` defines ownership, issue intake, triage, PR evidence, and review-process verification.
@@ -353,6 +366,7 @@ Before pushing to `main`:
 
 - `npm run verify`
 - Review the diff for unrelated churn.
+- Confirm `npm run product:learning` passes when feedback loops, future analytics, experiments, feature flags, support signals, delivery metrics, DORA expectations, or roadmap validation change.
 - Confirm `npm run release:safety` passes when deployment, staging, rollback, provenance, artifact, Pages, workflow, or release-signoff expectations change.
 - Confirm `npm run release:notes` passes when release notes or package version metadata change.
 - Confirm generated folders such as `dist`, `playwright-report`, and `test-results` remain untracked.
@@ -417,6 +431,8 @@ After pushing:
 - `npm run operations:check` verifies the runbook, release-health signals, post-release verification, incident triggers, triage flow, rollback expectations, evidence handling, observability boundaries, and operations-review guidance stay aligned.
 - `docs/OBSERVABILITY.md` defines the current production visibility boundary, future signal rules, incident-learning expectations, and SLO/SLA boundary.
 - `npm run observability:check` verifies production visibility, future telemetry rules, incident-review templates, SLO/SLA expectations, and review/release guidance stay aligned.
+- `docs/PRODUCT_LEARNING.md` defines product feedback loops, future analytics and experiment rules, feature-flag expectations, delivery-metric timing, and review cadence.
+- `npm run product:learning` verifies feedback-loop boundaries, future analytics and experiment rules, feature-flag expectations, delivery-metric timing, and review/release guidance stay aligned.
 - `docs/RELEASE_SAFETY.md` defines the current direct-to-Pages release boundary, rollout triggers, provenance/artifact expectations, and rollback/recovery rules.
 - `npm run release:safety` verifies direct-to-Pages release boundaries, staging/canary triggers, rollback expectations, artifact/provenance expectations, and release-review guidance stay aligned.
 - Current operations rely on deterministic checks, GitHub Actions, public deployment verification, repository governance, and user reports rather than analytics or telemetry.

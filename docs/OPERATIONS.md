@@ -4,6 +4,8 @@ NoteSense is currently a static, local-first app deployed to GitHub Pages. Opera
 
 Observability and incident-learning expectations live in [OBSERVABILITY.md](OBSERVABILITY.md).
 
+Product-learning and feedback expectations live in [PRODUCT_LEARNING.md](PRODUCT_LEARNING.md).
+
 Release safety and provenance expectations live in [RELEASE_SAFETY.md](RELEASE_SAFETY.md).
 
 ## Supported Surface
@@ -89,6 +91,7 @@ Before shipping accounts, sync, APIs, or managed storage, add an observability p
 ## Change Rules
 
 - Run `npm run operations:check` after operations-runbook, release, deployment, PWA, repository-governance, security, privacy, backend-readiness, monitoring, telemetry, support, or rollback changes.
+- Run `npm run product:learning` after product-feedback, analytics, experiment, feature-flag, survey, support, product-metric, delivery-metric, DORA, roadmap, or product-learning changes.
 - Run `npm run observability:check` after observability, monitoring, telemetry, analytics, incident-response, postmortem-template, SLO/SLA, DORA-metric, support, or production-visibility changes.
 - Run `npm run release:safety` after release-safety, deployment, staging, canary, progressive-rollout, rollback, provenance, SBOM, signing, artifact, Pages, workflow, or release-signoff changes.
 - Run `npm run ops:repository` after branch protection, required-check, repository security, Pages, or workflow-activation changes.

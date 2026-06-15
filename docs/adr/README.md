@@ -61,3 +61,4 @@ Architecture Decision Records document durable product and engineering decisions
 - [ADR 0044: Add Legal And License Contract](0044-add-legal-license-contract.md) - Accepted
 - [ADR 0045: Add Observability And Incident Learning Contract](0045-add-observability-incident-learning-contract.md) - Accepted
 - [ADR 0046: Add Release Safety And Provenance Contract](0046-add-release-safety-provenance-contract.md) - Accepted
+- [ADR 0047: Add Product Learning And Feedback Contract](0047-add-product-learning-feedback-contract.md) - Accepted
