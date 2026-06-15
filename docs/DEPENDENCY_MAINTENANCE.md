@@ -4,6 +4,8 @@ NoteSense depends on a small client-side toolchain, but dependency changes can s
 
 Project licensing expectations live in [LEGAL.md](LEGAL.md).
 
+Release safety and provenance expectations live in [RELEASE_SAFETY.md](RELEASE_SAFETY.md).
+
 ## Sources
 
 - npm dependencies live in `package.json` and `package-lock.json`.
@@ -40,6 +42,7 @@ Dependency PRs should show:
 - `npm run verify` for release-ready dependency changes
 - passing remote Dependency Review and CodeQL checks
 - bundle-budget and Lighthouse impact when runtime dependencies affect built output
+- SBOM or provenance changes should be generated from the committed lockfile and reviewed with dependency-maintenance evidence.
 - an explanation for new licenses, new packages, major upgrades, runtime upgrades, or workflow action changes
 
 ## Change Rules

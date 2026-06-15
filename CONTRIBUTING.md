@@ -98,6 +98,12 @@ For observability, monitoring, telemetry, analytics, incident-response, postmort
 npm run observability:check
 ```
 
+For release-safety, deployment, staging, canary, progressive-rollout, rollback, provenance, SBOM, signing, artifact, Pages, or release-doc changes, keep [docs/RELEASE_SAFETY.md](docs/RELEASE_SAFETY.md) aligned and run the release-safety contract check:
+
+```bash
+npm run release:safety
+```
+
 For intentional visual changes, refresh and review the screenshot baselines:
 
 ```bash
@@ -128,6 +134,7 @@ npm run test:e2e:visual:update
 - Run `npm run ops:repository` after branch protection, repository security, Pages, required-check, or workflow-activation changes.
 - Keep [docs/OPERATIONS.md](docs/OPERATIONS.md) aligned when release-health signals, post-release verification, incident triggers, triage flow, rollback expectations, evidence handling, observability boundaries, monitoring, telemetry, or support expectations change; run `npm run operations:check` after operations-sensitive changes.
 - Keep [docs/OBSERVABILITY.md](docs/OBSERVABILITY.md) aligned when changing production visibility, monitoring, telemetry, analytics, incident-response, postmortem-template, SLO/SLA, DORA metrics, support expectations, or production signal ownership; run `npm run observability:check` after observability-sensitive changes.
+- Keep [docs/RELEASE_SAFETY.md](docs/RELEASE_SAFETY.md) aligned when changing release safety, deployment, staging, canary, progressive rollout, rollback, provenance, SBOM, signing, artifact, Pages, workflow, operations, observability, security, privacy, legal, or backend-readiness expectations; run `npm run release:safety` after release-safety-sensitive changes.
 - Keep bundle growth intentional; budget increases need a clear reason in the PR.
 - Keep generated outputs, dependency installs, local environment files, logs, and TypeScript build-info files untracked.
 - Prefer small, shippable changes with clear user value or clear maintainability value.

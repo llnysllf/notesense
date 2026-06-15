@@ -24,6 +24,7 @@ Browser support: [docs/BROWSER_SUPPORT.md](docs/BROWSER_SUPPORT.md)
 Performance contract: [docs/PERFORMANCE.md](docs/PERFORMANCE.md)
 Data contract: [docs/DATA_CONTRACT.md](docs/DATA_CONTRACT.md)
 Release guide: [docs/RELEASE.md](docs/RELEASE.md)
+Release safety and provenance: [docs/RELEASE_SAFETY.md](docs/RELEASE_SAFETY.md)
 Operations runbook: [docs/OPERATIONS.md](docs/OPERATIONS.md)
 Observability and incident learning: [docs/OBSERVABILITY.md](docs/OBSERVABILITY.md)
 Security/privacy contract: [docs/SECURITY_PRIVACY.md](docs/SECURITY_PRIVACY.md)
@@ -181,6 +182,12 @@ Run the release-notes contract check:
 
 ```bash
 npm run release:notes
+```
+
+Run the release-safety/provenance contract check:
+
+```bash
+npm run release:safety
 ```
 
 Run the unit coverage gate for core practice and storage logic:
@@ -393,6 +400,7 @@ npm run ops:repository
 - `npm run performance:check` verifies bundle budgets, Lighthouse thresholds, metadata/PWA/runtime checks, Pages smoke coverage, and performance-review guidance stay aligned.
 - `npm run operations:check` verifies release-health signals, post-release verification, incident triggers, triage, rollback, evidence handling, observability boundaries, and operations-review guidance stay aligned.
 - `npm run observability:check` verifies production-visibility boundaries, future telemetry rules, incident-review templates, SLO/SLA expectations, and review/release guidance stay aligned.
+- `npm run release:safety` verifies direct-to-Pages release boundaries, staging/canary triggers, rollback expectations, artifact/provenance expectations, and release-review guidance stay aligned.
 - Progress, history, and settings are normalized when loaded from LocalStorage, including migration from the original V1 progress shape.
 - The data contract in `docs/DATA_CONTRACT.md` and `npm run data:check` keep storage keys, export schema, import normalization, privacy docs, and browser coverage aligned.
 - `npm run security:privacy` verifies privacy docs, security policy, threat model, backend readiness, data contract, runtime-surface, CSP, PWA, supply-chain, and review/release guidance stay aligned.

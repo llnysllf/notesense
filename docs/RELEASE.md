@@ -2,6 +2,8 @@
 
 NoteSense currently releases from `main` to GitHub Pages. The release process is intentionally lightweight, but every release should leave clear evidence that the app is safe to use and easy to maintain.
 
+Release safety and provenance expectations live in [RELEASE_SAFETY.md](RELEASE_SAFETY.md).
+
 ## Release Principles
 
 - Prefer small releases with one clear product or engineering purpose.
@@ -34,6 +36,7 @@ NoteSense currently releases from `main` to GitHub Pages. The release process is
 - Treat operations docs as release evidence when release-health signals, incident response, deployment ownership, monitoring, telemetry, or support expectations change.
 - Treat operations-contract results as release evidence when release-health signals, post-release verification, incident triggers, triage flow, rollback expectations, evidence handling, observability boundaries, monitoring, telemetry, or support expectations change.
 - Treat observability results as release evidence when production visibility, monitoring, telemetry, analytics, incident-response, postmortem-template, SLO/SLA, DORA metrics, support expectations, or production signal ownership changes.
+- Treat release-safety results as release evidence when deployment, staging, canary, progressive rollout, rollback, provenance, SBOM, signing, artifact, Pages, workflow, or release sign-off expectations change.
 - Treat release notes as release evidence when user-visible behavior, architecture boundaries, quality gates, dependencies, security posture, operations, or package version metadata change.
 - Treat dependency audit and CodeQL results as release evidence.
 - Treat built browser security policy results as release evidence when HTML shell, Vite build, runtime APIs, or asset categories change.
@@ -67,6 +70,7 @@ Confirm policy docs and documentation integrity remain aligned:
 npm run repo:hygiene
 npm run docs:check
 npm run adr:check
+npm run release:safety
 npm run release:notes
 ```
 
@@ -96,6 +100,7 @@ For UI changes, manually inspect:
 - Whether `npm run review:check` still proves CODEOWNERS, issue templates, PR template, security routing, and review evidence stay aligned.
 - Whether `npm run operations:check` still proves release-health signals, post-release verification, incident triggers, triage flow, rollback expectations, evidence handling, observability boundaries, and operations-review guidance are aligned.
 - Whether `npm run observability:check` still proves production-visibility boundaries, future telemetry rules, incident-review templates, SLO/SLA expectations, and review/release guidance are aligned.
+- Whether `npm run release:safety` still proves direct-to-Pages release boundaries, staging/canary triggers, rollback expectations, artifact/provenance expectations, and release-review guidance are aligned.
 - Whether `npm run test:e2e:visual` passes or baselines were intentionally updated and reviewed.
 
 For data changes, manually inspect:
@@ -175,6 +180,7 @@ After pushing:
 - Confirm the live verifier still proves the deployed security policy, service worker, and Workbox runtime when the HTML shell, build security policy, or PWA behavior changes.
 - Confirm [OPERATIONS.md](OPERATIONS.md) still reflects release-health, incident-response, rollback, evidence-handling, and observability expectations, and run `npm run operations:check` after operations-sensitive changes.
 - Confirm [OBSERVABILITY.md](OBSERVABILITY.md) still reflects production visibility, future telemetry, incident learning, and SLO/SLA expectations, and run `npm run observability:check` after observability-sensitive changes.
+- Confirm [RELEASE_SAFETY.md](RELEASE_SAFETY.md) still reflects release boundary, staging/canary triggers, rollback expectations, and provenance/artifact expectations; run `npm run release:safety` after release-safety-sensitive changes.
 - Run `npm run ops:repository` after repository governance changes.
 - Run the live deployment verifier:
 

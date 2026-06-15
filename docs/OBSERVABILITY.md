@@ -2,6 +2,8 @@
 
 NoteSense should eventually be able to see, react to, and learn from production usage without betraying its local-first privacy promise. This contract defines the current visibility boundary and the rules for adding production error reporting, monitoring, analytics, or delivery metrics later.
 
+Release safety and provenance expectations live in [RELEASE_SAFETY.md](RELEASE_SAFETY.md).
+
 ## Product Standard
 
 - The app should never become blind to production failures once real users depend on it.
@@ -35,6 +37,7 @@ NoteSense should eventually be able to see, react to, and learn from production 
   - SEV2: degraded but recoverable UX, browser-specific failure, metadata/PWA issue, or documentation/process drift that could affect release confidence.
   - SEV3: low-impact process, monitoring, documentation, or follow-up improvement.
 - Incident reviews should capture timeline, detection source, impact, root cause, resolution, prevention, evidence links, and follow-up owners.
+- Release evidence should connect incident timelines to commit SHAs, deployment runs, Pages artifacts, and live verification results.
 - DORA-style metrics such as lead time, deployment frequency, change-failure rate, and MTTR should be introduced only after the release process has enough real production history to make those metrics meaningful.
 
 ## SLO And SLA Boundary

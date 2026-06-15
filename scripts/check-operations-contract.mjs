@@ -47,7 +47,7 @@ requireSnippets("docs/OPERATIONS.md", [
 
 requireSnippets("package.json", [
   '"operations:check": "node scripts/check-operations-contract.mjs"',
-  "npm run browsers:check && npm run performance:check && npm run operations:check && npm run observability:check && npm run release:notes",
+  "npm run browsers:check && npm run performance:check && npm run operations:check && npm run observability:check && npm run release:safety && npm run release:notes",
   '"ops:repository": "node scripts/check-github-repository.mjs"',
   '"deploy:verify-live": "node scripts/verify-live-pages.mjs"',
   '"verify": "npm run security:supply-chain && npm run check && npm run test:e2e:resilience && npm run build:pages && npm run security:policy && npm run metadata:check && npm run pwa:check && npm run runtime:check && npm run perf:budget && npm run test:e2e:pages"',
