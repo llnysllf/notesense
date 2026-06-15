@@ -2,6 +2,8 @@
 
 NoteSense should eventually be able to see, react to, and learn from production usage without betraying its local-first privacy promise. This contract defines the current visibility boundary and the rules for adding production error reporting, monitoring, analytics, or delivery metrics later.
 
+Product-learning and feedback expectations live in [PRODUCT_LEARNING.md](PRODUCT_LEARNING.md).
+
 Release safety and provenance expectations live in [RELEASE_SAFETY.md](RELEASE_SAFETY.md).
 
 ## Product Standard
@@ -25,7 +27,7 @@ Release safety and provenance expectations live in [RELEASE_SAFETY.md](RELEASE_S
 - Any future telemetry sink must document allowed fields, denied fields, retention, sampling, provider ownership, opt-in or notice requirements, deletion workflow, and incident access rules.
 - Allowed future signals may include app version, release SHA, page load status, route shape, browser family, viewport class, error class, stack fingerprint, service-worker version, and coarse timing.
 - Denied future signals include practice answers, note-level progress, session history, imported/exported JSON contents, raw LocalStorage, audio recordings, keystrokes, precise IP-derived location, full URLs with query strings, and stable cross-site identifiers.
-- Analytics or product-usage events require a separate product-feedback and privacy decision before implementation.
+- Analytics or product-usage events require a separate product-learning and privacy decision before implementation.
 - Runtime surface checks, Content Security Policy, privacy docs, legal docs, release docs, operations docs, threat model, backend readiness, and ADRs must move together when any telemetry, analytics, monitoring SDK, or external endpoint is introduced.
 
 ## Incident Learning

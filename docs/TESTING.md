@@ -5,7 +5,7 @@ NoteSense keeps a small product surface, but the testing system should still mak
 ## Test Ownership Matrix
 
 - Formatting and static analysis: `npm run format:check`, `npm run lint`, and `npm run typecheck` own code style, JSX accessibility linting, React hook rules, and strict TypeScript correctness.
-- Repository and documentation contracts: `npm run repo:hygiene`, `npm run docs:check`, `npm run adr:check`, `npm run product:check`, `npm run review:check`, `npm run dependencies:check`, `npm run legal:check`, `npm run architecture:check`, `npm run data:check`, `npm run security:privacy`, `npm run design:check`, `npm run accessibility:check`, `npm run testing:check`, `npm run browsers:check`, `npm run performance:check`, `npm run operations:check`, `npm run observability:check`, `npm run release:safety`, and `npm run release:notes` own foundation drift.
+- Repository and documentation contracts: `npm run repo:hygiene`, `npm run docs:check`, `npm run adr:check`, `npm run product:check`, `npm run product:learning`, `npm run review:check`, `npm run dependencies:check`, `npm run legal:check`, `npm run architecture:check`, `npm run data:check`, `npm run security:privacy`, `npm run design:check`, `npm run accessibility:check`, `npm run testing:check`, `npm run browsers:check`, `npm run performance:check`, `npm run operations:check`, `npm run observability:check`, `npm run release:safety`, and `npm run release:notes` own foundation drift.
 - Unit and component tests: `npm run test` owns pure practice logic, data contracts, merge behavior, storage behavior, and reusable UI component states.
 - Coverage: `npm run test:coverage` owns per-file thresholds for the framework-independent practice, storage, and shared data modules.
 - Browser workflow tests: `npm run test:e2e` owns the production-preview practice loop, keyboard answers, import/export, storage failures, responsive overflow, axe scans, and cross-browser behavior.
@@ -65,6 +65,7 @@ NoteSense keeps a small product surface, but the testing system should still mak
 - package scripts keep the documented testing gates available
 - ADR governance stays part of the foundation contract gate
 - product-scope governance stays part of the foundation contract gate
+- product-learning governance stays part of the foundation contract gate
 - review/intake governance stays part of the foundation contract gate
 - dependency-maintenance governance stays part of the foundation contract gate
 - legal/licensing governance stays part of the foundation contract gate

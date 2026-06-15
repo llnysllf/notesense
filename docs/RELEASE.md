@@ -9,6 +9,7 @@ Release safety and provenance expectations live in [RELEASE_SAFETY.md](RELEASE_S
 - Prefer small releases with one clear product or engineering purpose.
 - Keep learner-facing behavior intentional and documented.
 - Treat product-scope results as release evidence when supported scope, explicit non-goals, roadmap language, or feature-intake expectations change.
+- Treat product-learning results as release evidence when feedback loops, future analytics, experiments, feature flags, support signals, product metrics, delivery metrics, DORA expectations, or roadmap validation changes.
 - Preserve the local-first data model unless a migration plan exists.
 - Treat architecture-boundary results as release evidence when shared contracts, practice logic, storage, hooks, components, or app-shell responsibilities change.
 - Treat data-contract results as release evidence when storage keys, export schema, import normalization, privacy boundaries, or future sync assumptions change.
@@ -70,6 +71,7 @@ Confirm policy docs and documentation integrity remain aligned:
 npm run repo:hygiene
 npm run docs:check
 npm run adr:check
+npm run product:learning
 npm run release:safety
 npm run release:notes
 ```
@@ -97,6 +99,7 @@ For UI changes, manually inspect:
 - Whether `npm run browsers:check` still proves supported engines, mobile viewports, Pages base path, visual-regression profiles, PWA/runtime boundaries, and browser-support docs are aligned.
 - Whether `npm run performance:check` still proves bundle budgets, Lighthouse thresholds, metadata/PWA/runtime checks, Pages smoke coverage, and performance-review guidance are aligned.
 - Whether `npm run product:check` still proves README scope, explicit non-goals, contributor guidance, review guidance, and foundation-first expectations are aligned.
+- Whether `npm run product:learning` still proves feedback-loop boundaries, future analytics and experiment rules, feature-flag expectations, delivery-metric timing, and review/release guidance are aligned.
 - Whether `npm run review:check` still proves CODEOWNERS, issue templates, PR template, security routing, and review evidence stay aligned.
 - Whether `npm run operations:check` still proves release-health signals, post-release verification, incident triggers, triage flow, rollback expectations, evidence handling, observability boundaries, and operations-review guidance are aligned.
 - Whether `npm run observability:check` still proves production-visibility boundaries, future telemetry rules, incident-review templates, SLO/SLA expectations, and review/release guidance are aligned.
@@ -179,6 +182,7 @@ After pushing:
 - Confirm the `Lighthouse` workflow succeeds when it runs for the change.
 - Confirm the live verifier still proves the deployed security policy, service worker, and Workbox runtime when the HTML shell, build security policy, or PWA behavior changes.
 - Confirm [OPERATIONS.md](OPERATIONS.md) still reflects release-health, incident-response, rollback, evidence-handling, and observability expectations, and run `npm run operations:check` after operations-sensitive changes.
+- Confirm [PRODUCT_LEARNING.md](PRODUCT_LEARNING.md) still reflects feedback loops, future analytics and experiment rules, feature-flag expectations, delivery-metric timing, and review cadence; run `npm run product:learning` after product-learning-sensitive changes.
 - Confirm [OBSERVABILITY.md](OBSERVABILITY.md) still reflects production visibility, future telemetry, incident learning, and SLO/SLA expectations, and run `npm run observability:check` after observability-sensitive changes.
 - Confirm [RELEASE_SAFETY.md](RELEASE_SAFETY.md) still reflects release boundary, staging/canary triggers, rollback expectations, and provenance/artifact expectations; run `npm run release:safety` after release-safety-sensitive changes.
 - Run `npm run ops:repository` after repository governance changes.

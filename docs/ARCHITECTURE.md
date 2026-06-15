@@ -25,6 +25,7 @@ NoteSense is currently a local-first React application. The product goal is to k
 - `docs/adr` records architecture decisions that should survive beyond a single implementation pass.
 - `docs/adr/README.md` indexes ADRs and documents decision-record process expectations.
 - `docs/PRODUCT_SCOPE.md` documents the supported learner surface, explicit non-goals, foundation-first rule, and feature-intake expectations.
+- `docs/PRODUCT_LEARNING.md` documents product feedback loops, future analytics and experiment rules, feature-flag expectations, delivery-metric timing, and review cadence.
 - `docs/REVIEW_PROCESS.md` documents ownership, issue intake, triage, pull-request evidence, and review-process verification.
 - `docs/DEPENDENCY_MAINTENANCE.md` documents dependency sources, Dependabot policy, update classes, review evidence, and dependency-maintenance verification.
 - `docs/LEGAL.md` documents the project license boundary, user-facing legal triggers, dependency-license separation, and legal-change process.
@@ -46,6 +47,7 @@ NoteSense is currently a local-first React application. The product goal is to k
 - `scripts/check-repository-hygiene.mjs` owns required root configuration, ignore-policy, runtime-policy, and tracked-artifact hygiene checks.
 - `scripts/check-adr-contracts.mjs` owns ADR numbering, status, required-section, and index-link checks.
 - `scripts/check-product-scope.mjs` owns product-scope drift checks for README scope, explicit non-goals, contributor guidance, review guidance, and release docs.
+- `scripts/check-product-learning-contract.mjs` owns product-learning drift checks for feedback loops, future analytics, experiments, feature flags, delivery metrics, release guidance, and PR review guidance.
 - `scripts/check-review-process.mjs` owns review/intake drift checks for CODEOWNERS, issue templates, PR template, security routing, and review evidence.
 - `scripts/check-dependency-maintenance.mjs` owns dependency-maintenance drift checks for Dependabot cadence, dependency review evidence, lockfile policy, license policy, supply-chain gates, and workflow-update expectations.
 - `scripts/check-legal-contract.mjs` owns legal/licensing drift checks for the root license, package metadata, legal docs, dependency-license boundaries, release guidance, and PR review guidance.
@@ -104,6 +106,7 @@ Every feature should keep these expectations intact:
 - Performance-contract changes should keep bundle budgets, Lighthouse thresholds, metadata checks, PWA checks, runtime-surface checks, Pages smoke coverage, browser-support guidance, dependency guidance, release guidance, and PR review guidance aligned.
 - ADR changes should keep numbering, status, required sections, index links, release guidance, and contributor guidance aligned.
 - Product-scope changes should keep README current scope, explicit non-goals, feature-intake expectations, foundation-first guidance, release guidance, and ADRs aligned.
+- Product-learning changes should keep feedback loops, future analytics, experiments, feature flags, support signals, delivery metrics, product scope, observability, privacy, legal, release, operations, backend-readiness, and PR review guidance aligned.
 - Review-process changes should keep CODEOWNERS, issue templates, PR evidence, security routing, product-scope guidance, release guidance, and contributor guidance aligned.
 - Dependency-maintenance changes should keep Dependabot cadence, dependency review evidence, lockfile policy, license policy, supply-chain gates, release guidance, and contributor guidance aligned.
 - Legal/licensing changes should keep root license terms, package metadata, user-facing terms, privacy-policy hosting, contributor-community expectations, dependency license policy, release guidance, and PR review guidance aligned.

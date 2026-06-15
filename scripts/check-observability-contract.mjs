@@ -33,6 +33,7 @@ requireSnippets("docs/OBSERVABILITY.md", [
   "## Change Rules",
   "## Verification",
   "The app should never become blind to production failures once real users depend on it.",
+  "Product-learning and feedback expectations live in [PRODUCT_LEARNING.md](PRODUCT_LEARNING.md).",
   "The current app has no production telemetry, analytics, real-user monitoring, remote logging, or support queue.",
   "`src/components/ErrorBoundary.tsx` provides a learner-facing recovery surface and logs render failures to the browser console for development and future client-side error reporting.",
   "Client error reporting must be privacy reviewed before implementation.",
@@ -101,6 +102,7 @@ requireSnippets("docs/OPERATIONS.md", [
 requireSnippets("docs/SECURITY_PRIVACY.md", [
   "Observability and incident-learning expectations live in [OBSERVABILITY.md](OBSERVABILITY.md).",
   "Future telemetry, analytics, monitoring SDKs, remote logging, or error-reporting sinks must follow [OBSERVABILITY.md](OBSERVABILITY.md) before implementation.",
+  "Future product analytics, experiments, surveys, support tooling, feature flags, or delivery metrics must follow [PRODUCT_LEARNING.md](PRODUCT_LEARNING.md) before implementation.",
 ]);
 
 requireSnippets("docs/LEGAL.md", [
