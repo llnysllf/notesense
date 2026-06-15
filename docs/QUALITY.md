@@ -239,6 +239,7 @@ For visual QA:
 
 - `docs/DESIGN_SYSTEM.md` defines the product posture, token layers, component states, accessibility expectations, protected visual surface, and UI change process.
 - `npm run design:check` verifies that the design-system document, CSS token/state contract, visual-regression tests, and committed baselines stay aligned.
+- `npm run design:check` rejects hard-coded theme colors outside token definitions so component styles consume semantic CSS custom properties.
 - Durable UI patterns should become documented tokens or states instead of one-off values.
 - UI changes that affect layout, color, spacing, typography, or component appearance should run `npm run design:check` and `npm run test:e2e:visual`.
 

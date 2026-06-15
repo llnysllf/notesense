@@ -21,6 +21,7 @@ Shared CSS custom properties in `src/styles.css` own the app-wide design languag
 - Typography: system UI stack, stable display sizes, and fixed responsive breakpoints instead of viewport-scaled text.
 
 Light and dark themes should be implemented by token substitution inside one `prefers-color-scheme` block. Component selectors should use tokens rather than hard-coded theme colors.
+Hard-coded hex, RGB, RGBA, HSL, and HSLA theme colors belong only in token definitions; component selectors should consume `var(...)` tokens so light and dark mode changes stay centralized.
 
 ## Component States
 
