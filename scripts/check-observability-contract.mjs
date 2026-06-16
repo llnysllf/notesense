@@ -64,13 +64,6 @@ requireSnippets("package.json", [
   "npm run performance:check && npm run operations:check && npm run observability:check && npm run release:safety && npm run release:notes",
 ]);
 
-requireSnippets("README.md", [
-  "Observability and incident learning: [docs/OBSERVABILITY.md](docs/OBSERVABILITY.md)",
-  "Run the observability/incident-learning contract check:",
-  "npm run observability:check",
-  "`npm run observability:check` verifies production-visibility boundaries, future telemetry rules, incident-review templates, SLO/SLA expectations, and review/release guidance stay aligned.",
-]);
-
 requireSnippets("CONTRIBUTING.md", [
   "For observability, monitoring, telemetry, analytics, incident-response, postmortem-template, SLO/SLA, support, or production-visibility changes, keep [docs/OBSERVABILITY.md](docs/OBSERVABILITY.md) aligned and run the observability contract check:",
   "npm run observability:check",

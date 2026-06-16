@@ -103,14 +103,6 @@ requireSnippet(
   "npm run docs:check && npm run adr:check && npm run product:check && npm run product:learning && npm run review:check && npm run dependencies:check && npm run legal:check && npm run data:check",
 );
 
-requireSnippet(
-  "README.md",
-  readProjectFile("README.md"),
-  "Architecture decision records: [docs/adr/README.md](docs/adr/README.md)",
-);
-requireSnippet("README.md", readProjectFile("README.md"), "Run the ADR governance check:");
-requireSnippet("README.md", readProjectFile("README.md"), "npm run adr:check");
-
 console.log(`- ADR files checked: ${adrs.length}`);
 console.log(`- ADR statuses checked: ${adrs.length}`);
 console.log("- ADR index links checked");

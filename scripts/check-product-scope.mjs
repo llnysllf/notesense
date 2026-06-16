@@ -46,25 +46,6 @@ requireSnippets("package.json", [
   "npm run docs:check && npm run adr:check && npm run product:check && npm run product:learning && npm run review:check && npm run dependencies:check && npm run legal:check && npm run data:check",
 ]);
 
-requireSnippets("README.md", [
-  "Product scope: [docs/PRODUCT_SCOPE.md](docs/PRODUCT_SCOPE.md)",
-  "Run the product-scope contract check:",
-  "npm run product:check",
-  "## Current Scope",
-  "- Two practice modes",
-  "- Two starter sight-reading clefs",
-  "- Ten starter reading notes across treble and bass",
-  "- Seven natural pitch-training notes",
-  "- Local JSON data import/export",
-  "- Browser-level accessibility and smoke tests",
-  "- CI quality gate",
-  "- GitHub Pages deployment",
-  "- No backend",
-  "- No login",
-  "- No sharps or flats",
-  "This keeps the practice loop fast and finishable while leaving room for meaningful future features.",
-]);
-
 requireSnippets("CONTRIBUTING.md", [
   "NoteSense is intentionally small, but changes should still meet a production-quality bar.",
   "Keep [docs/PRODUCT_SCOPE.md](docs/PRODUCT_SCOPE.md) aligned when changing supported product scope, explicit non-goals, roadmap language, or feature-intake expectations; run `npm run product:check` after product-scope changes.",

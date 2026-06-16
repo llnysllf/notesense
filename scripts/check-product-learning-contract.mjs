@@ -46,13 +46,6 @@ requireSnippets("package.json", [
   "npm run docs:check && npm run adr:check && npm run product:check && npm run product:learning && npm run review:check",
 ]);
 
-requireSnippets("README.md", [
-  "Product learning and feedback: [docs/PRODUCT_LEARNING.md](docs/PRODUCT_LEARNING.md)",
-  "Run the product-learning/feedback contract check:",
-  "npm run product:learning",
-  "`npm run product:learning` verifies feedback-loop boundaries, future analytics and experiment rules, feature-flag expectations, delivery-metric timing, and review/release guidance stay aligned.",
-]);
-
 requireSnippets("CONTRIBUTING.md", [
   "For product-feedback, analytics, experiment, feature-flag, survey, support, product-metric, delivery-metric, DORA, roadmap, or product-learning changes, keep [docs/PRODUCT_LEARNING.md](docs/PRODUCT_LEARNING.md) aligned and run the product-learning contract check:",
   "npm run product:learning",

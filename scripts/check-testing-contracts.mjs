@@ -237,13 +237,6 @@ for (const workflow of [
   requireSnippets(workflow, ["name:"]);
 }
 
-requireSnippets("README.md", [
-  "Testing strategy: [docs/TESTING.md](docs/TESTING.md)",
-  "Run the testing contract check:",
-  "npm run testing:check",
-  "`npm run testing:check` verifies that the test ownership matrix, package scripts, Vitest coverage thresholds, Playwright configs, browser specs, and CI quality gate stay aligned.",
-]);
-
 requireSnippets("docs/QUALITY.md", [
   "ADR index and `npm run adr:check` stay aligned when decision records are added, renamed, removed, or moved between statuses.",
   "Product-scope docs and `npm run product:check` stay aligned when supported scope, explicit non-goals, roadmap language, or feature-intake expectations change.",

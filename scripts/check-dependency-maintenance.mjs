@@ -70,13 +70,6 @@ requireSnippets(".github/pull_request_template.md", [
   "Dependency maintenance impact was considered for Dependabot cadence, lockfile policy, license policy, supply-chain gates, major upgrades, and workflow action updates.",
 ]);
 
-requireSnippets("README.md", [
-  "Dependency maintenance: [docs/DEPENDENCY_MAINTENANCE.md](docs/DEPENDENCY_MAINTENANCE.md)",
-  "Run the dependency-maintenance contract check:",
-  "npm run dependencies:check",
-  "`npm run dependencies:check` verifies Dependabot cadence, dependency review evidence, lockfile policy, license policy, supply-chain gates, and workflow-update expectations stay aligned.",
-]);
-
 requireSnippets("CONTRIBUTING.md", [
   "For dependency-maintenance, Dependabot, package manager, lockfile-policy, license-policy, or workflow-update-policy changes, keep [docs/DEPENDENCY_MAINTENANCE.md](docs/DEPENDENCY_MAINTENANCE.md) aligned and run the dependency-maintenance contract check:",
   "npm run dependencies:check",

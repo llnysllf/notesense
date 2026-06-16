@@ -53,14 +53,6 @@ requireSnippets("package.json", [
   '"verify": "npm run security:supply-chain && npm run check && npm run test:e2e:resilience && npm run build:pages && npm run security:policy && npm run metadata:check && npm run pwa:check && npm run runtime:check && npm run perf:budget && npm run test:e2e:pages"',
 ]);
 
-requireSnippets("README.md", [
-  "Operations runbook: [docs/OPERATIONS.md](docs/OPERATIONS.md)",
-  "Run the operations contract check:",
-  "npm run operations:check",
-  "`npm run operations:check` verifies release-health signals, post-release verification, incident triggers, triage, rollback, evidence handling, observability boundaries, and operations-review guidance stay aligned.",
-  "`npm run ops:repository` verifies branch protection, required checks, repository security settings, vulnerability alerts, Pages, and active workflows against the reviewed governance policy.",
-]);
-
 requireSnippets("CONTRIBUTING.md", [
   "For release-health, incident-response, deployment ownership, monitoring, telemetry, support, rollback, or operations-doc changes, keep [docs/OPERATIONS.md](docs/OPERATIONS.md) aligned and run the operations contract check:",
   "npm run operations:check",

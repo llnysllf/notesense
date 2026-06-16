@@ -144,13 +144,6 @@ requireSnippets("src/components/MasteryMap.tsx", [
   'aria-hidden="true"',
 ]);
 
-requireSnippets("README.md", [
-  "Accessibility contract: [docs/ACCESSIBILITY.md](docs/ACCESSIBILITY.md)",
-  "Run the accessibility contract check:",
-  "npm run accessibility:check",
-  "`npm run accessibility:check` verifies keyboard, screen reader, focus, motion, axe, cross-browser, and Lighthouse accessibility coverage stay connected.",
-]);
-
 requireSnippets("docs/QUALITY.md", [
   "Accessibility contract docs and `npm run accessibility:check` stay aligned when keyboard, screen reader, focus, contrast, motion, or automated accessibility coverage changes.",
   "For accessibility-contract feedback:",

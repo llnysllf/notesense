@@ -102,13 +102,6 @@ requireSnippets(".github/pull_request_template.md", [
   "## Risk Notes",
 ]);
 
-requireSnippets("README.md", [
-  "Review process: [docs/REVIEW_PROCESS.md](docs/REVIEW_PROCESS.md)",
-  "Run the review/intake contract check:",
-  "npm run review:check",
-  "`npm run review:check` verifies CODEOWNERS, issue templates, PR review evidence, security-report routing, and triage guidance stay aligned.",
-]);
-
 requireSnippets("CONTRIBUTING.md", [
   "For review, intake, issue-template, PR-template, CODEOWNERS, or triage-process changes, keep [docs/REVIEW_PROCESS.md](docs/REVIEW_PROCESS.md) aligned and run the review/intake contract check:",
   "npm run review:check",

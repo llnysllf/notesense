@@ -62,13 +62,6 @@ requireSnippets(".github/workflows/deploy-pages.yml", [
   "uses: actions/deploy-pages@",
 ]);
 
-requireSnippets("README.md", [
-  "Release safety and provenance: [docs/RELEASE_SAFETY.md](docs/RELEASE_SAFETY.md)",
-  "Run the release-safety/provenance contract check:",
-  "npm run release:safety",
-  "`npm run release:safety` verifies direct-to-Pages release boundaries, staging/canary triggers, rollback expectations, artifact/provenance expectations, and release-review guidance stay aligned.",
-]);
-
 requireSnippets("CONTRIBUTING.md", [
   "For release-safety, deployment, staging, canary, progressive-rollout, rollback, provenance, SBOM, signing, artifact, Pages, or release-doc changes, keep [docs/RELEASE_SAFETY.md](docs/RELEASE_SAFETY.md) aligned and run the release-safety contract check:",
   "npm run release:safety",

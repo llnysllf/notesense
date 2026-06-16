@@ -110,13 +110,6 @@ requireSnippets("e2e/pages-smoke.spec.ts", [
   'getByRole("button", { name: "Start drill" })',
 ]);
 
-requireSnippets("README.md", [
-  "Performance contract: [docs/PERFORMANCE.md](docs/PERFORMANCE.md)",
-  "Run the performance contract check:",
-  "npm run performance:check",
-  "`npm run performance:check` verifies bundle budgets, Lighthouse thresholds, metadata/PWA/runtime checks, Pages smoke coverage, and performance-review guidance stay aligned.",
-]);
-
 requireSnippets("CONTRIBUTING.md", [
   "For performance-budget, Lighthouse, metadata, PWA, runtime-surface, Pages smoke, dependency, browser-support, or performance-doc changes, keep [docs/PERFORMANCE.md](docs/PERFORMANCE.md) aligned and run the performance contract check:",
   "npm run performance:check",
