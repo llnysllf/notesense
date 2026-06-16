@@ -6,34 +6,9 @@
 [![CodeQL](https://github.com/llnysllf/notesense/actions/workflows/codeql.yml/badge.svg)](https://github.com/llnysllf/notesense/actions/workflows/codeql.yml)
 [![Dependency Review](https://github.com/llnysllf/notesense/actions/workflows/dependency-review.yml/badge.svg)](https://github.com/llnysllf/notesense/actions/workflows/dependency-review.yml)
 
-NoteSense is a small piano sight-reading and ear-training app for beginner musicians. It focuses on two practical habits: reading notes on starter treble and bass staffs and recognizing natural piano pitches by ear, then adapts practice toward weak notes and pitches.
+NoteSense is a local-first piano sight-reading and ear-training app for beginner musicians. It helps learners build two practical habits: reading starter treble and bass staff notes, and recognizing natural piano pitches by ear. Practice adapts toward weak notes and pitches while keeping the product small, fast, accessible, and easy to trust.
 
 Live demo: [https://llnysllf.github.io/notesense/](https://llnysllf.github.io/notesense/)
-
-Architecture notes: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)
-Architecture decision records: [docs/adr/README.md](docs/adr/README.md)
-Product scope: [docs/PRODUCT_SCOPE.md](docs/PRODUCT_SCOPE.md)
-Product learning and feedback: [docs/PRODUCT_LEARNING.md](docs/PRODUCT_LEARNING.md)
-Review process: [docs/REVIEW_PROCESS.md](docs/REVIEW_PROCESS.md)
-Dependency maintenance: [docs/DEPENDENCY_MAINTENANCE.md](docs/DEPENDENCY_MAINTENANCE.md)
-Legal and licensing: [docs/LEGAL.md](docs/LEGAL.md)
-Quality runbook: [docs/QUALITY.md](docs/QUALITY.md)
-Design system: [docs/DESIGN_SYSTEM.md](docs/DESIGN_SYSTEM.md)
-Accessibility contract: [docs/ACCESSIBILITY.md](docs/ACCESSIBILITY.md)
-Testing strategy: [docs/TESTING.md](docs/TESTING.md)
-Browser support: [docs/BROWSER_SUPPORT.md](docs/BROWSER_SUPPORT.md)
-Performance contract: [docs/PERFORMANCE.md](docs/PERFORMANCE.md)
-Data contract: [docs/DATA_CONTRACT.md](docs/DATA_CONTRACT.md)
-Release guide: [docs/RELEASE.md](docs/RELEASE.md)
-Release safety and provenance: [docs/RELEASE_SAFETY.md](docs/RELEASE_SAFETY.md)
-Operations runbook: [docs/OPERATIONS.md](docs/OPERATIONS.md)
-Observability and incident learning: [docs/OBSERVABILITY.md](docs/OBSERVABILITY.md)
-Security/privacy contract: [docs/SECURITY_PRIVACY.md](docs/SECURITY_PRIVACY.md)
-Privacy and data handling: [docs/PRIVACY.md](docs/PRIVACY.md)
-Threat model: [docs/THREAT_MODEL.md](docs/THREAT_MODEL.md)
-Backend readiness: [docs/BACKEND_READINESS.md](docs/BACKEND_READINESS.md)
-Contributing guide: [CONTRIBUTING.md](CONTRIBUTING.md)
-Security policy: [SECURITY.md](SECURITY.md)
 
 ## Screenshots
 
@@ -43,30 +18,28 @@ NoteSense follows the system color scheme automatically. The screenshots below a
 | ----------------------------------------------------------------------------- | --------------------------------------------------------------------------- |
 | ![NoteSense note-reading drill in light mode](docs/media/notesense-light.png) | ![NoteSense note-reading drill in dark mode](docs/media/notesense-dark.png) |
 
-## Features
+## Product Standard
 
-- Timed 60-second note-reading drill
-- Treble and bass clef starter ranges
-- Interactive SVG staff with ledger-line support
-- Saved reading-range setting for treble or bass practice
-- Keyboard or button answers for C, D, E, F, and G
-- Pitch-training mode across one natural-note octave, C4 to B4
-- Hidden pitch reveal after each answer
-- Instant correct/incorrect feedback
-- Web Audio note playback for ear association
-- Separate local progress tracking for note reading and pitch training
-- Focus-note and focus-pitch stats for weak areas
-- Adaptive practice that weights weak notes and pitches more often
-- Configurable 30, 60, or 90 second rounds
-- Round summary with score, accuracy, best streak, and next-practice suggestion
-- Recent practice history with accuracy, time, and streak analytics
-- Daily practice goal with streak and practice-time tracking
-- Practice insight trend chart for recent accuracy, streak, and time
-- Practice plan coach that recommends baseline, focus, recovery, steady, or stretch sessions
-- Mastery map that labels each active note or pitch as new, learning, focus, or strong
-- Local data import/export and storage-failure messaging
-- Automatic light and dark theme that follows the system color scheme
-- Installable PWA with offline practice after the first load
+This repository is intentionally treated like a production product, even though the app is small:
+
+- Local-first by default: no account, backend, tracking, telemetry, cookies, or third-party scripts.
+- Learner-focused scope: sight-reading, pitch recognition, adaptive drills, and progress clarity before larger features.
+- Strong foundation first: architecture boundaries, design tokens, accessibility, tests, CI, security/privacy, release discipline, and operations docs are all explicit.
+- Future-ready without overbuilding: auth, sync, analytics, feature flags, and backend services are documented paths, not premature implementation.
+
+## What It Does
+
+- Timed note-reading drills for starter treble and bass ranges
+- Pitch-training mode across natural notes C4 to B4
+- Adaptive or random practice selection
+- Keyboard and button answers
+- Web Audio playback for ear association
+- Instant feedback and optional pitch reveal
+- Round summaries with score, accuracy, best streak, and next-practice guidance
+- Daily practice goal, streak, recent history, and practice insight chart
+- Practice plan coach and mastery map derived from local progress
+- Local JSON import/export with schema validation and storage-failure messaging
+- Automatic light/dark theme, installable PWA behavior, and offline practice after first load
 
 ## Tech Stack
 
@@ -80,36 +53,17 @@ NoteSense follows the system color scheme automatically. The screenshots below a
 - Prettier
 - CSS design tokens with automatic light/dark theming
 - vite-plugin-pwa service worker for offline support
-- Accessible SVG trend chart
-- Tested practice-plan recommendation engine
-- Tested mastery-state model for active note ranges
-- Tested daily-goal and streak analytics
 - Browser Web Audio API
 - LocalStorage for progress persistence
 - Versioned JSON import/export for local data portability
-- Local-first analytics for session history
 
-## Why I Built It
+## Quick Start
 
-I am learning piano and wanted a simple tool to improve note-reading speed and pitch recognition. The project is intentionally small, but it is built like a real product: reusable note data, adaptive practice logic, persistent practice stats, responsive UI, and a clear roadmap for stronger ear-training and MIDI input.
-
-## Getting Started
-
-Use the Node.js version pinned in `.nvmrc`. If you use `nvm`, run:
+Use the Node.js version pinned in `.nvmrc`.
 
 ```bash
 nvm use
-```
-
-Install dependencies from the lockfile:
-
-```bash
 npm ci
-```
-
-Start the development server:
-
-```bash
 npm run dev
 ```
 
@@ -130,6 +84,47 @@ Run the test suite:
 ```bash
 npm test
 ```
+
+Run the full local quality check:
+
+```bash
+npm run check
+```
+
+Run the full local release verification gate:
+
+```bash
+npm run verify
+```
+
+## Documentation Map
+
+- Architecture notes: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)
+- Architecture decision records: [docs/adr/README.md](docs/adr/README.md)
+- Product scope: [docs/PRODUCT_SCOPE.md](docs/PRODUCT_SCOPE.md)
+- Product learning and feedback: [docs/PRODUCT_LEARNING.md](docs/PRODUCT_LEARNING.md)
+- Review process: [docs/REVIEW_PROCESS.md](docs/REVIEW_PROCESS.md)
+- Dependency maintenance: [docs/DEPENDENCY_MAINTENANCE.md](docs/DEPENDENCY_MAINTENANCE.md)
+- Legal and licensing: [docs/LEGAL.md](docs/LEGAL.md)
+- Quality runbook: [docs/QUALITY.md](docs/QUALITY.md)
+- Design system: [docs/DESIGN_SYSTEM.md](docs/DESIGN_SYSTEM.md)
+- Accessibility contract: [docs/ACCESSIBILITY.md](docs/ACCESSIBILITY.md)
+- Testing strategy: [docs/TESTING.md](docs/TESTING.md)
+- Browser support: [docs/BROWSER_SUPPORT.md](docs/BROWSER_SUPPORT.md)
+- Performance contract: [docs/PERFORMANCE.md](docs/PERFORMANCE.md)
+- Data contract: [docs/DATA_CONTRACT.md](docs/DATA_CONTRACT.md)
+- Release guide: [docs/RELEASE.md](docs/RELEASE.md)
+- Release safety and provenance: [docs/RELEASE_SAFETY.md](docs/RELEASE_SAFETY.md)
+- Operations runbook: [docs/OPERATIONS.md](docs/OPERATIONS.md)
+- Observability and incident learning: [docs/OBSERVABILITY.md](docs/OBSERVABILITY.md)
+- Security/privacy contract: [docs/SECURITY_PRIVACY.md](docs/SECURITY_PRIVACY.md)
+- Privacy and data handling: [docs/PRIVACY.md](docs/PRIVACY.md)
+- Threat model: [docs/THREAT_MODEL.md](docs/THREAT_MODEL.md)
+- Backend readiness: [docs/BACKEND_READINESS.md](docs/BACKEND_READINESS.md)
+- Contributing guide: [CONTRIBUTING.md](CONTRIBUTING.md)
+- Security policy: [SECURITY.md](SECURITY.md)
+
+## Command Reference
 
 Run the architecture-boundary contract check:
 
@@ -227,6 +222,12 @@ Run the visual regression suite:
 npm run test:e2e:visual
 ```
 
+Refresh visual regression baselines after an intentional UI change:
+
+```bash
+npm run test:e2e:visual:update
+```
+
 Run the design-system contract check:
 
 ```bash
@@ -269,10 +270,53 @@ Run the observability/incident-learning contract check:
 npm run observability:check
 ```
 
-Refresh visual regression baselines after an intentional UI change:
+Run static code-quality checks:
 
 ```bash
-npm run test:e2e:visual:update
+npm run format:check
+npm run lint
+```
+
+Run the repository hygiene check:
+
+```bash
+npm run repo:hygiene
+```
+
+Run the policy and documentation integrity check:
+
+```bash
+npm run docs:check
+```
+
+Run the dependency security audit:
+
+```bash
+npm run security:audit
+```
+
+Run the lockfile supply-chain policy check:
+
+```bash
+npm run security:lockfile
+```
+
+Run the dependency license compliance check:
+
+```bash
+npm run compliance:licenses
+```
+
+Run the GitHub Actions workflow policy checks:
+
+```bash
+npm run security:workflows
+```
+
+Run the full local supply-chain gate:
+
+```bash
+npm run security:supply-chain
 ```
 
 Run the built web metadata check after a Pages build:
@@ -296,60 +340,11 @@ npm run build:pages
 npm run runtime:check
 ```
 
-Run static code-quality checks:
-
-```bash
-npm run format:check
-npm run lint
-```
-
-Run the repository hygiene check:
-
-```bash
-npm run repo:hygiene
-```
-
-Run the dependency security audit:
-
-```bash
-npm run security:audit
-```
-
-Run the lockfile supply-chain policy check:
-
-```bash
-npm run security:lockfile
-```
-
-Run the GitHub Actions workflow policy checks:
-
-```bash
-npm run security:workflows
-```
-
 Run the built browser security policy check after a Pages build:
 
 ```bash
 npm run build:pages
 npm run security:policy
-```
-
-Run the dependency license compliance check:
-
-```bash
-npm run compliance:licenses
-```
-
-Run the full local supply-chain gate:
-
-```bash
-npm run security:supply-chain
-```
-
-Run the policy and documentation integrity check:
-
-```bash
-npm run docs:check
 ```
 
 Run the bundle performance budget check after a Pages build:
@@ -359,16 +354,10 @@ npm run build:pages
 npm run perf:budget
 ```
 
-Run the full local quality check:
+Verify GitHub repository governance after branch protection, workflow, or security-setting changes:
 
 ```bash
-npm run check
-```
-
-Run the full local release verification gate:
-
-```bash
-npm run verify
+npm run ops:repository
 ```
 
 Verify the live GitHub Pages deployment after pushing:
@@ -377,15 +366,10 @@ Verify the live GitHub Pages deployment after pushing:
 npm run deploy:verify-live
 ```
 
-Verify GitHub repository governance after branch protection, workflow, or security-setting changes:
+## Quality System
 
-```bash
-npm run ops:repository
-```
+NoteSense uses small, focused checks that make future drift visible before it becomes expensive:
 
-## Engineering Notes
-
-- Practice selection and summary logic live in `src/practiceEngine.ts` so the learning behavior can be tested outside React.
 - `npm run architecture:check` verifies that shared contracts, practice logic, storage, hooks, and components keep their documented boundaries as the app grows.
 - `npm run architecture:check` also enforces source-size budgets so future features split broad files before they become hard to review.
 - `npm run adr:check` verifies that ADR filenames, headings, statuses, required sections, and index links stay aligned.
@@ -394,15 +378,9 @@ npm run ops:repository
 - `npm run review:check` verifies CODEOWNERS, issue templates, PR review evidence, security-report routing, and triage guidance stay aligned.
 - `npm run dependencies:check` verifies Dependabot cadence, dependency review evidence, lockfile policy, license policy, supply-chain gates, and workflow-update expectations stay aligned.
 - `npm run legal:check` verifies the project license file, package metadata, legal docs, dependency-license boundaries, release guidance, and PR review guidance stay aligned.
-- Practice-plan recommendations are derived in `src/practiceEngine.ts`, keeping the coaching layer deterministic and ready for a future service boundary.
-- Mastery map state is derived in `src/practiceEngine.ts` from the active range, note attempts, and accuracy thresholds.
-- Daily goal and streak state is derived from completed session history, keeping habit analytics independent from browser storage.
-- `src/noteData.ts` keeps treble, bass, and pitch-note definitions structured so new ranges can be added without rewriting the practice loop.
-- UI-only pieces live in `src/components` to keep the main app focused on state and orchestration.
-- `PracticeStatsPanel` and `SessionHistory` isolate the progress sidebar from the drill loop, which keeps product analytics UI easier to evolve.
-- `PracticeInsights` renders tested trend data from `practiceEngine.ts` as an accessible SVG chart.
-- CSS custom properties define shared color, spacing, radius, and shadow tokens so the interface can be tuned consistently.
-- The design-system contract in `docs/DESIGN_SYSTEM.md` and `npm run design:check` keep core tokens, component states, accessibility affordances, and visual-regression coverage aligned.
+- `npm run data:check` keeps storage keys, export schema, import normalization, privacy docs, and browser coverage aligned.
+- `npm run security:privacy` verifies privacy docs, security policy, threat model, backend readiness, data contract, runtime-surface, CSP, PWA, supply-chain, and review/release guidance stay aligned.
+- `npm run design:check` verifies that the design-system document, CSS token/state contract, visual-regression tests, and committed baselines stay aligned.
 - `npm run design:check` rejects hard-coded theme colors outside token definitions so light and dark mode changes stay centralized.
 - `npm run accessibility:check` verifies keyboard, screen reader, focus, motion, axe, cross-browser, and Lighthouse accessibility coverage stay connected.
 - `npm run testing:check` verifies that the test ownership matrix, package scripts, Vitest coverage thresholds, Playwright configs, browser specs, and CI quality gate stay aligned.
@@ -412,34 +390,67 @@ npm run ops:repository
 - `npm run operations:check` verifies release-health signals, post-release verification, incident triggers, triage, rollback, evidence handling, observability boundaries, and operations-review guidance stay aligned.
 - `npm run observability:check` verifies production-visibility boundaries, future telemetry rules, incident-review templates, SLO/SLA expectations, and review/release guidance stay aligned.
 - `npm run release:safety` verifies direct-to-Pages release boundaries, staging/canary triggers, rollback expectations, artifact/provenance expectations, and release-review guidance stay aligned.
-- Progress, history, and settings are normalized when loaded from LocalStorage, including migration from the original V1 progress shape.
+- `npm run docs:check` verifies that privacy, accessibility, testing, security, release, architecture, design-system, and contribution docs stay linked and aligned, and that local Markdown links plus documented npm scripts still resolve.
+- `npm run release:notes` verifies that `CHANGELOG.md` stays aligned with `package.json` versioning and the Keep a Changelog release structure.
+- `npm run repo:hygiene` verifies required repository configuration and blocks generated, dependency, secret, and local artifact files from being tracked.
+- `npm run runtime:check` verifies the built app and source stay inside the documented local-first runtime boundary.
+- `npm run security:workflows` verifies that GitHub Actions references are pinned to immutable commit SHAs, workflow token permissions stay least-privilege, and workflow operations keep concurrency, timeout, and artifact-retention controls.
+- `npm run ops:repository` verifies branch protection, required checks, repository security settings, vulnerability alerts, Pages, and active workflows against the reviewed governance policy.
+- `docs/OPERATIONS.md` defines release-health signals, post-release verification, incident triggers, triage, rollback, evidence handling, and future observability expectations.
 - The data contract in `docs/DATA_CONTRACT.md` and `npm run data:check` keep storage keys, export schema, import normalization, privacy docs, and browser coverage aligned.
-- `npm run security:privacy` verifies privacy docs, security policy, threat model, backend readiness, data contract, runtime-surface, CSP, PWA, supply-chain, and review/release guidance stay aligned.
+
+## Architecture And Implementation
+
+- Practice selection and summary logic live in `src/practiceEngine.ts` so the learning behavior can be tested outside React.
+- Practice-plan recommendations are derived in `src/practiceEngine.ts`, keeping the coaching layer deterministic and ready for a future service boundary.
+- Mastery map state is derived in `src/practiceEngine.ts` from the active range, note attempts, and accuracy thresholds.
+- Daily goal and streak state is derived from completed session history, keeping habit analytics independent from browser storage.
+- `src/noteData.ts` keeps treble, bass, and pitch-note definitions structured so new ranges can be added without rewriting the practice loop.
+- UI-only pieces live in `src/components` to keep the main app focused on state and orchestration.
+- `PracticeStatsPanel` and `SessionHistory` isolate the progress sidebar from the drill loop, which keeps product analytics UI easier to evolve.
+- `PracticeInsights` renders tested trend data from `practiceEngine.ts` as an accessible SVG chart.
+- CSS custom properties define shared color, spacing, radius, and shadow tokens so the interface can be tuned consistently.
+- The design-system contract in `docs/DESIGN_SYSTEM.md` and `npm run design:check` keep core tokens, component states, accessibility affordances, and visual-regression coverage aligned.
+- Progress, history, and settings are normalized when loaded from LocalStorage, including migration from the original V1 progress shape.
 - Save operations fail safely and surface a non-blocking status message when browser storage is unavailable.
 - Imported and exported practice data includes a schema version, timestamp, progress, and settings for local-first data portability.
-- The architecture notes document the local-first data model and the path toward sign-in, backend APIs, cloud storage, and sync.
-- The privacy notes document the current local storage, import/export, no-tracking, and future sync boundaries.
-- The threat model and backend-readiness notes define the security and service-boundary work required before sign-in, PostgreSQL, or cloud sync.
 - An app-level React error boundary keeps unexpected render failures from blanking the whole product.
 - Keyboard answers, ARIA pressed states, live feedback, visible focus rings, and reduced-motion support are included for accessibility.
+
+## Security, Privacy, And Operations
+
+- The privacy notes document the current local storage, import/export, no-tracking, and future sync boundaries.
+- The architecture notes document the local-first data model and the path toward sign-in, backend APIs, cloud storage, and sync.
+- The threat model and backend-readiness notes define the security and service-boundary work required before sign-in, PostgreSQL, or cloud sync.
 - The HTML shell, favicon, web manifest, robots file, and sitemap are checked after the Pages build.
 - The Pages build injects and verifies a Content Security Policy meta tag that restricts scripts, styles, images, connections, workers, media, manifests, forms, base URLs, and object embeds.
 - The runtime surface check rejects unreviewed client network APIs, cookies, telemetry beacons, websockets, and unapproved external URLs.
+- `npm run security:policy` verifies the built HTML security policy before metadata, runtime surface, bundle, and Pages smoke checks run.
+- `npm run pwa:check` verifies the generated service worker precaches reviewed static assets only.
+- `npm run metadata:check` verifies the built web identity metadata before bundle and Pages smoke checks run.
+- `npm run perf:budget` keeps the static Pages output within explicit raw and gzip size budgets.
+- `npm run deploy:verify-live` checks the public GitHub Pages deployment, metadata assets, service worker, Workbox runtime, and security policy after release.
+
+## CI And Release
+
 - `.nvmrc`, package engines, and `.npmrc` keep local development, CI, deployment, and dependency maintenance on the same runtime contract.
-- `npm run repo:hygiene` verifies required repository configuration and blocks generated, dependency, secret, and local artifact files from being tracked.
 - TypeScript runs with strict optional-property, indexed-access, override, and unused-code checks enabled.
-- `npm run docs:check` verifies that privacy, accessibility, testing, security, release, architecture, design-system, and contribution docs stay linked and aligned, and that local Markdown links plus documented npm scripts still resolve.
-- `npm run release:notes` verifies that `CHANGELOG.md` stays aligned with `package.json` versioning and the Keep a Changelog release structure.
+- ESLint enforces TypeScript, React hooks, React refresh, and JSX accessibility rules with zero warnings allowed.
+- Prettier formatting is enforced before the test suite runs.
 - `npm run compliance:licenses` checks dependency licenses from the lockfile against the project policy.
 - `npm run security:lockfile` verifies the committed npm lockfile uses registry HTTPS tarballs, `sha512` integrity hashes, aligned root metadata, and the expected npm lockfile version.
 - Dependency Review scans pull requests for high-severity vulnerable dependency changes and invalid license changes before merge.
-- `npm run ops:repository` verifies branch protection, required checks, repository security settings, vulnerability alerts, Pages, and active workflows against the reviewed governance policy.
-- ESLint enforces TypeScript, React hooks, React refresh, and JSX accessibility rules with zero warnings allowed.
-- Prettier formatting is enforced before the test suite runs.
 - `npm run verify` includes the full local supply-chain gate before release.
-- `npm run security:workflows` verifies that GitHub Actions references are pinned to immutable commit SHAs, workflow token permissions stay least-privilege, and workflow operations keep concurrency, timeout, and artifact-retention controls.
-- `npm run security:policy` verifies the built HTML security policy before metadata, runtime surface, bundle, and Pages smoke checks run.
-- `npm run pwa:check` verifies the generated service worker precaches reviewed static assets only.
+- `npm run verify` is the single local gate before release, combining supply-chain policy checks, code quality, unit/browser tests, accessibility checks, the Pages build, PWA checks, bundle budgets, and the Pages smoke test.
+- GitHub Actions run formatting, linting, typechecking, unit tests, and browser tests on every push and pull request.
+- CodeQL scans JavaScript and TypeScript security issues on pushes, pull requests, and a weekly schedule.
+- Pull requests also build the GitHub Pages artifact and upload browser failure artifacts for debugging.
+- Dependabot keeps npm minor/patch updates and GitHub Actions dependencies on a weekly maintenance cadence; major npm upgrades are handled as intentional engineering tasks.
+- CODEOWNERS, issue templates, indexed ADRs, repository governance checks, and the release guide keep review, planning, and deployment expectations explicit.
+- The `main` branch publishes a static production build to GitHub Pages.
+
+## Test Coverage
+
 - The test suite covers adaptive weighting, deterministic note selection, focus-note ranking, session summaries, session-history analytics, and progress reducers.
 - `npm run test:coverage` enforces coverage thresholds for the framework-independent practice and storage modules.
 - Playwright and axe-core cover the browser practice loop, responsive layout, console health, and automated accessibility violations.
@@ -450,19 +461,7 @@ npm run ops:repository
 - `npm run docs:screenshots` regenerates the light and dark README screenshots from a production preview build.
 - A dedicated resilience Playwright suite proves the app renders an accessible recovery screen during an intentional render failure.
 - The Pages smoke test verifies the built app loads and starts correctly from the `/notesense/` deployment base path.
-- `npm run metadata:check` verifies the built web identity metadata before bundle and Pages smoke checks run.
 - `npm run runtime:check` verifies the built app and source stay inside the documented local-first runtime boundary.
-- `npm run verify` is the single local gate before release, combining supply-chain policy checks, code quality, unit/browser tests, accessibility checks, the Pages build, PWA checks, bundle budgets, and the Pages smoke test.
-- `npm run deploy:verify-live` checks the public GitHub Pages deployment, metadata assets, service worker, Workbox runtime, and security policy after release.
-- `docs/OPERATIONS.md` defines release-health signals, post-release verification, incident triggers, triage, rollback, evidence handling, and future observability expectations.
-- `npm run perf:budget` keeps the static Pages output within explicit raw and gzip size budgets.
-- GitHub Actions run formatting, linting, typechecking, unit tests, and browser tests on every push and pull request.
-- CodeQL scans JavaScript and TypeScript security issues on pushes, pull requests, and a weekly schedule.
-- Dependency Review scans dependency changes on pull requests before they can merge.
-- Pull requests also build the GitHub Pages artifact and upload browser failure artifacts for debugging.
-- Dependabot keeps npm minor/patch updates and GitHub Actions dependencies on a weekly maintenance cadence; major npm upgrades are handled as intentional engineering tasks.
-- CODEOWNERS, issue templates, indexed ADRs, repository governance checks, and the release guide keep review, planning, and deployment expectations explicit.
-- The `main` branch publishes a static production build to GitHub Pages.
 
 ## Current Scope
 
@@ -494,12 +493,18 @@ This keeps the practice loop fast and finishable while leaving room for meaningf
 
 ## Roadmap
 
+Future work should begin from product-scope and product-learning evidence, not from adding features for size:
+
 - Expand note ranges
 - Add sharps and flats
 - Add interval training
 - Add MIDI keyboard input
 - Add sign-in and cloud sync for practice history
 - Add a service-backed profile and storage layer when the learning loop needs cross-device persistence
+
+## Why I Built It
+
+I am learning piano and wanted a simple tool to improve note-reading speed and pitch recognition. The project is intentionally small, but it is built like a real product: reusable note data, adaptive practice logic, persistent practice stats, responsive UI, and a clear roadmap for stronger ear-training and MIDI input.
 
 ## Portfolio Summary
 
