@@ -21,6 +21,21 @@ function requireSnippets(file, snippets) {
   }
 }
 
+function requirePlaywrightServerContract(file, { commandSnippet, port, strictPort }) {
+  const content = readProjectFile(file);
+  const url = `http://127.0.0.1:${port}`;
+
+  for (const snippet of [`baseURL: "${url}"`, `url: "${url}`, commandSnippet]) {
+    if (!content.includes(snippet)) {
+      failures.push(`${file} is missing expected Playwright server contract text: ${snippet}`);
+    }
+  }
+
+  if (strictPort && !content.includes("--strictPort")) {
+    failures.push(`${file} must use --strictPort so preview server port drift fails fast`);
+  }
+}
+
 console.log("Testing contract report");
 
 requireSnippets("docs/TESTING.md", [
@@ -47,6 +62,7 @@ requireSnippets("docs/TESTING.md", [
   "npm run observability:check",
   "npm run release:safety",
   "Browser tests run against production preview builds",
+  "Preview servers use explicit ports and fail fast when a port is unavailable",
   "UI behavior tests block service workers",
   "Coverage thresholds are per-file",
   "product-learning governance stays part of the foundation contract gate",
@@ -102,12 +118,18 @@ requireSnippets("playwright.config.ts", [
   'testIgnore: ["**/error-boundary.spec.ts", "**/pages-smoke.spec.ts", "**/visual.spec.ts"]',
   'serviceWorkers: "block"',
   'trace: "retain-on-failure"',
-  'command: "npm run build && npm run preview -- --host 127.0.0.1"',
+  'command: "npm run build && npm run preview -- --host 127.0.0.1 --port 4173 --strictPort"',
   'name: "chromium"',
   'name: "firefox"',
   'name: "webkit"',
   'name: "mobile-chromium"',
 ]);
+
+requirePlaywrightServerContract("playwright.config.ts", {
+  commandSnippet: "npm run preview -- --host 127.0.0.1 --port 4173 --strictPort",
+  port: 4173,
+  strictPort: true,
+});
 
 requireSnippets("playwright.resilience.config.ts", [
   'testMatch: "**/error-boundary.spec.ts"',
@@ -117,6 +139,12 @@ requireSnippets("playwright.resilience.config.ts", [
   'name: "resilience-chromium"',
   'name: "resilience-mobile-chromium"',
 ]);
+
+requirePlaywrightServerContract("playwright.resilience.config.ts", {
+  commandSnippet: "npm run preview -- --host 127.0.0.1 --port 4175 --strictPort",
+  port: 4175,
+  strictPort: true,
+});
 
 requireSnippets("playwright.pages.config.ts", [
   'testMatch: "**/pages-smoke.spec.ts"',
@@ -128,6 +156,12 @@ requireSnippets("playwright.pages.config.ts", [
   'name: "pages-mobile-chromium"',
 ]);
 
+requirePlaywrightServerContract("playwright.pages.config.ts", {
+  commandSnippet: "node scripts/serve-pages-preview.mjs --port 4174",
+  port: 4174,
+  strictPort: false,
+});
+
 requireSnippets("playwright.visual.config.ts", [
   'testMatch: "**/visual.spec.ts"',
   "toHaveScreenshot",
@@ -138,6 +172,12 @@ requireSnippets("playwright.visual.config.ts", [
   'name: "visual-mobile-light"',
   'name: "visual-mobile-dark"',
 ]);
+
+requirePlaywrightServerContract("playwright.visual.config.ts", {
+  commandSnippet: "npm run preview -- --host 127.0.0.1 --port 4176 --strictPort",
+  port: 4176,
+  strictPort: true,
+});
 
 requireSnippets("e2e/app.spec.ts", [
   'page.on("pageerror"',
@@ -255,6 +295,7 @@ requireSnippets("docs/ARCHITECTURE.md", [
 
 console.log("- testing documentation checked");
 console.log("- package scripts, coverage thresholds, and Playwright configs checked");
+console.log("- Playwright preview server contracts checked");
 console.log("- browser specs, CI workflow, and governance docs checked");
 
 if (failures.length > 0) {

@@ -254,6 +254,7 @@ For visual QA:
 
 - `docs/TESTING.md` defines test ownership, change routing, determinism, coverage, CI, review, and verification expectations.
 - `npm run testing:check` verifies that package scripts, coverage thresholds, browser configs, workflow specs, and CI evidence stay aligned.
+- Browser preview servers should use explicit ports that match Playwright `baseURL` and web-server URLs, with Vite preview configs using `--strictPort`.
 - Put pure practice, data, and merge behavior in Vitest when possible.
 - Use browser tests for workflows, accessibility-sensitive behavior, persistence, import/export, responsive behavior, and deployment shape.
 - Use visual-regression tests only for intentional protected-shell appearance changes.
