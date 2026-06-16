@@ -32,6 +32,7 @@ These are not part of the current supported product surface:
 - cloud sync or hosted practice storage
 - backend APIs, PostgreSQL, AWS services, or direct database access
 - sharps, flats, scales, chords, rhythm drills, MIDI input, or expanded lesson content
+- translated UI, locale selector, runtime locale negotiation, right-to-left layout, or localized music notation
 - analytics, telemetry, advertising pixels, or third-party tracking
 - payments, subscriptions, social sharing, or classroom management
 
@@ -69,6 +70,7 @@ Product proposals should use the product proposal issue template before implemen
 - Update README current scope when the supported learner surface changes.
 - Keep review/intake docs aligned when feature intake changes.
 - Update privacy, threat-model, backend-readiness, data-contract, accessibility, design-system, testing, release, and operations docs when scope changes affect their boundaries.
+- Update i18n/l10n guidance when language, locale, notation-label, or localization-readiness expectations change.
 - Add or update ADRs for durable scope changes.
 - Run `npm run product:check` after scope, roadmap, feature-intake, or product-positioning changes.
 - Run `npm run product:learning` after product-feedback, analytics, experiment, feature-flag, survey, support, product-metric, delivery-metric, DORA, roadmap, or product-learning changes.

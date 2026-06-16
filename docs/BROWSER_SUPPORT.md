@@ -27,6 +27,7 @@ Performance expectations live in [PERFORMANCE.md](PERFORMANCE.md).
 - Browsers that block LocalStorage can still load the app, but saved progress is not guaranteed.
 - Direct database access, third-party scripts, telemetry beacons, cookies, websockets, and external network APIs are not part of the current browser support contract.
 - Custom service-worker runtime API caching, background sync, push notifications, and practice-data service-worker storage are not supported.
+- Right-to-left layout and runtime locale negotiation are not part of the current browser support contract.
 
 ## Verification Evidence
 

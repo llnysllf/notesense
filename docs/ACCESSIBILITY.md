@@ -33,6 +33,7 @@ Browser support expectations live in [BROWSER_SUPPORT.md](BROWSER_SUPPORT.md).
 - SVGs that communicate practice content or trend data use `role="img"` with useful labels.
 - Decorative marks, meters, and visual-only helpers use `aria-hidden="true"`.
 - Progress indicators that communicate a numeric goal use native ARIA value attributes.
+- Localized copy must preserve accessible names, headings, live-region meaning, focus order, and keyboard workflows.
 
 ## Visual And Motion
 

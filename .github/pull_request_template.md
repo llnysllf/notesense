@@ -10,6 +10,7 @@
 - [ ] Accessibility-contract impact was considered for source semantics, focus behavior, axe coverage, Lighthouse, and release guidance.
 - [ ] Testing impact was considered for unit, component, browser, resilience, Pages, visual, coverage, and CI evidence.
 - [ ] Browser-support impact was considered for supported engines, mobile viewports, Pages base path, Web Audio, LocalStorage, PWA/offline behavior, and browser verification evidence.
+- [ ] I18n/l10n impact was considered for language boundaries, translatable copy, notation labels, locale formatting, RTL assumptions, and layout growth.
 - [ ] Performance impact was considered for bundle budgets, Lighthouse thresholds, metadata/PWA/runtime checks, Pages smoke coverage, and performance-review evidence.
 - [ ] ADR impact was considered for decision numbering, status, index links, and required sections.
 - [ ] Product-scope impact was considered for current scope, explicit non-goals, feature intake, and foundation-first expectations.
