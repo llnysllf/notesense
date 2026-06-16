@@ -5,7 +5,7 @@ NoteSense keeps a small product surface, but the testing system should still mak
 ## Test Ownership Matrix
 
 - Formatting and static analysis: `npm run format:check`, `npm run lint`, and `npm run typecheck` own code style, JSX accessibility linting, React hook rules, and strict TypeScript correctness.
-- Repository and documentation contracts: `npm run repo:hygiene`, `npm run docs:check`, `npm run adr:check`, `npm run product:check`, `npm run product:learning`, `npm run review:check`, `npm run dependencies:check`, `npm run legal:check`, `npm run architecture:check`, `npm run data:check`, `npm run security:privacy`, `npm run design:check`, `npm run accessibility:check`, `npm run testing:check`, `npm run browsers:check`, `npm run performance:check`, `npm run operations:check`, `npm run observability:check`, `npm run release:safety`, and `npm run release:notes` own foundation drift.
+- Repository and documentation contracts: `npm run repo:hygiene`, `npm run docs:check`, `npm run adr:check`, `npm run product:check`, `npm run product:learning`, `npm run review:check`, `npm run dependencies:check`, `npm run legal:check`, `npm run architecture:check`, `npm run data:check`, `npm run i18n:check`, `npm run security:privacy`, `npm run design:check`, `npm run accessibility:check`, `npm run testing:check`, `npm run browsers:check`, `npm run performance:check`, `npm run operations:check`, `npm run observability:check`, `npm run release:safety`, and `npm run release:notes` own foundation drift.
 - Unit and component tests: `npm run test` owns pure practice logic, data contracts, merge behavior, storage behavior, and reusable UI component states.
 - Coverage: `npm run test:coverage` owns per-file thresholds for the framework-independent practice, storage, and shared data modules.
 - Browser workflow tests: `npm run test:e2e` owns the production-preview practice loop, keyboard answers, import/export, storage failures, responsive overflow, axe scans, and cross-browser behavior.
@@ -20,6 +20,7 @@ NoteSense keeps a small product surface, but the testing system should still mak
 - Add or update component tests when a reusable component state, ARIA label, meter, chart label, or empty state changes and the full browser workflow would be too broad.
 - Add or update main Playwright tests when a learner workflow, keyboard behavior, persistence path, import/export path, accessibility-sensitive behavior, or responsive behavior changes.
 - Add or update manual accessibility evidence when WCAG target coverage, assistive-technology review scope, screen reader semantics, or accessibility release evidence changes.
+- Add or update browser, visual, accessibility, and formatting evidence when language, locale, translated copy, notation labels, or right-to-left assumptions change.
 - Add or update resilience tests when the app shell, root render path, or error boundary changes.
 - Add or update Pages smoke tests when build output, base-path behavior, metadata, CSP, static assets, or preview serving changes.
 - Add or update visual-regression baselines when intentional UI changes affect layout, color, spacing, typography, or protected component appearance.
@@ -71,6 +72,7 @@ NoteSense keeps a small product surface, but the testing system should still mak
 - review/intake governance stays part of the foundation contract gate
 - dependency-maintenance governance stays part of the foundation contract gate
 - legal/licensing and conduct governance stays part of the foundation contract gate
+- i18n/l10n governance stays part of the foundation contract gate
 - security/privacy governance stays part of the foundation contract gate
 - browser-support governance stays part of the foundation contract gate
 - performance governance stays part of the foundation contract gate

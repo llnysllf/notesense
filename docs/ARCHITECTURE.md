@@ -41,6 +41,7 @@ NoteSense is currently a local-first React application. The product goal is to k
 - `docs/OBSERVABILITY.md` documents the production visibility boundary, future signal rules, incident-learning expectations, and SLO/SLA boundary.
 - `docs/RELEASE_SAFETY.md` documents the direct-to-Pages release boundary, rollout triggers, provenance/artifact expectations, and rollback/recovery rules.
 - `docs/DATA_CONTRACT.md` documents browser storage keys, export schema, import normalization, and future sync constraints.
+- `docs/I18N.md` documents the current English-only language boundary, locale-readiness rules, music-learning localization constraints, accessibility/layout expectations, and localization change process.
 - `.nvmrc`, package engines, and `.npmrc` define the shared Node/npm runtime for local development, CI, deployment, and dependency maintenance.
 - `vite.config.ts` injects the production Content Security Policy meta tag during build.
 - `vite.config.ts` also owns PWA service worker generation and Vitest browser-like component-test setup.
@@ -52,6 +53,7 @@ NoteSense is currently a local-first React application. The product goal is to k
 - `scripts/check-dependency-maintenance.mjs` owns dependency-maintenance drift checks for Dependabot cadence, dependency review evidence, lockfile policy, license policy, supply-chain gates, and workflow-update expectations.
 - `scripts/check-legal-contract.mjs` owns legal/licensing drift checks for the root license, package metadata, legal docs, code-of-conduct expectations, dependency-license boundaries, release guidance, and PR review guidance.
 - `scripts/check-data-contracts.mjs` owns data-contract drift checks for storage keys, shared export shape, privacy docs, and browser coverage.
+- `scripts/check-i18n-contract.mjs` owns i18n/l10n drift checks for language boundaries, HTML language metadata, future message ownership, locale formatting, music notation labels, accessibility, layout, data stability, release guidance, and PR review guidance.
 - `scripts/check-security-privacy.mjs` owns security/privacy drift checks for privacy docs, security policy, threat model, backend readiness, data contract, runtime-surface, CSP, PWA, supply-chain, and review/release guidance.
 - `scripts/check-architecture-boundaries.mjs` owns source import-boundary checks for shared contracts, practice logic, storage, hooks, and UI components.
 - `scripts/check-architecture-boundaries.mjs` also owns source-size budgets for the app shell, hooks, components, core modules, and shared contracts so future feature work has an explicit split point before files become catch-all modules.
@@ -97,6 +99,7 @@ Every feature should keep these expectations intact:
 - Cross-device or sync-ready data-shape changes should happen in `shared/src` before UI or backend adapters consume them.
 - Privacy expectations must stay aligned with local storage, import/export, future auth, sync, analytics, and network behavior.
 - Data-contract changes should keep storage keys, export schema, import normalization, privacy docs, and browser coverage aligned.
+- I18n/l10n changes should keep language boundaries, translatable copy, notation labels, locale formatting, right-to-left assumptions, accessibility, layout, data stability, privacy, release guidance, and PR review guidance aligned.
 - Security/privacy changes should keep local-first privacy, import/export trust, runtime/network boundaries, CSP, PWA behavior, future auth/sync, backend readiness, operations guidance, release guidance, and PR review guidance aligned.
 - Client runtime surface checks should reject network, tracking, cookie, websocket, or external URL drift unless the change is intentional and documented.
 - User-visible state has a failure path, especially for save, export, auth, and sync operations.

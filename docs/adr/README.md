@@ -67,3 +67,4 @@ Architecture Decision Records document durable product and engineering decisions
 - [ADR 0050: Add Playwright Strict Port Contract](0050-add-playwright-strict-port-contract.md) - Accepted
 - [ADR 0051: Add Code Of Conduct Contract](0051-add-code-of-conduct-contract.md) - Accepted
 - [ADR 0052: Add Accessibility Conformance Review Contract](0052-add-accessibility-conformance-review-contract.md) - Accepted
+- [ADR 0053: Add I18n Readiness Contract](0053-add-i18n-readiness-contract.md) - Accepted

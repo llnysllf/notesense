@@ -41,6 +41,8 @@ Future sign-in, cloud sync, backend APIs, or hosted storage must be designed as 
 - Add tests for sync, migration, auth, and data-retention behavior.
 - Update this document, the security policy, architecture notes, and release checklist before shipping.
 
+Future localization must not introduce remote translation services, locale analytics, cookies, or third-party scripts without privacy, security, runtime-surface, and release review.
+
 ## Local Control
 
 Learners can remove NoteSense data by using the app's reset control or by clearing site data for `llnysllf.github.io` in the browser.
