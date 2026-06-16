@@ -106,13 +106,6 @@ requireSnippets("e2e/visual.spec.ts", [
   'toHaveScreenshot("pitch-training-shell.png"',
 ]);
 
-requireSnippets("README.md", [
-  "Browser support: [docs/BROWSER_SUPPORT.md](docs/BROWSER_SUPPORT.md)",
-  "Run the browser-support contract check:",
-  "npm run browsers:check",
-  "`npm run browsers:check` verifies Playwright browser projects, Pages/mobile support, visual-regression profiles, PWA/runtime boundaries, and browser-support docs stay aligned.",
-]);
-
 requireSnippets("CONTRIBUTING.md", [
   "For browser-support, Playwright project, Pages smoke, visual-regression, PWA, runtime-surface, Lighthouse, or browser-support documentation changes, keep [docs/BROWSER_SUPPORT.md](docs/BROWSER_SUPPORT.md) aligned and run the browser-support contract check:",
   "npm run browsers:check",

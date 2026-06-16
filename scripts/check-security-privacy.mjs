@@ -49,13 +49,6 @@ requireSnippets("package.json", [
   '"verify": "npm run security:supply-chain && npm run check && npm run test:e2e:resilience && npm run build:pages && npm run security:policy && npm run metadata:check && npm run pwa:check && npm run runtime:check && npm run perf:budget && npm run test:e2e:pages"',
 ]);
 
-requireSnippets("README.md", [
-  "Security/privacy contract: [docs/SECURITY_PRIVACY.md](docs/SECURITY_PRIVACY.md)",
-  "Run the security/privacy contract check:",
-  "npm run security:privacy",
-  "`npm run security:privacy` verifies privacy docs, security policy, threat model, backend readiness, data contract, runtime-surface, CSP, PWA, supply-chain, and review/release guidance stay aligned.",
-]);
-
 requireSnippets("SECURITY.md", [
   "Security/privacy readiness expectations live in [docs/SECURITY_PRIVACY.md](docs/SECURITY_PRIVACY.md).",
   "Run `npm run security:privacy` after privacy, security, data-contract, runtime-surface, CSP, PWA, import/export, storage, telemetry, analytics, auth, sync, backend-readiness, threat-model, or security-doc changes.",

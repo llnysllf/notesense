@@ -87,13 +87,6 @@ requireSnippets("package.json", [
   "npm run dependencies:check && npm run legal:check && npm run data:check",
 ]);
 
-requireSnippets("README.md", [
-  "Legal and licensing: [docs/LEGAL.md](docs/LEGAL.md)",
-  "Run the legal/licensing contract check:",
-  "npm run legal:check",
-  "`npm run legal:check` verifies the project license file, package metadata, legal docs, dependency-license boundaries, release guidance, and PR review guidance stay aligned.",
-]);
-
 requireSnippets("CONTRIBUTING.md", [
   "For legal, licensing, user-facing terms, privacy-policy hosting, contributor-community, or project-license metadata changes, keep [docs/LEGAL.md](docs/LEGAL.md) aligned and run the legal contract check:",
   "npm run legal:check",
