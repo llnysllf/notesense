@@ -31,10 +31,12 @@ requireSnippets("docs/REVIEW_PROCESS.md", [
   "## Pull Request Evidence",
   "## Change Rules",
   "## Verification",
+  "Support expectations and non-SLA boundaries live in [../.github/SUPPORT.md](../.github/SUPPORT.md).",
   "Bug reports use `.github/ISSUE_TEMPLATE/bug_report.yml`.",
   "Product proposals use `.github/ISSUE_TEMPLATE/feature_proposal.yml`.",
   "Engineering tasks use `.github/ISSUE_TEMPLATE/engineering_task.yml`.",
-  "Run `npm run review:check` after review, intake, issue-template, PR-template, CODEOWNERS, or triage-process changes.",
+  "Support requests should avoid private LocalStorage exports, imported files, raw practice history, credentials, `.env` files, and screenshots that expose private data.",
+  "Run `npm run review:check` after review, support-policy, intake, issue-template, PR-template, CODEOWNERS, or triage-process changes.",
 ]);
 
 requireSnippets("package.json", [
@@ -43,6 +45,21 @@ requireSnippets("package.json", [
 ]);
 
 requireSnippets(".github/CODEOWNERS", ["* @llnysllf"]);
+
+requireSnippets(".github/SUPPORT.md", [
+  "# Support Policy",
+  "## Supported Surface",
+  "## Where To Ask",
+  "## Privacy And Data",
+  "## Incident And Release Signals",
+  "## Change Rules",
+  "The supported version is the `main` branch deployed to GitHub Pages.",
+  "There is no public SLA or guaranteed response time for support requests.",
+  "Use the [bug report template](ISSUE_TEMPLATE/bug_report.yml) for broken, confusing, inaccessible, or unreliable behavior.",
+  "Follow [SECURITY.md](../SECURITY.md) for vulnerabilities or security-sensitive reports. Do not post exploit details publicly.",
+  "Do not attach private LocalStorage exports, imported files, raw practice history, credentials, `.env` files, or screenshots that expose private data.",
+  "Run `npm run review:check` after support-policy, intake, issue-template, security-routing, or triage-process changes.",
+]);
 
 requireSnippets(".github/ISSUE_TEMPLATE/bug_report.yml", [
   "name: Bug Report",
@@ -85,6 +102,9 @@ requireSnippets(".github/ISSUE_TEMPLATE/engineering_task.yml", [
 
 requireSnippets(".github/ISSUE_TEMPLATE/config.yml", [
   "blank_issues_enabled: false",
+  "name: Support policy",
+  "url: https://github.com/llnysllf/notesense/blob/main/.github/SUPPORT.md",
+  "Read the supported surface, privacy guidance, and issue routing before opening a request.",
   "name: Security report",
   "url: https://github.com/llnysllf/notesense/security",
   "Please follow the security policy instead of opening public vulnerability details.",
@@ -98,7 +118,7 @@ requireSnippets(".github/pull_request_template.md", [
   "Accessibility-contract impact was considered for source semantics, focus behavior, axe coverage, Lighthouse, and release guidance.",
   "Testing impact was considered for unit, component, browser, resilience, Pages, visual, coverage, and CI evidence.",
   "ADR impact was considered for decision numbering, status, index links, and required sections.",
-  "Review/intake impact was considered for CODEOWNERS, issue templates, PR evidence, labels, and triage routing.",
+  "Review/intake impact was considered for CODEOWNERS, support policy, issue templates, PR evidence, labels, and triage routing.",
   "## Risk Notes",
 ]);
 
@@ -136,13 +156,20 @@ requireSnippets("docs/TESTING.md", [
 ]);
 
 requireSnippets("docs/OPERATIONS.md", [
+  "Support expectations and non-SLA boundaries live in [../.github/SUPPORT.md](../.github/SUPPORT.md).",
   "GitHub Actions, repository governance checks, live deployment verification, and user-reported issues are the current operational signal.",
   "Classify the issue as deployment, source behavior, dependency/security, repository governance, browser-specific, or documentation/process drift.",
+]);
+
+requireSnippets("docs/OBSERVABILITY.md", [
+  "Support expectations and non-SLA boundaries live in [../.github/SUPPORT.md](../.github/SUPPORT.md).",
+  "Run `npm run observability:check` after observability, monitoring, telemetry, analytics, incident-response, postmortem-template, SLO/SLA, DORA-metric, support, support-policy, operations, privacy, security, legal, runtime-surface, release, or backend-readiness changes.",
 ]);
 
 requireSnippets("SECURITY.md", [
   "Please avoid posting exploit details publicly.",
   "The `main` branch and the GitHub Pages deployment are the supported version.",
+  "Support expectations and non-SLA boundaries live in [.github/SUPPORT.md](.github/SUPPORT.md).",
 ]);
 
 requireSnippets("docs/adr/README.md", [

@@ -8,6 +8,7 @@ Security/privacy readiness expectations live in [docs/SECURITY_PRIVACY.md](docs/
 
 The `main` branch and the GitHub Pages deployment are the supported version.
 Operational health and incident-response expectations live in [docs/OPERATIONS.md](docs/OPERATIONS.md).
+Support expectations and non-SLA boundaries live in [.github/SUPPORT.md](.github/SUPPORT.md).
 
 ## Reporting a Vulnerability
 

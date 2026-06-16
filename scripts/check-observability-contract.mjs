@@ -41,7 +41,7 @@ requireSnippets("docs/OBSERVABILITY.md", [
   "User-impacting production incidents should leave an incident review using [POSTMORTEM_TEMPLATE.md](POSTMORTEM_TEMPLATE.md).",
   "DORA-style metrics such as lead time, deployment frequency, change-failure rate, and MTTR should be introduced only after the release process has enough real production history to make those metrics meaningful.",
   "NoteSense does not currently promise an external SLA.",
-  "Run `npm run observability:check` after observability, monitoring, telemetry, analytics, incident-response, postmortem-template, SLO/SLA, DORA-metric, support, operations, privacy, security, legal, runtime-surface, release, or backend-readiness changes.",
+  "Run `npm run observability:check` after observability, monitoring, telemetry, analytics, incident-response, postmortem-template, SLO/SLA, DORA-metric, support, support-policy, operations, privacy, security, legal, runtime-surface, release, or backend-readiness changes.",
 ]);
 
 requireSnippets("docs/POSTMORTEM_TEMPLATE.md", [

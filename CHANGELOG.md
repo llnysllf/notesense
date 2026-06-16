@@ -19,6 +19,7 @@ All notable changes to NoteSense are documented here. The format follows [Keep a
 - Product-scope contract with `docs/PRODUCT_SCOPE.md` and `npm run product:check` for current scope, explicit non-goals, feature intake, and foundation-first expectations
 - Product-learning and feedback contract with `docs/PRODUCT_LEARNING.md` and `npm run product:learning` for feedback loops, future analytics and experiment rules, feature-flag expectations, delivery-metric timing, and review/release guidance
 - Review/intake contract with `docs/REVIEW_PROCESS.md` and `npm run review:check` for CODEOWNERS, issue templates, PR evidence, security-report routing, and triage guidance
+- Support policy with `.github/SUPPORT.md` and review-process checks for support boundaries, privacy-safe reports, issue routing, security routing, and non-SLA expectations
 - Dependency-maintenance contract with `docs/DEPENDENCY_MAINTENANCE.md` and `npm run dependencies:check` for Dependabot cadence, lockfile policy, license policy, supply-chain gates, and workflow-update expectations
 - Browser-support contract with `docs/BROWSER_SUPPORT.md` and `npm run browsers:check` for supported engines, mobile viewports, Pages base path, visual-regression profiles, PWA/runtime boundaries, and browser verification evidence
 - Performance contract with `docs/PERFORMANCE.md` and `npm run performance:check` for bundle budgets, Lighthouse thresholds, metadata/PWA/runtime checks, Pages smoke coverage, and performance-review guidance

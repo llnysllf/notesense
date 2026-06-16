@@ -12,6 +12,7 @@ Product-learning expectations live in [PRODUCT_LEARNING.md](PRODUCT_LEARNING.md)
 
 ## Intake Paths
 
+- Support expectations and non-SLA boundaries live in [../.github/SUPPORT.md](../.github/SUPPORT.md).
 - Bug reports use `.github/ISSUE_TEMPLATE/bug_report.yml`.
 - Product proposals use `.github/ISSUE_TEMPLATE/feature_proposal.yml`.
 - Engineering tasks use `.github/ISSUE_TEMPLATE/engineering_task.yml`.
@@ -25,6 +26,7 @@ Product-learning expectations live in [PRODUCT_LEARNING.md](PRODUCT_LEARNING.md)
 - Product proposals should include the intended learning signal before implementation.
 - Engineering tasks should state the quality bar being raised, acceptance evidence, and risk notes.
 - Feature proposals that expand current scope should update `docs/PRODUCT_SCOPE.md` before implementation starts.
+- Support requests should avoid private LocalStorage exports, imported files, raw practice history, credentials, `.env` files, and screenshots that expose private data.
 - Security-sensitive work should follow `SECURITY.md`, `docs/THREAT_MODEL.md`, and `docs/BACKEND_READINESS.md`.
 
 ## Pull Request Evidence
@@ -39,8 +41,8 @@ Every PR should include:
 
 ## Change Rules
 
-- Update this contract when CODEOWNERS, issue templates, PR template, review routing, triage labels, security-report routing, or review evidence expectations change.
-- Run `npm run review:check` after review, intake, issue-template, PR-template, CODEOWNERS, or triage-process changes.
+- Update this contract when CODEOWNERS, support policy, issue templates, PR template, review routing, triage labels, security-report routing, or review evidence expectations change.
+- Run `npm run review:check` after review, support-policy, intake, issue-template, PR-template, CODEOWNERS, or triage-process changes.
 - Keep product-scope, quality, release, operations, security, and repository-governance docs aligned when the review process changes.
 
 ## Verification
@@ -48,6 +50,7 @@ Every PR should include:
 `npm run review:check` verifies that:
 
 - CODEOWNERS still routes default ownership
+- support expectations, non-SLA boundaries, privacy guidance, and issue routing stay documented
 - bug, product proposal, and engineering task templates keep required labels and evidence fields
 - blank public issues stay disabled and security reports route through the security policy
 - the pull request template keeps summary, quality checklist, risk notes, validation, and foundation-impact prompts

@@ -17,6 +17,7 @@ Release safety and provenance expectations live in [RELEASE_SAFETY.md](RELEASE_S
 
 - The current app has no production telemetry, analytics, real-user monitoring, remote logging, or support queue.
 - Current release-health signals are GitHub Actions, Lighthouse, visual regression, Dependency Review, CodeQL, Pages deployment, `npm run deploy:verify-live`, `npm run ops:repository`, and user reports.
+- Support expectations and non-SLA boundaries live in [../.github/SUPPORT.md](../.github/SUPPORT.md).
 - `src/components/ErrorBoundary.tsx` provides a learner-facing recovery surface and logs render failures to the browser console for development and future client-side error reporting.
 - The current operations model is intentionally no-telemetry; this is acceptable while the app is a local-first portfolio product with no hosted accounts or paid service.
 - This boundary becomes insufficient before hosted accounts, sync, paid usage, formal support, public classrooms, or other real-user operating commitments.
@@ -51,7 +52,7 @@ Release safety and provenance expectations live in [RELEASE_SAFETY.md](RELEASE_S
 
 ## Change Rules
 
-- Run `npm run observability:check` after observability, monitoring, telemetry, analytics, incident-response, postmortem-template, SLO/SLA, DORA-metric, support, operations, privacy, security, legal, runtime-surface, release, or backend-readiness changes.
+- Run `npm run observability:check` after observability, monitoring, telemetry, analytics, incident-response, postmortem-template, SLO/SLA, DORA-metric, support, support-policy, operations, privacy, security, legal, runtime-surface, release, or backend-readiness changes.
 - Do not add telemetry, analytics, monitoring SDKs, remote logging, or external error-reporting endpoints without updating this contract first.
 - Keep operations, security/privacy, legal, release, quality, architecture, testing, backend-readiness, threat-model, ADR, changelog, and PR review guidance aligned when observability expectations change.
 
