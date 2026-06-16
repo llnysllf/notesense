@@ -64,6 +64,7 @@ Imported files are untrusted input:
 - No analytics, telemetry, cookies, beacons, websockets, or background sync are part of the current data contract.
 - Future account, sync, analytics, API, or hosted-storage work must update this contract, privacy docs, threat model, backend readiness, runtime-surface checks, and release guidance together.
 - Future product analytics, experiments, surveys, support tooling, or remote feature flags must not collect practice answers, note-level progress, session history, imported/exported JSON contents, raw LocalStorage, audio recordings, keystrokes, precise location, or stable cross-site identifiers without a new product, privacy, legal, security, and data-contract decision.
+- Future localization must keep exported data identifiers stable and presentation-only labels separate from stored practice IDs.
 
 ## Verification
 

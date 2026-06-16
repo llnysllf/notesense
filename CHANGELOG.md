@@ -14,6 +14,7 @@ All notable changes to NoteSense are documented here. The format follows [Keep a
 - Data-contract documentation and `npm run data:check` for LocalStorage keys, export schema, import normalization, privacy docs, and browser coverage
 - Accessibility contract with `docs/ACCESSIBILITY.md` and `npm run accessibility:check` for keyboard, screen reader, focus, motion, axe, cross-browser, and Lighthouse coverage
 - Accessibility conformance review contract for WCAG 2.2 Level AA alignment, assistive-technology review planning, and release evidence
+- Internationalization and localization readiness contract with `docs/I18N.md` and `npm run i18n:check` for English-only boundaries, future locale strategy, notation labels, layout, accessibility, data stability, and review guidance
 - Testing contract with `docs/TESTING.md` and `npm run testing:check` for test ownership, coverage thresholds, Playwright configs, browser specs, and CI evidence
 - ADR governance with `docs/adr/README.md` and `npm run adr:check` for decision numbering, status, required sections, and index links
 - Product-scope contract with `docs/PRODUCT_SCOPE.md` and `npm run product:check` for current scope, explicit non-goals, feature intake, and foundation-first expectations

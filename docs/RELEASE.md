@@ -15,6 +15,7 @@ Release safety and provenance expectations live in [RELEASE_SAFETY.md](RELEASE_S
 - Treat data-contract results as release evidence when storage keys, export schema, import normalization, privacy boundaries, or future sync assumptions change.
 - Treat security/privacy results as release evidence when local-first privacy, import/export trust, runtime APIs, CSP, PWA behavior, future auth/sync, backend readiness, telemetry, analytics, or security posture changes.
 - Treat privacy and data-handling docs as release evidence when storage, import/export, analytics, network, account, or sync behavior changes.
+- Treat i18n/l10n results as release evidence when language boundaries, translated copy, notation labels, locale formatting, right-to-left assumptions, metadata language, or localization review evidence changes.
 - Treat threat-model and backend-readiness docs as release evidence before auth, API, database, sync, PostgreSQL, or cloud infrastructure changes.
 - Treat repository hygiene results as release evidence when root configuration, ignore policy, runtime configuration, or generated artifact handling changes.
 - Treat documentation integrity results as release evidence when docs, file paths, anchors, or npm scripts change.
@@ -97,6 +98,7 @@ For UI changes, manually inspect:
 - Whether `npm run design:check` passes when tokens, layout, component states, or visual-regression coverage change.
 - Whether `npm run accessibility:check` still proves keyboard, screen reader, focus, motion, axe, cross-browser, and Lighthouse coverage are aligned.
 - Whether accessibility evidence still supports the documented WCAG 2.2 Level AA self-assessment target for changed workflows.
+- Whether `npm run i18n:check` still proves English-only boundaries, future localization rules, accessibility, layout, data stability, privacy, and review guidance are aligned.
 - Whether `npm run testing:check` still proves package scripts, coverage thresholds, Playwright configs, browser specs, and CI evidence are aligned.
 - Whether `npm run browsers:check` still proves supported engines, mobile viewports, Pages base path, visual-regression profiles, PWA/runtime boundaries, and browser-support docs are aligned.
 - Whether `npm run performance:check` still proves bundle budgets, Lighthouse thresholds, metadata/PWA/runtime checks, Pages smoke coverage, and performance-review guidance are aligned.

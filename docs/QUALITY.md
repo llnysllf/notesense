@@ -36,6 +36,7 @@ A change is done when:
 - TypeScript strictness flags stay enabled for optional properties, indexed access, overrides, and unused code.
 - Privacy and data-handling docs stay aligned with local storage, import/export, analytics, network, auth, and sync behavior.
 - Data-contract docs and `npm run data:check` stay aligned when storage keys, export schema, import normalization, or future sync assumptions change.
+- I18n/l10n docs and `npm run i18n:check` stay aligned when language boundaries, translated copy, notation labels, locale formatting, right-to-left assumptions, or localization review evidence changes.
 - Threat model and backend-readiness docs stay aligned before account, API, database, sync, or cloud infrastructure work begins.
 - Security/privacy docs and `npm run security:privacy` stay aligned when local-first privacy, import/export trust, runtime/network boundaries, CSP, PWA behavior, future auth/sync, backend readiness, telemetry, analytics, or security posture changes.
 - Documentation links, anchors, and documented npm script references stay resolvable.
@@ -330,6 +331,8 @@ When touching progress, settings, history, import, or export:
 - `npm run docs:check` verifies that policy and governance docs remain linked and aligned.
 - `npm run docs:check` also validates local Markdown links, anchors, and documented npm script references.
 - `npm run data:check` verifies that storage keys, export schema, import normalization, privacy docs, and browser coverage stay aligned.
+- `docs/I18N.md` defines the current English-only language boundary, locale-readiness rules, music-learning localization constraints, accessibility/layout expectations, and localization change process.
+- `npm run i18n:check` verifies language boundaries, `lang="en"`, future message ownership, locale formatting, layout, accessibility, data stability, privacy, release, and review guidance stay aligned.
 - `docs/LEGAL.md` defines the project license boundary, user-facing legal triggers, community-conduct expectations, dependency-license separation, and legal-change process.
 - Privacy docs must describe current browser storage keys, import/export boundaries, tracking behavior, and future account or sync expectations.
 - Security and release docs must keep privacy-impacting changes visible during review and release.
