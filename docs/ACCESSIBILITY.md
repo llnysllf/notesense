@@ -11,6 +11,13 @@ Browser support expectations live in [BROWSER_SUPPORT.md](BROWSER_SUPPORT.md).
 - The practice surface must keep clear labels for the current mode, prompt, answers, round status, saved progress, and recovery state.
 - UI changes should preserve calm focus behavior and avoid motion that distracts from practice.
 
+## WCAG Alignment
+
+- Current conformance target: NoteSense targets WCAG 2.2 Level AA for the supported browser surface and documented learner workflows.
+- This is an owner-maintained self-assessment target, not a third-party accessibility audit, VPAT, ACR, or legal certification.
+- Conformance evidence must combine automated checks, keyboard review, visual review, and assistive-technology review notes when UI behavior changes.
+- Known gaps, unavailable review devices, or deferred manual checks must be documented in the pull request and release evidence before merge.
+
 ## Keyboard And Focus
 
 - All interactive controls use native `button`, `input`, or label patterns unless a stronger semantic reason exists.
@@ -51,6 +58,17 @@ The current automated coverage includes:
 - Lighthouse accessibility scoring for the Pages-shaped build
 - visual-regression coverage for protected shells
 
+## Assistive Technology Review Plan
+
+When UI behavior, layout, copy, color, motion, controls, charts, prompts, or recovery states change, include assistive-technology review evidence appropriate to the risk:
+
+- keyboard-only navigation from app load through a completed round
+- macOS VoiceOver with Safari for primary practice flows when screen reader semantics change
+- NVDA with Firefox or Chrome when Windows desktop screen-reader coverage is available
+- iOS VoiceOver or Android TalkBack when mobile touch workflows, responsive layout, or mobile-only controls change
+- browser zoom at 200% when layout, text wrapping, or responsive density changes
+- reduced-motion behavior when animation or transition behavior changes
+
 ## Manual Review
 
 When UI behavior, layout, copy, color, motion, controls, charts, prompts, or recovery states change, review:
@@ -61,10 +79,11 @@ When UI behavior, layout, copy, color, motion, controls, charts, prompts, or rec
 - light and dark contrast for text, feedback, and focus rings
 - mobile text wrapping and horizontal overflow
 - reduced-motion behavior when animation changes
+- whether the WCAG 2.2 Level AA self-assessment target is still credible for the changed workflow
 
 ## Change Rules
 
-- Run `npm run accessibility:check` after accessibility-sensitive UI, test, style, Playwright, Lighthouse, design-system, or release-doc changes.
+- Run `npm run accessibility:check` after accessibility-sensitive UI, test, style, Playwright, Lighthouse, design-system, WCAG, assistive-technology review, or release-doc changes.
 - Run `npm run browsers:check` after changing supported browsers, device profiles, responsive support, or browser verification evidence.
 - Run `npm run test:e2e` after changing core browser workflows, keyboard behavior, ARIA state, responsive layout, or axe coverage.
 - Run `npm run test:e2e:resilience` after changing the app shell, root render path, or recovery surface.

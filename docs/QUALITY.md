@@ -28,6 +28,7 @@ A change is done when:
 - User workflows have browser coverage when UI, persistence, import/export, or accessibility-sensitive behavior changes.
 - Design-system docs and `npm run design:check` stay aligned when layout, color, spacing, typography, or component states change.
 - Accessibility contract docs and `npm run accessibility:check` stay aligned when keyboard, screen reader, focus, contrast, motion, or automated accessibility coverage changes.
+- Accessibility conformance evidence stays aligned when WCAG targets, manual assistive-technology review, or accessibility release evidence changes.
 - Testing contract docs and `npm run testing:check` stay aligned when package scripts, coverage thresholds, browser configs, CI quality gates, or test ownership changes.
 - Browser-support docs and `npm run browsers:check` stay aligned when supported browsers, Playwright projects, device profiles, Pages base path, Web Audio behavior, LocalStorage behavior, responsive support, color-scheme support, PWA/offline behavior, runtime-surface policy, or browser verification evidence changes.
 - Performance docs and `npm run performance:check` stay aligned when bundle budgets, tracked asset categories, Lighthouse thresholds, Lighthouse workflow behavior, metadata checks, PWA artifact checks, runtime-surface checks, Pages smoke behavior, or performance review expectations change.
@@ -225,7 +226,7 @@ For visual QA:
 
 ## Accessibility Checklist
 
-- `docs/ACCESSIBILITY.md` defines the product accessibility standard, keyboard and focus rules, screen reader semantics, visual and motion rules, automated coverage, manual review expectations, and change process.
+- `docs/ACCESSIBILITY.md` defines the product accessibility standard, WCAG 2.2 Level AA target, keyboard and focus rules, screen reader semantics, visual and motion rules, automated coverage, assistive-technology review expectations, manual review expectations, and change process.
 - `npm run accessibility:check` verifies that source semantics, styles, browser tests, lint rules, and docs stay aligned.
 - All interactive controls are keyboard reachable.
 - Focus rings are visible and not clipped.
@@ -233,6 +234,7 @@ For visual QA:
 - Color contrast passes automated axe checks.
 - SVGs that communicate data have useful labels.
 - Decorative SVG/text is hidden from assistive technology.
+- Manual review notes identify any unavailable assistive-technology profile or deferred WCAG evidence.
 - Motion respects `prefers-reduced-motion`.
 
 ## Design System
