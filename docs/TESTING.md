@@ -28,6 +28,7 @@ NoteSense keeps a small product surface, but the testing system should still mak
 ## Determinism Rules
 
 - Browser tests run against production preview builds, not the development server.
+- Preview servers use explicit ports and fail fast when a port is unavailable so browser tests do not accidentally wait on or reuse the wrong server.
 - UI behavior tests block service workers so cache lifecycle timing does not affect workflow results.
 - PWA behavior is verified through generated-artifact checks, live deployment checks, and Lighthouse instead of being mixed into normal UI tests.
 - Browser suites fail on uncaught page errors and unexpected console errors.
@@ -77,5 +78,6 @@ NoteSense keeps a small product surface, but the testing system should still mak
 - release-safety governance stays part of the foundation contract gate
 - Vitest coverage thresholds remain per-file for core modules
 - Playwright configs keep service workers blocked, traces retained on failure, and expected browser projects
+- Playwright configs keep explicit preview-server ports aligned with their `baseURL` and web-server URL
 - browser specs continue to cover accessibility, keyboard, import/export, storage failure, responsive, resilience, Pages, and visual-regression behavior
 - CI still runs `npm run verify` and uploads browser failure artifacts only on failure

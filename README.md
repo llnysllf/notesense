@@ -406,6 +406,7 @@ npm run ops:repository
 - `npm run design:check` rejects hard-coded theme colors outside token definitions so light and dark mode changes stay centralized.
 - `npm run accessibility:check` verifies keyboard, screen reader, focus, motion, axe, cross-browser, and Lighthouse accessibility coverage stay connected.
 - `npm run testing:check` verifies that the test ownership matrix, package scripts, Vitest coverage thresholds, Playwright configs, browser specs, and CI quality gate stay aligned.
+- `npm run testing:check` also verifies Playwright preview server ports stay explicit and aligned with their `baseURL` and readiness URLs.
 - `npm run browsers:check` verifies Playwright browser projects, Pages/mobile support, visual-regression profiles, PWA/runtime boundaries, and browser-support docs stay aligned.
 - `npm run performance:check` verifies bundle budgets, Lighthouse thresholds, metadata/PWA/runtime checks, Pages smoke coverage, and performance-review guidance stay aligned.
 - `npm run operations:check` verifies release-health signals, post-release verification, incident triggers, triage, rollback, evidence handling, observability boundaries, and operations-review guidance stay aligned.

@@ -36,6 +36,7 @@ requireSnippets("docs/BROWSER_SUPPORT.md", [
   "Performance expectations live in [PERFORMANCE.md](PERFORMANCE.md).",
   "Run `npm run browsers:check` after browser-support, Playwright project, Pages smoke, visual-regression, PWA, runtime-surface, Lighthouse, or browser-support documentation changes.",
   "Run `npm run performance:check` when browser changes affect bundle budgets, Lighthouse, metadata, PWA, runtime-surface, or Pages smoke evidence.",
+  "Playwright preview commands must use explicit ports aligned with their `baseURL` and readiness URL.",
 ]);
 
 requireSnippets("package.json", [
@@ -52,7 +53,7 @@ requireSnippets("playwright.config.ts", [
   'baseURL: "http://127.0.0.1:4173"',
   'serviceWorkers: "block"',
   'trace: "retain-on-failure"',
-  'command: "npm run build && npm run preview -- --host 127.0.0.1"',
+  'command: "npm run build && npm run preview -- --host 127.0.0.1 --port 4173 --strictPort"',
   'name: "chromium"',
   'name: "firefox"',
   'name: "webkit"',

@@ -36,6 +36,7 @@ Performance expectations live in [PERFORMANCE.md](PERFORMANCE.md).
 - `npm run pwa:check` verifies generated service-worker static precache behavior.
 - `npm run runtime:check` verifies client source and built Pages output stay inside the local-first runtime boundary.
 - The Lighthouse workflow verifies deployment-shaped performance, accessibility, best-practice, SEO, and PWA signals.
+- Playwright preview commands must use explicit ports aligned with their `baseURL` and readiness URL.
 
 ## Change Rules
 
@@ -51,5 +52,6 @@ Performance expectations live in [PERFORMANCE.md](PERFORMANCE.md).
 
 - this contract keeps supported-surface, runtime-assumption, unsupported-surface, verification-evidence, change-rule, and verification sections
 - Playwright configs keep the reviewed browser engines, mobile profiles, Pages base path, visual-regression profiles, service-worker blocking, and trace policy
+- Playwright configs keep preview-server ports explicit and aligned with their `baseURL` and readiness URL
 - browser specs continue to cover accessibility, keyboard, import/export, storage failures, responsive layout, Pages base path, and visual-regression shells
 - README, contributing, accessibility, testing, quality, release, architecture, operations, privacy, ADR, changelog, and PR review guidance stay connected to browser support
