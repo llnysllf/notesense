@@ -19,6 +19,7 @@ NoteSense keeps a small product surface, but the testing system should still mak
 - Add or update unit tests when pure calculations, data normalization, storage migration, merge behavior, or reducer-style state changes.
 - Add or update component tests when a reusable component state, ARIA label, meter, chart label, or empty state changes and the full browser workflow would be too broad.
 - Add or update main Playwright tests when a learner workflow, keyboard behavior, persistence path, import/export path, accessibility-sensitive behavior, or responsive behavior changes.
+- Add or update manual accessibility evidence when WCAG target coverage, assistive-technology review scope, screen reader semantics, or accessibility release evidence changes.
 - Add or update resilience tests when the app shell, root render path, or error boundary changes.
 - Add or update Pages smoke tests when build output, base-path behavior, metadata, CSP, static assets, or preview serving changes.
 - Add or update visual-regression baselines when intentional UI changes affect layout, color, spacing, typography, or protected component appearance.

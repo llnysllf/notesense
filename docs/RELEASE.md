@@ -22,6 +22,7 @@ Release safety and provenance expectations live in [RELEASE_SAFETY.md](RELEASE_S
 - Treat review/intake results as release evidence when CODEOWNERS, issue templates, PR templates, labels, triage routing, or review evidence expectations change.
 - Treat design-system results as UI release evidence when tokens, component states, responsive behavior, typography, or visual-regression coverage changes.
 - Treat accessibility-contract results as release evidence when keyboard behavior, screen reader semantics, focus visibility, contrast, motion, or automated accessibility coverage changes.
+- Treat accessibility conformance results as release evidence when WCAG targets, manual assistive-technology review, or accessibility self-assessment scope changes.
 - Treat testing-contract results as release evidence when test ownership, package scripts, coverage thresholds, browser configs, CI quality gates, or workflow evidence changes.
 - Treat browser-support results as release evidence when supported browsers, Playwright projects, device profiles, Pages base path, Web Audio behavior, LocalStorage behavior, responsive support, color-scheme support, PWA/offline behavior, runtime-surface policy, or browser verification evidence changes.
 - Treat performance-contract results as release evidence when bundle budgets, tracked asset categories, Lighthouse thresholds, Lighthouse workflow behavior, metadata checks, PWA artifact checks, runtime-surface checks, Pages smoke behavior, or performance review expectations change.
@@ -95,6 +96,7 @@ For UI changes, manually inspect:
 - Reduced-motion behavior when animation changes.
 - Whether `npm run design:check` passes when tokens, layout, component states, or visual-regression coverage change.
 - Whether `npm run accessibility:check` still proves keyboard, screen reader, focus, motion, axe, cross-browser, and Lighthouse coverage are aligned.
+- Whether accessibility evidence still supports the documented WCAG 2.2 Level AA self-assessment target for changed workflows.
 - Whether `npm run testing:check` still proves package scripts, coverage thresholds, Playwright configs, browser specs, and CI evidence are aligned.
 - Whether `npm run browsers:check` still proves supported engines, mobile viewports, Pages base path, visual-regression profiles, PWA/runtime boundaries, and browser-support docs are aligned.
 - Whether `npm run performance:check` still proves bundle budgets, Lighthouse thresholds, metadata/PWA/runtime checks, Pages smoke coverage, and performance-review guidance are aligned.

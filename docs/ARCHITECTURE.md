@@ -30,7 +30,7 @@ NoteSense is currently a local-first React application. The product goal is to k
 - `docs/DEPENDENCY_MAINTENANCE.md` documents dependency sources, Dependabot policy, update classes, review evidence, and dependency-maintenance verification.
 - `docs/LEGAL.md` documents the project license boundary, user-facing legal triggers, community-conduct expectations, dependency-license separation, and legal-change process.
 - `docs/DESIGN_SYSTEM.md` documents the design-token, component-state, accessibility, and visual-regression contract for UI changes.
-- `docs/ACCESSIBILITY.md` documents the keyboard, screen reader, focus, contrast, motion, and automated accessibility coverage contract.
+- `docs/ACCESSIBILITY.md` documents the WCAG alignment, assistive-technology review, keyboard, screen reader, focus, contrast, motion, and automated accessibility coverage contract.
 - `docs/TESTING.md` documents test ownership, change routing, determinism, coverage, CI, and review expectations.
 - `docs/BROWSER_SUPPORT.md` documents supported engines, device shapes, runtime assumptions, unsupported surfaces, and browser verification evidence.
 - `docs/PERFORMANCE.md` documents the product performance standard, bundle budgets, Lighthouse signal, static asset boundaries, and performance verification evidence.
@@ -103,6 +103,7 @@ Every feature should keep these expectations intact:
 - Unexpected render failures should show the app-level recovery screen instead of leaving a blank product surface.
 - Accessibility is part of the feature definition, not a final cleanup step.
 - Accessibility-contract changes should keep source semantics, focus behavior, reduced-motion behavior, axe coverage, Lighthouse expectations, and release guidance aligned.
+- Accessibility conformance changes should keep WCAG targets, assistive-technology review evidence, manual review expectations, release guidance, and PR review guidance aligned.
 - Testing-contract changes should keep package scripts, coverage thresholds, browser configs, CI workflow evidence, and release guidance aligned.
 - Browser-support changes should keep supported engines, device profiles, Pages base path, Web Audio behavior, LocalStorage behavior, responsive support, PWA/offline behavior, accessibility guidance, testing guidance, release guidance, and PR review guidance aligned.
 - Performance-contract changes should keep bundle budgets, Lighthouse thresholds, metadata checks, PWA checks, runtime-surface checks, Pages smoke coverage, browser-support guidance, dependency guidance, release guidance, and PR review guidance aligned.
