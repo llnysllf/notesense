@@ -12,6 +12,7 @@ Release safety and provenance expectations live in [RELEASE_SAFETY.md](RELEASE_S
 
 - The supported production surface is the `main` branch deployed to GitHub Pages at `https://llnysllf.github.io/notesense/`.
 - The app stores practice progress and settings in the learner's browser. There is no hosted account, backend API, database, analytics service, or support queue yet.
+- Support expectations and non-SLA boundaries live in [../.github/SUPPORT.md](../.github/SUPPORT.md).
 - GitHub Actions, repository governance checks, live deployment verification, and user-reported issues are the current operational signal.
 - Do not add telemetry, monitoring SDKs, backend APIs, or third-party services without updating privacy, security, runtime-surface, release, threat-model, backend-readiness, and operations docs together.
 
@@ -90,7 +91,7 @@ Before shipping accounts, sync, APIs, or managed storage, add an observability p
 
 ## Change Rules
 
-- Run `npm run operations:check` after operations-runbook, release, deployment, PWA, repository-governance, security, privacy, backend-readiness, monitoring, telemetry, support, or rollback changes.
+- Run `npm run operations:check` after operations-runbook, release, deployment, PWA, repository-governance, security, privacy, backend-readiness, monitoring, telemetry, support, support-policy, or rollback changes.
 - Run `npm run product:learning` after product-feedback, analytics, experiment, feature-flag, survey, support, product-metric, delivery-metric, DORA, roadmap, or product-learning changes.
 - Run `npm run observability:check` after observability, monitoring, telemetry, analytics, incident-response, postmortem-template, SLO/SLA, DORA-metric, support, or production-visibility changes.
 - Run `npm run release:safety` after release-safety, deployment, staging, canary, progressive-rollout, rollback, provenance, SBOM, signing, artifact, Pages, workflow, or release-signoff changes.

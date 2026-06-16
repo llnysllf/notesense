@@ -15,7 +15,7 @@
 - [ ] ADR impact was considered for decision numbering, status, index links, and required sections.
 - [ ] Product-scope impact was considered for current scope, explicit non-goals, feature intake, and foundation-first expectations.
 - [ ] Product-learning impact was considered for feedback loops, future analytics, experiments, feature flags, support signals, delivery metrics, and roadmap validation.
-- [ ] Review/intake impact was considered for CODEOWNERS, issue templates, PR evidence, labels, and triage routing.
+- [ ] Review/intake impact was considered for CODEOWNERS, support policy, issue templates, PR evidence, labels, and triage routing.
 - [ ] Persistence/import/export behavior is unchanged or has a tested migration path.
 - [ ] Data-contract impact was considered for storage keys, export schema, import normalization, privacy docs, and future sync assumptions.
 - [ ] Runtime changes keep `.nvmrc`, package engines, GitHub Actions, docs, and ADRs aligned.

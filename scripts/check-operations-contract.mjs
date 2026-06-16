@@ -40,7 +40,7 @@ requireSnippets("docs/OPERATIONS.md", [
   "Do not add telemetry, monitoring SDKs, backend APIs, or third-party services without updating privacy, security, runtime-surface, release, threat-model, backend-readiness, and operations docs together.",
   "Observability and incident-learning expectations live in [OBSERVABILITY.md](OBSERVABILITY.md).",
   "Use [POSTMORTEM_TEMPLATE.md](POSTMORTEM_TEMPLATE.md) for user-impacting production incidents and process gaps that should teach the project something durable.",
-  "Run `npm run operations:check` after operations-runbook, release, deployment, PWA, repository-governance, security, privacy, backend-readiness, monitoring, telemetry, support, or rollback changes.",
+  "Run `npm run operations:check` after operations-runbook, release, deployment, PWA, repository-governance, security, privacy, backend-readiness, monitoring, telemetry, support, support-policy, or rollback changes.",
   "Run `npm run observability:check` after observability, monitoring, telemetry, analytics, incident-response, postmortem-template, SLO/SLA, DORA-metric, support, or production-visibility changes.",
   "Run `npm run ops:repository` after branch protection, required-check, repository security, Pages, or workflow-activation changes.",
 ]);
