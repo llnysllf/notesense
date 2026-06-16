@@ -116,7 +116,9 @@ Highlights:
 | Release & safety       | [docs/RELEASE.md](docs/RELEASE.md), [docs/RELEASE_SAFETY.md](docs/RELEASE_SAFETY.md) |
 | Backend readiness      | [docs/BACKEND_READINESS.md](docs/BACKEND_READINESS.md)                               |
 | Contributing           | [CONTRIBUTING.md](CONTRIBUTING.md)                                                   |
+| Code of Conduct        | [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md)                                             |
 | Security policy        | [SECURITY.md](SECURITY.md)                                                           |
+| Legal                  | [docs/LEGAL.md](docs/LEGAL.md)                                                       |
 | Changelog              | [CHANGELOG.md](CHANGELOG.md)                                                         |
 
 ## Scope

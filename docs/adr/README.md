@@ -65,3 +65,4 @@ Architecture Decision Records document durable product and engineering decisions
 - [ADR 0048: Add Source Size Budget Check](0048-add-source-size-budget-check.md) - Accepted
 - [ADR 0049: Add Color Token Drift Check](0049-add-color-token-drift-check.md) - Accepted
 - [ADR 0050: Add Playwright Strict Port Contract](0050-add-playwright-strict-port-contract.md) - Accepted
+- [ADR 0051: Add Code Of Conduct Contract](0051-add-code-of-conduct-contract.md) - Accepted
