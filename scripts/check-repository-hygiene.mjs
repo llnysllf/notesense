@@ -8,6 +8,7 @@ const REQUIRED_FILES = [
   ".nvmrc",
   ".prettierignore",
   ".prettierrc.json",
+  "CODE_OF_CONDUCT.md",
   ".github/CODEOWNERS",
   ".github/dependabot.yml",
   ".github/pull_request_template.md",

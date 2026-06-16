@@ -26,6 +26,7 @@ All notable changes to NoteSense are documented here. The format follows [Keep a
 - Release-safety and provenance contract with `docs/RELEASE_SAFETY.md` and `npm run release:safety` for direct-to-Pages release boundaries, staging/canary triggers, rollback expectations, artifact/provenance expectations, and release-review guidance
 - Security/privacy contract with `docs/SECURITY_PRIVACY.md` and `npm run security:privacy` for local-first privacy, import/export trust, runtime/network boundaries, CSP, PWA behavior, future auth/sync, backend readiness, and review/release evidence
 - Legal/licensing contract with a root `LICENSE`, `docs/LEGAL.md`, `license: "UNLICENSED"`, and `npm run legal:check` for project-license, package metadata, user-facing legal, dependency-license boundary, and review/release guidance
+- Code of Conduct policy for repository participation, reporting, enforcement, and legal-contract alignment
 - GitHub Actions workflow policy gates that require immutable action references and least-privilege token permissions
 - GitHub repository governance check for branch protection, required checks, repository security settings, vulnerability alerts, Pages, and active workflows
 - Dependency Review workflow for pull requests that introduce dependency or lockfile changes

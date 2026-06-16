@@ -69,7 +69,7 @@ NoteSense keeps a small product surface, but the testing system should still mak
 - product-learning governance stays part of the foundation contract gate
 - review/intake governance stays part of the foundation contract gate
 - dependency-maintenance governance stays part of the foundation contract gate
-- legal/licensing governance stays part of the foundation contract gate
+- legal/licensing and conduct governance stays part of the foundation contract gate
 - security/privacy governance stays part of the foundation contract gate
 - browser-support governance stays part of the foundation contract gate
 - performance governance stays part of the foundation contract gate

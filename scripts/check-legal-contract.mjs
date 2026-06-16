@@ -46,6 +46,19 @@ requireSnippets("LICENSE", [
   "Third-party dependencies remain governed by their own licenses.",
 ]);
 
+requireSnippets("CODE_OF_CONDUCT.md", [
+  "# Code Of Conduct",
+  "## Standard",
+  "## Unacceptable Behavior",
+  "## Reporting",
+  "## Enforcement",
+  "## Scope",
+  "## Change Rules",
+  "This Code of Conduct applies to participation in the NoteSense repository and project-managed spaces.",
+  "It does not change the project license, grant source-code rights, or create a formal support commitment.",
+  "Run `npm run legal:check` and `npm run docs:check` after conduct-policy changes.",
+]);
+
 const packageJson = readJson("package.json");
 if (packageJson) {
   if (packageJson.private !== true) {
@@ -68,6 +81,7 @@ requireSnippets("docs/LEGAL.md", [
   "# Legal And Licensing Contract",
   "## Project License",
   "## User-Facing Legal Surface",
+  "## Community Conduct",
   "## Dependency License Boundary",
   "## Change Rules",
   "## Verification",
@@ -76,10 +90,13 @@ requireSnippets("docs/LEGAL.md", [
   '`package.json` uses `license: "UNLICENSED"` and `private: true` so npm metadata does not imply open-source distribution rights.',
   "Add user-facing Terms of Service before shipping hosted accounts, payments, subscriptions, collaboration, public sharing, user-generated cloud content, or a formal support channel.",
   "Add an externally hosted privacy policy before collecting production telemetry, analytics, account data, sync data, or backend logs tied to users.",
-  "Add a `CODE_OF_CONDUCT.md` before treating the repository as an external contributor community rather than an owner-maintained portfolio product.",
+  "The root [CODE_OF_CONDUCT.md](../CODE_OF_CONDUCT.md) file defines expected behavior for issues, pull requests, reviews, and project-managed discussion.",
+  "The Code of Conduct does not change project license terms, grant source-code rights, or replace security/privacy reporting guidance.",
   "Dependency license compliance covers installed third-party packages, not the license for NoteSense's own source code.",
-  "Run `npm run legal:check` after changing the root license, package license metadata, legal docs, user-facing terms, privacy-policy hosting, contributor community expectations, dependency license policy, release guidance, or PR review guidance.",
+  "Run `npm run legal:check` after changing the root license, package license metadata, legal docs, user-facing terms, privacy-policy hosting, contributor community expectations, code-of-conduct expectations, dependency license policy, release guidance, or PR review guidance.",
 ]);
+
+requireSnippets("README.md", ["[CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md)", "[docs/LEGAL.md](docs/LEGAL.md)"]);
 
 requireSnippets("package.json", [
   '"license": "UNLICENSED"',
@@ -91,33 +108,36 @@ requireSnippets("CONTRIBUTING.md", [
   "For legal, licensing, user-facing terms, privacy-policy hosting, contributor-community, or project-license metadata changes, keep [docs/LEGAL.md](docs/LEGAL.md) aligned and run the legal contract check:",
   "npm run legal:check",
   "Keep [docs/LEGAL.md](docs/LEGAL.md) aligned when changing root license terms, package license metadata, user-facing terms, privacy-policy hosting, contributor-community expectations, dependency license policy, release guidance, or PR review guidance; run `npm run legal:check` after legal-sensitive changes.",
+  "Participation in issues, pull requests, reviews, and project-managed discussion should follow [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md).",
+  "Keep [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md) aligned when changing contributor-community, moderation, reporting, participation, or conduct expectations.",
 ]);
 
 requireSnippets(".github/pull_request_template.md", [
-  "Legal/licensing impact was considered for root license terms, package metadata, user-facing terms, privacy-policy hosting, contributor community expectations, and dependency license policy.",
+  "Legal/licensing impact was considered for root license terms, package metadata, user-facing terms, privacy-policy hosting, contributor community expectations, code-of-conduct expectations, and dependency license policy.",
 ]);
 
 requireSnippets("docs/QUALITY.md", [
-  "Legal/licensing docs and `npm run legal:check` stay aligned when root license terms, package metadata, user-facing terms, privacy-policy hosting, contributor-community expectations, dependency license policy, release guidance, or PR review guidance changes.",
+  "Legal/licensing docs and `npm run legal:check` stay aligned when root license terms, package metadata, user-facing terms, privacy-policy hosting, contributor-community expectations, code-of-conduct expectations, dependency license policy, release guidance, or PR review guidance changes.",
   "For legal/licensing feedback:",
   "npm run legal:check",
-  "`docs/LEGAL.md` defines the project license boundary, user-facing legal triggers, dependency-license separation, and legal-change process.",
+  "`docs/LEGAL.md` defines the project license boundary, user-facing legal triggers, community-conduct expectations, dependency-license separation, and legal-change process.",
+  "`npm run legal:check` verifies root license terms, package metadata, legal docs, code-of-conduct expectations, dependency-license boundaries, release guidance, and PR review guidance stay aligned.",
 ]);
 
 requireSnippets("docs/RELEASE.md", [
-  "Treat legal/licensing results as release evidence when root license terms, package metadata, user-facing terms, privacy-policy hosting, contributor-community expectations, dependency license policy, release guidance, or PR review guidance changes.",
-  "Whether `npm run legal:check` still proves project license, package metadata, legal docs, dependency-license boundaries, release guidance, and PR review guidance are aligned.",
+  "Treat legal/licensing results as release evidence when root license terms, package metadata, user-facing terms, privacy-policy hosting, contributor-community expectations, code-of-conduct expectations, dependency license policy, release guidance, or PR review guidance changes.",
+  "Whether `npm run legal:check` still proves project license, package metadata, legal docs, code-of-conduct expectations, dependency-license boundaries, release guidance, and PR review guidance are aligned.",
 ]);
 
 requireSnippets("docs/ARCHITECTURE.md", [
-  "`docs/LEGAL.md` documents the project license boundary, user-facing legal triggers, dependency-license separation, and legal-change process.",
-  "`scripts/check-legal-contract.mjs` owns legal/licensing drift checks for the root license, package metadata, legal docs, dependency-license boundaries, release guidance, and PR review guidance.",
-  "Legal/licensing changes should keep root license terms, package metadata, user-facing terms, privacy-policy hosting, contributor-community expectations, dependency license policy, release guidance, and PR review guidance aligned.",
+  "`docs/LEGAL.md` documents the project license boundary, user-facing legal triggers, community-conduct expectations, dependency-license separation, and legal-change process.",
+  "`scripts/check-legal-contract.mjs` owns legal/licensing drift checks for the root license, package metadata, legal docs, code-of-conduct expectations, dependency-license boundaries, release guidance, and PR review guidance.",
+  "Legal/licensing changes should keep root license terms, package metadata, user-facing terms, privacy-policy hosting, contributor-community expectations, code-of-conduct expectations, dependency license policy, release guidance, and PR review guidance aligned.",
 ]);
 
 requireSnippets("docs/TESTING.md", [
   "npm run legal:check",
-  "legal/licensing governance stays part of the foundation contract gate",
+  "legal/licensing and conduct governance stays part of the foundation contract gate",
 ]);
 
 requireSnippets("docs/DEPENDENCY_MAINTENANCE.md", [
@@ -130,14 +150,18 @@ requireSnippets("docs/SECURITY_PRIVACY.md", [
   "Run `npm run legal:check` before adding user-facing terms, externally hosted privacy policies, contributor-community terms, production telemetry, analytics, account data, sync data, or backend logs tied to users.",
 ]);
 
-requireSnippets("docs/adr/README.md", ["ADR 0044: Add Legal And License Contract"]);
+requireSnippets("docs/adr/README.md", [
+  "ADR 0044: Add Legal And License Contract",
+  "ADR 0051: Add Code Of Conduct Contract",
+]);
 
 requireSnippets("CHANGELOG.md", [
   'Legal/licensing contract with a root `LICENSE`, `docs/LEGAL.md`, `license: "UNLICENSED"`, and `npm run legal:check` for project-license, package metadata, user-facing legal, dependency-license boundary, and review/release guidance',
+  "Code of Conduct policy for repository participation, reporting, enforcement, and legal-contract alignment",
 ]);
 
 console.log("- project license and package metadata checked");
-console.log("- legal docs and user-facing legal triggers checked");
+console.log("- legal docs, conduct policy, and user-facing legal triggers checked");
 console.log("- governance, release, and dependency-license links checked");
 
 if (failures.length > 0) {

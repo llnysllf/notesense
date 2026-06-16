@@ -88,6 +88,8 @@ For legal, licensing, user-facing terms, privacy-policy hosting, contributor-com
 npm run legal:check
 ```
 
+Participation in issues, pull requests, reviews, and project-managed discussion should follow [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md).
+
 For security/privacy, runtime-surface, CSP, PWA, import/export, storage, telemetry, analytics, auth, sync, backend-readiness, threat-model, or security-doc changes, keep [docs/SECURITY_PRIVACY.md](docs/SECURITY_PRIVACY.md) aligned and run the security/privacy contract check:
 
 ```bash
@@ -136,6 +138,7 @@ npm run test:e2e:visual:update
 - Keep [docs/REVIEW_PROCESS.md](docs/REVIEW_PROCESS.md) aligned when changing CODEOWNERS, issue templates, PR template, review routing, labels, or triage expectations; run `npm run review:check` after review-process changes.
 - Keep [docs/DEPENDENCY_MAINTENANCE.md](docs/DEPENDENCY_MAINTENANCE.md) aligned when changing Dependabot cadence, dependency grouping, ignored update types, package manager policy, lockfile policy, license policy, or workflow-update policy; run `npm run dependencies:check` after dependency-maintenance changes.
 - Keep [docs/LEGAL.md](docs/LEGAL.md) aligned when changing root license terms, package license metadata, user-facing terms, privacy-policy hosting, contributor-community expectations, dependency license policy, release guidance, or PR review guidance; run `npm run legal:check` after legal-sensitive changes.
+- Keep [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md) aligned when changing contributor-community, moderation, reporting, participation, or conduct expectations.
 - Keep [docs/SECURITY_PRIVACY.md](docs/SECURITY_PRIVACY.md) aligned when privacy, security, data-contract, runtime-surface, CSP, PWA, import/export, storage, telemetry, analytics, auth, sync, backend-readiness, threat-model, or security-doc expectations change; run `npm run security:privacy` after security/privacy-sensitive changes.
 - Keep dependency license changes intentional; explain new licenses before updating the allowlist.
 - Keep dependency changes passing Dependency Review before merge.
