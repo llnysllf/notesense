@@ -6,7 +6,7 @@ NoteSense keeps a small product surface, but the testing system should still mak
 
 - Formatting and static analysis: `npm run format:check`, `npm run lint`, and `npm run typecheck` own code style, JSX accessibility linting, React hook rules, and strict TypeScript correctness.
 - Repository and documentation contracts: `npm run repo:hygiene`, `npm run docs:check`, `npm run adr:check`, `npm run product:check`, `npm run product:learning`, `npm run review:check`, `npm run dependencies:check`, `npm run legal:check`, `npm run architecture:check`, `npm run data:check`, `npm run i18n:check`, `npm run security:privacy`, `npm run design:check`, `npm run accessibility:check`, `npm run testing:check`, `npm run browsers:check`, `npm run performance:check`, `npm run operations:check`, `npm run observability:check`, `npm run release:safety`, and `npm run release:notes` own foundation drift.
-- Unit and component tests: `npm run test` owns pure practice logic, data contracts, merge behavior, storage behavior, React hook orchestration, and reusable UI component states.
+- Unit and component tests: `npm run test` owns pure practice logic, data contracts, merge behavior, storage behavior, React hook orchestration, shared contract-check helper behavior, and reusable UI component states.
 - Coverage: `npm run test:coverage` owns per-file thresholds for the framework-independent practice, storage, shared data, and hook orchestration modules.
 - Browser workflow tests: `npm run test:e2e` owns the production-preview practice loop, keyboard answers, import/export, storage failures, responsive overflow, axe scans, and cross-browser behavior.
 - Runtime resilience tests: `npm run test:e2e:resilience` owns the app-level recovery screen when rendering fails.
@@ -16,7 +16,7 @@ NoteSense keeps a small product surface, but the testing system should still mak
 
 ## Change Routing
 
-- Add or update unit tests when pure calculations, data normalization, storage migration, merge behavior, hook orchestration, or reducer-style state changes.
+- Add or update unit tests when pure calculations, data normalization, storage migration, merge behavior, hook orchestration, shared contract-check helper behavior, or reducer-style state changes.
 - Add or update component tests when a reusable component state, ARIA label, meter, chart label, or empty state changes and the full browser workflow would be too broad.
 - Add or update main Playwright tests when a learner workflow, keyboard behavior, persistence path, import/export path, accessibility-sensitive behavior, or responsive behavior changes.
 - Add or update manual accessibility evidence when WCAG target coverage, assistive-technology review scope, screen reader semantics, or accessibility release evidence changes.

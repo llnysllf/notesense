@@ -1,5 +1,6 @@
 import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
+import { includesContractSnippet } from "./lib/contract-checks.mjs";
 
 const DIST_DIR = "dist";
 const LIVE_URL = "https://llnysllf.github.io/notesense/";
@@ -35,7 +36,7 @@ function readDistFile(fileName) {
 }
 
 function assertIncludes(content, snippet, label) {
-  assert(content.includes(snippet), `${label} is missing expected snippet: ${snippet}`);
+  assert(includesContractSnippet(content, snippet), `${label} is missing expected snippet: ${snippet}`);
 }
 
 function parseJson(content, label) {

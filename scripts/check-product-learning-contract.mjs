@@ -1,4 +1,5 @@
 import { existsSync, readFileSync } from "node:fs";
+import { includesContractSnippet } from "./lib/contract-checks.mjs";
 
 const failures = [];
 
@@ -15,7 +16,7 @@ function requireSnippets(file, snippets) {
   const content = readProjectFile(file);
 
   for (const snippet of snippets) {
-    if (!content.includes(snippet)) {
+    if (!includesContractSnippet(content, snippet)) {
       failures.push(`${file} is missing expected product-learning text: ${snippet}`);
     }
   }

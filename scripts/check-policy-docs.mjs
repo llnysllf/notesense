@@ -1,4 +1,5 @@
 import { existsSync, readFileSync } from "node:fs";
+import { includesContractSnippet } from "./lib/contract-checks.mjs";
 
 const requiredFiles = [
   "README.md",
@@ -709,7 +710,7 @@ for (const { file, snippets } of requiredSnippets) {
   const content = readProjectFile(file);
 
   for (const snippet of snippets) {
-    assert(content.includes(snippet), `${file} is missing expected policy text: ${snippet}`);
+    assert(includesContractSnippet(content, snippet), `${file} is missing expected policy text: ${snippet}`);
   }
 }
 
