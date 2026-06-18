@@ -84,6 +84,7 @@ NoteSense is currently a local-first React application. The product goal is to k
 - `scripts/check-workflow-permissions.mjs` owns GitHub Actions token-permission policy enforcement.
 - `scripts/check-workflow-operations.mjs` owns GitHub Actions concurrency, timeout, and artifact-retention policy enforcement.
 - `scripts/check-github-repository.mjs` owns GitHub repository governance drift detection for branch protection, required checks, security settings, Pages, vulnerability alerts, and active workflows.
+- App-shell coverage protects `src/App.tsx` as the coordinator for settings, rounds, mode switching, import/export, reset, and status messaging.
 
 ## Quality Bar
 
@@ -136,6 +137,7 @@ Every feature should keep these expectations intact:
 - Deployment base-path smoke coverage is part of release readiness because GitHub Pages serves the app from `/notesense/`.
 - The full `npm run check` gate must pass before a change is considered ready.
 - The full `npm run verify` release gate must pass before a change is shipped.
+- App-shell unit coverage should protect the main coordinator without replacing browser workflow tests.
 - Core unit coverage thresholds should protect the practice engine and storage contracts without pretending to replace browser workflow tests.
 - Hook coverage should protect settings, progress, data portability, timers, answer handling, audio callbacks, and session reset orchestration.
 - Component tests should cover reusable UI states that are awkward to exercise through full browser workflows.

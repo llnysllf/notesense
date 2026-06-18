@@ -17,6 +17,7 @@ All notable changes to NoteSense are documented here. The format follows [Keep a
 - Internationalization and localization readiness contract with `docs/I18N.md` and `npm run i18n:check` for English-only boundaries, future locale strategy, notation labels, layout, accessibility, data stability, and review guidance
 - Testing contract with `docs/TESTING.md` and `npm run testing:check` for test ownership, coverage thresholds, Playwright configs, browser specs, and CI evidence
 - Hook-focused unit coverage for settings, progress, data portability, and practice-session orchestration
+- App-shell coverage gate for settings, rounds, import/export, reset, mode switching, and status coordination
 - Shared contract-check helper with whitespace-normalized snippet matching and focused unit coverage
 - ADR governance with `docs/adr/README.md` and `npm run adr:check` for decision numbering, status, required sections, and index links
 - Product-scope contract with `docs/PRODUCT_SCOPE.md` and `npm run product:check` for current scope, explicit non-goals, feature intake, and foundation-first expectations
