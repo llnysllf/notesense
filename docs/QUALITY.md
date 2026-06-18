@@ -23,6 +23,7 @@ A change is done when:
 - Source-size budgets pass `npm run architecture:check` so future features split app-shell, hook, component, core, and shared-contract responsibilities before files become too broad.
 - Pure practice, analytics, and data-shape logic has unit coverage.
 - Core practice and storage modules meet the configured Vitest coverage thresholds.
+- React hook orchestration for settings, progress, data portability, and practice sessions meets the configured Vitest coverage thresholds.
 - Shared data contract modules meet the configured Vitest coverage thresholds when they change.
 - Reusable UI components have focused component coverage for accessibility labels and state rendering where browser workflows would be too broad.
 - User workflows have browser coverage when UI, persistence, import/export, or accessibility-sensitive behavior changes.
@@ -217,7 +218,7 @@ For visual QA:
 - Confirm `npm run runtime:check` passes when client runtime APIs, URLs, privacy boundaries, or build references change.
 - Confirm bundle growth is intentional when `npm run perf:budget` changes or fails.
 - Confirm `npm run security:workflows` passes after workflow action, permission, timeout, concurrency, or artifact-retention changes.
-- Confirm `npm run test:coverage` passes when practice-engine, analytics, or storage behavior changes.
+- Confirm `npm run test:coverage` passes when practice-engine, analytics, storage behavior, or hook orchestration changes.
 - Confirm `npm run test:coverage` passes when shared data contracts or reusable UI component states change.
 - Confirm `npm run test:e2e:resilience` passes when app shell, error-boundary, or root rendering behavior changes.
 - Confirm `npm run test:e2e:pages` passes when deployment base path, build output, or preview behavior changes.
@@ -481,6 +482,7 @@ After pushing:
 ## Unit Coverage
 
 - `npm run test:coverage` measures the framework-independent practice and storage modules.
+- Focused hook orchestration coverage covers settings, progress, data portability, and practice-session flow.
 - Coverage thresholds live in `vite.config.ts` and are included in `npm run check`.
 - `@testing-library/react` component tests run in jsdom for reusable UI contracts that do not need the full Playwright workflow.
 - UI coverage stays workflow-based through Playwright and axe-core rather than line-based component coverage.

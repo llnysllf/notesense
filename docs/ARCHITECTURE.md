@@ -76,6 +76,7 @@ NoteSense is currently a local-first React application. The product goal is to k
 - `scripts/serve-pages-preview.mjs` serves `dist` under `/notesense/` for deployment-shape smoke tests.
 - `scripts/verify-live-pages.mjs` owns post-deploy public GitHub Pages, metadata asset, service worker, Workbox runtime, and security policy verification.
 - `vite.config.ts` owns Vitest configuration, including coverage thresholds for the framework-independent core modules.
+- The same coverage gate includes focused React hook orchestration for settings, progress, data portability, and practice sessions.
 - `tsconfig.json` and `tsconfig.node.json` own the strict TypeScript contract for app code and project tooling.
 - `docs/PRIVACY.md` documents the current local-first privacy and data-handling boundary.
 - `scripts/check-workflow-actions.mjs` owns GitHub Actions reference pinning policy enforcement.
@@ -135,6 +136,7 @@ Every feature should keep these expectations intact:
 - The full `npm run check` gate must pass before a change is considered ready.
 - The full `npm run verify` release gate must pass before a change is shipped.
 - Core unit coverage thresholds should protect the practice engine and storage contracts without pretending to replace browser workflow tests.
+- Hook coverage should protect settings, progress, data portability, timers, answer handling, audio callbacks, and session reset orchestration.
 - Component tests should cover reusable UI states that are awkward to exercise through full browser workflows.
 - TypeScript strictness should make optional values, array access, overrides, and unused code explicit.
 - Runtime resilience coverage should stay in its own browser config so intentional crash testing does not weaken strict console/page-error checks.
@@ -179,6 +181,7 @@ PostgreSQL should sit behind a backend API, never behind direct browser access. 
 - Keep privacy documentation updated when data fields, storage keys, export content, tracking behavior, network calls, auth, or sync changes.
 - Keep the runtime-surface gate updated with any intentional external URLs, network APIs, auth, analytics, telemetry, or sync behavior.
 - Keep coverage thresholds focused on deterministic core modules where line coverage is meaningful.
+- Keep hook coverage focused on orchestration boundaries where persistence, timers, answers, and audio callbacks meet React state.
 - Keep TypeScript hardening flags enabled as the app grows toward service-backed data.
 - Keep network calls outside the core practice engine.
 - Keep UI components focused on one product responsibility.

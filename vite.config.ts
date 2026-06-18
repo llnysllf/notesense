@@ -63,7 +63,16 @@ export default defineConfig({
       provider: "v8",
       reporter: ["text", "json-summary"],
       reportsDirectory: "coverage",
-      include: ["src/practiceEngine.ts", "src/storage.ts", "shared/src/practiceData.ts", "shared/src/merge.ts"],
+      include: [
+        "src/practiceEngine.ts",
+        "src/storage.ts",
+        "src/hooks/useSettings.ts",
+        "src/hooks/usePracticeProgress.ts",
+        "src/hooks/useDataPortability.ts",
+        "src/hooks/usePracticeSession.ts",
+        "shared/src/practiceData.ts",
+        "shared/src/merge.ts",
+      ],
       thresholds: {
         perFile: true,
         statements: 85,
