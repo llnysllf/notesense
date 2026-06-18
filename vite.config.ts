@@ -64,6 +64,7 @@ export default defineConfig({
       reporter: ["text", "json-summary"],
       reportsDirectory: "coverage",
       include: [
+        "src/App.tsx",
         "src/practiceEngine.ts",
         "src/storage.ts",
         "src/hooks/useSettings.ts",
