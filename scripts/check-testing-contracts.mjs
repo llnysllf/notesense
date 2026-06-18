@@ -1,4 +1,5 @@
 import { existsSync, readFileSync } from "node:fs";
+import { includesContractSnippet } from "./lib/contract-checks.mjs";
 
 const failures = [];
 
@@ -15,7 +16,7 @@ function requireSnippets(file, snippets) {
   const content = readProjectFile(file);
 
   for (const snippet of snippets) {
-    if (!content.includes(snippet)) {
+    if (!includesContractSnippet(content, snippet)) {
       failures.push(`${file} is missing expected testing text: ${snippet}`);
     }
   }
@@ -26,7 +27,7 @@ function requirePlaywrightServerContract(file, { commandSnippet, port, strictPor
   const url = `http://127.0.0.1:${port}`;
 
   for (const snippet of [`baseURL: "${url}"`, `url: "${url}`, commandSnippet]) {
-    if (!content.includes(snippet)) {
+    if (!includesContractSnippet(content, snippet)) {
       failures.push(`${file} is missing expected Playwright server contract text: ${snippet}`);
     }
   }
@@ -67,6 +68,7 @@ requireSnippets("docs/TESTING.md", [
   "UI behavior tests block service workers",
   "Coverage thresholds are per-file",
   "hook orchestration modules",
+  "shared contract-check helper behavior",
   "product-learning governance stays part of the foundation contract gate",
   "review/intake governance stays part of the foundation contract gate",
   "dependency-maintenance governance stays part of the foundation contract gate",
@@ -109,7 +111,10 @@ requireSnippets("package.json", [
 ]);
 
 requireSnippets("vite.config.ts", [
-  'include: ["src/**/*.test.ts", "src/**/*.test.tsx", "shared/**/*.test.ts"]',
+  '"src/**/*.test.ts"',
+  '"src/**/*.test.tsx"',
+  '"shared/**/*.test.ts"',
+  '"scripts/**/*.test.mjs"',
   '"src/practiceEngine.ts"',
   '"src/storage.ts"',
   '"src/hooks/useSettings.ts"',
@@ -258,6 +263,7 @@ requireSnippets("docs/QUALITY.md", [
   "Security/privacy docs and `npm run security:privacy` stay aligned when local-first privacy, import/export trust, runtime/network boundaries, CSP, PWA behavior, future auth/sync, backend readiness, telemetry, analytics, or security posture changes.",
   "Testing contract docs and `npm run testing:check` stay aligned when package scripts, coverage thresholds, browser configs, CI quality gates, or test ownership changes.",
   "React hook orchestration for settings, progress, data portability, and practice sessions meets the configured Vitest coverage thresholds.",
+  "Shared contract-check helpers have focused unit coverage so policy gates stay resilient to harmless formatting drift.",
   "Browser-support docs and `npm run browsers:check` stay aligned when supported browsers, Playwright projects, device profiles, Pages base path, Web Audio behavior, LocalStorage behavior, responsive support, color-scheme support, PWA/offline behavior, runtime-surface policy, or browser verification evidence changes.",
   "Performance docs and `npm run performance:check` stay aligned when bundle budgets, tracked asset categories, Lighthouse thresholds, Lighthouse workflow behavior, metadata checks, PWA artifact checks, runtime-surface checks, Pages smoke behavior, or performance review expectations change.",
   "For testing-contract feedback:",

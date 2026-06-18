@@ -1,5 +1,6 @@
 import { readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
+import { includesContractSnippet } from "./lib/contract-checks.mjs";
 
 const ADR_DIR = "docs/adr";
 const INDEX_FILE = "docs/adr/README.md";
@@ -14,7 +15,7 @@ function readProjectFile(file) {
 }
 
 function requireSnippet(file, content, snippet) {
-  if (!content.includes(snippet)) {
+  if (!includesContractSnippet(content, snippet)) {
     failures.push(`${file} is missing expected ADR text: ${snippet}`);
   }
 }

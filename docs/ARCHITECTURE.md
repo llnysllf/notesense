@@ -68,6 +68,7 @@ NoteSense is currently a local-first React application. The product goal is to k
 - `scripts/check-licenses.mjs` owns dependency license policy enforcement.
 - `scripts/check-security-policy.mjs` owns built HTML security policy verification.
 - `scripts/check-policy-docs.mjs` owns policy document presence and alignment checks.
+- `scripts/lib/contract-checks.mjs` owns shared contract-snippet matching for policy and governance checks.
 - `scripts/check-doc-integrity.mjs` owns local Markdown link, anchor, and documented npm script reference checks.
 - `scripts/check-pwa-artifacts.mjs` owns generated service worker and static precache verification.
 - `scripts/check-runtime-surface.mjs` owns client runtime/network surface checks against the local-first privacy boundary.

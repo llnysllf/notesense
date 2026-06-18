@@ -1,4 +1,5 @@
 import { readFileSync } from "node:fs";
+import { includesContractSnippet } from "./lib/contract-checks.mjs";
 
 const failures = [];
 
@@ -9,7 +10,7 @@ function readProjectFile(file) {
 function requireSnippet(file, snippet) {
   const content = readProjectFile(file);
 
-  if (!content.includes(snippet)) {
+  if (!includesContractSnippet(content, snippet)) {
     failures.push(`${file} is missing expected data-contract text: ${snippet}`);
   }
 }
