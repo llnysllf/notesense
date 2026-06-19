@@ -26,6 +26,7 @@ A change is done when:
 - App-shell coordination for settings, rounds, import/export, reset, and mode switching meets the configured Vitest coverage thresholds.
 - React hook orchestration for settings, progress, data portability, and practice sessions meets the configured Vitest coverage thresholds.
 - Shared contract-check helpers have focused unit coverage so policy gates stay resilient to harmless formatting drift.
+- Local render-failure reporting has focused unit coverage and stays console-only until the observability contract allows production telemetry.
 - Shared data contract modules meet the configured Vitest coverage thresholds when they change.
 - Reusable UI components have focused component coverage for accessibility labels and state rendering where browser workflows would be too broad.
 - User workflows have browser coverage when UI, persistence, import/export, or accessibility-sensitive behavior changes.

@@ -18,7 +18,8 @@ Release safety and provenance expectations live in [RELEASE_SAFETY.md](RELEASE_S
 - The current app has no production telemetry, analytics, real-user monitoring, remote logging, or support queue.
 - Current release-health signals are GitHub Actions, Lighthouse, visual regression, Dependency Review, CodeQL, Pages deployment, `npm run deploy:verify-live`, `npm run ops:repository`, and user reports.
 - Support expectations and non-SLA boundaries live in [../.github/SUPPORT.md](../.github/SUPPORT.md).
-- `src/components/ErrorBoundary.tsx` provides a learner-facing recovery surface and logs render failures to the browser console for development and future client-side error reporting.
+- `src/components/ErrorBoundary.tsx` provides a learner-facing recovery surface and sends bounded render-failure reports through `src/observability.ts`, which currently logs only to the browser console for development and future client-side error reporting.
+- `src/observability.ts` owns the current local-only render-failure report shape and must not add telemetry, network delivery, durable identifiers, practice content, imported/exported data, raw LocalStorage, audio, or keystroke capture.
 - The current operations model is intentionally no-telemetry; this is acceptable while the app is a local-first portfolio product with no hosted accounts or paid service.
 - This boundary becomes insufficient before hosted accounts, sync, paid usage, formal support, public classrooms, or other real-user operating commitments.
 
