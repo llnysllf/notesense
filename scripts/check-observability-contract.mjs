@@ -36,7 +36,8 @@ requireSnippets("docs/OBSERVABILITY.md", [
   "The app should never become blind to production failures once real users depend on it.",
   "Product-learning and feedback expectations live in [PRODUCT_LEARNING.md](PRODUCT_LEARNING.md).",
   "The current app has no production telemetry, analytics, real-user monitoring, remote logging, or support queue.",
-  "`src/components/ErrorBoundary.tsx` provides a learner-facing recovery surface and logs render failures to the browser console for development and future client-side error reporting.",
+  "`src/components/ErrorBoundary.tsx` provides a learner-facing recovery surface and sends bounded render-failure reports through `src/observability.ts`, which currently logs only to the browser console for development and future client-side error reporting.",
+  "`src/observability.ts` owns the current local-only render-failure report shape and must not add telemetry, network delivery, durable identifiers, practice content, imported/exported data, raw LocalStorage, audio, or keystroke capture.",
   "Client error reporting must be privacy reviewed before implementation.",
   "Denied future signals include practice answers, note-level progress, session history, imported/exported JSON contents, raw LocalStorage, audio recordings, keystrokes, precise IP-derived location, full URLs with query strings, and stable cross-site identifiers.",
   "User-impacting production incidents should leave an incident review using [POSTMORTEM_TEMPLATE.md](POSTMORTEM_TEMPLATE.md).",
@@ -106,6 +107,7 @@ requireSnippets("docs/LEGAL.md", [
 
 requireSnippets("docs/ARCHITECTURE.md", [
   "`docs/OBSERVABILITY.md` documents the production visibility boundary, future signal rules, incident-learning expectations, and SLO/SLA boundary.",
+  "`src/observability.ts` owns the current local-only render-failure report shape for the error boundary.",
   "`scripts/check-observability-contract.mjs` owns observability drift checks for production visibility, future telemetry rules, incident review templates, SLO/SLA boundaries, release guidance, and PR review guidance.",
   "Observability changes should keep production visibility, telemetry boundaries, incident learning, SLO/SLA expectations, support, operations, privacy, security, legal, release, backend-readiness, and PR review guidance aligned.",
 ]);
@@ -128,6 +130,7 @@ requireSnippets("docs/THREAT_MODEL.md", [
 requireSnippets("docs/adr/README.md", ["ADR 0045: Add Observability And Incident Learning Contract"]);
 
 requireSnippets("CHANGELOG.md", [
+  "Local-only render-failure reporting helper with bounded report shape and focused unit coverage",
   "Observability and incident-learning contract with `docs/OBSERVABILITY.md`, `docs/POSTMORTEM_TEMPLATE.md`, and `npm run observability:check` for production visibility, future telemetry rules, incident reviews, SLO/SLA boundaries, and review/release guidance",
 ]);
 

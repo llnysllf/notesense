@@ -65,6 +65,7 @@ export default defineConfig({
       reportsDirectory: "coverage",
       include: [
         "src/App.tsx",
+        "src/observability.ts",
         "src/practiceEngine.ts",
         "src/storage.ts",
         "src/hooks/useSettings.ts",

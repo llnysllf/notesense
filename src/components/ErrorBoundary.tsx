@@ -1,4 +1,5 @@
 import { Component, type ErrorInfo, type ReactNode } from "react";
+import { reportRenderFailure } from "../observability";
 
 type ErrorBoundaryProps = {
   children: ReactNode;
@@ -18,7 +19,7 @@ export default class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBo
   }
 
   override componentDidCatch(error: Error, errorInfo: ErrorInfo) {
-    console.error("NoteSense render failure", error, errorInfo);
+    reportRenderFailure(error, errorInfo);
   }
 
   private handleReload = () => {

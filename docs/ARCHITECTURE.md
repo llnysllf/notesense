@@ -9,6 +9,7 @@ NoteSense is currently a local-first React application. The product goal is to k
 - `src/storage.ts` owns persistence, normalization, migration from the original local progress shape, and versioned data import/export.
 - `shared/src` owns framework-agnostic practice data normalization, import/export, and merge contracts that can be reused by a future sync backend.
 - `src/audio.ts` owns browser audio playback.
+- `src/observability.ts` owns the current local-only render-failure report shape for the error boundary.
 - `src/hooks` contains focused React state orchestration for settings, progress, session flow, and data portability.
 - `src/components` contains focused UI sections for the staff, pitch prompt, stats panel, session history, practice insights, and stat tiles.
 - `src/components/ErrorBoundary.tsx` owns the app-level recovery surface for unexpected render failures.
@@ -77,6 +78,7 @@ NoteSense is currently a local-first React application. The product goal is to k
 - `scripts/serve-pages-preview.mjs` serves `dist` under `/notesense/` for deployment-shape smoke tests.
 - `scripts/verify-live-pages.mjs` owns post-deploy public GitHub Pages, metadata asset, service worker, Workbox runtime, and security policy verification.
 - `vite.config.ts` owns Vitest configuration, including coverage thresholds for the framework-independent core modules.
+- The coverage gate includes the local observability helper so runtime failure reporting stays bounded and testable.
 - The same coverage gate includes focused React hook orchestration for settings, progress, data portability, and practice sessions.
 - `tsconfig.json` and `tsconfig.node.json` own the strict TypeScript contract for app code and project tooling.
 - `docs/PRIVACY.md` documents the current local-first privacy and data-handling boundary.
