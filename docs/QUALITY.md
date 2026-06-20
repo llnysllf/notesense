@@ -60,7 +60,7 @@ A change is done when:
 - Dependency Review passes for pull requests that introduce dependency or lockfile changes.
 - GitHub Actions workflow references are pinned to full commit SHAs with source-version comments, and workflow token permissions stay least-privilege.
 - GitHub Actions workflows keep reviewed concurrency, timeout, and artifact-retention controls.
-- Dependency-maintenance docs and `npm run dependencies:check` stay aligned when Dependabot cadence, dependency grouping, ignored update types, package manager policy, lockfile policy, license policy, or workflow-update policy changes.
+- Dependency-maintenance docs and `npm run dependencies:check` stay aligned when Dependabot cadence, dependency grouping, ignored update types, package manager policy, lockfile policy, license policy, SBOM policy, or workflow-update policy changes.
 - Legal/licensing docs and `npm run legal:check` stay aligned when root license terms, package metadata, user-facing terms, privacy-policy hosting, contributor-community expectations, code-of-conduct expectations, dependency license policy, release guidance, or PR review guidance changes.
 - GitHub repository governance checks pass after branch protection, repository security, Pages, required-check, or workflow-activation changes.
 - Static bundle output stays within the documented performance budgets.
@@ -227,7 +227,7 @@ For visual QA:
 - Confirm `npm run test:e2e:pages` passes when deployment base path, build output, or preview behavior changes.
 - Confirm `npm run test:e2e:visual` passes when protected shell layout, color, spacing, typography, or component appearance changes.
 - Confirm `npm run ops:repository` passes after branch protection, repository security, Pages, required-check, or workflow-activation changes.
-- Confirm `npm run security:lockfile` passes after dependency, lockfile, Node, or npm runtime changes.
+- Confirm `npm run security:lockfile` and `npm run security:sbom` pass after dependency, lockfile, Node, or npm runtime changes.
 
 ## Accessibility Checklist
 
@@ -397,7 +397,7 @@ After pushing:
 ## Dependency Maintenance
 
 - `docs/DEPENDENCY_MAINTENANCE.md` defines dependency sources, Dependabot policy, update classes, review evidence, and dependency-maintenance verification.
-- `npm run dependencies:check` verifies Dependabot cadence, dependency review evidence, lockfile policy, license policy, supply-chain gates, and workflow-update expectations stay aligned.
+- `npm run dependencies:check` verifies Dependabot cadence, dependency review evidence, lockfile policy, license policy, SBOM policy, supply-chain gates, and workflow-update expectations stay aligned.
 - Dependabot opens routine npm minor/patch updates and GitHub Actions updates weekly.
 - Major npm upgrades should be tracked as engineering tasks because they can affect peer dependencies, test tooling, bundling, or browser coverage.
 - Node/npm runtime upgrades should update `.nvmrc`, package engines, workflow behavior, docs, and ADRs together.
@@ -423,7 +423,7 @@ After pushing:
 
 - `npm run security:audit` blocks high and critical advisories from the release gate.
 - `npm run security:lockfile` blocks unreviewed lockfile source, integrity, package-manager, and root-metadata drift.
-- `npm run security:supply-chain` combines audit, lockfile, license, and workflow policy checks.
+- `npm run security:supply-chain` combines audit, lockfile, license, SBOM generation, and workflow policy checks.
 - `npm run security:workflows` blocks floating GitHub Actions refs, unreviewed token-permission drift, missing concurrency controls, unbounded job runtimes, and excessive artifact retention in workflow files.
 - `npm run security:policy` verifies the built HTML Content Security Policy after `npm run build:pages`.
 - Dependency Review blocks high-severity vulnerable dependency additions and invalid dependency licenses on pull requests.

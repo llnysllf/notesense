@@ -36,6 +36,7 @@ requireSnippets("docs/SECURITY_PRIVACY.md", [
   "The practice loop must remain usable without an account, backend API, analytics service, or hosted storage.",
   "Practice progress, settings, session history, imports, and exports are user-private local data unless a future reviewed backend design says otherwise.",
   "Do not connect the browser app directly to PostgreSQL or any other database.",
+  "`npm run security:supply-chain` verifies high-severity dependency advisories, lockfile source/integrity, dependency licenses, SPDX SBOM generation, workflow action pinning, workflow permissions, and workflow operations.",
   "Run `npm run security:privacy` after privacy, security, data-contract, runtime-surface, CSP, PWA, import/export, storage, telemetry, analytics, auth, sync, backend-readiness, threat-model, or security-doc changes.",
 ]);
 
@@ -46,7 +47,8 @@ requireSnippets("package.json", [
   '"runtime:check": "node scripts/check-runtime-surface.mjs"',
   '"security:policy": "node scripts/check-security-policy.mjs"',
   '"pwa:check": "node scripts/check-pwa-artifacts.mjs"',
-  '"security:supply-chain": "npm run security:audit && npm run security:lockfile && npm run compliance:licenses && npm run security:workflows"',
+  '"security:sbom": "node scripts/check-sbom.mjs"',
+  '"security:supply-chain": "npm run security:audit && npm run security:lockfile && npm run compliance:licenses && npm run security:sbom && npm run security:workflows"',
   '"verify": "npm run security:supply-chain && npm run check && npm run test:e2e:resilience && npm run build:pages && npm run security:policy && npm run metadata:check && npm run pwa:check && npm run runtime:check && npm run perf:budget && npm run test:e2e:pages"',
 ]);
 
