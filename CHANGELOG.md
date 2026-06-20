@@ -51,6 +51,7 @@ All notable changes to NoteSense are documented here. The format follows [Keep a
 
 ### Changed
 
+- Observability and product-learning contract checks now verify Markdown headings and npm script wiring structurally instead of relying on exact prose snippets for those stable contracts.
 - Extracted `usePracticeSession`, `useSettings`, `usePracticeProgress`, and `useDataPortability` custom hooks from `App.tsx` — `App` is now a thin coordinator rather than a god component
 - `color-scheme` meta tag updated to `light dark` so browsers render system controls in the correct scheme
 
