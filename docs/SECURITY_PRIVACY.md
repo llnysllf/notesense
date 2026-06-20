@@ -31,7 +31,7 @@ Release safety and provenance expectations live in [RELEASE_SAFETY.md](RELEASE_S
 - `npm run security:policy` verifies the built HTML Content Security Policy after `npm run build:pages`.
 - `npm run pwa:check` verifies the generated service worker imports only the local Workbox runtime, precaches reviewed static assets, and avoids background sync, push notifications, external URLs, and external worker imports.
 - `npm run data:check` verifies storage keys, export schema, import normalization, privacy docs, and browser coverage stay aligned.
-- `npm run security:supply-chain` verifies high-severity dependency advisories, lockfile source/integrity, dependency licenses, workflow action pinning, workflow permissions, and workflow operations.
+- `npm run security:supply-chain` verifies high-severity dependency advisories, lockfile source/integrity, dependency licenses, SPDX SBOM generation, workflow action pinning, workflow permissions, and workflow operations.
 
 ## Future Auth And Sync Rules
 
@@ -39,7 +39,7 @@ Release safety and provenance expectations live in [RELEASE_SAFETY.md](RELEASE_S
 - Future sign-in, cloud sync, backend APIs, analytics, telemetry, or hosted storage must update privacy docs, security policy, threat model, backend readiness, data contract, runtime-surface checks, release guidance, operations guidance, and ADRs together.
 - Future telemetry, analytics, monitoring SDKs, remote logging, or error-reporting sinks must follow [OBSERVABILITY.md](OBSERVABILITY.md) before implementation.
 - Future product analytics, experiments, surveys, support tooling, feature flags, or delivery metrics must follow [PRODUCT_LEARNING.md](PRODUCT_LEARNING.md) before implementation.
-- Future SBOM, provenance, signing, staging, canary, or automated rollback work must preserve least-privilege workflow identities and avoid exposing user-private practice data.
+- Future published SBOM, provenance, signing, staging, canary, or automated rollback work must preserve least-privilege workflow identities and avoid exposing user-private practice data.
 - Future account data must define authentication, authorization, retention, deletion, export, migration, sync conflict handling, observability, rollback, and incident-response expectations before launch.
 - Anonymous local practice should remain a usable baseline unless a product-scope decision explicitly changes that promise.
 
@@ -53,7 +53,7 @@ Release safety and provenance expectations live in [RELEASE_SAFETY.md](RELEASE_S
 
 - Run `npm run security:privacy` after privacy, security, data-contract, runtime-surface, CSP, PWA, import/export, storage, telemetry, analytics, auth, sync, backend-readiness, threat-model, or security-doc changes.
 - Run `npm run build:pages` before `npm run security:policy`, `npm run pwa:check`, and `npm run runtime:check`.
-- Run `npm run security:supply-chain` after dependency, lockfile, license, workflow, Node, npm, or package-manager changes.
+- Run `npm run security:supply-chain` after dependency, lockfile, license, SBOM, workflow, Node, npm, or package-manager changes.
 - Run `npm run legal:check` before adding user-facing terms, externally hosted privacy policies, contributor-community terms, production telemetry, analytics, account data, sync data, or backend logs tied to users.
 - Add an ADR when a change affects security posture, privacy posture, account data, sync, service boundaries, deployment trust boundaries, or backend readiness.
 

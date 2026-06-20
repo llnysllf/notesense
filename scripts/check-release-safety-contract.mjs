@@ -34,10 +34,11 @@ requireSnippets("docs/RELEASE_SAFETY.md", [
   "## Change Rules",
   "## Verification",
   "NoteSense currently deploys the `main` branch directly to GitHub Pages after reviewed pull requests merge.",
-  "The current release path has no separate staging environment, canary rollout, progressive delivery system, automated rollback, generated SBOM, signed release artifact, or SLSA provenance attestation.",
+  "The current release path has no separate staging environment, canary rollout, progressive delivery system, automated rollback, published SBOM artifact, signed release artifact, or SLSA provenance attestation.",
   "This direct-to-production path is acceptable only while NoteSense remains a static portfolio app with no hosted accounts, paid usage, formal support, classroom commitment, or service-backed sync.",
   "Every release should identify the commit SHA, package-lock hash, Node/npm runtime, GitHub Actions run, Pages artifact, and live deployment verification result.",
-  "SBOM, provenance attestations, signed release artifacts, and automated rollback should be added before distributing installable builds, paid releases, or third-party-deployed artifacts.",
+  "`npm run security:sbom` generates and validates an SPDX 2.3 SBOM from the committed lockfile as part of the supply-chain gate.",
+  "Published SBOM artifacts, provenance attestations, signed release artifacts, and automated rollback should be added before distributing installable builds, paid releases, or third-party-deployed artifacts.",
   "Rollback uses a normal Git revert and a fresh deployment through the same protected workflow.",
   "Force-pushing `main` is not an acceptable release recovery path.",
   "Run `npm run release:safety` after release-safety, deployment, staging, canary, progressive-rollout, rollback, provenance, SBOM, signing, artifact, Pages, workflow, operations, observability, security, privacy, legal, or backend-readiness changes.",
@@ -99,7 +100,7 @@ requireSnippets("docs/OBSERVABILITY.md", [
 
 requireSnippets("docs/SECURITY_PRIVACY.md", [
   "Release safety and provenance expectations live in [RELEASE_SAFETY.md](RELEASE_SAFETY.md).",
-  "Future SBOM, provenance, signing, staging, canary, or automated rollback work must preserve least-privilege workflow identities and avoid exposing user-private practice data.",
+  "Future published SBOM, provenance, signing, staging, canary, or automated rollback work must preserve least-privilege workflow identities and avoid exposing user-private practice data.",
 ]);
 
 requireSnippets("docs/LEGAL.md", [
@@ -109,7 +110,7 @@ requireSnippets("docs/LEGAL.md", [
 
 requireSnippets("docs/DEPENDENCY_MAINTENANCE.md", [
   "Release safety and provenance expectations live in [RELEASE_SAFETY.md](RELEASE_SAFETY.md).",
-  "SBOM or provenance changes should be generated from the committed lockfile and reviewed with dependency-maintenance evidence.",
+  "SBOM or provenance changes should be generated from the committed lockfile, validated with `npm run security:sbom`, and reviewed with dependency-maintenance evidence.",
 ]);
 
 requireSnippets("docs/ARCHITECTURE.md", [
@@ -132,6 +133,7 @@ requireSnippets("docs/adr/README.md", ["ADR 0046: Add Release Safety And Provena
 
 requireSnippets("CHANGELOG.md", [
   "Release-safety and provenance contract with `docs/RELEASE_SAFETY.md` and `npm run release:safety` for direct-to-Pages release boundaries, staging/canary triggers, rollback expectations, artifact/provenance expectations, and release-review guidance",
+  "SBOM generation gate with `npm run security:sbom`, validating npm SPDX output from the committed lockfile inside the supply-chain release gate",
 ]);
 
 console.log("- direct-to-Pages release boundary checked");

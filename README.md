@@ -124,13 +124,13 @@ Core boundaries to preserve:
 
 ## Operating Model
 
-The current production surface is a static GitHub Pages app. There is no hosted account system, backend API, database, analytics service, telemetry sink, support queue, SLA, staging environment, canary rollout, generated SBOM, signed artifact, or automated rollback yet.
+The current production surface is a static GitHub Pages app. There is no hosted account system, backend API, database, analytics service, telemetry sink, support queue, SLA, staging environment, canary rollout, published SBOM artifact, signed artifact, SLSA provenance attestation, or automated rollback yet.
 
 That is acceptable for the current local-first product, but the boundaries are explicit:
 
 - Releases go through reviewed pull requests, GitHub Actions, `npm run verify`, and post-deploy live verification.
 - Incidents use [docs/OPERATIONS.md](docs/OPERATIONS.md) and [docs/POSTMORTEM_TEMPLATE.md](docs/POSTMORTEM_TEMPLATE.md).
-- Future telemetry, monitoring, analytics, support workflows, product experiments, staging, canary, SBOM, provenance, signing, accounts, sync, or backend APIs must update the relevant contracts before code lands.
+- Future telemetry, monitoring, analytics, support workflows, product experiments, staging, canary, published SBOMs, provenance, signing, accounts, sync, or backend APIs must update the relevant contracts before code lands.
 - The browser app must not connect directly to PostgreSQL or any other database.
 
 ## Documentation Index

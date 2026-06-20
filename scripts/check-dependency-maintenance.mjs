@@ -33,15 +33,17 @@ requireSnippets("docs/DEPENDENCY_MAINTENANCE.md", [
   "## Change Rules",
   "## Verification",
   "npm major upgrades are ignored by Dependabot and should be opened as intentional engineering tasks.",
-  "Run `npm run dependencies:check` after dependency-maintenance, Dependabot, lockfile-policy, license-policy, or workflow-update-policy changes.",
+  "SBOM or provenance changes should be generated from the committed lockfile, validated with `npm run security:sbom`, and reviewed with dependency-maintenance evidence.",
+  "Run `npm run dependencies:check` after dependency-maintenance, Dependabot, lockfile-policy, license-policy, SBOM-policy, or workflow-update-policy changes.",
 ]);
 
 requireSnippets("package.json", [
   '"dependencies:check": "node scripts/check-dependency-maintenance.mjs"',
   "npm run product:check && npm run product:learning && npm run review:check && npm run dependencies:check && npm run legal:check && npm run data:check",
-  '"security:supply-chain": "npm run security:audit && npm run security:lockfile && npm run compliance:licenses && npm run security:workflows"',
+  '"security:supply-chain": "npm run security:audit && npm run security:lockfile && npm run compliance:licenses && npm run security:sbom && npm run security:workflows"',
   '"security:lockfile": "node scripts/check-lockfile-supply-chain.mjs"',
   '"compliance:licenses": "node scripts/check-licenses.mjs"',
+  '"security:sbom": "node scripts/check-sbom.mjs"',
   '"security:audit": "npm audit --audit-level=high"',
   '"security:workflows": "npm run security:workflow-actions && npm run security:workflow-permissions && npm run security:workflow-operations"',
   '"verify": "npm run security:supply-chain && npm run check',
@@ -68,36 +70,36 @@ requireSnippets(".github/dependabot.yml", [
 ]);
 
 requireSnippets(".github/pull_request_template.md", [
-  "Dependency maintenance impact was considered for Dependabot cadence, lockfile policy, license policy, supply-chain gates, major upgrades, and workflow action updates.",
+  "Dependency maintenance impact was considered for Dependabot cadence, lockfile policy, license policy, SBOM policy, supply-chain gates, major upgrades, and workflow action updates.",
 ]);
 
 requireSnippets("CONTRIBUTING.md", [
-  "For dependency-maintenance, Dependabot, package manager, lockfile-policy, license-policy, or workflow-update-policy changes, keep [docs/DEPENDENCY_MAINTENANCE.md](docs/DEPENDENCY_MAINTENANCE.md) aligned and run the dependency-maintenance contract check:",
+  "For dependency-maintenance, Dependabot, package manager, lockfile-policy, license-policy, SBOM-policy, or workflow-update-policy changes, keep [docs/DEPENDENCY_MAINTENANCE.md](docs/DEPENDENCY_MAINTENANCE.md) aligned and run the dependency-maintenance contract check:",
   "npm run dependencies:check",
-  "Keep [docs/DEPENDENCY_MAINTENANCE.md](docs/DEPENDENCY_MAINTENANCE.md) aligned when changing Dependabot cadence, dependency grouping, ignored update types, package manager policy, lockfile policy, license policy, or workflow-update policy; run `npm run dependencies:check` after dependency-maintenance changes.",
+  "Keep [docs/DEPENDENCY_MAINTENANCE.md](docs/DEPENDENCY_MAINTENANCE.md) aligned when changing Dependabot cadence, dependency grouping, ignored update types, package manager policy, lockfile policy, license policy, SBOM policy, or workflow-update policy; run `npm run dependencies:check` after dependency-maintenance changes.",
 ]);
 
 requireSnippets("SECURITY.md", [
   "Dependency maintenance expectations live in [docs/DEPENDENCY_MAINTENANCE.md](docs/DEPENDENCY_MAINTENANCE.md).",
-  "Run `npm run dependencies:check` after Dependabot, dependency-maintenance, lockfile-policy, license-policy, package manager, or workflow-update-policy changes.",
+  "Run `npm run dependencies:check` after Dependabot, dependency-maintenance, lockfile-policy, license-policy, SBOM-policy, package manager, or workflow-update-policy changes.",
 ]);
 
 requireSnippets("docs/QUALITY.md", [
-  "Dependency-maintenance docs and `npm run dependencies:check` stay aligned when Dependabot cadence, dependency grouping, ignored update types, package manager policy, lockfile policy, license policy, or workflow-update policy changes.",
+  "Dependency-maintenance docs and `npm run dependencies:check` stay aligned when Dependabot cadence, dependency grouping, ignored update types, package manager policy, lockfile policy, license policy, SBOM policy, or workflow-update policy changes.",
   "For dependency-maintenance feedback:",
   "npm run dependencies:check",
   "`docs/DEPENDENCY_MAINTENANCE.md` defines dependency sources, Dependabot policy, update classes, review evidence, and dependency-maintenance verification.",
 ]);
 
 requireSnippets("docs/RELEASE.md", [
-  "Treat dependency-maintenance results as release evidence when Dependabot cadence, dependency grouping, ignored update types, package manager policy, lockfile policy, license policy, or workflow-update policy changes.",
-  "Whether `npm run dependencies:check` still proves Dependabot cadence, dependency review evidence, lockfile policy, license policy, supply-chain gates, and workflow-update expectations are aligned.",
+  "Treat dependency-maintenance results as release evidence when Dependabot cadence, dependency grouping, ignored update types, package manager policy, lockfile policy, license policy, SBOM policy, or workflow-update policy changes.",
+  "Whether `npm run dependencies:check` still proves Dependabot cadence, dependency review evidence, lockfile policy, license policy, SBOM policy, supply-chain gates, and workflow-update expectations are aligned.",
 ]);
 
 requireSnippets("docs/ARCHITECTURE.md", [
   "`docs/DEPENDENCY_MAINTENANCE.md` documents dependency sources, Dependabot policy, update classes, review evidence, and dependency-maintenance verification.",
-  "`scripts/check-dependency-maintenance.mjs` owns dependency-maintenance drift checks for Dependabot cadence, dependency review evidence, lockfile policy, license policy, supply-chain gates, and workflow-update expectations.",
-  "Dependency-maintenance changes should keep Dependabot cadence, dependency review evidence, lockfile policy, license policy, supply-chain gates, release guidance, and contributor guidance aligned.",
+  "`scripts/check-dependency-maintenance.mjs` owns dependency-maintenance drift checks for Dependabot cadence, dependency review evidence, lockfile policy, license policy, SBOM policy, supply-chain gates, and workflow-update expectations.",
+  "Dependency-maintenance changes should keep Dependabot cadence, dependency review evidence, lockfile policy, license policy, SBOM policy, supply-chain gates, release guidance, and contributor guidance aligned.",
 ]);
 
 requireSnippets("docs/TESTING.md", [
@@ -111,7 +113,8 @@ requireSnippets("docs/adr/README.md", [
 ]);
 
 requireSnippets("CHANGELOG.md", [
-  "Dependency-maintenance contract with `docs/DEPENDENCY_MAINTENANCE.md` and `npm run dependencies:check` for Dependabot cadence, lockfile policy, license policy, supply-chain gates, and workflow-update expectations",
+  "Dependency-maintenance contract with `docs/DEPENDENCY_MAINTENANCE.md` and `npm run dependencies:check` for Dependabot cadence, lockfile policy, license policy, SBOM policy, supply-chain gates, and workflow-update expectations",
+  "SBOM generation gate with `npm run security:sbom`, validating npm SPDX output from the committed lockfile inside the supply-chain release gate",
 ]);
 
 console.log("- Dependabot cadence and grouping checked");

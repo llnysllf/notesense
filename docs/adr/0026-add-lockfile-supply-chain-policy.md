@@ -24,7 +24,7 @@ The policy verifies:
 - every package resolves from an `https://registry.npmjs.org/` tarball
 - every package has `sha512` integrity metadata
 
-Add `npm run security:supply-chain` to combine audit, lockfile, license, and workflow policy checks, and make `npm run verify` call that combined gate.
+Add `npm run security:supply-chain` to combine audit, lockfile, license, and workflow policy checks, and make `npm run verify` call that combined gate. ADR 0054 later adds SBOM generation to the same supply-chain gate.
 
 ## Consequences
 

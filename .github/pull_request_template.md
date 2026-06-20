@@ -22,7 +22,7 @@
 - [ ] `npm run verify` passes locally.
 - [ ] Dependency license changes are intentional and explained.
 - [ ] Dependency Review impact was considered for dependency and lockfile changes.
-- [ ] Dependency maintenance impact was considered for Dependabot cadence, lockfile policy, license policy, supply-chain gates, major upgrades, and workflow action updates.
+- [ ] Dependency maintenance impact was considered for Dependabot cadence, lockfile policy, license policy, SBOM policy, supply-chain gates, major upgrades, and workflow action updates.
 - [ ] Legal/licensing impact was considered for root license terms, package metadata, user-facing terms, privacy-policy hosting, contributor community expectations, code-of-conduct expectations, and dependency license policy.
 - [ ] Workflow changes keep action refs pinned to full commit SHAs, token permissions least-privilege, and operational controls bounded.
 - [ ] Repository governance impact was considered for branch protection, security settings, Pages, required checks, and workflow activation.
