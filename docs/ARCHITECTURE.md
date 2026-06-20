@@ -9,7 +9,7 @@ NoteSense is currently a local-first React application. The product goal is to k
 - `src/storage.ts` owns persistence, normalization, migration from the original local progress shape, and versioned data import/export.
 - `shared/src` owns framework-agnostic practice data normalization, import/export, and merge contracts that can be reused by a future sync backend.
 - `src/audio.ts` owns browser audio playback.
-- `src/observability.ts` owns the current local-only render-failure report shape for the error boundary.
+- `src/observability.ts` owns the current local-only render-failure, runtime-failure, and unhandled-rejection report shapes.
 - `src/hooks` contains focused React state orchestration for settings, progress, session flow, and data portability.
 - `src/components` contains focused UI sections for the staff, pitch prompt, stats panel, session history, practice insights, and stat tiles.
 - `src/components/ErrorBoundary.tsx` owns the app-level recovery surface for unexpected render failures.
@@ -108,7 +108,7 @@ Every feature should keep these expectations intact:
 - Security/privacy changes should keep local-first privacy, import/export trust, runtime/network boundaries, CSP, PWA behavior, future auth/sync, backend readiness, operations guidance, release guidance, and PR review guidance aligned.
 - Client runtime surface checks should reject network, tracking, cookie, websocket, or external URL drift unless the change is intentional and documented.
 - User-visible state has a failure path, especially for save, export, auth, and sync operations.
-- Unexpected render failures should show the app-level recovery screen instead of leaving a blank product surface.
+- Unexpected render failures should show the app-level recovery screen instead of leaving a blank product surface, and uncaught runtime failures should stay inside the local-only observability boundary.
 - Accessibility is part of the feature definition, not a final cleanup step.
 - Accessibility-contract changes should keep source semantics, focus behavior, reduced-motion behavior, axe coverage, Lighthouse expectations, and release guidance aligned.
 - Accessibility conformance changes should keep WCAG targets, assistive-technology review evidence, manual review expectations, release guidance, and PR review guidance aligned.
