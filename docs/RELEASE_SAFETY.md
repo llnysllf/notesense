@@ -1,6 +1,6 @@
 # Release Safety And Provenance Contract
 
-NoteSense can stay lightweight while it is a static local-first app, but releases should still be repeatable, reviewable, and recoverable. This contract defines the current direct-to-GitHub-Pages boundary and the rules for adding staging, progressive rollout, SBOMs, provenance, signing, or automated rollback later.
+NoteSense can stay lightweight while it is a static local-first app, but releases should still be repeatable, reviewable, and recoverable. This contract defines the current direct-to-GitHub-Pages boundary, SBOM generation evidence, and the rules for adding staging, progressive rollout, published SBOM artifacts, provenance, signing, or automated rollback later.
 
 ## Product Standard
 
@@ -12,8 +12,8 @@ NoteSense can stay lightweight while it is a static local-first app, but release
 ## Current Release Boundary
 
 - NoteSense currently deploys the `main` branch directly to GitHub Pages after reviewed pull requests merge.
-- The current release path has no separate staging environment, canary rollout, progressive delivery system, automated rollback, generated SBOM, signed release artifact, or SLSA provenance attestation.
-- The current release evidence is `npm run verify`, GitHub Actions checks, pinned workflow actions, dependency lockfile policy, CodeQL, Dependency Review, Lighthouse, visual regression, Pages artifact deployment, and `npm run deploy:verify-live`.
+- The current release path has no separate staging environment, canary rollout, progressive delivery system, automated rollback, published SBOM artifact, signed release artifact, or SLSA provenance attestation.
+- The current release evidence is `npm run verify`, `npm run security:sbom`, GitHub Actions checks, pinned workflow actions, dependency lockfile policy, CodeQL, Dependency Review, Lighthouse, visual regression, Pages artifact deployment, and `npm run deploy:verify-live`.
 - This direct-to-production path is acceptable only while NoteSense remains a static portfolio app with no hosted accounts, paid usage, formal support, classroom commitment, or service-backed sync.
 
 ## Pre-Production And Rollout Boundary
@@ -26,8 +26,9 @@ NoteSense can stay lightweight while it is a static local-first app, but release
 ## Provenance And Artifact Evidence
 
 - Every release should identify the commit SHA, package-lock hash, Node/npm runtime, GitHub Actions run, Pages artifact, and live deployment verification result.
-- SBOM, provenance attestations, signed release artifacts, and automated rollback should be added before distributing installable builds, paid releases, or third-party-deployed artifacts.
-- Future SBOM or provenance output must be generated from the locked dependency graph and must not include secrets, LocalStorage exports, imported files, or user-private practice data.
+- `npm run security:sbom` generates and validates an SPDX 2.3 SBOM from the committed lockfile as part of the supply-chain gate.
+- Published SBOM artifacts, provenance attestations, signed release artifacts, and automated rollback should be added before distributing installable builds, paid releases, or third-party-deployed artifacts.
+- Future published SBOM or provenance output must be generated from the locked dependency graph and must not include secrets, LocalStorage exports, imported files, or user-private practice data.
 - Signed artifacts or attestations should use least-privilege workflow identities, reviewed retention, and documented verification steps.
 
 ## Rollback And Recovery
@@ -40,7 +41,7 @@ NoteSense can stay lightweight while it is a static local-first app, but release
 ## Change Rules
 
 - Run `npm run release:safety` after release-safety, deployment, staging, canary, progressive-rollout, rollback, provenance, SBOM, signing, artifact, Pages, workflow, operations, observability, security, privacy, legal, or backend-readiness changes.
-- Do not add a staging service, canary system, feature-flag platform, automated rollback, SBOM output, signed artifact, or provenance attestation without updating this contract first.
+- Do not add a staging service, canary system, feature-flag platform, automated rollback, published SBOM artifact, signed artifact, or provenance attestation without updating this contract first.
 - Keep release, operations, observability, security/privacy, legal, dependency-maintenance, quality, architecture, testing, backend-readiness, ADR, changelog, and PR review guidance aligned when release safety expectations change.
 
 ## Verification
@@ -49,5 +50,5 @@ NoteSense can stay lightweight while it is a static local-first app, but release
 
 - this contract keeps product-standard, current-release-boundary, rollout-boundary, provenance/artifact, rollback/recovery, change-rule, and verification sections
 - package scripts include release-safety governance in the local foundation gate
-- deployment workflow expectations stay connected to Pages, permissions, environments, and artifacts
+- deployment workflow expectations stay connected to Pages, permissions, environments, artifacts, and SBOM generation
 - README, contributing, quality, release, operations, observability, security/privacy, legal, dependency-maintenance, architecture, testing, backend-readiness, ADR, changelog, and PR review guidance stay connected to release safety and provenance

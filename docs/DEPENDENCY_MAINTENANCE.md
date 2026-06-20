@@ -38,17 +38,18 @@ Dependency PRs should show:
 - `npm run dependencies:check`
 - `npm run security:lockfile`
 - `npm run compliance:licenses`
+- `npm run security:sbom`
 - `npm run security:audit`
 - `npm run verify` for release-ready dependency changes
 - passing remote Dependency Review and CodeQL checks
 - bundle-budget and Lighthouse impact when runtime dependencies affect built output
-- SBOM or provenance changes should be generated from the committed lockfile and reviewed with dependency-maintenance evidence.
+- SBOM or provenance changes should be generated from the committed lockfile, validated with `npm run security:sbom`, and reviewed with dependency-maintenance evidence.
 - an explanation for new licenses, new packages, major upgrades, runtime upgrades, or workflow action changes
 
 ## Change Rules
 
-- Update this contract when Dependabot cadence, grouping, ignored update types, package manager policy, lockfile policy, license policy, Dependency Review expectations, or workflow action policy changes.
-- Run `npm run dependencies:check` after dependency-maintenance, Dependabot, lockfile-policy, license-policy, or workflow-update-policy changes.
+- Update this contract when Dependabot cadence, grouping, ignored update types, package manager policy, lockfile policy, license policy, SBOM policy, Dependency Review expectations, or workflow action policy changes.
+- Run `npm run dependencies:check` after dependency-maintenance, Dependabot, lockfile-policy, license-policy, SBOM-policy, or workflow-update-policy changes.
 - Keep security, quality, release, architecture, testing, contributing, and PR review guidance aligned when dependency maintenance changes.
 
 ## Verification
@@ -57,5 +58,5 @@ Dependency PRs should show:
 
 - this contract keeps source, Dependabot, update-class, review-evidence, change-rule, and verification sections
 - Dependabot keeps the reviewed npm and GitHub Actions cadence, grouping, open-PR limits, and npm major-upgrade policy
-- package scripts keep dependency maintenance, supply-chain, lockfile, license, audit, workflow, and release gates available
+- package scripts keep dependency maintenance, supply-chain, lockfile, license, audit, SBOM, workflow, and release gates available
 - README, contributing, security, quality, release, architecture, testing, ADR, changelog, and PR review guidance stay connected to dependency maintenance
