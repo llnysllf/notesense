@@ -66,6 +66,8 @@ export default defineConfig({
       include: [
         "src/App.tsx",
         "src/audio.ts",
+        "src/components/PracticeStatsPanel.tsx",
+        "src/noteData.ts",
         "src/observability.ts",
         "src/practiceEngine.ts",
         "src/storage.ts",

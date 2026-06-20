@@ -1,0 +1,79 @@
+import { describe, expect, it } from "vitest";
+import {
+  BASS_STARTER_NOTES,
+  DEFAULT_READING_RANGE,
+  PITCH_ANSWER_OPTIONS,
+  PITCH_NOTES,
+  READING_ANSWER_OPTIONS,
+  READING_NOTES,
+  READING_RANGES,
+  STARTER_NOTES,
+  emptyPitchProgress,
+  emptyProgress,
+  emptyReadingProgress,
+  getReadingNotes,
+  getReadingRange,
+  isReadingRange,
+} from "./noteData";
+
+function noteIds(notes: Array<{ id: string }>): string[] {
+  return notes.map((note) => note.id);
+}
+
+describe("noteData", () => {
+  it("exposes the supported reading ranges and default starter range", () => {
+    expect(DEFAULT_READING_RANGE).toBe("treble-starter");
+    expect(READING_RANGES.map((range) => range.id)).toEqual(["treble-starter", "bass-starter"]);
+    expect(getReadingRange("treble-starter")).toMatchObject({
+      label: "Treble",
+      clef: "treble",
+      detail: "Treble clef C4-G4",
+      notes: STARTER_NOTES,
+    });
+    expect(getReadingRange("bass-starter")).toMatchObject({
+      label: "Bass",
+      clef: "bass",
+      detail: "Bass clef C3-G3",
+      notes: BASS_STARTER_NOTES,
+    });
+  });
+
+  it("returns treble notes by default and falls back to the default range for unsafe values", () => {
+    expect(getReadingNotes()).toBe(STARTER_NOTES);
+    expect(getReadingNotes("bass-starter")).toBe(BASS_STARTER_NOTES);
+    expect(getReadingRange("wide-range" as never)).toBe(getReadingRange(DEFAULT_READING_RANGE));
+  });
+
+  it("validates reading range ids defensively", () => {
+    expect(isReadingRange("treble-starter")).toBe(true);
+    expect(isReadingRange("bass-starter")).toBe(true);
+    expect(isReadingRange("wide-range")).toBe(false);
+    expect(isReadingRange(undefined)).toBe(false);
+  });
+
+  it("keeps note ids, answer options, and shortcuts stable", () => {
+    expect(noteIds(STARTER_NOTES)).toEqual(["C4", "D4", "E4", "F4", "G4"]);
+    expect(noteIds(BASS_STARTER_NOTES)).toEqual(["C3", "D3", "E3", "F3", "G3"]);
+    expect(noteIds(PITCH_NOTES)).toEqual(["C4", "D4", "E4", "F4", "G4", "A4", "B4"]);
+    expect(READING_ANSWER_OPTIONS).toEqual(["C", "D", "E", "F", "G"]);
+    expect(PITCH_ANSWER_OPTIONS).toEqual(["C", "D", "E", "F", "G", "A", "B"]);
+    expect(STARTER_NOTES.map((note) => note.keyboardShortcut)).toEqual(["1", "2", "3", "4", "5"]);
+    expect(PITCH_NOTES.map((note) => note.keyboardShortcut)).toEqual(["1", "2", "3", "4", "5", "6", "7"]);
+  });
+
+  it("seeds empty progress for every known reading note and pitch", () => {
+    expect(Object.keys(emptyReadingProgress.noteStats)).toEqual(noteIds(READING_NOTES));
+    expect(Object.keys(emptyPitchProgress.noteStats)).toEqual(noteIds(PITCH_NOTES));
+    expect(Object.values(emptyReadingProgress.noteStats)).toEqual(
+      Array.from({ length: READING_NOTES.length }, () => ({ attempts: 0, correct: 0 })),
+    );
+    expect(Object.values(emptyPitchProgress.noteStats)).toEqual(
+      Array.from({ length: PITCH_NOTES.length }, () => ({ attempts: 0, correct: 0 })),
+    );
+    expect(emptyProgress).toMatchObject({
+      reading: emptyReadingProgress,
+      pitch: emptyPitchProgress,
+      history: [],
+    });
+  });
+});

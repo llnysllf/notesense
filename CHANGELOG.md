@@ -20,6 +20,7 @@ All notable changes to NoteSense are documented here. The format follows [Keep a
 - App-shell coverage gate for settings, rounds, import/export, reset, mode switching, and status coordination
 - Component coverage for practice plan, insight chart, pitch prompt, session history, and stat tile rendering
 - Web Audio playback coverage for oscillator setup, gain envelope scheduling, and audio-context reuse
+- Note-catalog and stats-panel coverage for range invariants, seeded progress, settings controls, and data actions
 - Local-only render-failure reporting helper with bounded report shape and focused unit coverage
 - Shared contract-check helper with whitespace-normalized snippet matching and focused unit coverage
 - ADR governance with `docs/adr/README.md` and `npm run adr:check` for decision numbering, status, required sections, and index links
