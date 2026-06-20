@@ -21,7 +21,7 @@ All notable changes to NoteSense are documented here. The format follows [Keep a
 - Component coverage for practice plan, insight chart, pitch prompt, session history, and stat tile rendering
 - Web Audio playback coverage for oscillator setup, gain envelope scheduling, and audio-context reuse
 - Note-catalog and stats-panel coverage for range invariants, seeded progress, settings controls, and data actions
-- Local-only render-failure reporting helper with bounded report shape and focused unit coverage
+- Local-only render and runtime-failure reporting helpers with bounded report shapes and focused unit coverage
 - Shared contract-check helper with whitespace-normalized snippet matching and focused unit coverage
 - ADR governance with `docs/adr/README.md` and `npm run adr:check` for decision numbering, status, required sections, and index links
 - Product-scope contract with `docs/PRODUCT_SCOPE.md` and `npm run product:check` for current scope, explicit non-goals, feature intake, and foundation-first expectations
