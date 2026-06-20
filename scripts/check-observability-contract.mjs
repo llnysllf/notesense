@@ -1,5 +1,11 @@
 import { existsSync, readFileSync } from "node:fs";
-import { includesContractSnippet } from "./lib/contract-checks.mjs";
+import {
+  formatMarkdownHeadingExpectation,
+  hasPackageScript,
+  includesContractSnippet,
+  missingMarkdownHeadings,
+  packageScriptRuns,
+} from "./lib/contract-checks.mjs";
 
 const failures = [];
 
@@ -22,17 +28,44 @@ function requireSnippets(file, snippets) {
   }
 }
 
+function requireHeadings(file, headings) {
+  const content = readProjectFile(file);
+
+  for (const heading of missingMarkdownHeadings(content, headings)) {
+    failures.push(`${file} is missing expected observability heading: ${formatMarkdownHeadingExpectation(heading)}`);
+  }
+}
+
+function requirePackageScript(scriptName, expectedCommand) {
+  const content = readProjectFile("package.json");
+
+  if (!hasPackageScript(content, scriptName, expectedCommand)) {
+    failures.push(`package.json scripts.${scriptName} must be "${expectedCommand}"`);
+  }
+}
+
+function requirePackageScriptRun(parentScriptName, childScriptName) {
+  const content = readProjectFile("package.json");
+
+  if (!packageScriptRuns(content, parentScriptName, childScriptName)) {
+    failures.push(`package.json scripts.${parentScriptName} must run npm run ${childScriptName}`);
+  }
+}
+
 console.log("Observability contract report");
 
+requireHeadings("docs/OBSERVABILITY.md", [
+  { depth: 1, text: "Observability And Incident Learning Contract" },
+  { depth: 2, text: "Product Standard" },
+  { depth: 2, text: "Current Visibility Boundary" },
+  { depth: 2, text: "Future Signal Rules" },
+  { depth: 2, text: "Incident Learning" },
+  { depth: 2, text: "SLO And SLA Boundary" },
+  { depth: 2, text: "Change Rules" },
+  { depth: 2, text: "Verification" },
+]);
+
 requireSnippets("docs/OBSERVABILITY.md", [
-  "# Observability And Incident Learning Contract",
-  "## Product Standard",
-  "## Current Visibility Boundary",
-  "## Future Signal Rules",
-  "## Incident Learning",
-  "## SLO And SLA Boundary",
-  "## Change Rules",
-  "## Verification",
   "The app should never become blind to production failures once real users depend on it.",
   "Product-learning and feedback expectations live in [PRODUCT_LEARNING.md](PRODUCT_LEARNING.md).",
   "The current app has no production telemetry, analytics, real-user monitoring, remote logging, or support queue.",
@@ -46,25 +79,26 @@ requireSnippets("docs/OBSERVABILITY.md", [
   "Run `npm run observability:check` after observability, monitoring, telemetry, analytics, incident-response, postmortem-template, SLO/SLA, DORA-metric, support, support-policy, operations, privacy, security, legal, runtime-surface, release, or backend-readiness changes.",
 ]);
 
+requireHeadings("docs/POSTMORTEM_TEMPLATE.md", [
+  { depth: 1, text: "Incident Review Template" },
+  { depth: 2, text: "Summary" },
+  { depth: 2, text: "Impact" },
+  { depth: 2, text: "Detection" },
+  { depth: 2, text: "Timeline" },
+  { depth: 2, text: "Root Cause" },
+  { depth: 2, text: "Resolution" },
+  { depth: 2, text: "Prevention" },
+  { depth: 2, text: "Follow-Ups" },
+  { depth: 2, text: "Evidence" },
+]);
+
 requireSnippets("docs/POSTMORTEM_TEMPLATE.md", [
-  "# Incident Review Template",
-  "## Summary",
-  "## Impact",
-  "## Detection",
-  "## Timeline",
-  "## Root Cause",
-  "## Resolution",
-  "## Prevention",
-  "## Follow-Ups",
-  "## Evidence",
   "Missing signals that would have reduced detection time:",
   "Why existing checks, review, or monitoring did not catch it earlier:",
 ]);
 
-requireSnippets("package.json", [
-  '"observability:check": "node scripts/check-observability-contract.mjs"',
-  "npm run performance:check && npm run operations:check && npm run observability:check && npm run release:safety && npm run release:notes",
-]);
+requirePackageScript("observability:check", "node scripts/check-observability-contract.mjs");
+requirePackageScriptRun("check", "observability:check");
 
 requireSnippets("CONTRIBUTING.md", [
   "For observability, monitoring, telemetry, analytics, incident-response, postmortem-template, SLO/SLA, support, or production-visibility changes, keep [docs/OBSERVABILITY.md](docs/OBSERVABILITY.md) aligned and run the observability contract check:",

@@ -1,5 +1,11 @@
 import { existsSync, readFileSync } from "node:fs";
-import { includesContractSnippet } from "./lib/contract-checks.mjs";
+import {
+  formatMarkdownHeadingExpectation,
+  hasPackageScript,
+  includesContractSnippet,
+  missingMarkdownHeadings,
+  packageScriptRuns,
+} from "./lib/contract-checks.mjs";
 
 const failures = [];
 
@@ -22,17 +28,44 @@ function requireSnippets(file, snippets) {
   }
 }
 
+function requireHeadings(file, headings) {
+  const content = readProjectFile(file);
+
+  for (const heading of missingMarkdownHeadings(content, headings)) {
+    failures.push(`${file} is missing expected product-learning heading: ${formatMarkdownHeadingExpectation(heading)}`);
+  }
+}
+
+function requirePackageScript(scriptName, expectedCommand) {
+  const content = readProjectFile("package.json");
+
+  if (!hasPackageScript(content, scriptName, expectedCommand)) {
+    failures.push(`package.json scripts.${scriptName} must be "${expectedCommand}"`);
+  }
+}
+
+function requirePackageScriptRun(parentScriptName, childScriptName) {
+  const content = readProjectFile("package.json");
+
+  if (!packageScriptRuns(content, parentScriptName, childScriptName)) {
+    failures.push(`package.json scripts.${parentScriptName} must run npm run ${childScriptName}`);
+  }
+}
+
 console.log("Product learning contract report");
 
+requireHeadings("docs/PRODUCT_LEARNING.md", [
+  { depth: 1, text: "Product Learning And Feedback Contract" },
+  { depth: 2, text: "Product Standard" },
+  { depth: 2, text: "Current Learning Boundary" },
+  { depth: 2, text: "Feedback And Decision Inputs" },
+  { depth: 2, text: "Future Analytics Experiments And Feature Flags" },
+  { depth: 2, text: "Delivery Metrics And Review Cadence" },
+  { depth: 2, text: "Change Rules" },
+  { depth: 2, text: "Verification" },
+]);
+
 requireSnippets("docs/PRODUCT_LEARNING.md", [
-  "# Product Learning And Feedback Contract",
-  "## Product Standard",
-  "## Current Learning Boundary",
-  "## Feedback And Decision Inputs",
-  "## Future Analytics Experiments And Feature Flags",
-  "## Delivery Metrics And Review Cadence",
-  "## Change Rules",
-  "## Verification",
   "The current app has no product analytics, experimentation platform, feature flag service, A/B testing, in-app survey, support CRM, or DORA dashboard.",
   "Current product learning comes from GitHub issues, pull-request review, manual learner testing, release evidence, incident reviews, and owner notes.",
   "Local practice history and in-app charts are learner-owned product features, not production analytics sent to the project owner.",
@@ -42,10 +75,8 @@ requireSnippets("docs/PRODUCT_LEARNING.md", [
   "Run `npm run product:learning` after product-feedback, analytics, experiment, feature-flag, survey, support, product-metric, delivery-metric, DORA, roadmap, product-scope, observability, privacy, legal, runtime-surface, release, or operations changes.",
 ]);
 
-requireSnippets("package.json", [
-  '"product:learning": "node scripts/check-product-learning-contract.mjs"',
-  "npm run docs:check && npm run adr:check && npm run product:check && npm run product:learning && npm run review:check",
-]);
+requirePackageScript("product:learning", "node scripts/check-product-learning-contract.mjs");
+requirePackageScriptRun("check", "product:learning");
 
 requireSnippets("CONTRIBUTING.md", [
   "For product-feedback, analytics, experiment, feature-flag, survey, support, product-metric, delivery-metric, DORA, roadmap, or product-learning changes, keep [docs/PRODUCT_LEARNING.md](docs/PRODUCT_LEARNING.md) aligned and run the product-learning contract check:",
