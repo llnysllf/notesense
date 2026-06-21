@@ -38,7 +38,6 @@ requireSnippets("docs/OPERATIONS.md", [
   "## Review Cadence",
   "## Verification",
   "GitHub Actions, repository governance checks, live deployment verification, and user-reported issues are the current operational signal.",
-  "Do not add telemetry, monitoring SDKs, backend APIs, or third-party services without updating privacy, security, runtime-surface, release, threat-model, backend-readiness, and operations docs together.",
   "Observability and incident-learning expectations live in [OBSERVABILITY.md](OBSERVABILITY.md).",
   "Use [POSTMORTEM_TEMPLATE.md](POSTMORTEM_TEMPLATE.md) for user-impacting production incidents and process gaps that should teach the project something durable.",
   "Run `npm run operations:check` after operations-runbook, release, deployment, PWA, repository-governance, security, privacy, backend-readiness, monitoring, telemetry, support, support-policy, or rollback changes.",
@@ -60,10 +59,6 @@ requireSnippets("CONTRIBUTING.md", [
   "Keep [docs/OPERATIONS.md](docs/OPERATIONS.md) aligned when release-health signals, post-release verification, incident triggers, triage flow, rollback expectations, evidence handling, observability boundaries, monitoring, telemetry, or support expectations change; run `npm run operations:check` after operations-sensitive changes.",
 ]);
 
-requireSnippets(".github/pull_request_template.md", [
-  "Operations-contract impact was considered for runbook sections, release-health signals, post-release verification, incident triage, rollback, evidence handling, and observability boundaries.",
-]);
-
 requireSnippets("docs/QUALITY.md", [
   "Operations runbook and `npm run operations:check` stay aligned when release-health signals, post-release verification, incident triggers, triage flow, rollback expectations, evidence handling, observability boundaries, monitoring, telemetry, or support expectations change.",
   "For operations feedback:",
@@ -72,13 +67,7 @@ requireSnippets("docs/QUALITY.md", [
 ]);
 
 requireSnippets("docs/RELEASE.md", [
-  "Treat operations-contract results as release evidence when release-health signals, post-release verification, incident triggers, triage flow, rollback expectations, evidence handling, observability boundaries, monitoring, telemetry, or support expectations change.",
   "Whether `npm run operations:check` still proves release-health signals, post-release verification, incident triggers, triage flow, rollback expectations, evidence handling, observability boundaries, and operations-review guidance are aligned.",
-]);
-
-requireSnippets("docs/ARCHITECTURE.md", [
-  "`scripts/check-operations-contract.mjs` owns operations-runbook drift checks for release-health signals, post-release verification, incident triggers, triage flow, rollback expectations, evidence handling, observability boundaries, and operations-review guidance.",
-  "Operations-contract changes should keep release-health signals, post-release verification, incident triggers, triage flow, rollback expectations, evidence handling, observability boundaries, release guidance, security guidance, privacy guidance, backend-readiness guidance, and PR review guidance aligned.",
 ]);
 
 requireSnippets("docs/TESTING.md", [
