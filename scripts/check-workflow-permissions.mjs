@@ -19,6 +19,7 @@ const EXPECTED_PERMISSIONS = {
     jobs: {
       build: { contents: "read" },
       deploy: { "id-token": "write", pages: "write" },
+      "verify-live": { contents: "read" },
     },
     topLevel: {},
   },
