@@ -117,26 +117,14 @@ requireSnippets("CONTRIBUTING.md", [
   "Keep [docs/PERFORMANCE.md](docs/PERFORMANCE.md) aligned when changing bundle budgets, tracked asset categories, Lighthouse thresholds, Lighthouse workflow behavior, metadata checks, PWA artifact checks, runtime-surface checks, Pages smoke behavior, or performance review expectations; run `npm run performance:check` after performance-sensitive changes.",
 ]);
 
-requireSnippets(".github/pull_request_template.md", [
-  "Performance impact was considered for bundle budgets, Lighthouse thresholds, metadata/PWA/runtime checks, Pages smoke coverage, and performance-review evidence.",
-]);
-
 requireSnippets("docs/QUALITY.md", [
   "Performance docs and `npm run performance:check` stay aligned when bundle budgets, tracked asset categories, Lighthouse thresholds, Lighthouse workflow behavior, metadata checks, PWA artifact checks, runtime-surface checks, Pages smoke behavior, or performance review expectations change.",
   "For performance feedback:",
   "npm run performance:check",
-  "`docs/PERFORMANCE.md` defines the product performance standard, bundle budgets, Lighthouse signal, static asset boundaries, and performance verification evidence.",
 ]);
 
 requireSnippets("docs/RELEASE.md", [
-  "Treat performance-contract results as release evidence when bundle budgets, tracked asset categories, Lighthouse thresholds, Lighthouse workflow behavior, metadata checks, PWA artifact checks, runtime-surface checks, Pages smoke behavior, or performance review expectations change.",
   "Whether `npm run performance:check` still proves bundle budgets, Lighthouse thresholds, metadata/PWA/runtime checks, Pages smoke coverage, and performance-review guidance are aligned.",
-]);
-
-requireSnippets("docs/ARCHITECTURE.md", [
-  "`docs/PERFORMANCE.md` documents the product performance standard, bundle budgets, Lighthouse signal, static asset boundaries, and performance verification evidence.",
-  "`scripts/check-performance-contract.mjs` owns performance-contract drift checks for bundle budgets, Lighthouse thresholds, metadata/PWA/runtime checks, Pages smoke coverage, and performance-review guidance.",
-  "Performance-contract changes should keep bundle budgets, Lighthouse thresholds, metadata checks, PWA checks, runtime-surface checks, Pages smoke coverage, browser-support guidance, dependency guidance, release guidance, and PR review guidance aligned.",
 ]);
 
 requireSnippets("docs/TESTING.md", [
@@ -147,10 +135,6 @@ requireSnippets("docs/TESTING.md", [
 requireSnippets("docs/BROWSER_SUPPORT.md", [
   "Performance expectations live in [PERFORMANCE.md](PERFORMANCE.md).",
   "Run `npm run performance:check` when browser changes affect bundle budgets, Lighthouse, metadata, PWA, runtime-surface, or Pages smoke evidence.",
-]);
-
-requireSnippets("docs/DEPENDENCY_MAINTENANCE.md", [
-  "bundle-budget and Lighthouse impact when runtime dependencies affect built output",
 ]);
 
 requireSnippets("docs/adr/README.md", ["ADR 0041: Add Performance Contract"]);

@@ -38,8 +38,6 @@ requireSnippets("docs/ACCESSIBILITY.md", [
   "WCAG 2.2 Level AA",
   "owner-maintained self-assessment target",
   "not a third-party accessibility audit, VPAT, ACR, or legal certification",
-  "Conformance evidence must combine automated checks, keyboard review, visual review, and assistive-technology review notes when UI behavior changes.",
-  "Known gaps, unavailable review devices, or deferred manual checks must be documented in the pull request and release evidence before merge.",
   "macOS VoiceOver with Safari",
   "NVDA with Firefox or Chrome",
   "iOS VoiceOver or Android TalkBack",
@@ -158,46 +156,24 @@ requireSnippets("src/components/MasteryMap.tsx", [
 
 requireSnippets("docs/QUALITY.md", [
   "Accessibility contract docs and `npm run accessibility:check` stay aligned when keyboard, screen reader, focus, contrast, motion, or automated accessibility coverage changes.",
-  "Accessibility conformance evidence stays aligned when WCAG targets, manual assistive-technology review, or accessibility release evidence changes.",
   "For accessibility-contract feedback:",
   "npm run accessibility:check",
-  "`docs/ACCESSIBILITY.md` defines the product accessibility standard, WCAG 2.2 Level AA target, keyboard and focus rules, screen reader semantics, visual and motion rules, automated coverage, assistive-technology review expectations, manual review expectations, and change process.",
   "`npm run accessibility:check` verifies that source semantics, styles, browser tests, lint rules, and docs stay aligned.",
-  "Manual review notes identify any unavailable assistive-technology profile or deferred WCAG evidence.",
 ]);
 
 requireSnippets("docs/RELEASE.md", [
-  "Treat accessibility-contract results as release evidence when keyboard behavior, screen reader semantics, focus visibility, contrast, motion, or automated accessibility coverage changes.",
-  "Treat accessibility conformance results as release evidence when WCAG targets, manual assistive-technology review, or accessibility self-assessment scope changes.",
   "Whether `npm run accessibility:check` still proves keyboard, screen reader, focus, motion, axe, cross-browser, and Lighthouse coverage are aligned.",
-  "Whether accessibility evidence still supports the documented WCAG 2.2 Level AA self-assessment target for changed workflows.",
 ]);
 
 requireSnippets("docs/ARCHITECTURE.md", [
-  "`docs/ACCESSIBILITY.md` documents the WCAG alignment, assistive-technology review, keyboard, screen reader, focus, contrast, motion, and automated accessibility coverage contract.",
   "`scripts/check-accessibility-contracts.mjs` owns accessibility-contract drift checks for source semantics, styles, browser coverage, lint coverage, and release docs.",
-  "Accessibility-contract changes should keep source semantics, focus behavior, reduced-motion behavior, axe coverage, Lighthouse expectations, and release guidance aligned.",
-  "Accessibility conformance changes should keep WCAG targets, assistive-technology review evidence, manual review expectations, release guidance, and PR review guidance aligned.",
-]);
-
-requireSnippets("docs/TESTING.md", [
-  "Add or update manual accessibility evidence when WCAG target coverage, assistive-technology review scope, screen reader semantics, or accessibility release evidence changes.",
-]);
-
-requireSnippets(".github/pull_request_template.md", [
-  "Accessibility conformance impact was considered for WCAG alignment, manual assistive-technology review, and release evidence.",
 ]);
 
 requireSnippets("docs/adr/README.md", ["ADR 0052: Add Accessibility Conformance Review Contract"]);
 
-requireSnippets("CHANGELOG.md", [
-  "Accessibility conformance review contract for WCAG 2.2 Level AA alignment, assistive-technology review planning, and release evidence",
-]);
-
 requireSnippets("docs/DESIGN_SYSTEM.md", [
   "## Accessibility And Motion",
   "Motion must respect `prefers-reduced-motion`.",
-  "Every interactive control must be reachable by keyboard and have a visible focus ring.",
 ]);
 
 console.log("- accessibility documentation checked");

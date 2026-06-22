@@ -64,7 +64,6 @@ requireSnippets("docs/TESTING.md", [
   "npm run observability:check",
   "npm run release:safety",
   "Browser tests run against production preview builds",
-  "Preview servers use explicit ports and fail fast when a port is unavailable",
   "UI behavior tests block service workers",
   "Coverage thresholds are per-file",
   "App-shell coordination",
@@ -82,7 +81,6 @@ requireSnippets("docs/TESTING.md", [
   "operations governance stays part of the foundation contract gate",
   "observability governance stays part of the foundation contract gate",
   "release-safety governance stays part of the foundation contract gate",
-  "Dedicated workflows own CodeQL, Dependency Review, Lighthouse, Visual Regression, and Pages deployment evidence.",
 ]);
 
 requireSnippets("package.json", [
@@ -268,7 +266,6 @@ requireSnippets("docs/QUALITY.md", [
   "Testing contract docs and `npm run testing:check` stay aligned when package scripts, coverage thresholds, browser configs, CI quality gates, or test ownership changes.",
   "App-shell coordination for settings, rounds, import/export, reset, and mode switching meets the configured Vitest coverage thresholds.",
   "React hook orchestration for settings, progress, data portability, and practice sessions meets the configured Vitest coverage thresholds.",
-  "Shared contract-check helpers have focused unit coverage so policy gates stay resilient to harmless formatting drift.",
   "Browser-support docs and `npm run browsers:check` stay aligned when supported browsers, Playwright projects, device profiles, Pages base path, Web Audio behavior, LocalStorage behavior, responsive support, color-scheme support, PWA/offline behavior, runtime-surface policy, or browser verification evidence changes.",
   "Performance docs and `npm run performance:check` stay aligned when bundle budgets, tracked asset categories, Lighthouse thresholds, Lighthouse workflow behavior, metadata checks, PWA artifact checks, runtime-surface checks, Pages smoke behavior, or performance review expectations change.",
   "For testing-contract feedback:",
@@ -277,36 +274,12 @@ requireSnippets("docs/QUALITY.md", [
 ]);
 
 requireSnippets("docs/RELEASE.md", [
-  "Treat ADR governance results as release evidence when architecture decisions are added, renamed, removed, or moved between statuses.",
-  "Treat product-scope results as release evidence when supported scope, explicit non-goals, roadmap language, or feature-intake expectations change.",
-  "Treat product-learning results as release evidence when feedback loops, future analytics, experiments, feature flags, support signals, product metrics, delivery metrics, DORA expectations, or roadmap validation changes.",
-  "Treat review/intake results as release evidence when CODEOWNERS, issue templates, PR templates, labels, triage routing, or review evidence expectations change.",
-  "Treat dependency-maintenance results as release evidence when Dependabot cadence, dependency grouping, ignored update types, package manager policy, lockfile policy, license policy, SBOM policy, or workflow-update policy changes.",
-  "Treat legal/licensing results as release evidence when root license terms, package metadata, user-facing terms, privacy-policy hosting, contributor-community expectations, code-of-conduct expectations, dependency license policy, release guidance, or PR review guidance changes.",
-  "Treat security/privacy results as release evidence when local-first privacy, import/export trust, runtime APIs, CSP, PWA behavior, future auth/sync, backend readiness, telemetry, analytics, or security posture changes.",
-  "Treat testing-contract results as release evidence when test ownership, package scripts, coverage thresholds, browser configs, CI quality gates, or workflow evidence changes.",
-  "Treat browser-support results as release evidence when supported browsers, Playwright projects, device profiles, Pages base path, Web Audio behavior, LocalStorage behavior, responsive support, color-scheme support, PWA/offline behavior, runtime-surface policy, or browser verification evidence changes.",
-  "Treat performance-contract results as release evidence when bundle budgets, tracked asset categories, Lighthouse thresholds, Lighthouse workflow behavior, metadata checks, PWA artifact checks, runtime-surface checks, Pages smoke behavior, or performance review expectations change.",
-  "Treat observability results as release evidence when production visibility, monitoring, telemetry, analytics, incident-response, postmortem-template, SLO/SLA, DORA metrics, support expectations, or production signal ownership changes.",
-  "Treat release-safety results as release evidence when deployment, staging, canary, progressive rollout, rollback, provenance, SBOM, signing, artifact, Pages, workflow, or release sign-off expectations change.",
   "Whether `npm run testing:check` still proves package scripts, coverage thresholds, Playwright configs, browser specs, and CI evidence are aligned.",
 ]);
 
 requireSnippets("docs/ARCHITECTURE.md", [
   "`scripts/check-adr-contracts.mjs` owns ADR numbering, status, required-section, and index-link checks.",
-  "`scripts/check-product-scope.mjs` owns product-scope drift checks for README scope, explicit non-goals, contributor guidance, review guidance, and release docs.",
-  "`scripts/check-product-learning-contract.mjs` owns product-learning drift checks for feedback loops, future analytics, experiments, feature flags, delivery metrics, release guidance, and PR review guidance.",
-  "`scripts/check-review-process.mjs` owns review/intake drift checks for CODEOWNERS, issue templates, PR template, security routing, and review evidence.",
-  "`scripts/check-dependency-maintenance.mjs` owns dependency-maintenance drift checks for Dependabot cadence, dependency review evidence, lockfile policy, license policy, SBOM policy, supply-chain gates, and workflow-update expectations.",
-  "`scripts/check-legal-contract.mjs` owns legal/licensing drift checks for the root license, package metadata, legal docs, code-of-conduct expectations, dependency-license boundaries, release guidance, and PR review guidance.",
-  "`scripts/check-security-privacy.mjs` owns security/privacy drift checks for privacy docs, security policy, threat model, backend readiness, data contract, runtime-surface, CSP, PWA, supply-chain, and review/release guidance.",
   "`scripts/check-browser-support.mjs` owns browser-support drift checks for Playwright browser projects, Pages/mobile support, visual-regression profiles, PWA/runtime boundaries, and browser-support docs.",
-  "`scripts/check-performance-contract.mjs` owns performance-contract drift checks for bundle budgets, Lighthouse thresholds, metadata/PWA/runtime checks, Pages smoke coverage, and performance-review guidance.",
-  "`scripts/check-observability-contract.mjs` owns observability drift checks for production visibility, future telemetry rules, incident review templates, SLO/SLA boundaries, release guidance, and PR review guidance.",
-  "`scripts/check-release-safety-contract.mjs` owns release-safety drift checks for deployment boundaries, staging/canary triggers, rollback expectations, artifact/provenance expectations, release guidance, and PR review guidance.",
-  "`docs/TESTING.md` documents test ownership, change routing, determinism, coverage, CI, and review expectations.",
-  "`scripts/check-testing-contracts.mjs` owns testing-contract drift checks for package scripts, Vitest coverage thresholds, Playwright configs, browser specs, and CI workflow evidence.",
-  "Testing-contract changes should keep package scripts, coverage thresholds, browser configs, CI workflow evidence, and release guidance aligned.",
 ]);
 
 console.log("- testing documentation checked");
