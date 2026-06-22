@@ -27,6 +27,10 @@ const EXPECTED_PERMISSIONS = {
     jobs: {},
     topLevel: { contents: "read" },
   },
+  ".github/workflows/preview.yml": {
+    jobs: {},
+    topLevel: { contents: "read", "pull-requests": "write" },
+  },
   ".github/workflows/visual-regression.yml": {
     jobs: {},
     topLevel: { contents: "read" },
