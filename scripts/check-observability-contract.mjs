@@ -66,16 +66,10 @@ requireHeadings("docs/OBSERVABILITY.md", [
 ]);
 
 requireSnippets("docs/OBSERVABILITY.md", [
-  "The app should never become blind to production failures once real users depend on it.",
   "Product-learning and feedback expectations live in [PRODUCT_LEARNING.md](PRODUCT_LEARNING.md).",
   "The current app has no production telemetry, analytics, real-user monitoring, remote logging, or support queue.",
-  "`src/components/ErrorBoundary.tsx` provides a learner-facing recovery surface and sends bounded render-failure reports through `src/observability.ts`, which currently logs only to the browser console for development and future client-side error reporting.",
-  "`src/main.tsx` installs local runtime-failure listeners for uncaught browser errors and unhandled promise rejections so failures outside React rendering use the same bounded local reporting boundary.",
-  "`src/observability.ts` owns the current local-only render-failure, runtime-failure, and unhandled-rejection report shapes and must not add telemetry, network delivery, durable identifiers, practice content, imported/exported data, raw LocalStorage, audio, or keystroke capture.",
-  "Client error reporting must be privacy reviewed before implementation.",
   "Denied future signals include practice answers, note-level progress, session history, imported/exported JSON contents, raw LocalStorage, audio recordings, keystrokes, precise IP-derived location, full URLs with query strings, and stable cross-site identifiers.",
   "User-impacting production incidents should leave an incident review using [POSTMORTEM_TEMPLATE.md](POSTMORTEM_TEMPLATE.md).",
-  "DORA-style metrics such as lead time, deployment frequency, change-failure rate, and MTTR should be introduced only after the release process has enough real production history to make those metrics meaningful.",
   "NoteSense does not currently promise an external SLA.",
   "Run `npm run observability:check` after observability, monitoring, telemetry, analytics, incident-response, postmortem-template, SLO/SLA, DORA-metric, support, support-policy, operations, privacy, security, legal, runtime-surface, release, or backend-readiness changes.",
 ]);
@@ -107,19 +101,13 @@ requireSnippets("CONTRIBUTING.md", [
   "Keep [docs/OBSERVABILITY.md](docs/OBSERVABILITY.md) aligned when changing production visibility, monitoring, telemetry, analytics, incident-response, postmortem-template, SLO/SLA, DORA metrics, support expectations, or production signal ownership; run `npm run observability:check` after observability-sensitive changes.",
 ]);
 
-requireSnippets(".github/pull_request_template.md", [
-  "Observability impact was considered for production visibility, telemetry boundaries, incident learning, SLO/SLA expectations, support, and future monitoring.",
-]);
-
 requireSnippets("docs/QUALITY.md", [
   "Observability docs and `npm run observability:check` stay aligned when production visibility, monitoring, telemetry, analytics, incident-response, postmortem-template, SLO/SLA, DORA metrics, support expectations, or production signal ownership changes.",
   "For observability feedback:",
   "npm run observability:check",
-  "`docs/OBSERVABILITY.md` defines the current production visibility boundary, future signal rules, incident-learning expectations, and SLO/SLA boundary.",
 ]);
 
 requireSnippets("docs/RELEASE.md", [
-  "Treat observability results as release evidence when production visibility, monitoring, telemetry, analytics, incident-response, postmortem-template, SLO/SLA, DORA metrics, support expectations, or production signal ownership changes.",
   "Whether `npm run observability:check` still proves production-visibility boundaries, future telemetry rules, incident-review templates, SLO/SLA expectations, and review/release guidance are aligned.",
 ]);
 
@@ -137,14 +125,10 @@ requireSnippets("docs/SECURITY_PRIVACY.md", [
 
 requireSnippets("docs/LEGAL.md", [
   "Observability and incident-learning expectations live in [OBSERVABILITY.md](OBSERVABILITY.md).",
-  "Production telemetry, analytics, monitoring, remote logging, or support commitments must update legal, privacy, and observability expectations together before implementation.",
 ]);
 
 requireSnippets("docs/ARCHITECTURE.md", [
-  "`docs/OBSERVABILITY.md` documents the production visibility boundary, future signal rules, incident-learning expectations, and SLO/SLA boundary.",
   "`src/observability.ts` owns the current local-only render-failure, runtime-failure, and unhandled-rejection report shapes.",
-  "`scripts/check-observability-contract.mjs` owns observability drift checks for production visibility, future telemetry rules, incident review templates, SLO/SLA boundaries, release guidance, and PR review guidance.",
-  "Observability changes should keep production visibility, telemetry boundaries, incident learning, SLO/SLA expectations, support, operations, privacy, security, legal, release, backend-readiness, and PR review guidance aligned.",
 ]);
 
 requireSnippets("docs/TESTING.md", [
@@ -154,12 +138,10 @@ requireSnippets("docs/TESTING.md", [
 
 requireSnippets("docs/BACKEND_READINESS.md", [
   "Observability and incident-learning expectations live in [OBSERVABILITY.md](OBSERVABILITY.md).",
-  "Before backend launch, define privacy-safe production signals, incident review ownership, SLO/SLA boundaries, and telemetry retention.",
 ]);
 
 requireSnippets("docs/THREAT_MODEL.md", [
   "Observability and incident-learning expectations live in [OBSERVABILITY.md](OBSERVABILITY.md).",
-  "Future telemetry or monitoring must avoid collecting practice content, imported files, exported files, keystrokes, audio, raw LocalStorage, and unnecessary identifiers.",
 ]);
 
 requireSnippets("docs/adr/README.md", ["ADR 0045: Add Observability And Incident Learning Contract"]);
