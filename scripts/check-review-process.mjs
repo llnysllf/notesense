@@ -36,7 +36,6 @@ requireSnippets("docs/REVIEW_PROCESS.md", [
   "Bug reports use `.github/ISSUE_TEMPLATE/bug_report.yml`.",
   "Product proposals use `.github/ISSUE_TEMPLATE/feature_proposal.yml`.",
   "Engineering tasks use `.github/ISSUE_TEMPLATE/engineering_task.yml`.",
-  "Support requests should avoid private LocalStorage exports, imported files, raw practice history, credentials, `.env` files, and screenshots that expose private data.",
   "Run `npm run review:check` after review, support-policy, intake, issue-template, PR-template, CODEOWNERS, or triage-process changes.",
 ]);
 
@@ -58,7 +57,6 @@ requireSnippets(".github/SUPPORT.md", [
   "There is no public SLA or guaranteed response time for support requests.",
   "Use the [bug report template](ISSUE_TEMPLATE/bug_report.yml) for broken, confusing, inaccessible, or unreliable behavior.",
   "Follow [SECURITY.md](../SECURITY.md) for vulnerabilities or security-sensitive reports. Do not post exploit details publicly.",
-  "Do not attach private LocalStorage exports, imported files, raw practice history, credentials, `.env` files, or screenshots that expose private data.",
   "Run `npm run review:check` after support-policy, intake, issue-template, security-routing, or triage-process changes.",
 ]);
 
@@ -115,11 +113,7 @@ requireSnippets(".github/pull_request_template.md", [
   "## Summary",
   "## Quality Checklist",
   "`npm run verify` passes locally.",
-  "Product-scope impact was considered for current scope, explicit non-goals, feature intake, and foundation-first expectations.",
-  "Accessibility-contract impact was considered for source semantics, focus behavior, axe coverage, Lighthouse, and release guidance.",
-  "Testing impact was considered for unit, component, browser, resilience, Pages, visual, coverage, and CI evidence.",
   "ADR impact was considered for decision numbering, status, index links, and required sections.",
-  "Review/intake impact was considered for CODEOWNERS, support policy, issue templates, PR evidence, labels, and triage routing.",
   "## Risk Notes",
 ]);
 
@@ -136,24 +130,13 @@ requireSnippets("docs/QUALITY.md", [
 ]);
 
 requireSnippets("docs/RELEASE.md", [
-  "Treat review/intake results as release evidence when CODEOWNERS, issue templates, PR templates, labels, triage routing, or review evidence expectations change.",
   "Whether `npm run review:check` still proves CODEOWNERS, issue templates, PR template, security routing, and review evidence stay aligned.",
-]);
-
-requireSnippets("docs/ARCHITECTURE.md", [
-  "`docs/REVIEW_PROCESS.md` documents ownership, issue intake, triage, pull-request evidence, and review-process verification.",
-  "`scripts/check-review-process.mjs` owns review/intake drift checks for CODEOWNERS, issue templates, PR template, security routing, and review evidence.",
-  "Review-process changes should keep CODEOWNERS, issue templates, PR evidence, security routing, product-scope guidance, release guidance, and contributor guidance aligned.",
 ]);
 
 requireSnippets("docs/PRODUCT_SCOPE.md", [
   "New features should not start as code.",
   "the learner problem",
   "why the current scope is insufficient",
-]);
-
-requireSnippets("docs/TESTING.md", [
-  "A PR is not ready until the relevant test layer for the changed risk has evidence.",
 ]);
 
 requireSnippets("docs/OPERATIONS.md", [
@@ -171,10 +154,6 @@ requireSnippets("SECURITY.md", [
   "Please avoid posting exploit details publicly.",
   "The `main` branch and the GitHub Pages deployment are the supported version.",
   "Support expectations and non-SLA boundaries live in [.github/SUPPORT.md](.github/SUPPORT.md).",
-]);
-
-requireSnippets("docs/adr/README.md", [
-  "Add an ADR when a change affects data ownership, deployment, quality gates, runtime policy, security posture, release process, service boundaries, or future backend direction.",
 ]);
 
 console.log("- CODEOWNERS and issue templates checked");

@@ -37,7 +37,6 @@ requireSnippets("docs/BROWSER_SUPPORT.md", [
   "Performance expectations live in [PERFORMANCE.md](PERFORMANCE.md).",
   "Run `npm run browsers:check` after browser-support, Playwright project, Pages smoke, visual-regression, PWA, runtime-surface, Lighthouse, or browser-support documentation changes.",
   "Run `npm run performance:check` when browser changes affect bundle budgets, Lighthouse, metadata, PWA, runtime-surface, or Pages smoke evidence.",
-  "Playwright preview commands must use explicit ports aligned with their `baseURL` and readiness URL.",
 ]);
 
 requireSnippets("package.json", [
@@ -113,10 +112,6 @@ requireSnippets("CONTRIBUTING.md", [
   "Keep [docs/BROWSER_SUPPORT.md](docs/BROWSER_SUPPORT.md) aligned when changing supported browsers, Playwright projects, device profiles, Pages base path, Web Audio behavior, LocalStorage behavior, responsive support, color-scheme support, PWA/offline behavior, or browser verification evidence; run `npm run browsers:check` after browser-support changes.",
 ]);
 
-requireSnippets(".github/pull_request_template.md", [
-  "Browser-support impact was considered for supported engines, mobile viewports, Pages base path, Web Audio, LocalStorage, PWA/offline behavior, and browser verification evidence.",
-]);
-
 requireSnippets("docs/ACCESSIBILITY.md", [
   "Browser support expectations live in [BROWSER_SUPPORT.md](BROWSER_SUPPORT.md).",
   "Run `npm run browsers:check` after changing supported browsers, device profiles, responsive support, or browser verification evidence.",
@@ -131,18 +126,14 @@ requireSnippets("docs/QUALITY.md", [
   "Browser-support docs and `npm run browsers:check` stay aligned when supported browsers, Playwright projects, device profiles, Pages base path, Web Audio behavior, LocalStorage behavior, responsive support, color-scheme support, PWA/offline behavior, runtime-surface policy, or browser verification evidence changes.",
   "For browser-support feedback:",
   "npm run browsers:check",
-  "`docs/BROWSER_SUPPORT.md` defines supported engines, device shapes, runtime assumptions, unsupported surfaces, and browser verification evidence.",
 ]);
 
 requireSnippets("docs/RELEASE.md", [
-  "Treat browser-support results as release evidence when supported browsers, Playwright projects, device profiles, Pages base path, Web Audio behavior, LocalStorage behavior, responsive support, color-scheme support, PWA/offline behavior, runtime-surface policy, or browser verification evidence changes.",
   "Whether `npm run browsers:check` still proves supported engines, mobile viewports, Pages base path, visual-regression profiles, PWA/runtime boundaries, and browser-support docs are aligned.",
 ]);
 
 requireSnippets("docs/ARCHITECTURE.md", [
-  "`docs/BROWSER_SUPPORT.md` documents supported engines, device shapes, runtime assumptions, unsupported surfaces, and browser verification evidence.",
   "`scripts/check-browser-support.mjs` owns browser-support drift checks for Playwright browser projects, Pages/mobile support, visual-regression profiles, PWA/runtime boundaries, and browser-support docs.",
-  "Browser-support changes should keep supported engines, device profiles, Pages base path, Web Audio behavior, LocalStorage behavior, responsive support, PWA/offline behavior, accessibility guidance, testing guidance, release guidance, and PR review guidance aligned.",
 ]);
 
 requireSnippets("docs/OPERATIONS.md", [

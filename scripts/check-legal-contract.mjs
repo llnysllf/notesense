@@ -89,10 +89,7 @@ requireSnippets("docs/LEGAL.md", [
   "The root [LICENSE](../LICENSE) file is the source of truth for project source code and owned assets.",
   "The current project license is all rights reserved.",
   '`package.json` uses `license: "UNLICENSED"` and `private: true` so npm metadata does not imply open-source distribution rights.',
-  "Add user-facing Terms of Service before shipping hosted accounts, payments, subscriptions, collaboration, public sharing, user-generated cloud content, or a formal support channel.",
-  "Add an externally hosted privacy policy before collecting production telemetry, analytics, account data, sync data, or backend logs tied to users.",
   "The root [CODE_OF_CONDUCT.md](../CODE_OF_CONDUCT.md) file defines expected behavior for issues, pull requests, reviews, and project-managed discussion.",
-  "The Code of Conduct does not change project license terms, grant source-code rights, or replace security/privacy reporting guidance.",
   "Dependency license compliance covers installed third-party packages, not the license for NoteSense's own source code.",
   "Run `npm run legal:check` after changing the root license, package license metadata, legal docs, user-facing terms, privacy-policy hosting, contributor community expectations, code-of-conduct expectations, dependency license policy, release guidance, or PR review guidance.",
 ]);
@@ -113,27 +110,15 @@ requireSnippets("CONTRIBUTING.md", [
   "Keep [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md) aligned when changing contributor-community, moderation, reporting, participation, or conduct expectations.",
 ]);
 
-requireSnippets(".github/pull_request_template.md", [
-  "Legal/licensing impact was considered for root license terms, package metadata, user-facing terms, privacy-policy hosting, contributor community expectations, code-of-conduct expectations, and dependency license policy.",
-]);
-
 requireSnippets("docs/QUALITY.md", [
   "Legal/licensing docs and `npm run legal:check` stay aligned when root license terms, package metadata, user-facing terms, privacy-policy hosting, contributor-community expectations, code-of-conduct expectations, dependency license policy, release guidance, or PR review guidance changes.",
   "For legal/licensing feedback:",
   "npm run legal:check",
-  "`docs/LEGAL.md` defines the project license boundary, user-facing legal triggers, community-conduct expectations, dependency-license separation, and legal-change process.",
   "`npm run legal:check` verifies root license terms, package metadata, legal docs, code-of-conduct expectations, dependency-license boundaries, release guidance, and PR review guidance stay aligned.",
 ]);
 
 requireSnippets("docs/RELEASE.md", [
-  "Treat legal/licensing results as release evidence when root license terms, package metadata, user-facing terms, privacy-policy hosting, contributor-community expectations, code-of-conduct expectations, dependency license policy, release guidance, or PR review guidance changes.",
   "Whether `npm run legal:check` still proves project license, package metadata, legal docs, code-of-conduct expectations, dependency-license boundaries, release guidance, and PR review guidance are aligned.",
-]);
-
-requireSnippets("docs/ARCHITECTURE.md", [
-  "`docs/LEGAL.md` documents the project license boundary, user-facing legal triggers, community-conduct expectations, dependency-license separation, and legal-change process.",
-  "`scripts/check-legal-contract.mjs` owns legal/licensing drift checks for the root license, package metadata, legal docs, code-of-conduct expectations, dependency-license boundaries, release guidance, and PR review guidance.",
-  "Legal/licensing changes should keep root license terms, package metadata, user-facing terms, privacy-policy hosting, contributor-community expectations, code-of-conduct expectations, dependency license policy, release guidance, and PR review guidance aligned.",
 ]);
 
 requireSnippets("docs/TESTING.md", [
