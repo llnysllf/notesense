@@ -1,0 +1,92 @@
+name: PR Preview
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+permissions:
+  contents: read
+  pull-requests: write
+
+concurrency:
+  group: preview-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  preview:
+    name: Deploy PR preview
+    # Skip forked PRs: they cannot access the Cloudflare secrets.
+    if: github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+
+      - name: Set up Node.js
+        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      # Cleanly skip (green, non-blocking) until the Cloudflare secrets are configured.
+      - name: Check Cloudflare credentials
+        id: creds
+        env:
+          CF_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+        run: |
+          if [ -n "$CF_API_TOKEN" ]; then
+            echo "configured=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "configured=false" >> "$GITHUB_OUTPUT"
+            echo "CLOUDFLARE_API_TOKEN is not set; skipping preview deploy until secrets are configured."
+          fi
+
+      - name: Install dependencies
+        if: steps.creds.outputs.configured == 'true'
+        run: npm ci
+
+      - name: Build preview bundle
+        if: steps.creds.outputs.configured == 'true'
+        run: npm run build
+
+      - name: Deploy to Cloudflare Pages
+        id: deploy
+        if: steps.creds.outputs.configured == 'true'
+        uses: cloudflare/wrangler-action@ebbaa1584979971c8614a24965b4405ff95890e0 # v4.0.0
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: pages deploy dist --project-name=notesense --branch=${{ github.head_ref }}
+
+      - name: Comment preview URL
+        if: steps.creds.outputs.configured == 'true'
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
+        with:
+          script: |
+            const marker = "<!-- pr-preview -->";
+            const url = ${{ toJSON(steps.deploy.outputs['pages-deployment-alias-url'] || steps.deploy.outputs['deployment-url']) }};
+            const sha = context.sha.slice(0, 7);
+            const body = `${marker}\n### 🔍 PR preview deploy\n\n${url ? `Preview: ${url}` : "Preview deploy did not return a URL — check the workflow logs."}\n\n_Updated for ${sha}._`;
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+            });
+            const existing = comments.find((c) => c.body && c.body.includes(marker));
+            if (existing) {
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: existing.id,
+                body,
+              });
+            } else {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body,
+              });
+            }
