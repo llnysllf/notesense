@@ -75,6 +75,34 @@ test("runs the note-reading practice loop", async ({ page }) => {
   await expect(page.getByRole("listitem", { name: /Note reading session/ })).toBeVisible();
 });
 
+test("fits the full 88-key piano in the note-reading stage", async ({ page }) => {
+  await page.goto("/", { waitUntil: "domcontentloaded" });
+
+  await expect(page.getByRole("group", { name: "88-key piano keyboard" })).toBeVisible();
+
+  const pianoLayout = await page.evaluate(() => {
+    const viewport = document.querySelector(".piano-keyboard-viewport");
+    const buttons = Array.from(document.querySelectorAll(".piano-key"));
+    const viewportRect = viewport?.getBoundingClientRect();
+    const visibleButtons = buttons.filter((button) => {
+      const rect = button.getBoundingClientRect();
+
+      return viewportRect !== undefined && rect.right > viewportRect.left && rect.left < viewportRect.right;
+    });
+
+    return {
+      clientWidth: viewport?.clientWidth ?? 0,
+      scrollWidth: viewport?.scrollWidth ?? 0,
+      totalButtons: buttons.length,
+      visibleButtons: visibleButtons.length,
+    };
+  });
+
+  expect(pianoLayout.totalButtons).toBe(88);
+  expect(pianoLayout.visibleButtons).toBe(88);
+  expect(pianoLayout.scrollWidth).toBeLessThanOrEqual(pianoLayout.clientWidth + 1);
+});
+
 test("answers with keyboard shortcuts in both practice modes", async ({ page }) => {
   await page.goto("/", { waitUntil: "domcontentloaded" });
 
