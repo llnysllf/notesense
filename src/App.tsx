@@ -143,7 +143,7 @@ function App() {
   }
 
   return (
-    <main className="app-shell">
+    <main className={`app-shell ${mode === "reading" ? "reading-layout" : "pitch-layout"}`}>
       <section className="practice-panel" aria-labelledby="app-title">
         <header className="topbar">
           <div className="brand-lockup">

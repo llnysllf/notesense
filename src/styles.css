@@ -164,6 +164,11 @@ input:focus-visible {
   background: linear-gradient(180deg, var(--color-canvas-top) 0%, var(--color-canvas-soft) 100%);
 }
 
+.app-shell.reading-layout {
+  width: min(100%, 1680px);
+  grid-template-columns: minmax(0, 1fr);
+}
+
 .practice-panel,
 .stats-panel {
   border: 1px solid var(--color-border);
@@ -178,6 +183,26 @@ input:focus-visible {
   flex-direction: column;
   gap: var(--space-gap);
   padding: var(--space-page);
+}
+
+.reading-layout .practice-panel {
+  gap: 18px;
+}
+
+.reading-layout h1 {
+  font-size: 3.6rem;
+}
+
+.reading-layout .app-subtitle {
+  margin-top: 4px;
+}
+
+.reading-layout .topbar {
+  align-items: center;
+}
+
+.reading-layout .mode-switch button {
+  min-height: 40px;
 }
 
 .stats-panel {
@@ -374,6 +399,15 @@ h3 {
   line-height: 1.1;
 }
 
+.reading-layout .round-strip .stat-tile {
+  min-height: 58px;
+  padding: 10px 14px;
+}
+
+.reading-layout .round-strip .stat-tile strong {
+  font-size: 1.35rem;
+}
+
 .staff-card {
   position: relative;
   display: flex;
@@ -389,6 +423,13 @@ h3 {
   background: var(--color-surface);
 }
 
+.reading-layout .staff-card {
+  min-height: auto;
+  gap: 12px;
+  justify-content: flex-start;
+  padding: 18px;
+}
+
 .staff-card::before {
   position: absolute;
   inset: 0 0 auto;
@@ -400,6 +441,10 @@ h3 {
 .staff {
   width: 100%;
   max-height: 280px;
+}
+
+.reading-layout .staff {
+  max-height: 150px;
 }
 
 .pitch-card {
@@ -447,9 +492,9 @@ h3 {
 }
 
 .piano-keyboard-viewport {
-  --piano-white-key-width: clamp(18px, 2.1vw, 24px);
-  --piano-black-key-width: calc(var(--piano-white-key-width) * 0.64);
-  overflow-x: auto;
+  --piano-white-key-width: calc(100% / var(--piano-white-key-count));
+  --piano-black-key-width: max(8px, calc(var(--piano-white-key-width) * 0.64));
+  overflow-x: hidden;
   overflow-y: hidden;
   padding: 4px 2px 12px;
   scrollbar-color: var(--color-border-strong) transparent;
@@ -457,9 +502,13 @@ h3 {
 
 .piano-keybed {
   position: relative;
-  width: calc(var(--piano-white-key-count) * var(--piano-white-key-width));
-  height: clamp(128px, 18vw, 168px);
-  min-width: calc(var(--piano-white-key-count) * var(--piano-white-key-width));
+  width: 100%;
+  min-width: 0;
+  height: clamp(128px, 13vw, 168px);
+}
+
+.reading-layout .piano-keybed {
+  height: 112px;
 }
 
 .piano-white-keys {
@@ -482,7 +531,8 @@ h3 {
 
 .white-key {
   display: flex;
-  flex: 0 0 var(--piano-white-key-width);
+  flex: 1 1 0;
+  min-width: 0;
   align-items: flex-end;
   justify-content: center;
   height: 100%;
@@ -490,6 +540,12 @@ h3 {
   border-radius: 0 0 var(--radius-control) var(--radius-control);
   background: linear-gradient(180deg, var(--color-piano-white-top) 0%, var(--color-piano-white-bottom) 100%);
   color: var(--color-piano-white-text);
+}
+
+.white-key span {
+  display: block;
+  max-width: 100%;
+  overflow: hidden;
 }
 
 .black-key {
@@ -1404,5 +1460,17 @@ h3 {
   .staff-card {
     min-height: auto;
     padding: var(--space-control);
+  }
+
+  .reading-layout .staff {
+    max-height: 118px;
+  }
+
+  .reading-layout .staff-card {
+    gap: 10px;
+  }
+
+  .reading-layout .piano-keybed {
+    height: 96px;
   }
 }
