@@ -27,6 +27,7 @@ import {
   parsePracticeDataImport,
   recordPitchAttempt,
   recordReadingAttempt,
+  recordReadingLocationAttempt,
   resetProgress,
   saveProgress,
   saveSettings,
@@ -487,6 +488,15 @@ describe("storage progress reducers", () => {
     expect(progress.reading).toMatchObject({ totalAttempts: 1, totalCorrect: 1 });
     expect(progress.pitch).toMatchObject({ totalAttempts: 1, totalCorrect: 0 });
     expect(progress.pitch.noteStats.G4).toEqual({ attempts: 1, correct: 0 });
+  });
+
+  it("records piano-key reading attempts by exact keyboard location", () => {
+    let progress = freshProgress();
+    progress = recordReadingLocationAttempt(progress, fixtureItem(STARTER_NOTES, 0), "C3");
+    progress = recordReadingLocationAttempt(progress, fixtureItem(STARTER_NOTES, 0), "C4");
+
+    expect(progress.reading).toMatchObject({ totalAttempts: 2, totalCorrect: 1 });
+    expect(progress.reading.noteStats.C4).toEqual({ attempts: 2, correct: 1 });
   });
 
   it("completes a round without touching the other mode", () => {

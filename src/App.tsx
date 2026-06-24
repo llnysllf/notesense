@@ -1,13 +1,14 @@
 import { useCallback, useMemo, useState } from "react";
 import MusicStaff from "./components/MusicStaff";
 import PitchPrompt from "./components/PitchPrompt";
+import PianoKeyboard from "./components/PianoKeyboard";
 import PracticeStatsPanel from "./components/PracticeStatsPanel";
 import StatTile from "./components/StatTile";
 import { useDataPortability } from "./hooks/useDataPortability";
 import { usePracticeProgress } from "./hooks/usePracticeProgress";
 import { usePracticeSession } from "./hooks/usePracticeSession";
 import { useSettings } from "./hooks/useSettings";
-import { PITCH_ANSWER_OPTIONS, READING_ANSWER_OPTIONS, getReadingRange } from "./noteData";
+import { PITCH_ANSWER_OPTIONS, getReadingRange } from "./noteData";
 import {
   formatAccuracy,
   getDailyGoalSummary,
@@ -72,6 +73,7 @@ function App() {
     startRound,
     finishRound,
     handleAnswer,
+    handleReadingKeyAnswer,
     playCurrentNote,
   } = session;
 
@@ -94,7 +96,7 @@ function App() {
   }
 
   const activeProgress = progress[mode];
-  const answerOptions = mode === "reading" ? READING_ANSWER_OPTIONS : PITCH_ANSWER_OPTIONS;
+  const answerOptions = PITCH_ANSWER_OPTIONS;
   const activeNote = mode === "reading" ? currentReadingNote : currentPitchNote;
   const roundAccuracy = formatAccuracy(roundCorrect, roundAttempts);
   const lifetimeAccuracy = formatAccuracy(activeProgress.totalCorrect, activeProgress.totalAttempts);
@@ -196,7 +198,7 @@ function App() {
           <div className="prompt-row">
             <div>
               <span className="prompt-label">
-                {mode === "reading" ? "Which note is this?" : "Name the pitch you hear."}
+                {mode === "reading" ? "Find this note on the piano." : "Name the pitch you hear."}
               </span>
               <p>{promptDetail}</p>
             </div>
@@ -205,21 +207,31 @@ function App() {
             </span>
           </div>
 
-          <div className={`answer-grid ${mode === "pitch" ? "pitch-answer-grid" : ""}`}>
-            {answerOptions.map((answer, index) => (
-              <button
-                className="answer-button"
-                key={answer}
-                type="button"
-                aria-label={`Answer ${answer}`}
-                disabled={!isRunning || Boolean(feedback)}
-                onClick={() => handleAnswer(answer)}
-              >
-                <strong>{answer}</strong>
-                <span>{index + 1}</span>
-              </button>
-            ))}
-          </div>
+          {mode === "reading" ? (
+            <PianoKeyboard
+              disabled={!isRunning || Boolean(feedback)}
+              isCorrect={feedback?.isCorrect}
+              revealedNoteId={feedback ? activeNote.id : undefined}
+              selectedNoteId={feedback?.answerId}
+              onKeySelect={handleReadingKeyAnswer}
+            />
+          ) : (
+            <div className="answer-grid pitch-answer-grid">
+              {answerOptions.map((answer, index) => (
+                <button
+                  className="answer-button"
+                  key={answer}
+                  type="button"
+                  aria-label={`Answer ${answer}`}
+                  disabled={!isRunning || Boolean(feedback)}
+                  onClick={() => handleAnswer(answer)}
+                >
+                  <strong>{answer}</strong>
+                  <span>{index + 1}</span>
+                </button>
+              ))}
+            </div>
+          )}
 
           <div className="action-row">
             <button className="primary-button" type="button" onClick={startRound}>

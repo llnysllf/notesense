@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { playTone } from "../audio";
-import { PITCH_ANSWER_OPTIONS, PITCH_NOTES, READING_ANSWER_OPTIONS, getReadingNotes } from "../noteData";
+import { PITCH_ANSWER_OPTIONS, PITCH_NOTES, getPianoKeyById, getReadingNotes } from "../noteData";
 import { createSessionRecord, createSessionSummary, selectPitchNote, selectReadingNote } from "../practiceEngine";
-import { completeRound, recordPitchAttempt, recordReadingAttempt } from "../storage";
+import { completeRound, recordPitchAttempt, recordReadingAttempt, recordReadingLocationAttempt } from "../storage";
 import type {
   FeedbackState,
   NoteName,
@@ -39,6 +39,7 @@ export interface UsePracticeSessionResult {
   startRound: () => void;
   finishRound: () => void;
   handleAnswer: (answer: NoteName) => void;
+  handleReadingKeyAnswer: (noteId: string) => void;
   playCurrentNote: () => void;
   setTimeRemaining: (n: number) => void;
   resetSession: (nextSettings: PracticeSettings, nextProgress: PracticeProgress) => void;
@@ -187,21 +188,24 @@ export function usePracticeSession({
     playTone(activeNote.frequency);
   }
 
-  function handleAnswer(answer: NoteName) {
+  function recordAnswer(answer: NoteName, answerId?: string) {
     if (feedback !== null || !isRunning) return;
     const answeredMode = mode;
     const answeredReadingNote = currentReadingNote;
     const answeredPitchNote = currentPitchNote;
     const expectedAnswer = answeredMode === "reading" ? answeredReadingNote.name : answeredPitchNote.name;
-    const isCorrect = answer === expectedAnswer;
+    const isExactReadingAnswer = answeredMode === "reading" && answerId !== undefined;
+    const isCorrect = isExactReadingAnswer ? answerId === answeredReadingNote.id : answer === expectedAnswer;
     const nextStreak = isCorrect ? currentStreak + 1 : 0;
     const nextBestStreak = Math.max(bestRoundStreak, nextStreak);
     const nextProgress =
-      answeredMode === "reading"
-        ? recordReadingAttempt(progress, answeredReadingNote, answer as ReadingNoteName)
-        : recordPitchAttempt(progress, answeredPitchNote, answer);
+      answeredMode === "reading" && answerId !== undefined
+        ? recordReadingLocationAttempt(progress, answeredReadingNote, answerId)
+        : answeredMode === "reading"
+          ? recordReadingAttempt(progress, answeredReadingNote, answer as ReadingNoteName)
+          : recordPitchAttempt(progress, answeredPitchNote, answer);
 
-    setFeedback({ answer, isCorrect });
+    setFeedback(answerId === undefined ? { answer, isCorrect } : { answer, answerId, isCorrect });
     setRoundAttempts((n) => n + 1);
     setRoundCorrect((n) => n + (isCorrect ? 1 : 0));
     setCurrentStreak(nextStreak);
@@ -222,6 +226,17 @@ export function usePracticeSession({
         playTone(nextPitch.frequency);
       }
     }, ADVANCE_DELAY_MS);
+  }
+
+  function handleAnswer(answer: NoteName) {
+    recordAnswer(answer);
+  }
+
+  function handleReadingKeyAnswer(noteId: string) {
+    const key = getPianoKeyById(noteId);
+    if (!key) return;
+
+    recordAnswer(key.naturalName, key.id);
   }
 
   function resetSession(nextSettings: PracticeSettings, nextProgress: PracticeProgress) {
@@ -246,18 +261,21 @@ export function usePracticeSession({
 
   // No dependency array so the handler always has current closure values.
   useEffect(() => {
-    const answerOptions = mode === "reading" ? READING_ANSWER_OPTIONS : PITCH_ANSWER_OPTIONS;
     const shortcutSource = mode === "reading" ? getReadingNotes(settings.readingRange) : PITCH_NOTES;
 
     function handleKeyDown(event: KeyboardEvent) {
       const key = event.key.toUpperCase() as NoteName;
-      const letterOption = answerOptions.find((a) => a === key);
+      const letterOption = PITCH_ANSWER_OPTIONS.find((a) => a === key);
       const shortcutOption = shortcutSource.find((note) => note.keyboardShortcut === event.key);
-      if (letterOption !== undefined) {
+      if (mode === "pitch" && letterOption !== undefined) {
         handleAnswer(letterOption);
         return;
       }
       if (shortcutOption !== undefined) {
+        if (mode === "reading") {
+          handleReadingKeyAnswer(shortcutOption.id);
+          return;
+        }
         handleAnswer(shortcutOption.name as NoteName);
       }
     }
@@ -283,6 +301,7 @@ export function usePracticeSession({
     startRound,
     finishRound,
     handleAnswer,
+    handleReadingKeyAnswer,
     playCurrentNote,
     resetSession,
   };

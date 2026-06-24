@@ -118,5 +118,6 @@ export type MasterySummary = {
 
 export type FeedbackState = {
   answer: NoteName;
+  answerId?: string;
   isCorrect: boolean;
 } | null;

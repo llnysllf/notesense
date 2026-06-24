@@ -7,7 +7,7 @@ import {
   serializePracticeDataExport as serializeSharedExport,
   SESSION_HISTORY_LIMIT,
 } from "@notesense/shared";
-import { emptyProgress } from "./noteData";
+import { emptyProgress, getPianoKeyById } from "./noteData";
 import type {
   NoteName,
   PitchNote,
@@ -102,8 +102,8 @@ function recordModeAttempt(
   mode: PracticeMode,
   note: TrainingNote | PitchNote,
   answer: NoteName,
+  isCorrect = answer === note.name,
 ): PracticeProgress {
-  const isCorrect = answer === note.name;
   const modeProgress = progress[mode];
   const currentNoteStats = modeProgress.noteStats[note.id] ?? { attempts: 0, correct: 0 };
 
@@ -130,6 +130,16 @@ export function recordReadingAttempt(
   answer: ReadingNoteName,
 ): PracticeProgress {
   return recordModeAttempt(progress, "reading", note, answer);
+}
+
+export function recordReadingLocationAttempt(
+  progress: PracticeProgress,
+  note: TrainingNote,
+  answerNoteId: string,
+): PracticeProgress {
+  const answerKey = getPianoKeyById(answerNoteId);
+
+  return recordModeAttempt(progress, "reading", note, answerKey?.naturalName ?? note.name, answerNoteId === note.id);
 }
 
 export function recordPitchAttempt(progress: PracticeProgress, note: PitchNote, answer: NoteName): PracticeProgress {

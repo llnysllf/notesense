@@ -1,7 +1,24 @@
 import AxeBuilder from "@axe-core/playwright";
 import { expect, test } from "@playwright/test";
+import type { Page } from "@playwright/test";
 
 const ADVANCE_DELAY_MS = 650;
+
+async function getCurrentReadingNoteId(page: Page) {
+  const label = (await page.getByRole("img", { name: /staff note/i }).getAttribute("aria-label")) ?? "";
+  const match = /note ([A-G]\d)/.exec(label);
+
+  if (!match?.[1]) {
+    throw new Error(`Could not read current staff note from "${label}".`);
+  }
+
+  return match[1];
+}
+
+async function clickCurrentReadingPianoKey(page: Page) {
+  const noteId = await getCurrentReadingNoteId(page);
+  await page.getByRole("button", { name: `White piano key ${noteId}` }).click();
+}
 
 test.beforeEach(async ({ page }) => {
   page.on("pageerror", (error) => {
@@ -26,6 +43,7 @@ test("loads with no automated accessibility violations", async ({ page }) => {
   await expect(page.getByText("5 more answers")).toBeVisible();
   await expect(page.getByRole("heading", { name: "Mastery map" })).toBeVisible();
   await expect(page.getByRole("listitem", { name: "C4 New, no attempts yet" })).toBeVisible();
+  await expect(page.getByRole("group", { name: "88-key piano keyboard" })).toBeVisible();
 
   const accessibilityScanResults = await new AxeBuilder({ page }).analyze();
   expect(accessibilityScanResults.violations).toEqual([]);
@@ -34,11 +52,13 @@ test("loads with no automated accessibility violations", async ({ page }) => {
 test("runs the note-reading practice loop", async ({ page }) => {
   await page.goto("/", { waitUntil: "domcontentloaded" });
 
-  await expect(page.getByRole("button", { name: "Answer C" })).toBeDisabled();
+  await expect(page.getByRole("button", { name: "White piano key A0" })).toHaveAttribute("aria-disabled", "true");
   await page.getByRole("button", { name: "Start drill" }).click();
-  await expect(page.getByRole("button", { name: "Answer C" })).toBeEnabled();
+  await expect(
+    page.getByRole("button", { name: `White piano key ${await getCurrentReadingNoteId(page)}` }),
+  ).toHaveAttribute("aria-disabled", "false");
 
-  await page.getByRole("button", { name: "Answer C" }).click();
+  await clickCurrentReadingPianoKey(page);
   await expect(page.getByTestId("practice-feedback")).not.toHaveText("Listening");
 
   await page.getByRole("button", { name: "Finish round" }).click();
@@ -80,7 +100,9 @@ test("switches to bass clef reading practice", async ({ page }) => {
   await expect(page.getByLabel(/Bass staff note [C-G]3/)).toBeVisible();
 
   await page.getByRole("button", { name: "Start drill" }).click();
-  await expect(page.getByRole("button", { name: "Answer C" })).toBeEnabled();
+  await expect(
+    page.getByRole("button", { name: `White piano key ${await getCurrentReadingNoteId(page)}` }),
+  ).toHaveAttribute("aria-disabled", "false");
 
   await page.reload({ waitUntil: "domcontentloaded" });
   await expect(page.getByRole("button", { name: "Bass" })).toHaveAttribute("aria-pressed", "true");
@@ -91,7 +113,7 @@ test("keeps the selected reading range after switching during feedback", async (
   await page.goto("/", { waitUntil: "domcontentloaded" });
 
   await page.getByRole("button", { name: "Start drill" }).click();
-  await page.getByRole("button", { name: "Answer C" }).click();
+  await clickCurrentReadingPianoKey(page);
   await expect(page.getByTestId("practice-feedback")).not.toHaveText("Listening");
 
   await page.getByRole("button", { name: "Bass" }).click();
@@ -238,7 +260,7 @@ test("surfaces storage failures without crashing", async ({ page }) => {
 
   await page.goto("/", { waitUntil: "domcontentloaded" });
   await page.getByRole("button", { name: "Start drill" }).click();
-  await page.getByRole("button", { name: "Answer C" }).click();
+  await clickCurrentReadingPianoKey(page);
 
   await expect(page.getByRole("status")).toHaveText("Progress is not being saved on this device right now.");
 });

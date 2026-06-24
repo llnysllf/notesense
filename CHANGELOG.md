@@ -6,6 +6,7 @@ All notable changes to NoteSense are documented here. The format follows [Keep a
 
 ### Added
 
+- 88-key piano keyboard answers for note-reading practice, including exact-octave location checks and post-answer key reveal
 - Foundation polish for the app shell, responsive behavior, session status affordance, dark-mode tokens, and refreshed visual/docs screenshots
 - Design-system contract with `docs/DESIGN_SYSTEM.md`, `npm run design:check`, and ADR coverage for tokens, component states, accessibility affordances, and protected visual surfaces
 - Architecture-boundary check with `npm run architecture:check` to keep shared contracts, practice logic, storage, hooks, and components in clear source layers
