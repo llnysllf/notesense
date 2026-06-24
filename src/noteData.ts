@@ -9,6 +9,23 @@ import type {
   TrainingNote,
 } from "./types";
 
+const PIANO_MIDI_START = 21;
+const PIANO_MIDI_END = 108;
+const PIANO_KEY_NAMES = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"] as const;
+
+export type PianoKeyName = (typeof PIANO_KEY_NAMES)[number];
+
+export type PianoKey = {
+  id: string;
+  name: PianoKeyName;
+  naturalName: NoteName;
+  octave: number;
+  midi: number;
+  isBlack: boolean;
+  whiteKeyIndex?: number;
+  blackKeyAfterWhiteIndex?: number;
+};
+
 type ReadingRangeConfig = {
   id: ReadingRange;
   label: string;
@@ -190,16 +207,46 @@ export const PITCH_NOTES: PitchNote[] = [
   },
 ];
 
-function getDefaultReadingRangeConfig(): ReadingRangeConfig {
-  const rangeConfig = READING_RANGES.find((range) => range.id === DEFAULT_READING_RANGE);
-  if (!rangeConfig) {
-    throw new Error(`Missing NoteSense reading range: ${DEFAULT_READING_RANGE}`);
-  }
-
-  return rangeConfig;
+function getPianoKeyNaturalName(name: PianoKeyName): NoteName {
+  return name[0] as NoteName;
 }
 
-const defaultReadingRangeConfig = getDefaultReadingRangeConfig();
+function createPianoKeys(): PianoKey[] {
+  let whiteKeyIndex = 0;
+
+  return Array.from({ length: PIANO_MIDI_END - PIANO_MIDI_START + 1 }, (_, index) => {
+    const midi = PIANO_MIDI_START + index;
+    const name = PIANO_KEY_NAMES[midi % PIANO_KEY_NAMES.length]!;
+    const octave = Math.floor(midi / PIANO_KEY_NAMES.length) - 1;
+    const isBlack = name.includes("#");
+    const key: PianoKey = {
+      id: `${name}${octave}`,
+      name,
+      naturalName: getPianoKeyNaturalName(name),
+      octave,
+      midi,
+      isBlack,
+    };
+
+    if (isBlack) {
+      key.blackKeyAfterWhiteIndex = whiteKeyIndex - 1;
+    } else {
+      key.whiteKeyIndex = whiteKeyIndex;
+      whiteKeyIndex += 1;
+    }
+
+    return key;
+  });
+}
+
+export const PIANO_KEYS = createPianoKeys();
+export const PIANO_WHITE_KEY_COUNT = PIANO_KEYS.filter((key) => !key.isBlack).length;
+
+export function getPianoKeyById(noteId: string): PianoKey | undefined {
+  return PIANO_KEYS.find((key) => key.id === noteId);
+}
+
+const defaultReadingRangeConfig = READING_RANGES.find((range) => range.id === DEFAULT_READING_RANGE)!;
 
 function createEmptyModeProgress(notes: Array<{ id: string }>): ModeProgress {
   return {

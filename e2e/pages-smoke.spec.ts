@@ -1,4 +1,16 @@
 import { expect, test } from "@playwright/test";
+import type { Page } from "@playwright/test";
+
+async function getCurrentReadingNoteId(page: Page) {
+  const label = (await page.getByRole("img", { name: /staff note/i }).getAttribute("aria-label")) ?? "";
+  const match = /note ([A-G]\d)/.exec(label);
+
+  if (!match?.[1]) {
+    throw new Error(`Could not read current staff note from "${label}".`);
+  }
+
+  return match[1];
+}
 
 test("serves the GitHub Pages build under the /notesense/ base path", async ({ page }) => {
   const failedRequests: string[] = [];
@@ -50,7 +62,9 @@ test("serves the GitHub Pages build under the /notesense/ base path", async ({ p
   expect(manifestResponse.headers()["content-type"]).toMatch(/json|manifest/);
 
   await page.getByRole("button", { name: "Start drill" }).click();
-  await expect(page.getByRole("button", { name: "Answer C" })).toBeEnabled();
+  await expect(
+    page.getByRole("button", { name: `White piano key ${await getCurrentReadingNoteId(page)}` }),
+  ).toHaveAttribute("aria-disabled", "false");
 
   await expect
     .poll(() => page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth))

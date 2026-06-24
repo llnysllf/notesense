@@ -66,6 +66,7 @@ export default defineConfig({
       include: [
         "src/App.tsx",
         "src/audio.ts",
+        "src/components/PianoKeyboard.tsx",
         "src/components/PracticeStatsPanel.tsx",
         "src/noteData.ts",
         "src/observability.ts",

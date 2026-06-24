@@ -17,16 +17,20 @@ function freshProgress(): PracticeProgress {
   return structuredClone(emptyProgress);
 }
 
-function getCurrentReadingAnswer() {
+function getCurrentReadingNoteId() {
   const staff = screen.getByRole("img", { name: /staff note/i });
   const noteLabel = staff.getAttribute("aria-label") ?? "";
-  const match = /note ([A-G])\d/.exec(noteLabel);
+  const match = /note ([A-G]\d)/.exec(noteLabel);
 
   if (!match?.[1]) {
     throw new Error(`Could not read current staff note from "${noteLabel}".`);
   }
 
   return match[1];
+}
+
+function getCurrentReadingPianoKeyButton() {
+  return screen.getByRole("button", { name: `White piano key ${getCurrentReadingNoteId()}` });
 }
 
 function readStoredJson<T>(key: string): T {
@@ -39,9 +43,15 @@ function readStoredJson<T>(key: string): T {
   return JSON.parse(value) as T;
 }
 
-function getWrongReadingAnswer() {
-  const answer = getCurrentReadingAnswer();
-  return ["C", "D", "E", "F", "G"].find((option) => option !== answer) ?? "C";
+function getWrongReadingNoteId() {
+  const noteId = getCurrentReadingNoteId();
+  const [, letter, octave] = /([A-G])(\d)/.exec(noteId) ?? [];
+
+  if (letter === undefined || octave === undefined) {
+    throw new Error(`Could not choose a wrong piano key for "${noteId}".`);
+  }
+
+  return `${letter}${octave === "4" ? "3" : "4"}`;
 }
 
 afterEach(() => {
@@ -59,7 +69,8 @@ describe("App", () => {
     expect(screen.getByRole("button", { name: "Note reading" })).toHaveAttribute("aria-pressed", "true");
     expect(screen.getByRole("button", { name: "Pitch training" })).toHaveAttribute("aria-pressed", "false");
     expect(screen.getByTestId("practice-feedback")).toHaveTextContent("Ready");
-    expect(screen.getByRole("button", { name: "Answer C" })).toBeDisabled();
+    expect(screen.getByRole("group", { name: "88-key piano keyboard" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "White piano key A0" })).toHaveAttribute("aria-disabled", "true");
   });
 
   it("starts a reading round, records an answer, and persists progress", () => {
@@ -69,8 +80,7 @@ describe("App", () => {
     expect(screen.getByText("Live round")).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Finish round" })).toBeInTheDocument();
 
-    const answer = getCurrentReadingAnswer();
-    fireEvent.click(screen.getByRole("button", { name: `Answer ${answer}` }));
+    fireEvent.click(getCurrentReadingPianoKeyButton());
 
     expect(screen.getByTestId("practice-feedback")).toHaveTextContent("Correct");
     expect(readStoredJson<PracticeProgress>(PROGRESS_STORAGE_KEY).reading).toMatchObject({
@@ -83,7 +93,7 @@ describe("App", () => {
     render(<App />);
 
     fireEvent.click(screen.getByRole("button", { name: "Start drill" }));
-    fireEvent.click(screen.getByRole("button", { name: `Answer ${getCurrentReadingAnswer()}` }));
+    fireEvent.click(getCurrentReadingPianoKeyButton());
     fireEvent.click(screen.getByRole("button", { name: "Finish round" }));
 
     expect(screen.getByText("Round saved")).toBeInTheDocument();
@@ -95,12 +105,8 @@ describe("App", () => {
     render(<App />);
 
     fireEvent.click(screen.getByRole("button", { name: "Start drill" }));
-    const expectedNoteId = screen
-      .getByRole("img", { name: /staff note/i })
-      .getAttribute("aria-label")
-      ?.split(" ")
-      .at(-1);
-    fireEvent.click(screen.getByRole("button", { name: `Answer ${getWrongReadingAnswer()}` }));
+    const expectedNoteId = getCurrentReadingNoteId();
+    fireEvent.click(screen.getByRole("button", { name: `White piano key ${getWrongReadingNoteId()}` }));
 
     expect(screen.getByTestId("practice-feedback")).toHaveTextContent(`It was ${expectedNoteId}`);
   });

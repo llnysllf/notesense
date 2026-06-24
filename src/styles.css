@@ -27,12 +27,26 @@
   --color-danger: #9a3412;
   --color-danger-bg: #ffe3dc;
   --color-danger-border: rgba(154, 52, 18, 0.28);
+  --color-piano-white-top: #ffffff;
+  --color-piano-white-bottom: #f5f2ec;
+  --color-piano-white-text: #253027;
+  --color-piano-black-top: #222629;
+  --color-piano-black-bottom: #0f1214;
+  --color-piano-black-border: rgba(0, 0, 0, 0.68);
+  --color-piano-focus-ring: rgba(10, 132, 255, 0.18);
+  --color-piano-success-white: #f7fff6;
+  --color-piano-success-black-top: #3d7d4a;
+  --color-piano-success-black-bottom: #184320;
+  --color-piano-danger-white: #fff8f5;
+  --color-piano-danger-black-top: #8c3c2c;
+  --color-piano-danger-black-bottom: #3d140e;
   --radius-card: 8px;
   --radius-control: 6px;
   --radius-pill: 999px;
   --shadow-panel: 0 24px 60px rgba(29, 29, 31, 0.08);
   --shadow-control: 0 8px 18px rgba(29, 29, 31, 0.08);
   --shadow-action: 0 12px 24px rgba(29, 29, 31, 0.18);
+  --shadow-piano-black: 0 6px 10px rgba(0, 0, 0, 0.24);
   --shadow-sound-ring: inset 0 0 0 18px rgba(85, 112, 91, 0.08);
   --space-page: 28px;
   --space-panel: 24px;
@@ -84,9 +98,23 @@
     --color-danger: #e07a5f;
     --color-danger-bg: #2e1510;
     --color-danger-border: rgba(224, 122, 95, 0.34);
+    --color-piano-white-top: #f3f0e8;
+    --color-piano-white-bottom: #d8d4ca;
+    --color-piano-white-text: #1e251f;
+    --color-piano-black-top: #2b3034;
+    --color-piano-black-bottom: #07090a;
+    --color-piano-black-border: rgba(0, 0, 0, 0.82);
+    --color-piano-focus-ring: rgba(77, 163, 255, 0.22);
+    --color-piano-success-white: #d9f2dc;
+    --color-piano-success-black-top: #315f39;
+    --color-piano-success-black-bottom: #102d15;
+    --color-piano-danger-white: #f5d8d0;
+    --color-piano-danger-black-top: #7a3225;
+    --color-piano-danger-black-bottom: #2f0f0a;
     --shadow-panel: 0 24px 60px rgba(0, 0, 0, 0.4);
     --shadow-control: 0 8px 18px rgba(0, 0, 0, 0.3);
     --shadow-action: 0 12px 24px rgba(0, 0, 0, 0.5);
+    --shadow-piano-black: 0 6px 10px rgba(0, 0, 0, 0.44);
     --shadow-sound-ring: inset 0 0 0 18px rgba(122, 170, 130, 0.08);
   }
 }
@@ -412,6 +440,115 @@ h3 {
   font-size: 2rem;
   line-height: 1.1;
   text-align: center;
+}
+
+.piano-keyboard-panel {
+  min-width: 0;
+}
+
+.piano-keyboard-viewport {
+  --piano-white-key-width: clamp(18px, 2.1vw, 24px);
+  --piano-black-key-width: calc(var(--piano-white-key-width) * 0.64);
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 4px 2px 12px;
+  scrollbar-color: var(--color-border-strong) transparent;
+}
+
+.piano-keybed {
+  position: relative;
+  width: calc(var(--piano-white-key-count) * var(--piano-white-key-width));
+  height: clamp(128px, 18vw, 168px);
+  min-width: calc(var(--piano-white-key-count) * var(--piano-white-key-width));
+}
+
+.piano-white-keys {
+  display: flex;
+  height: 100%;
+}
+
+.piano-key {
+  border: 1px solid var(--color-border-strong);
+  cursor: pointer;
+  font-size: 0.64rem;
+  font-weight: 850;
+  line-height: 1;
+  transition:
+    border-color 140ms ease,
+    box-shadow 140ms ease,
+    transform 140ms ease,
+    background 140ms ease;
+}
+
+.white-key {
+  display: flex;
+  flex: 0 0 var(--piano-white-key-width);
+  align-items: flex-end;
+  justify-content: center;
+  height: 100%;
+  padding: 0 0 10px;
+  border-radius: 0 0 var(--radius-control) var(--radius-control);
+  background: linear-gradient(180deg, var(--color-piano-white-top) 0%, var(--color-piano-white-bottom) 100%);
+  color: var(--color-piano-white-text);
+}
+
+.black-key {
+  position: absolute;
+  z-index: 2;
+  top: 0;
+  left: calc((var(--white-key-index) + 0.68) * var(--piano-white-key-width));
+  width: var(--piano-black-key-width);
+  height: 62%;
+  border-color: var(--color-piano-black-border);
+  border-radius: 0 0 5px 5px;
+  background: linear-gradient(180deg, var(--color-piano-black-top) 0%, var(--color-piano-black-bottom) 100%);
+  box-shadow: var(--shadow-piano-black);
+  color: var(--color-piano-white-top);
+}
+
+.piano-key:not([aria-disabled="true"]):hover {
+  border-color: var(--color-focus);
+  box-shadow: 0 0 0 2px var(--color-piano-focus-ring);
+  transform: translateY(-1px);
+}
+
+.piano-key:not([aria-disabled="true"]):active {
+  transform: translateY(0);
+}
+
+.piano-key[aria-disabled="true"] {
+  cursor: not-allowed;
+}
+
+.piano-key.target-key {
+  border-color: var(--color-success);
+  background: linear-gradient(180deg, var(--color-success-bg), var(--color-piano-success-white));
+  box-shadow: inset 0 0 0 2px var(--color-success-border);
+}
+
+.black-key.target-key {
+  background: linear-gradient(180deg, var(--color-piano-success-black-top), var(--color-piano-success-black-bottom));
+  box-shadow:
+    inset 0 0 0 2px var(--color-success-border),
+    var(--shadow-piano-black);
+}
+
+.piano-key.selected-wrong {
+  border-color: var(--color-danger);
+  background: linear-gradient(180deg, var(--color-danger-bg), var(--color-piano-danger-white));
+  box-shadow: inset 0 0 0 2px var(--color-danger-border);
+}
+
+.black-key.selected-wrong {
+  background: linear-gradient(180deg, var(--color-piano-danger-black-top), var(--color-piano-danger-black-bottom));
+  box-shadow:
+    inset 0 0 0 2px var(--color-danger-border),
+    var(--shadow-piano-black);
+}
+
+.piano-key.selected-correct {
+  border-color: var(--color-success);
+  box-shadow: inset 0 0 0 2px var(--color-success-border);
 }
 
 .staff-line {

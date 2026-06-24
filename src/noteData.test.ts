@@ -4,6 +4,8 @@ import {
   DEFAULT_READING_RANGE,
   PITCH_ANSWER_OPTIONS,
   PITCH_NOTES,
+  PIANO_KEYS,
+  PIANO_WHITE_KEY_COUNT,
   READING_ANSWER_OPTIONS,
   READING_NOTES,
   READING_RANGES,
@@ -13,6 +15,7 @@ import {
   emptyReadingProgress,
   getReadingNotes,
   getReadingRange,
+  getPianoKeyById,
   isReadingRange,
 } from "./noteData";
 
@@ -59,6 +62,17 @@ describe("noteData", () => {
     expect(PITCH_ANSWER_OPTIONS).toEqual(["C", "D", "E", "F", "G", "A", "B"]);
     expect(STARTER_NOTES.map((note) => note.keyboardShortcut)).toEqual(["1", "2", "3", "4", "5"]);
     expect(PITCH_NOTES.map((note) => note.keyboardShortcut)).toEqual(["1", "2", "3", "4", "5", "6", "7"]);
+  });
+
+  it("models the full 88-key piano range from A0 to C8", () => {
+    expect(PIANO_KEYS).toHaveLength(88);
+    expect(PIANO_WHITE_KEY_COUNT).toBe(52);
+    expect(PIANO_KEYS.filter((key) => key.isBlack)).toHaveLength(36);
+    expect(PIANO_KEYS[0]).toMatchObject({ id: "A0", name: "A", octave: 0, isBlack: false });
+    expect(PIANO_KEYS.at(-1)).toMatchObject({ id: "C8", name: "C", octave: 8, isBlack: false });
+    expect(getPianoKeyById("C4")).toMatchObject({ id: "C4", naturalName: "C", whiteKeyIndex: 23 });
+    expect(getPianoKeyById("C#4")).toMatchObject({ id: "C#4", naturalName: "C", blackKeyAfterWhiteIndex: 23 });
+    expect(getPianoKeyById("H4")).toBeUndefined();
   });
 
   it("seeds empty progress for every known reading note and pitch", () => {
