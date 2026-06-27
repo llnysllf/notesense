@@ -1,12 +1,16 @@
-import { useEffect, useState, type CSSProperties } from "react";
+import { useEffect, useState, type MouseEvent } from "react";
 import { PIANO_KEYS, PIANO_WHITE_KEY_COUNT } from "../noteData";
 import type { PianoKey } from "../noteData";
+import PianoKeybed from "./PianoKeybed";
 import {
   FULL_BLACK_KEYS,
   FULL_WHITE_KEYS,
+  MOBILE_DEFAULT_CENTER_NOTE_ID,
   MOBILE_QUERY,
+  MOBILE_WINDOW_STEP_WHITE_KEYS,
   MOBILE_WHITE_KEY_COUNT,
-  getBlackKeyLeft,
+  getMovedWindowCenterNoteId,
+  getOverviewCenterNoteId,
   getWindowKeys,
 } from "./pianoKeyboardLayout";
 
@@ -14,17 +18,8 @@ type PianoKeyboardProps = {
   disabled: boolean;
   revealedNoteId?: string | undefined;
   selectedNoteId?: string | undefined;
-  targetNoteId: string;
   isCorrect?: boolean | undefined;
   onKeySelect: (noteId: string) => void;
-};
-
-type KeyPositionStyle = CSSProperties & {
-  "--black-key-left": string;
-};
-
-type KeybedStyle = CSSProperties & {
-  "--piano-white-key-count": number;
 };
 
 function getIsMobilePianoLayout(): boolean {
@@ -57,54 +52,18 @@ function useIsMobilePianoLayout(): boolean {
   return isMobile;
 }
 
-function getVisibleKeyLabel(key: PianoKey): string {
-  if (key.id === "A0" || key.id === "C8" || key.name === "C") {
-    return key.id;
-  }
-
-  return key.name;
-}
-
-function getKeyStateClass(
-  key: PianoKey,
-  selectedNoteId?: string,
-  revealedNoteId?: string,
-  isCorrect?: boolean,
-): string {
-  const stateClasses: string[] = [];
-
-  if (key.id === selectedNoteId) {
-    stateClasses.push(isCorrect ? "selected-correct" : "selected-wrong");
-  }
-
-  if (revealedNoteId !== undefined && key.id === revealedNoteId) {
-    stateClasses.push("target-key");
-  }
-
-  return stateClasses.join(" ");
-}
-
-function getKeyAriaLabel(key: PianoKey, selectedNoteId?: string, revealedNoteId?: string, isCorrect?: boolean): string {
-  const parts = [`${key.isBlack ? "Black" : "White"} piano key ${key.id}`];
-
-  if (key.id === selectedNoteId) {
-    parts.push(isCorrect ? "selected correct" : "selected incorrect");
-  }
-
-  if (revealedNoteId !== undefined && key.id === revealedNoteId) {
-    parts.push("target note");
-  }
-
-  return parts.join(", ");
-}
-
 function getOverviewKeyStateClass(
   key: PianoKey,
+  visibleKeyIds: Set<string>,
   selectedNoteId?: string,
   revealedNoteId?: string,
   isCorrect?: boolean,
 ) {
   const stateClasses: string[] = [];
+
+  if (visibleKeyIds.has(key.id)) {
+    stateClasses.push("overview-window");
+  }
 
   if (key.id === selectedNoteId) {
     stateClasses.push(isCorrect ? "overview-selected-correct" : "overview-selected-wrong");
@@ -117,115 +76,103 @@ function getOverviewKeyStateClass(
   return stateClasses.join(" ");
 }
 
-function renderKeybed(
-  whiteKeys: PianoKey[],
-  blackKeys: PianoKey[],
-  whiteKeyStart: number,
-  whiteKeyCount: number,
-  disabled: boolean,
-  selectedNoteId: string | undefined,
-  revealedNoteId: string | undefined,
-  isCorrect: boolean | undefined,
-  onKeySelect: (noteId: string) => void,
-) {
-  return (
-    <div className="piano-keybed" style={{ "--piano-white-key-count": whiteKeyCount } as KeybedStyle}>
-      <div className="piano-white-keys">
-        {whiteKeys.map((key) => (
-          <button
-            className={`piano-key white-key ${getKeyStateClass(key, selectedNoteId, revealedNoteId, isCorrect)}`}
-            key={key.id}
-            type="button"
-            aria-label={getKeyAriaLabel(key, selectedNoteId, revealedNoteId, isCorrect)}
-            aria-disabled={disabled}
-            onClick={() => {
-              if (!disabled) onKeySelect(key.id);
-            }}
-          >
-            <span>{getVisibleKeyLabel(key)}</span>
-          </button>
-        ))}
-      </div>
-
-      <div className="piano-black-keys">
-        {blackKeys.map((key) => (
-          <button
-            className={`piano-key black-key ${getKeyStateClass(key, selectedNoteId, revealedNoteId, isCorrect)}`}
-            key={key.id}
-            type="button"
-            style={{ "--black-key-left": getBlackKeyLeft(key, whiteKeyStart, whiteKeyCount) } as KeyPositionStyle}
-            aria-label={getKeyAriaLabel(key, selectedNoteId, revealedNoteId, isCorrect)}
-            aria-disabled={disabled}
-            onClick={() => {
-              if (!disabled) onKeySelect(key.id);
-            }}
-          />
-        ))}
-      </div>
-    </div>
-  );
-}
-
-function PianoKeyboard({
-  disabled,
-  revealedNoteId,
-  selectedNoteId,
-  targetNoteId,
-  isCorrect,
-  onKeySelect,
-}: PianoKeyboardProps) {
+function PianoKeyboard({ disabled, revealedNoteId, selectedNoteId, isCorrect, onKeySelect }: PianoKeyboardProps) {
   const isMobileLayout = useIsMobilePianoLayout();
-  const targetDisplayId = revealedNoteId ?? targetNoteId;
-  const mobileWindow = getWindowKeys(targetDisplayId);
+  const [mobileCenterNoteId, setMobileCenterNoteId] = useState(MOBILE_DEFAULT_CENTER_NOTE_ID);
+  const mobileWindow = getWindowKeys(revealedNoteId ?? mobileCenterNoteId);
+  const visibleMobileKeyIds = new Set([...mobileWindow.whiteKeys, ...mobileWindow.blackKeys].map((key) => key.id));
+
   function handleKeySelect(noteId: string) {
     if (disabled) return;
     onKeySelect(noteId);
+  }
+
+  function moveMobileWindow(whiteKeyOffset: number) {
+    setMobileCenterNoteId((centerNoteId) => getMovedWindowCenterNoteId(centerNoteId, whiteKeyOffset));
+  }
+
+  function handleOverviewClick(event: MouseEvent<HTMLButtonElement>) {
+    const railRect = event.currentTarget.getBoundingClientRect();
+
+    setMobileCenterNoteId(getOverviewCenterNoteId(event.clientX, railRect.left, railRect.width));
   }
 
   return (
     <div className="piano-keyboard-panel" data-layout={isMobileLayout ? "mobile-window" : "full"}>
       <div className="piano-keyboard-viewport" role="group" aria-label="88-key piano keyboard">
         {isMobileLayout ? (
-          <div className="piano-mobile-layout">
-            {renderKeybed(
-              mobileWindow.whiteKeys,
-              mobileWindow.blackKeys,
-              mobileWindow.whiteKeyStart,
-              MOBILE_WHITE_KEY_COUNT,
-              disabled,
-              selectedNoteId,
-              revealedNoteId,
-              isCorrect,
-              handleKeySelect,
-            )}
-            <div className="piano-overview-rail" role="img" aria-label="Full 88-key piano overview">
+          <div className="piano-mobile-layout" data-window-center-note-id={mobileCenterNoteId}>
+            <div className="piano-mobile-controls" aria-label="Piano window controls">
+              <button
+                className="piano-window-button"
+                type="button"
+                aria-label="Move piano window left"
+                onClick={() => moveMobileWindow(-MOBILE_WINDOW_STEP_WHITE_KEYS)}
+              >
+                &lt;
+              </button>
+              <button
+                className="piano-window-button"
+                type="button"
+                aria-label="Center piano window on C4"
+                onClick={() => setMobileCenterNoteId(MOBILE_DEFAULT_CENTER_NOTE_ID)}
+              >
+                C4
+              </button>
+              <button
+                className="piano-window-button"
+                type="button"
+                aria-label="Move piano window right"
+                onClick={() => moveMobileWindow(MOBILE_WINDOW_STEP_WHITE_KEYS)}
+              >
+                &gt;
+              </button>
+            </div>
+            <PianoKeybed
+              whiteKeys={mobileWindow.whiteKeys}
+              blackKeys={mobileWindow.blackKeys}
+              whiteKeyStart={mobileWindow.whiteKeyStart}
+              whiteKeyCount={MOBILE_WHITE_KEY_COUNT}
+              disabled={disabled}
+              selectedNoteId={selectedNoteId}
+              revealedNoteId={revealedNoteId}
+              isCorrect={isCorrect}
+              onKeySelect={handleKeySelect}
+            />
+            <button
+              className="piano-overview-rail"
+              type="button"
+              aria-label="Move piano window on full 88-key overview"
+              onClick={handleOverviewClick}
+            >
               {PIANO_KEYS.map((key) => (
                 <span
                   aria-hidden="true"
                   className={`piano-overview-key ${key.isBlack ? "overview-black-key" : "overview-white-key"} ${getOverviewKeyStateClass(
                     key,
+                    visibleMobileKeyIds,
                     selectedNoteId,
-                    targetDisplayId,
+                    revealedNoteId,
                     isCorrect,
                   )}`}
                   data-piano-overview-key={key.id}
                   key={key.id}
                 />
               ))}
-            </div>
+            </button>
           </div>
         ) : (
-          renderKeybed(
-            FULL_WHITE_KEYS,
-            FULL_BLACK_KEYS,
-            0,
-            PIANO_WHITE_KEY_COUNT,
-            disabled,
-            selectedNoteId,
-            revealedNoteId,
-            isCorrect,
-            handleKeySelect,
-          )
+          <PianoKeybed
+            whiteKeys={FULL_WHITE_KEYS}
+            blackKeys={FULL_BLACK_KEYS}
+            whiteKeyStart={0}
+            whiteKeyCount={PIANO_WHITE_KEY_COUNT}
+            disabled={disabled}
+            selectedNoteId={selectedNoteId}
+            revealedNoteId={revealedNoteId}
+            isCorrect={isCorrect}
+            onKeySelect={handleKeySelect}
+          />
         )}
       </div>
     </div>

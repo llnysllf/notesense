@@ -8,7 +8,7 @@ import { useDataPortability } from "./hooks/useDataPortability";
 import { usePracticeProgress } from "./hooks/usePracticeProgress";
 import { usePracticeSession } from "./hooks/usePracticeSession";
 import { useSettings } from "./hooks/useSettings";
-import { PITCH_ANSWER_OPTIONS, getReadingRange } from "./noteData";
+import { PITCH_ANSWER_OPTIONS, READING_RANGES, getReadingRange } from "./noteData";
 import {
   formatAccuracy,
   getDailyGoalSummary,
@@ -181,6 +181,22 @@ function App() {
           </button>
         </div>
 
+        {mode === "reading" && (
+          <div className="reading-range-switch" aria-label="Reading drill range">
+            {READING_RANGES.map((range) => (
+              <button
+                key={range.id}
+                type="button"
+                aria-pressed={settings.readingRange === range.id}
+                className={settings.readingRange === range.id ? "active" : ""}
+                onClick={() => updateSettings({ readingRange: range.id })}
+              >
+                {range.label}
+              </button>
+            ))}
+          </div>
+        )}
+
         <div className="round-strip" aria-label="Current round status">
           <StatTile label="Time" value={`${timeRemaining}s`} />
           <StatTile label="Round" value={`${roundCorrect}/${roundAttempts}`} />
@@ -209,11 +225,11 @@ function App() {
 
           {mode === "reading" ? (
             <PianoKeyboard
+              key={settings.readingRange}
               disabled={!isRunning || Boolean(feedback)}
               isCorrect={feedback?.isCorrect}
               revealedNoteId={feedback ? activeNote.id : undefined}
               selectedNoteId={feedback?.answerId}
-              targetNoteId={activeNote.id}
               onKeySelect={handleReadingKeyAnswer}
             />
           ) : (

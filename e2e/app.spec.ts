@@ -88,6 +88,8 @@ test("renders the right piano layout for the current viewport", async ({ page })
     const buttons = Array.from(document.querySelectorAll(".piano-key"));
     const blackKeys = Array.from(document.querySelectorAll(".black-key"));
     const overviewKeys = Array.from(document.querySelectorAll("[data-piano-overview-key]"));
+    const overviewTargets = Array.from(document.querySelectorAll(".piano-overview-key.overview-target"));
+    const overviewWindowKeys = Array.from(document.querySelectorAll(".piano-overview-key.overview-window"));
     const viewportRect = viewport?.getBoundingClientRect();
     const visibleButtons = buttons.filter((button) => {
       const rect = button.getBoundingClientRect();
@@ -105,8 +107,11 @@ test("renders the right piano layout for the current viewport", async ({ page })
       lastBlackKeyLeft: blackKeyLefts.at(-1) ?? 0,
       layout: panel?.getAttribute("data-layout"),
       overviewKeyCount: overviewKeys.length,
+      overviewTargetCount: overviewTargets.length,
+      overviewWindowKeyCount: overviewWindowKeys.length,
       totalButtons: buttons.length,
       visibleButtons: visibleButtons.length,
+      windowCenterNoteId: document.querySelector(".piano-mobile-layout")?.getAttribute("data-window-center-note-id"),
     };
   });
 
@@ -115,7 +120,10 @@ test("renders the right piano layout for the current viewport", async ({ page })
     expect(pianoLayout.totalButtons).toBeGreaterThan(20);
     expect(pianoLayout.totalButtons).toBeLessThan(35);
     expect(pianoLayout.overviewKeyCount).toBe(88);
+    expect(pianoLayout.overviewTargetCount).toBe(0);
+    expect(pianoLayout.overviewWindowKeyCount).toBeGreaterThan(20);
     expect(pianoLayout.blackKeyCount).toBeGreaterThan(8);
+    expect(pianoLayout.windowCenterNoteId).toBe("C4");
   } else {
     expect(pianoLayout.totalButtons).toBe(88);
     expect(pianoLayout.visibleButtons).toBe(88);
@@ -125,6 +133,27 @@ test("renders the right piano layout for the current viewport", async ({ page })
   }
   expect(pianoLayout.lastBlackKeyLeft).toBeGreaterThan(pianoLayout.firstBlackKeyLeft);
   expect(pianoLayout.scrollWidth).toBeLessThanOrEqual(pianoLayout.clientWidth + 1);
+});
+
+test("moves the phone piano window without changing the hidden answer", async ({ page }) => {
+  await page.goto("/", { waitUntil: "domcontentloaded" });
+
+  const mobileLayout = page.locator(".piano-mobile-layout");
+  if ((await page.locator(".piano-keyboard-panel").getAttribute("data-layout")) !== "mobile-window") {
+    return;
+  }
+
+  await expect(mobileLayout).toHaveAttribute("data-window-center-note-id", "C4");
+  await expect(page.locator(".piano-overview-key.overview-target")).toHaveCount(0);
+
+  await page.getByRole("button", { name: "Move piano window right" }).click();
+  await expect(mobileLayout).toHaveAttribute("data-window-center-note-id", "C5");
+
+  await page.getByRole("button", { name: "Center piano window on C4" }).click();
+  await expect(mobileLayout).toHaveAttribute("data-window-center-note-id", "C4");
+
+  await page.getByRole("button", { name: "Move piano window on full 88-key overview" }).click();
+  expect(await mobileLayout.getAttribute("data-window-center-note-id")).not.toBe("C4");
 });
 
 test("answers with keyboard shortcuts in both practice modes", async ({ page }) => {
@@ -147,7 +176,7 @@ test("answers with keyboard shortcuts in both practice modes", async ({ page }) 
 test("switches to bass clef reading practice", async ({ page }) => {
   await page.goto("/", { waitUntil: "domcontentloaded" });
 
-  await page.getByRole("button", { name: "Bass" }).click();
+  await page.getByRole("button", { exact: true, name: "Bass" }).click();
   await expect(page.getByText("Adaptive | Bass clef C3-G3")).toBeVisible();
   await expect(page.getByLabel(/Bass staff note [C-G]3/)).toBeVisible();
 
@@ -157,8 +186,18 @@ test("switches to bass clef reading practice", async ({ page }) => {
   ).toHaveAttribute("aria-disabled", "false");
 
   await page.reload({ waitUntil: "domcontentloaded" });
-  await expect(page.getByRole("button", { name: "Bass" })).toHaveAttribute("aria-pressed", "true");
+  await expect(page.getByRole("button", { exact: true, name: "Bass" })).toHaveAttribute("aria-pressed", "true");
   await expect(page.getByLabel(/Bass staff note [C-G]3/)).toBeVisible();
+});
+
+test("switches to a wider mixed reading drill range", async ({ page }) => {
+  await page.goto("/", { waitUntil: "domcontentloaded" });
+
+  await page.getByRole("button", { name: "Grand" }).click();
+
+  await expect(page.getByRole("button", { name: "Grand" })).toHaveAttribute("aria-pressed", "true");
+  await expect(page.getByText("Adaptive | Mixed clef C3-B4")).toBeVisible();
+  await expect(page.getByLabel(/(?:Treble|Bass) staff note [A-G][34]/)).toBeVisible();
 });
 
 test("keeps the selected reading range after switching during feedback", async ({ page }) => {
@@ -168,7 +207,7 @@ test("keeps the selected reading range after switching during feedback", async (
   await clickCurrentReadingPianoKey(page);
   await expect(page.getByTestId("practice-feedback")).not.toHaveText("Listening");
 
-  await page.getByRole("button", { name: "Bass" }).click();
+  await page.getByRole("button", { exact: true, name: "Bass" }).click();
   await page.waitForTimeout(ADVANCE_DELAY_MS + 150);
 
   await expect(page.getByText("Adaptive | Bass clef C3-G3")).toBeVisible();
@@ -261,7 +300,7 @@ test("imports local practice data", async ({ page }) => {
   const progressPanel = page.getByLabel("Practice progress");
   await expect(progressPanel.getByRole("status")).toHaveText("Progress imported.");
   await expect(progressPanel.getByText("12")).toBeVisible();
-  await expect(page.getByRole("button", { name: "Bass" })).toHaveAttribute("aria-pressed", "true");
+  await expect(page.getByRole("button", { exact: true, name: "Bass" })).toHaveAttribute("aria-pressed", "true");
   await expect(page.getByText("Random | Bass clef C3-G3")).toBeVisible();
   await expect(progressPanel.getByRole("heading", { name: "Focus C3" })).toBeVisible();
   await expect(progressPanel.getByText("85% on C3")).toBeVisible();
@@ -281,7 +320,7 @@ test("imports local practice data", async ({ page }) => {
   await page.reload({ waitUntil: "domcontentloaded" });
   await expect(progressPanel.getByText("12")).toBeVisible();
   await expect(page.getByRole("button", { name: "30s" })).toHaveAttribute("aria-pressed", "true");
-  await expect(page.getByRole("button", { name: "Bass" })).toHaveAttribute("aria-pressed", "true");
+  await expect(page.getByRole("button", { exact: true, name: "Bass" })).toHaveAttribute("aria-pressed", "true");
 });
 
 test("rejects invalid imported practice data", async ({ page }) => {

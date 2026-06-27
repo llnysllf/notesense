@@ -58,6 +58,9 @@ describe("catalog-less normalization (server path)", () => {
   it("validates reading ranges and settings", () => {
     expect(isReadingRange("treble-starter")).toBe(true);
     expect(isReadingRange("bass-starter")).toBe(true);
+    expect(isReadingRange("treble-one-octave")).toBe(true);
+    expect(isReadingRange("bass-one-octave")).toBe(true);
+    expect(isReadingRange("grand-starter")).toBe(true);
     expect(isReadingRange("wide-range")).toBe(false);
 
     expect(normalizeSettings({ roundLength: 45, readingRange: "nope" })).toMatchObject({
@@ -72,7 +75,7 @@ describe("catalog-less normalization (server path)", () => {
         schemaVersion: 1,
         exportedAt: "2026-06-05T10:00:00.000Z",
         progress: { reading: {}, pitch: {}, history: [] },
-        settings: { roundLength: 90, readingRange: "bass-starter" },
+        settings: { roundLength: 90, readingRange: "grand-starter" },
       }),
       createEmptyPracticeProgress(),
     );
@@ -81,7 +84,7 @@ describe("catalog-less normalization (server path)", () => {
     if (!result.ok) {
       throw new Error(result.error);
     }
-    expect(result.data.settings).toMatchObject({ roundLength: 90, readingRange: "bass-starter" });
+    expect(result.data.settings).toMatchObject({ roundLength: 90, readingRange: "grand-starter" });
     expect(result.data.progress.reading.noteStats).toEqual({});
   });
 });

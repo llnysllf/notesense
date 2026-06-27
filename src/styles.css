@@ -35,12 +35,6 @@
   --color-piano-black-border: rgba(0, 0, 0, 0.68);
   --color-piano-focus-border: rgba(85, 112, 91, 0.72);
   --color-piano-focus-ring: rgba(85, 112, 91, 0.22);
-  --color-piano-success-white: #f7fff6;
-  --color-piano-success-black-top: #3d7d4a;
-  --color-piano-success-black-bottom: #184320;
-  --color-piano-danger-white: #fff8f5;
-  --color-piano-danger-black-top: #8c3c2c;
-  --color-piano-danger-black-bottom: #3d140e;
   --radius-card: 8px;
   --radius-control: 6px;
   --radius-pill: 999px;
@@ -107,12 +101,6 @@
     --color-piano-black-border: rgba(0, 0, 0, 0.82);
     --color-piano-focus-border: rgba(143, 179, 152, 0.78);
     --color-piano-focus-ring: rgba(143, 179, 152, 0.24);
-    --color-piano-success-white: #d9f2dc;
-    --color-piano-success-black-top: #315f39;
-    --color-piano-success-black-bottom: #102d15;
-    --color-piano-danger-white: #f5d8d0;
-    --color-piano-danger-black-top: #7a3225;
-    --color-piano-danger-black-bottom: #2f0f0a;
     --shadow-panel: 0 24px 60px rgba(0, 0, 0, 0.4);
     --shadow-control: 0 8px 18px rgba(0, 0, 0, 0.3);
     --shadow-action: 0 12px 24px rgba(0, 0, 0, 0.5);
@@ -345,18 +333,29 @@ h3 {
   font-size: 1rem;
 }
 
-.mode-switch {
+.mode-switch,
+.reading-range-switch,
+.length-options {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 6px;
   padding: 6px;
   border: 1px solid var(--color-border);
   border-radius: var(--radius-card);
+}
+
+.mode-switch {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   background: var(--color-control);
 }
 
-.mode-switch button {
-  min-height: 44px;
+.reading-range-switch,
+.length-options {
+  background: var(--color-control-soft);
+}
+
+.mode-switch button,
+.reading-range-switch button,
+.length-options button {
   border-radius: var(--radius-control);
   background: transparent;
   color: var(--color-muted-strong);
@@ -364,10 +363,32 @@ h3 {
   font-weight: 850;
 }
 
-.mode-switch button.active {
+.mode-switch button.active,
+.reading-range-switch button.active,
+.length-options button.active {
   background: var(--color-surface);
   color: var(--color-text);
   box-shadow: var(--shadow-control);
+}
+
+.mode-switch button {
+  min-height: 44px;
+}
+
+.reading-range-switch {
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+}
+
+.reading-range-switch button {
+  min-width: 0;
+  min-height: 38px;
+  padding: 0 8px;
+  border-radius: var(--radius-control);
+  background: transparent;
+  color: var(--color-muted-strong);
+  cursor: pointer;
+  font-size: 0.82rem;
+  overflow-wrap: anywhere;
 }
 
 .round-strip,
@@ -498,8 +519,29 @@ h3 {
   gap: 10px;
 }
 
+.piano-mobile-controls {
+  display: grid;
+  grid-template-columns: 44px minmax(56px, 1fr) 44px;
+  gap: 8px;
+}
+
+.piano-window-button {
+  min-width: 0;
+  min-height: 34px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-control);
+  background: var(--color-control-soft);
+  color: var(--color-text);
+  cursor: pointer;
+  font-weight: 900;
+}
+
+.piano-window-button:hover {
+  border-color: var(--color-border-strong);
+  background: var(--color-surface);
+}
+
 .piano-keyboard-viewport {
-  --piano-white-key-width: calc(100% / var(--piano-white-key-count));
   --piano-black-key-width: min(22px, calc(64% / var(--piano-white-key-count)));
   overflow-x: hidden;
   overflow-y: hidden;
@@ -529,11 +571,6 @@ h3 {
   font-size: 0.64rem;
   font-weight: 850;
   line-height: 1;
-  transition:
-    border-color 140ms ease,
-    box-shadow 140ms ease,
-    transform 140ms ease,
-    background 140ms ease;
 }
 
 .white-key {
@@ -597,12 +634,12 @@ h3 {
 
 .piano-key.target-key {
   border-color: var(--color-success);
-  background: linear-gradient(180deg, var(--color-success-bg), var(--color-piano-success-white));
+  background: var(--color-success-bg);
   box-shadow: inset 0 0 0 2px var(--color-success-border);
 }
 
 .black-key.target-key {
-  background: linear-gradient(180deg, var(--color-piano-success-black-top), var(--color-piano-success-black-bottom));
+  background: var(--color-success);
   box-shadow:
     inset 0 0 0 2px var(--color-success-border),
     var(--shadow-piano-black);
@@ -610,12 +647,12 @@ h3 {
 
 .piano-key.selected-wrong {
   border-color: var(--color-danger);
-  background: linear-gradient(180deg, var(--color-danger-bg), var(--color-piano-danger-white));
+  background: var(--color-danger-bg);
   box-shadow: inset 0 0 0 2px var(--color-danger-border);
 }
 
 .black-key.selected-wrong {
-  background: linear-gradient(180deg, var(--color-piano-danger-black-top), var(--color-piano-danger-black-bottom));
+  background: var(--color-danger);
   box-shadow:
     inset 0 0 0 2px var(--color-danger-border),
     var(--shadow-piano-black);
@@ -628,13 +665,17 @@ h3 {
 
 .piano-overview-rail {
   display: grid;
+  width: 100%;
   height: 24px;
+  padding: 0;
   grid-template-columns: repeat(88, minmax(0, 1fr));
   align-items: end;
   overflow: hidden;
   border: 1px solid var(--color-border);
   border-radius: var(--radius-control);
   background: var(--color-control-soft);
+  cursor: pointer;
+  text-align: initial;
 }
 
 .piano-overview-key {
@@ -649,12 +690,16 @@ h3 {
 
 .overview-white-key {
   height: 100%;
-  background: linear-gradient(180deg, var(--color-piano-white-top), var(--color-piano-white-bottom));
+  background: var(--color-piano-white-bottom);
 }
 
 .overview-black-key {
   height: 62%;
-  background: linear-gradient(180deg, var(--color-piano-black-top), var(--color-piano-black-bottom));
+  background: var(--color-piano-black-bottom);
+}
+
+.piano-overview-key.overview-window {
+  box-shadow: inset 0 0 0 1px var(--color-brand-strong);
 }
 
 .piano-overview-key.overview-target {
@@ -747,10 +792,6 @@ h3 {
 .ghost-button {
   border-radius: var(--radius-card);
   cursor: pointer;
-  transition:
-    transform 140ms ease,
-    box-shadow 140ms ease,
-    background 140ms ease;
 }
 
 .answer-button {
@@ -863,39 +904,12 @@ h3 {
   font-weight: 800;
 }
 
-.length-options,
-.range-options {
-  display: grid;
-  gap: 6px;
-  padding: 5px;
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-card);
-  background: var(--color-control-soft);
-}
-
 .length-options {
   grid-template-columns: repeat(3, minmax(0, 1fr));
 }
 
-.range-options {
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-}
-
-.length-options button,
-.range-options button {
+.length-options button {
   min-height: 34px;
-  border-radius: var(--radius-control);
-  background: transparent;
-  color: var(--color-muted-strong);
-  cursor: pointer;
-  font-weight: 850;
-}
-
-.length-options button.active,
-.range-options button.active {
-  background: var(--color-surface);
-  color: var(--color-text);
-  box-shadow: var(--shadow-control);
 }
 
 .toggle-row {
@@ -1489,6 +1503,7 @@ h3 {
 
   .round-strip,
   .answer-grid,
+  .reading-range-switch,
   .insight-metrics,
   .summary-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
