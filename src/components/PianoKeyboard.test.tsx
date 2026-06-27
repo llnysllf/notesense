@@ -33,6 +33,22 @@ describe("PianoKeyboard", () => {
     expect(onKeySelect).toHaveBeenNthCalledWith(2, "C#4");
   });
 
+  it("positions black keys across the full keyboard instead of stacking them", () => {
+    render(<PianoKeyboard disabled onKeySelect={vi.fn()} />);
+
+    const firstBlackKey = screen.getByRole("button", { name: "Black piano key A#0" });
+    const middleBlackKey = screen.getByRole("button", { name: "Black piano key C#4" });
+    const lastBlackKey = screen.getByRole("button", { name: "Black piano key A#7" });
+
+    expect(firstBlackKey.style.getPropertyValue("--black-key-left")).not.toEqual("");
+    expect(middleBlackKey.style.getPropertyValue("--black-key-left")).not.toEqual(
+      firstBlackKey.style.getPropertyValue("--black-key-left"),
+    );
+    expect(lastBlackKey.style.getPropertyValue("--black-key-left")).not.toEqual(
+      firstBlackKey.style.getPropertyValue("--black-key-left"),
+    );
+  });
+
   it("marks the selected key and revealed target key after an incorrect answer", () => {
     render(<PianoKeyboard disabled isCorrect={false} revealedNoteId="C4" selectedNoteId="C3" onKeySelect={vi.fn()} />);
 

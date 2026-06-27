@@ -83,16 +83,22 @@ test("fits the full 88-key piano in the note-reading stage", async ({ page }) =>
   const pianoLayout = await page.evaluate(() => {
     const viewport = document.querySelector(".piano-keyboard-viewport");
     const buttons = Array.from(document.querySelectorAll(".piano-key"));
+    const blackKeys = Array.from(document.querySelectorAll(".black-key"));
     const viewportRect = viewport?.getBoundingClientRect();
     const visibleButtons = buttons.filter((button) => {
       const rect = button.getBoundingClientRect();
 
       return viewportRect !== undefined && rect.right > viewportRect.left && rect.left < viewportRect.right;
     });
+    const blackKeyLefts = blackKeys.map((key) => Math.round(key.getBoundingClientRect().left));
 
     return {
       clientWidth: viewport?.clientWidth ?? 0,
       scrollWidth: viewport?.scrollWidth ?? 0,
+      blackKeyCount: blackKeys.length,
+      distributedBlackKeys: new Set(blackKeyLefts).size,
+      firstBlackKeyLeft: blackKeyLefts.at(0) ?? 0,
+      lastBlackKeyLeft: blackKeyLefts.at(-1) ?? 0,
       totalButtons: buttons.length,
       visibleButtons: visibleButtons.length,
     };
@@ -100,6 +106,9 @@ test("fits the full 88-key piano in the note-reading stage", async ({ page }) =>
 
   expect(pianoLayout.totalButtons).toBe(88);
   expect(pianoLayout.visibleButtons).toBe(88);
+  expect(pianoLayout.blackKeyCount).toBe(36);
+  expect(pianoLayout.distributedBlackKeys).toBeGreaterThan(30);
+  expect(pianoLayout.lastBlackKeyLeft).toBeGreaterThan(pianoLayout.firstBlackKeyLeft);
   expect(pianoLayout.scrollWidth).toBeLessThanOrEqual(pianoLayout.clientWidth + 1);
 });
 

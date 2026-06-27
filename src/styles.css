@@ -33,7 +33,8 @@
   --color-piano-black-top: #222629;
   --color-piano-black-bottom: #0f1214;
   --color-piano-black-border: rgba(0, 0, 0, 0.68);
-  --color-piano-focus-ring: rgba(10, 132, 255, 0.18);
+  --color-piano-focus-border: rgba(85, 112, 91, 0.72);
+  --color-piano-focus-ring: rgba(85, 112, 91, 0.22);
   --color-piano-success-white: #f7fff6;
   --color-piano-success-black-top: #3d7d4a;
   --color-piano-success-black-bottom: #184320;
@@ -104,7 +105,8 @@
     --color-piano-black-top: #2b3034;
     --color-piano-black-bottom: #07090a;
     --color-piano-black-border: rgba(0, 0, 0, 0.82);
-    --color-piano-focus-ring: rgba(77, 163, 255, 0.22);
+    --color-piano-focus-border: rgba(143, 179, 152, 0.78);
+    --color-piano-focus-ring: rgba(143, 179, 152, 0.24);
     --color-piano-success-white: #d9f2dc;
     --color-piano-success-black-top: #315f39;
     --color-piano-success-black-bottom: #102d15;
@@ -493,7 +495,7 @@ h3 {
 
 .piano-keyboard-viewport {
   --piano-white-key-width: calc(100% / var(--piano-white-key-count));
-  --piano-black-key-width: max(8px, calc(var(--piano-white-key-width) * 0.64));
+  --piano-black-key-width: min(22px, calc(64% / var(--piano-white-key-count)));
   overflow-x: hidden;
   overflow-y: hidden;
   padding: 4px 2px 12px;
@@ -552,7 +554,7 @@ h3 {
   position: absolute;
   z-index: 2;
   top: 0;
-  left: calc((var(--white-key-index) + 0.68) * var(--piano-white-key-width));
+  left: var(--black-key-left);
   width: var(--piano-black-key-width);
   height: 62%;
   border-color: var(--color-piano-black-border);
@@ -562,8 +564,20 @@ h3 {
   color: var(--color-piano-white-top);
 }
 
+.piano-key:focus-visible {
+  outline: 0;
+  border-color: var(--color-piano-focus-border);
+  box-shadow: 0 0 0 3px var(--color-piano-focus-ring);
+}
+
+.black-key:focus-visible {
+  box-shadow:
+    0 0 0 3px var(--color-piano-focus-ring),
+    var(--shadow-piano-black);
+}
+
 .piano-key:not([aria-disabled="true"]):hover {
-  border-color: var(--color-focus);
+  border-color: var(--color-piano-focus-border);
   box-shadow: 0 0 0 2px var(--color-piano-focus-ring);
   transform: translateY(-1px);
 }
@@ -1472,5 +1486,9 @@ h3 {
 
   .reading-layout .piano-keybed {
     height: 96px;
+  }
+
+  .reading-layout .black-key {
+    height: 44%;
   }
 }
