@@ -11,7 +11,7 @@ type PianoKeyboardProps = {
 };
 
 type KeyPositionStyle = CSSProperties & {
-  "--white-key-index": number;
+  "--black-key-left": string;
 };
 
 type KeybedStyle = CSSProperties & {
@@ -62,6 +62,13 @@ function getKeyAriaLabel(key: PianoKey, selectedNoteId?: string, revealedNoteId?
   return parts.join(", ");
 }
 
+function getBlackKeyLeft(key: PianoKey): string {
+  const afterWhiteIndex = key.blackKeyAfterWhiteIndex ?? 0;
+  const leftPercent = ((afterWhiteIndex + 0.68) / PIANO_WHITE_KEY_COUNT) * 100;
+
+  return `${leftPercent}%`;
+}
+
 function PianoKeyboard({ disabled, revealedNoteId, selectedNoteId, isCorrect, onKeySelect }: PianoKeyboardProps) {
   function handleKeySelect(noteId: string) {
     if (disabled) return;
@@ -93,7 +100,7 @@ function PianoKeyboard({ disabled, revealedNoteId, selectedNoteId, isCorrect, on
                 className={`piano-key black-key ${getKeyStateClass(key, selectedNoteId, revealedNoteId, isCorrect)}`}
                 key={key.id}
                 type="button"
-                style={{ "--white-key-index": key.blackKeyAfterWhiteIndex ?? 0 } as KeyPositionStyle}
+                style={{ "--black-key-left": getBlackKeyLeft(key) } as KeyPositionStyle}
                 aria-label={getKeyAriaLabel(key, selectedNoteId, revealedNoteId, isCorrect)}
                 aria-disabled={disabled}
                 onClick={() => handleKeySelect(key.id)}
