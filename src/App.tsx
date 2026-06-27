@@ -213,6 +213,7 @@ function App() {
               isCorrect={feedback?.isCorrect}
               revealedNoteId={feedback ? activeNote.id : undefined}
               selectedNoteId={feedback?.answerId}
+              targetNoteId={activeNote.id}
               onKeySelect={handleReadingKeyAnswer}
             />
           ) : (
