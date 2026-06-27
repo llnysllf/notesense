@@ -52,7 +52,9 @@ test("loads with no automated accessibility violations", async ({ page }) => {
 test("runs the note-reading practice loop", async ({ page }) => {
   await page.goto("/", { waitUntil: "domcontentloaded" });
 
-  await expect(page.getByRole("button", { name: "White piano key A0" })).toHaveAttribute("aria-disabled", "true");
+  await expect(
+    page.getByRole("button", { name: `White piano key ${await getCurrentReadingNoteId(page)}` }),
+  ).toHaveAttribute("aria-disabled", "true");
   await page.getByRole("button", { name: "Start drill" }).click();
   await expect(
     page.getByRole("button", { name: `White piano key ${await getCurrentReadingNoteId(page)}` }),
@@ -75,15 +77,17 @@ test("runs the note-reading practice loop", async ({ page }) => {
   await expect(page.getByRole("listitem", { name: /Note reading session/ })).toBeVisible();
 });
 
-test("fits the full 88-key piano in the note-reading stage", async ({ page }) => {
+test("renders the right piano layout for the current viewport", async ({ page }) => {
   await page.goto("/", { waitUntil: "domcontentloaded" });
 
   await expect(page.getByRole("group", { name: "88-key piano keyboard" })).toBeVisible();
 
   const pianoLayout = await page.evaluate(() => {
+    const panel = document.querySelector(".piano-keyboard-panel");
     const viewport = document.querySelector(".piano-keyboard-viewport");
     const buttons = Array.from(document.querySelectorAll(".piano-key"));
     const blackKeys = Array.from(document.querySelectorAll(".black-key"));
+    const overviewKeys = Array.from(document.querySelectorAll("[data-piano-overview-key]"));
     const viewportRect = viewport?.getBoundingClientRect();
     const visibleButtons = buttons.filter((button) => {
       const rect = button.getBoundingClientRect();
@@ -99,15 +103,26 @@ test("fits the full 88-key piano in the note-reading stage", async ({ page }) =>
       distributedBlackKeys: new Set(blackKeyLefts).size,
       firstBlackKeyLeft: blackKeyLefts.at(0) ?? 0,
       lastBlackKeyLeft: blackKeyLefts.at(-1) ?? 0,
+      layout: panel?.getAttribute("data-layout"),
+      overviewKeyCount: overviewKeys.length,
       totalButtons: buttons.length,
       visibleButtons: visibleButtons.length,
     };
   });
 
-  expect(pianoLayout.totalButtons).toBe(88);
-  expect(pianoLayout.visibleButtons).toBe(88);
-  expect(pianoLayout.blackKeyCount).toBe(36);
-  expect(pianoLayout.distributedBlackKeys).toBeGreaterThan(30);
+  if (pianoLayout.layout === "mobile-window") {
+    expect(pianoLayout.visibleButtons).toBe(pianoLayout.totalButtons);
+    expect(pianoLayout.totalButtons).toBeGreaterThan(20);
+    expect(pianoLayout.totalButtons).toBeLessThan(35);
+    expect(pianoLayout.overviewKeyCount).toBe(88);
+    expect(pianoLayout.blackKeyCount).toBeGreaterThan(8);
+  } else {
+    expect(pianoLayout.totalButtons).toBe(88);
+    expect(pianoLayout.visibleButtons).toBe(88);
+    expect(pianoLayout.overviewKeyCount).toBe(0);
+    expect(pianoLayout.blackKeyCount).toBe(36);
+    expect(pianoLayout.distributedBlackKeys).toBeGreaterThan(30);
+  }
   expect(pianoLayout.lastBlackKeyLeft).toBeGreaterThan(pianoLayout.firstBlackKeyLeft);
   expect(pianoLayout.scrollWidth).toBeLessThanOrEqual(pianoLayout.clientWidth + 1);
 });

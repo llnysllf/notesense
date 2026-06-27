@@ -1,10 +1,37 @@
 import { fireEvent, render, screen } from "@testing-library/react";
-import { describe, expect, it, vi } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import PianoKeyboard from "./PianoKeyboard";
+
+const originalMatchMedia = window.matchMedia;
+
+function mockMobilePianoLayout() {
+  Object.defineProperty(window, "matchMedia", {
+    configurable: true,
+    value: vi.fn().mockImplementation((query: string) => ({
+      addEventListener: vi.fn(),
+      addListener: vi.fn(),
+      dispatchEvent: vi.fn(() => false),
+      matches: query === "(max-width: 640px)",
+      media: query,
+      onchange: null,
+      removeEventListener: vi.fn(),
+      removeListener: vi.fn(),
+    })),
+    writable: true,
+  });
+}
+
+afterEach(() => {
+  Object.defineProperty(window, "matchMedia", {
+    configurable: true,
+    value: originalMatchMedia,
+    writable: true,
+  });
+});
 
 describe("PianoKeyboard", () => {
   it("renders the complete 88-key piano as disabled controls before a round starts", () => {
-    render(<PianoKeyboard disabled onKeySelect={vi.fn()} />);
+    render(<PianoKeyboard disabled targetNoteId="C4" onKeySelect={vi.fn()} />);
 
     expect(screen.getByRole("group", { name: "88-key piano keyboard" })).toBeInTheDocument();
     expect(screen.getAllByRole("button")).toHaveLength(88);
@@ -16,7 +43,7 @@ describe("PianoKeyboard", () => {
   it("ignores key clicks while disabled", () => {
     const onKeySelect = vi.fn();
 
-    render(<PianoKeyboard disabled onKeySelect={onKeySelect} />);
+    render(<PianoKeyboard disabled targetNoteId="C4" onKeySelect={onKeySelect} />);
     fireEvent.click(screen.getByRole("button", { name: "White piano key C4" }));
 
     expect(onKeySelect).not.toHaveBeenCalled();
@@ -25,7 +52,7 @@ describe("PianoKeyboard", () => {
   it("selects the exact piano key id", () => {
     const onKeySelect = vi.fn();
 
-    render(<PianoKeyboard disabled={false} onKeySelect={onKeySelect} />);
+    render(<PianoKeyboard disabled={false} targetNoteId="C4" onKeySelect={onKeySelect} />);
     fireEvent.click(screen.getByRole("button", { name: "White piano key C4" }));
     fireEvent.click(screen.getByRole("button", { name: "Black piano key C#4" }));
 
@@ -34,7 +61,7 @@ describe("PianoKeyboard", () => {
   });
 
   it("positions black keys across the full keyboard instead of stacking them", () => {
-    render(<PianoKeyboard disabled onKeySelect={vi.fn()} />);
+    render(<PianoKeyboard disabled targetNoteId="C4" onKeySelect={vi.fn()} />);
 
     const firstBlackKey = screen.getByRole("button", { name: "Black piano key A#0" });
     const middleBlackKey = screen.getByRole("button", { name: "Black piano key C#4" });
@@ -49,8 +76,29 @@ describe("PianoKeyboard", () => {
     );
   });
 
+  it("uses a target-centered playable window plus full overview on phone layouts", () => {
+    mockMobilePianoLayout();
+
+    const { container } = render(<PianoKeyboard disabled={false} targetNoteId="C4" onKeySelect={vi.fn()} />);
+
+    expect(screen.getByRole("button", { name: "White piano key C4" })).toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "White piano key A0" })).not.toBeInTheDocument();
+    expect(screen.getAllByRole("button").length).toBeLessThan(88);
+    expect(container.querySelectorAll("[data-piano-overview-key]")).toHaveLength(88);
+    expect(container.querySelector('[data-piano-overview-key="C4"]')).toHaveClass("overview-target");
+  });
+
   it("marks the selected key and revealed target key after an incorrect answer", () => {
-    render(<PianoKeyboard disabled isCorrect={false} revealedNoteId="C4" selectedNoteId="C3" onKeySelect={vi.fn()} />);
+    render(
+      <PianoKeyboard
+        disabled
+        isCorrect={false}
+        revealedNoteId="C4"
+        selectedNoteId="C3"
+        targetNoteId="C4"
+        onKeySelect={vi.fn()}
+      />,
+    );
 
     expect(screen.getByRole("button", { name: "White piano key C3, selected incorrect" })).toHaveClass(
       "selected-wrong",

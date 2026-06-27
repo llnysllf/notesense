@@ -493,6 +493,11 @@ h3 {
   min-width: 0;
 }
 
+.piano-mobile-layout {
+  display: grid;
+  gap: 10px;
+}
+
 .piano-keyboard-viewport {
   --piano-white-key-width: calc(100% / var(--piano-white-key-count));
   --piano-black-key-width: min(22px, calc(64% / var(--piano-white-key-count)));
@@ -619,6 +624,49 @@ h3 {
 .piano-key.selected-correct {
   border-color: var(--color-success);
   box-shadow: inset 0 0 0 2px var(--color-success-border);
+}
+
+.piano-overview-rail {
+  display: grid;
+  height: 24px;
+  grid-template-columns: repeat(88, minmax(0, 1fr));
+  align-items: end;
+  overflow: hidden;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-control);
+  background: var(--color-control-soft);
+}
+
+.piano-overview-key {
+  display: block;
+  min-width: 0;
+  border-right: 1px solid var(--color-border);
+}
+
+.piano-overview-key:last-child {
+  border-right: 0;
+}
+
+.overview-white-key {
+  height: 100%;
+  background: linear-gradient(180deg, var(--color-piano-white-top), var(--color-piano-white-bottom));
+}
+
+.overview-black-key {
+  height: 62%;
+  background: linear-gradient(180deg, var(--color-piano-black-top), var(--color-piano-black-bottom));
+}
+
+.piano-overview-key.overview-target {
+  background: var(--color-success);
+}
+
+.piano-overview-key.overview-selected-wrong {
+  background: var(--color-danger);
+}
+
+.piano-overview-key.overview-selected-correct {
+  background: var(--color-success);
 }
 
 .staff-line {
