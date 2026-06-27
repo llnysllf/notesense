@@ -1,7 +1,9 @@
 import { describe, expect, it } from "vitest";
 import {
   BASS_STARTER_NOTES,
+  BASS_ONE_OCTAVE_NOTES,
   DEFAULT_READING_RANGE,
+  GRAND_STARTER_NOTES,
   PITCH_ANSWER_OPTIONS,
   PITCH_NOTES,
   PIANO_KEYS,
@@ -10,6 +12,7 @@ import {
   READING_NOTES,
   READING_RANGES,
   STARTER_NOTES,
+  TREBLE_ONE_OCTAVE_NOTES,
   emptyPitchProgress,
   emptyProgress,
   emptyReadingProgress,
@@ -26,7 +29,13 @@ function noteIds(notes: Array<{ id: string }>): string[] {
 describe("noteData", () => {
   it("exposes the supported reading ranges and default starter range", () => {
     expect(DEFAULT_READING_RANGE).toBe("treble-starter");
-    expect(READING_RANGES.map((range) => range.id)).toEqual(["treble-starter", "bass-starter"]);
+    expect(READING_RANGES.map((range) => range.id)).toEqual([
+      "treble-starter",
+      "bass-starter",
+      "treble-one-octave",
+      "bass-one-octave",
+      "grand-starter",
+    ]);
     expect(getReadingRange("treble-starter")).toMatchObject({
       label: "Treble",
       clef: "treble",
@@ -39,17 +48,36 @@ describe("noteData", () => {
       detail: "Bass clef C3-G3",
       notes: BASS_STARTER_NOTES,
     });
+    expect(getReadingRange("treble-one-octave")).toMatchObject({
+      label: "Treble octave",
+      detail: "Treble clef C4-B4",
+      notes: TREBLE_ONE_OCTAVE_NOTES,
+    });
+    expect(getReadingRange("bass-one-octave")).toMatchObject({
+      label: "Bass octave",
+      detail: "Bass clef C3-B3",
+      notes: BASS_ONE_OCTAVE_NOTES,
+    });
+    expect(getReadingRange("grand-starter")).toMatchObject({
+      label: "Grand",
+      detail: "Mixed clef C3-B4",
+      notes: GRAND_STARTER_NOTES,
+    });
   });
 
   it("returns treble notes by default and falls back to the default range for unsafe values", () => {
     expect(getReadingNotes()).toBe(STARTER_NOTES);
     expect(getReadingNotes("bass-starter")).toBe(BASS_STARTER_NOTES);
+    expect(getReadingNotes("grand-starter")).toBe(GRAND_STARTER_NOTES);
     expect(getReadingRange("wide-range" as never)).toBe(getReadingRange(DEFAULT_READING_RANGE));
   });
 
   it("validates reading range ids defensively", () => {
     expect(isReadingRange("treble-starter")).toBe(true);
     expect(isReadingRange("bass-starter")).toBe(true);
+    expect(isReadingRange("treble-one-octave")).toBe(true);
+    expect(isReadingRange("bass-one-octave")).toBe(true);
+    expect(isReadingRange("grand-starter")).toBe(true);
     expect(isReadingRange("wide-range")).toBe(false);
     expect(isReadingRange(undefined)).toBe(false);
   });
@@ -57,10 +85,29 @@ describe("noteData", () => {
   it("keeps note ids, answer options, and shortcuts stable", () => {
     expect(noteIds(STARTER_NOTES)).toEqual(["C4", "D4", "E4", "F4", "G4"]);
     expect(noteIds(BASS_STARTER_NOTES)).toEqual(["C3", "D3", "E3", "F3", "G3"]);
+    expect(noteIds(TREBLE_ONE_OCTAVE_NOTES)).toEqual(["C4", "D4", "E4", "F4", "G4", "A4", "B4"]);
+    expect(noteIds(BASS_ONE_OCTAVE_NOTES)).toEqual(["C3", "D3", "E3", "F3", "G3", "A3", "B3"]);
+    expect(noteIds(GRAND_STARTER_NOTES)).toEqual([
+      "C3",
+      "D3",
+      "E3",
+      "F3",
+      "G3",
+      "A3",
+      "B3",
+      "C4",
+      "D4",
+      "E4",
+      "F4",
+      "G4",
+      "A4",
+      "B4",
+    ]);
     expect(noteIds(PITCH_NOTES)).toEqual(["C4", "D4", "E4", "F4", "G4", "A4", "B4"]);
-    expect(READING_ANSWER_OPTIONS).toEqual(["C", "D", "E", "F", "G"]);
+    expect(READING_ANSWER_OPTIONS).toEqual(["C", "D", "E", "F", "G", "A", "B"]);
     expect(PITCH_ANSWER_OPTIONS).toEqual(["C", "D", "E", "F", "G", "A", "B"]);
     expect(STARTER_NOTES.map((note) => note.keyboardShortcut)).toEqual(["1", "2", "3", "4", "5"]);
+    expect(TREBLE_ONE_OCTAVE_NOTES.map((note) => note.keyboardShortcut)).toEqual(["1", "2", "3", "4", "5", "6", "7"]);
     expect(PITCH_NOTES.map((note) => note.keyboardShortcut)).toEqual(["1", "2", "3", "4", "5", "6", "7"]);
   });
 

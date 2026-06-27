@@ -36,7 +36,7 @@ type ReadingRangeConfig = {
 
 export const DEFAULT_READING_RANGE: ReadingRange = "treble-starter";
 
-export const TREBLE_STARTER_NOTES: TrainingNote[] = [
+export const TREBLE_ONE_OCTAVE_NOTES: TrainingNote[] = [
   {
     id: "C4",
     name: "C",
@@ -83,9 +83,29 @@ export const TREBLE_STARTER_NOTES: TrainingNote[] = [
     clef: "treble",
     keyboardShortcut: "5",
   },
+  {
+    id: "A4",
+    name: "A",
+    octave: 4,
+    frequency: 440,
+    staffY: 96,
+    clef: "treble",
+    keyboardShortcut: "6",
+  },
+  {
+    id: "B4",
+    name: "B",
+    octave: 4,
+    frequency: 493.88,
+    staffY: 88,
+    clef: "treble",
+    keyboardShortcut: "7",
+  },
 ];
 
-export const BASS_STARTER_NOTES: TrainingNote[] = [
+export const TREBLE_STARTER_NOTES = TREBLE_ONE_OCTAVE_NOTES.slice(0, 5);
+
+export const BASS_ONE_OCTAVE_NOTES: TrainingNote[] = [
   {
     id: "C3",
     name: "C",
@@ -131,7 +151,28 @@ export const BASS_STARTER_NOTES: TrainingNote[] = [
     clef: "bass",
     keyboardShortcut: "5",
   },
+  {
+    id: "A3",
+    name: "A",
+    octave: 3,
+    frequency: 220,
+    staffY: 56,
+    clef: "bass",
+    keyboardShortcut: "6",
+  },
+  {
+    id: "B3",
+    name: "B",
+    octave: 3,
+    frequency: 246.94,
+    staffY: 48,
+    clef: "bass",
+    keyboardShortcut: "7",
+  },
 ];
+
+export const BASS_STARTER_NOTES = BASS_ONE_OCTAVE_NOTES.slice(0, 5);
+export const GRAND_STARTER_NOTES = [...BASS_ONE_OCTAVE_NOTES, ...TREBLE_ONE_OCTAVE_NOTES];
 
 export const READING_RANGES: ReadingRangeConfig[] = [
   {
@@ -148,11 +189,32 @@ export const READING_RANGES: ReadingRangeConfig[] = [
     detail: "Bass clef C3-G3",
     notes: BASS_STARTER_NOTES,
   },
+  {
+    id: "treble-one-octave",
+    label: "Treble octave",
+    clef: "treble",
+    detail: "Treble clef C4-B4",
+    notes: TREBLE_ONE_OCTAVE_NOTES,
+  },
+  {
+    id: "bass-one-octave",
+    label: "Bass octave",
+    clef: "bass",
+    detail: "Bass clef C3-B3",
+    notes: BASS_ONE_OCTAVE_NOTES,
+  },
+  {
+    id: "grand-starter",
+    label: "Grand",
+    clef: "treble",
+    detail: "Mixed clef C3-B4",
+    notes: GRAND_STARTER_NOTES,
+  },
 ];
 
 export const STARTER_NOTES = TREBLE_STARTER_NOTES;
-export const READING_NOTES = [...TREBLE_STARTER_NOTES, ...BASS_STARTER_NOTES];
-export const READING_ANSWER_OPTIONS: ReadingNoteName[] = ["C", "D", "E", "F", "G"];
+export const READING_NOTES = GRAND_STARTER_NOTES;
+export const READING_ANSWER_OPTIONS: ReadingNoteName[] = ["C", "D", "E", "F", "G", "A", "B"];
 export const PITCH_ANSWER_OPTIONS: NoteName[] = ["C", "D", "E", "F", "G", "A", "B"];
 
 export const PITCH_NOTES: PitchNote[] = [

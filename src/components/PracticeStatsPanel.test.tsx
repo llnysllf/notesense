@@ -159,21 +159,19 @@ describe("PracticeStatsPanel", () => {
     expect(screen.getByText("Pitch recognition across one natural-note octave from C4 to B4.")).toBeInTheDocument();
   });
 
-  it("sends focused settings patches from reading, length, and toggle controls", () => {
+  it("sends focused settings patches from length and toggle controls", () => {
     const onSettingsChange = vi.fn();
     render(<PracticeStatsPanel {...makeProps({ onSettingsChange })} />);
 
-    fireEvent.click(screen.getByRole("button", { name: "Bass" }));
     fireEvent.click(screen.getByRole("button", { name: "30s" }));
     fireEvent.click(screen.getByLabelText("Adaptive practice"));
     fireEvent.click(screen.getByLabelText("Auto-play pitch"));
     fireEvent.click(screen.getByLabelText("Reveal pitch answer"));
 
-    expect(onSettingsChange).toHaveBeenNthCalledWith(1, { readingRange: "bass-starter" });
-    expect(onSettingsChange).toHaveBeenNthCalledWith(2, { roundLength: 30 });
-    expect(onSettingsChange).toHaveBeenNthCalledWith(3, { adaptivePractice: false });
-    expect(onSettingsChange).toHaveBeenNthCalledWith(4, { autoPlayPitch: false });
-    expect(onSettingsChange).toHaveBeenNthCalledWith(5, { revealPitchAfterAnswer: false });
+    expect(onSettingsChange).toHaveBeenNthCalledWith(1, { roundLength: 30 });
+    expect(onSettingsChange).toHaveBeenNthCalledWith(2, { adaptivePractice: false });
+    expect(onSettingsChange).toHaveBeenNthCalledWith(3, { autoPlayPitch: false });
+    expect(onSettingsChange).toHaveBeenNthCalledWith(4, { revealPitchAfterAnswer: false });
   });
 
   it("wires data status, export, import, and reset actions", () => {
@@ -201,6 +199,15 @@ describe("PracticeStatsPanel", () => {
     expect(onExportData).toHaveBeenCalledTimes(1);
     expect(onImportData).toHaveBeenCalledWith(file);
     expect(onResetProgress).toHaveBeenCalledTimes(1);
+  });
+
+  it("opens the hidden import input from the import button", () => {
+    const inputClick = vi.spyOn(HTMLInputElement.prototype, "click").mockImplementation(() => undefined);
+
+    render(<PracticeStatsPanel {...makeProps()} />);
+    fireEvent.click(screen.getByRole("button", { name: "Import data" }));
+
+    expect(inputClick).toHaveBeenCalledTimes(1);
   });
 
   it("renders focus items with accuracy and attempt counts", () => {

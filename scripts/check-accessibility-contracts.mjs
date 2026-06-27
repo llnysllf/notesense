@@ -105,6 +105,8 @@ requireSnippets("src/App.tsx", [
   'aria-label="Practice mode"',
   'aria-pressed={mode === "reading"}',
   'aria-pressed={mode === "pitch"}',
+  'aria-label="Reading drill range"',
+  "aria-pressed={settings.readingRange === range.id}",
   'aria-label="Current round status"',
   "aria-label={`Answer ${answer}`}",
 ]);
@@ -112,8 +114,6 @@ requireSnippets("src/App.tsx", [
 requireSnippets("src/components/PracticeStatsPanel.tsx", [
   'aria-label="Practice progress"',
   'aria-live="polite"',
-  'aria-label="Reading range"',
-  "aria-pressed={settings.readingRange === range.id}",
   'aria-label="Round length"',
   "aria-pressed={settings.roundLength === length}",
   'role="status"',

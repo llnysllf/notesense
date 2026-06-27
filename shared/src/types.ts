@@ -2,10 +2,15 @@
 // These types describe what is persisted locally, exported/imported, and synced.
 
 export type NoteName = "C" | "D" | "E" | "F" | "G" | "A" | "B";
-export type ReadingNoteName = "C" | "D" | "E" | "F" | "G";
+export type ReadingNoteName = NoteName;
 export type PracticeMode = "reading" | "pitch";
 export type RoundLength = 30 | 60 | 90;
-export type ReadingRange = "treble-starter" | "bass-starter";
+export type ReadingRange =
+  | "treble-starter"
+  | "bass-starter"
+  | "treble-one-octave"
+  | "bass-one-octave"
+  | "grand-starter";
 
 export type AttemptProgress = {
   attempts: number;

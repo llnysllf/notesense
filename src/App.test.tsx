@@ -115,14 +115,15 @@ describe("App", () => {
     render(<App />);
 
     fireEvent.click(screen.getByRole("button", { name: "30s" }));
-    fireEvent.click(screen.getByRole("button", { name: "Bass" }));
+    fireEvent.click(screen.getByRole("button", { name: "Grand" }));
 
     expect(readStoredJson<typeof defaultSettings>(SETTINGS_STORAGE_KEY)).toMatchObject({
       roundLength: 30,
-      readingRange: "bass-starter",
+      readingRange: "grand-starter",
     });
     expect(screen.getByRole("button", { name: "30s" })).toHaveAttribute("aria-pressed", "true");
-    expect(screen.getAllByText("Bass clef C3-G3")).not.toHaveLength(0);
+    expect(screen.getByRole("button", { name: "Grand" })).toHaveAttribute("aria-pressed", "true");
+    expect(screen.getAllByText("Mixed clef C3-B4")).not.toHaveLength(0);
   });
 
   it("surfaces a storage warning when settings cannot be saved", () => {

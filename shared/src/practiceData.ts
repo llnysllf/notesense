@@ -15,7 +15,13 @@ export const SESSION_HISTORY_LIMIT = 20;
 export const INVALID_IMPORT_ERROR = "Choose a valid NoteSense export file.";
 export const UNSUPPORTED_IMPORT_ERROR = "This NoteSense export version is not supported.";
 
-export const READING_RANGE_IDS: readonly ReadingRange[] = ["treble-starter", "bass-starter"];
+export const READING_RANGE_IDS: readonly ReadingRange[] = [
+  "treble-starter",
+  "bass-starter",
+  "treble-one-octave",
+  "bass-one-octave",
+  "grand-starter",
+];
 export const DEFAULT_READING_RANGE: ReadingRange = "treble-starter";
 
 export const defaultSettings: PracticeSettings = {
