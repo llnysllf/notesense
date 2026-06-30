@@ -1,4 +1,5 @@
 import type {
+  CustomReadingRange,
   ModeProgress,
   NoteName,
   PitchNote,
@@ -12,6 +13,13 @@ import type {
 const PIANO_MIDI_START = 21;
 const PIANO_MIDI_END = 108;
 const PIANO_KEY_NAMES = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"] as const;
+const NATURAL_NOTE_NAMES: readonly NoteName[] = ["C", "D", "E", "F", "G", "A", "B"];
+export const CUSTOM_READING_MIN_NOTE_ID = "C2";
+export const CUSTOM_READING_MAX_NOTE_ID = "B5";
+const CUSTOM_READING_MIN_MIDI = 36;
+const CUSTOM_READING_MAX_MIDI = 83;
+const TREBLE_BASE_NOTE = { name: "C" as const, octave: 4, staffY: 136 };
+const BASS_BASE_NOTE = { name: "C" as const, octave: 3, staffY: 96 };
 
 export type PianoKeyName = (typeof PIANO_KEY_NAMES)[number];
 
@@ -26,6 +34,8 @@ export type PianoKey = {
   blackKeyAfterWhiteIndex?: number;
 };
 
+export const DEFAULT_CUSTOM_READING_RANGE: CustomReadingRange = { startNoteId: "C3", endNoteId: "B4" };
+
 type ReadingRangeConfig = {
   id: ReadingRange;
   label: string;
@@ -35,6 +45,56 @@ type ReadingRangeConfig = {
 };
 
 export const DEFAULT_READING_RANGE: ReadingRange = "treble-starter";
+
+function getPianoKeyNaturalName(name: PianoKeyName): NoteName {
+  return name[0] as NoteName;
+}
+
+function getDiatonicIndex(name: NoteName, octave: number): number {
+  return octave * NATURAL_NOTE_NAMES.length + NATURAL_NOTE_NAMES.indexOf(name);
+}
+
+function getFrequencyFromMidi(midi: number): number {
+  return Number((440 * 2 ** ((midi - 69) / 12)).toFixed(2));
+}
+
+function getStaffY(name: NoteName, octave: number, clef: StaffClef): number {
+  const baseNote = clef === "treble" ? TREBLE_BASE_NOTE : BASS_BASE_NOTE;
+  const diatonicStep = getDiatonicIndex(name, octave) - getDiatonicIndex(baseNote.name, baseNote.octave);
+
+  return baseNote.staffY - diatonicStep * 8;
+}
+
+function getLedgerLineYs(staffY: number): number[] {
+  if (staffY > 120) {
+    return Array.from({ length: Math.floor((staffY - 120) / 16) }, (_, index) => 136 + index * 16);
+  }
+
+  if (staffY < 56) {
+    return Array.from({ length: Math.floor((56 - staffY) / 16) }, (_, index) => 40 - index * 16);
+  }
+
+  return [];
+}
+
+function createReadingNoteFromMidi(midi: number, keyboardShortcut = ""): TrainingNote {
+  const keyName = PIANO_KEY_NAMES[midi % PIANO_KEY_NAMES.length]!;
+  const octave = Math.floor(midi / PIANO_KEY_NAMES.length) - 1;
+  const name = getPianoKeyNaturalName(keyName);
+  const clef: StaffClef = midi < 60 ? "bass" : "treble";
+  const staffY = getStaffY(name, octave, clef);
+
+  return {
+    id: `${keyName}${octave}`,
+    name,
+    octave,
+    frequency: getFrequencyFromMidi(midi),
+    staffY,
+    clef,
+    ledgerLineYs: getLedgerLineYs(staffY),
+    keyboardShortcut,
+  };
+}
 
 export const TREBLE_ONE_OCTAVE_NOTES: TrainingNote[] = [
   {
@@ -173,6 +233,16 @@ export const BASS_ONE_OCTAVE_NOTES: TrainingNote[] = [
 
 export const BASS_STARTER_NOTES = BASS_ONE_OCTAVE_NOTES.slice(0, 5);
 export const GRAND_STARTER_NOTES = [...BASS_ONE_OCTAVE_NOTES, ...TREBLE_ONE_OCTAVE_NOTES];
+export const CUSTOM_READING_NOTES: TrainingNote[] = Array.from(
+  { length: PIANO_MIDI_END - PIANO_MIDI_START + 1 },
+  (_, index) => PIANO_MIDI_START + index,
+)
+  .filter((midi) => {
+    const keyName = PIANO_KEY_NAMES[midi % PIANO_KEY_NAMES.length]!;
+    return !keyName.includes("#") && midi >= CUSTOM_READING_MIN_MIDI && midi <= CUSTOM_READING_MAX_MIDI;
+  })
+  .map((midi) => createReadingNoteFromMidi(midi));
+export const CUSTOM_READING_KEY_IDS = CUSTOM_READING_NOTES.map((note) => note.id);
 
 export const READING_RANGES: ReadingRangeConfig[] = [
   {
@@ -210,10 +280,19 @@ export const READING_RANGES: ReadingRangeConfig[] = [
     detail: "Mixed clef C3-B4",
     notes: GRAND_STARTER_NOTES,
   },
+  {
+    id: "custom",
+    label: "Custom",
+    clef: "treble",
+    detail: "Custom C3-B4",
+    notes: GRAND_STARTER_NOTES,
+  },
 ];
 
 export const STARTER_NOTES = TREBLE_STARTER_NOTES;
-export const READING_NOTES = GRAND_STARTER_NOTES;
+export const READING_NOTES = Array.from(
+  new Map([...CUSTOM_READING_NOTES, ...GRAND_STARTER_NOTES].map((note) => [note.id, note])).values(),
+);
 export const READING_ANSWER_OPTIONS: ReadingNoteName[] = ["C", "D", "E", "F", "G", "A", "B"];
 export const PITCH_ANSWER_OPTIONS: NoteName[] = ["C", "D", "E", "F", "G", "A", "B"];
 
@@ -269,10 +348,6 @@ export const PITCH_NOTES: PitchNote[] = [
   },
 ];
 
-function getPianoKeyNaturalName(name: PianoKeyName): NoteName {
-  return name[0] as NoteName;
-}
-
 function createPianoKeys(): PianoKey[] {
   let whiteKeyIndex = 0;
 
@@ -309,6 +384,40 @@ export function getPianoKeyById(noteId: string): PianoKey | undefined {
 }
 
 const defaultReadingRangeConfig = READING_RANGES.find((range) => range.id === DEFAULT_READING_RANGE)!;
+const customReadingRangeConfig = READING_RANGES.find((range) => range.id === "custom")!;
+
+function getSupportedCustomReadingNote(noteId: string | undefined, fallbackNoteId: string): TrainingNote {
+  return (
+    CUSTOM_READING_NOTES.find((note) => note.id === noteId) ??
+    CUSTOM_READING_NOTES.find((note) => note.id === fallbackNoteId)!
+  );
+}
+
+export function normalizeCustomReadingRange(
+  range: CustomReadingRange = DEFAULT_CUSTOM_READING_RANGE,
+): CustomReadingRange {
+  const startNote = getSupportedCustomReadingNote(range.startNoteId, DEFAULT_CUSTOM_READING_RANGE.startNoteId);
+  const endNote = getSupportedCustomReadingNote(range.endNoteId, DEFAULT_CUSTOM_READING_RANGE.endNoteId);
+  const startKey = getPianoKeyById(startNote.id);
+  const endKey = getPianoKeyById(endNote.id);
+
+  if (startKey !== undefined && endKey !== undefined && startKey.midi > endKey.midi) {
+    return { startNoteId: endNote.id, endNoteId: startNote.id };
+  }
+
+  return { startNoteId: startNote.id, endNoteId: endNote.id };
+}
+
+export function getCustomReadingNotes(range: CustomReadingRange = DEFAULT_CUSTOM_READING_RANGE): TrainingNote[] {
+  const normalizedRange = normalizeCustomReadingRange(range);
+  const startMidi = getPianoKeyById(normalizedRange.startNoteId)?.midi ?? CUSTOM_READING_MIN_MIDI;
+  const endMidi = getPianoKeyById(normalizedRange.endNoteId)?.midi ?? CUSTOM_READING_MAX_MIDI;
+
+  return CUSTOM_READING_NOTES.filter((note) => {
+    const midi = getPianoKeyById(note.id)?.midi;
+    return midi !== undefined && midi >= startMidi && midi <= endMidi;
+  });
+}
 
 function createEmptyModeProgress(notes: Array<{ id: string }>): ModeProgress {
   return {
@@ -327,12 +436,28 @@ export function isReadingRange(value: unknown): value is ReadingRange {
   return READING_RANGES.some((range) => range.id === value);
 }
 
-export function getReadingRange(range: ReadingRange): ReadingRangeConfig {
+export function getReadingRange(
+  range: ReadingRange,
+  customReadingRange: CustomReadingRange = DEFAULT_CUSTOM_READING_RANGE,
+): ReadingRangeConfig {
+  if (range === "custom") {
+    const normalizedRange = normalizeCustomReadingRange(customReadingRange);
+
+    return {
+      ...customReadingRangeConfig,
+      detail: `Custom ${normalizedRange.startNoteId}-${normalizedRange.endNoteId}`,
+      notes: getCustomReadingNotes(normalizedRange),
+    };
+  }
+
   return READING_RANGES.find((rangeConfig) => rangeConfig.id === range) ?? defaultReadingRangeConfig;
 }
 
-export function getReadingNotes(range: ReadingRange = DEFAULT_READING_RANGE): TrainingNote[] {
-  return getReadingRange(range).notes;
+export function getReadingNotes(
+  range: ReadingRange = DEFAULT_READING_RANGE,
+  customReadingRange: CustomReadingRange = DEFAULT_CUSTOM_READING_RANGE,
+): TrainingNote[] {
+  return getReadingRange(range, customReadingRange).notes;
 }
 
 export const emptyReadingProgress = createEmptyModeProgress(READING_NOTES);

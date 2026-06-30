@@ -141,6 +141,7 @@ describe("PracticeStatsPanel", () => {
     expect(screen.getByRole("heading", { level: 3, name: "Last round" })).toBeInTheDocument();
     expect(screen.getByText("7/10")).toBeInTheDocument();
     expect(screen.getByText("Keep going.")).toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: "Settings" }));
     expect(screen.getByText("Bass clef C3-G3 note reading.")).toBeInTheDocument();
   });
 
@@ -156,13 +157,27 @@ describe("PracticeStatsPanel", () => {
     );
 
     expect(screen.queryByRole("heading", { level: 3, name: "Last round" })).not.toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: "Settings" }));
     expect(screen.getByText("Pitch recognition across one natural-note octave from C4 to B4.")).toBeInTheDocument();
+  });
+
+  it("switches map and history into separate panel views", () => {
+    render(<PracticeStatsPanel {...makeProps()} />);
+
+    fireEvent.click(screen.getByRole("button", { name: "Map" }));
+    expect(screen.getByRole("heading", { level: 3, name: "Mastery map" })).toBeInTheDocument();
+    expect(screen.queryByRole("heading", { level: 3, name: "Practice history" })).not.toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole("button", { name: "History" }));
+    expect(screen.getByRole("heading", { level: 3, name: "Practice history" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { level: 3, name: "Practice insight" })).toBeInTheDocument();
   });
 
   it("sends focused settings patches from length and toggle controls", () => {
     const onSettingsChange = vi.fn();
     render(<PracticeStatsPanel {...makeProps({ onSettingsChange })} />);
 
+    fireEvent.click(screen.getByRole("button", { name: "Settings" }));
     fireEvent.click(screen.getByRole("button", { name: "30s" }));
     fireEvent.click(screen.getByLabelText("Adaptive practice"));
     fireEvent.click(screen.getByLabelText("Auto-play pitch"));
@@ -191,6 +206,7 @@ describe("PracticeStatsPanel", () => {
       />,
     );
 
+    fireEvent.click(screen.getByRole("button", { name: "Data" }));
     fireEvent.click(screen.getByRole("button", { name: "Export data" }));
     fireEvent.change(screen.getByLabelText("Import data file"), { target: { files: [file] } });
     fireEvent.click(screen.getByRole("button", { name: "Reset progress" }));
@@ -205,6 +221,7 @@ describe("PracticeStatsPanel", () => {
     const inputClick = vi.spyOn(HTMLInputElement.prototype, "click").mockImplementation(() => undefined);
 
     render(<PracticeStatsPanel {...makeProps()} />);
+    fireEvent.click(screen.getByRole("button", { name: "Data" }));
     fireEvent.click(screen.getByRole("button", { name: "Import data" }));
 
     expect(inputClick).toHaveBeenCalledTimes(1);

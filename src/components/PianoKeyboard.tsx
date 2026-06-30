@@ -16,6 +16,11 @@ import {
 
 type PianoKeyboardProps = {
   disabled: boolean;
+  activeRangeEdge?: "start" | "end" | undefined;
+  rangeEndNoteId?: string | undefined;
+  rangeNoteIds?: Set<string> | undefined;
+  rangeStartNoteId?: string | undefined;
+  selectableKeyIds?: Set<string> | undefined;
   revealedNoteId?: string | undefined;
   selectedNoteId?: string | undefined;
   isCorrect?: boolean | undefined;
@@ -58,6 +63,10 @@ function getOverviewKeyStateClass(
   selectedNoteId?: string,
   revealedNoteId?: string,
   isCorrect?: boolean,
+  rangeStartNoteId?: string,
+  rangeEndNoteId?: string,
+  rangeNoteIds?: Set<string>,
+  activeRangeEdge?: "start" | "end",
 ) {
   const stateClasses: string[] = [];
 
@@ -73,10 +82,39 @@ function getOverviewKeyStateClass(
     stateClasses.push("overview-target");
   }
 
+  if (rangeNoteIds?.has(key.id)) {
+    stateClasses.push("overview-range-key");
+  }
+
+  if (key.id === rangeStartNoteId) {
+    stateClasses.push(
+      "overview-range-boundary",
+      activeRangeEdge === "start" ? "overview-range-active-boundary" : "overview-range-start",
+    );
+  }
+
+  if (key.id === rangeEndNoteId) {
+    stateClasses.push(
+      "overview-range-boundary",
+      activeRangeEdge === "end" ? "overview-range-active-boundary" : "overview-range-end",
+    );
+  }
+
   return stateClasses.join(" ");
 }
 
-function PianoKeyboard({ disabled, revealedNoteId, selectedNoteId, isCorrect, onKeySelect }: PianoKeyboardProps) {
+function PianoKeyboard({
+  disabled,
+  activeRangeEdge,
+  rangeEndNoteId,
+  rangeNoteIds,
+  rangeStartNoteId,
+  selectableKeyIds,
+  revealedNoteId,
+  selectedNoteId,
+  isCorrect,
+  onKeySelect,
+}: PianoKeyboardProps) {
   const isMobileLayout = useIsMobilePianoLayout();
   const [mobileCenterNoteId, setMobileCenterNoteId] = useState(MOBILE_DEFAULT_CENTER_NOTE_ID);
   const mobileWindow = getWindowKeys(revealedNoteId ?? mobileCenterNoteId);
@@ -134,6 +172,11 @@ function PianoKeyboard({ disabled, revealedNoteId, selectedNoteId, isCorrect, on
               whiteKeyStart={mobileWindow.whiteKeyStart}
               whiteKeyCount={MOBILE_WHITE_KEY_COUNT}
               disabled={disabled}
+              activeRangeEdge={activeRangeEdge}
+              rangeEndNoteId={rangeEndNoteId}
+              rangeNoteIds={rangeNoteIds}
+              rangeStartNoteId={rangeStartNoteId}
+              selectableKeyIds={selectableKeyIds}
               selectedNoteId={selectedNoteId}
               revealedNoteId={revealedNoteId}
               isCorrect={isCorrect}
@@ -154,6 +197,10 @@ function PianoKeyboard({ disabled, revealedNoteId, selectedNoteId, isCorrect, on
                     selectedNoteId,
                     revealedNoteId,
                     isCorrect,
+                    rangeStartNoteId,
+                    rangeEndNoteId,
+                    rangeNoteIds,
+                    activeRangeEdge,
                   )}`}
                   data-piano-overview-key={key.id}
                   key={key.id}
@@ -168,6 +215,11 @@ function PianoKeyboard({ disabled, revealedNoteId, selectedNoteId, isCorrect, on
             whiteKeyStart={0}
             whiteKeyCount={PIANO_WHITE_KEY_COUNT}
             disabled={disabled}
+            activeRangeEdge={activeRangeEdge}
+            rangeEndNoteId={rangeEndNoteId}
+            rangeNoteIds={rangeNoteIds}
+            rangeStartNoteId={rangeStartNoteId}
+            selectableKeyIds={selectableKeyIds}
             selectedNoteId={selectedNoteId}
             revealedNoteId={revealedNoteId}
             isCorrect={isCorrect}

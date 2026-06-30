@@ -41,6 +41,7 @@ Settings include:
 
 - `roundLength`
 - `readingRange`
+- `customReadingRange`
 - `adaptivePractice`
 - `autoPlayPitch`
 - `revealPitchAfterAnswer`

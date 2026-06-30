@@ -8,6 +8,11 @@ type PianoKeybedProps = {
   whiteKeyStart: number;
   whiteKeyCount: number;
   disabled: boolean;
+  activeRangeEdge?: "start" | "end" | undefined;
+  rangeEndNoteId?: string | undefined;
+  rangeNoteIds?: Set<string> | undefined;
+  rangeStartNoteId?: string | undefined;
+  selectableKeyIds?: Set<string> | undefined;
   selectedNoteId: string | undefined;
   revealedNoteId: string | undefined;
   isCorrect: boolean | undefined;
@@ -35,6 +40,10 @@ function getKeyStateClass(
   selectedNoteId?: string,
   revealedNoteId?: string,
   isCorrect?: boolean,
+  rangeStartNoteId?: string,
+  rangeEndNoteId?: string,
+  rangeNoteIds?: Set<string>,
+  activeRangeEdge?: "start" | "end",
 ): string {
   const stateClasses: string[] = [];
 
@@ -46,10 +55,30 @@ function getKeyStateClass(
     stateClasses.push("target-key");
   }
 
+  if (rangeNoteIds?.has(key.id)) {
+    stateClasses.push("range-key");
+  }
+
+  if (key.id === rangeStartNoteId) {
+    stateClasses.push("range-boundary", activeRangeEdge === "start" ? "range-active-boundary" : "range-start");
+  }
+
+  if (key.id === rangeEndNoteId) {
+    stateClasses.push("range-boundary", activeRangeEdge === "end" ? "range-active-boundary" : "range-end");
+  }
+
   return stateClasses.join(" ");
 }
 
-function getKeyAriaLabel(key: PianoKey, selectedNoteId?: string, revealedNoteId?: string, isCorrect?: boolean): string {
+function getKeyAriaLabel(
+  key: PianoKey,
+  selectedNoteId?: string,
+  revealedNoteId?: string,
+  isCorrect?: boolean,
+  rangeStartNoteId?: string,
+  rangeEndNoteId?: string,
+  rangeNoteIds?: Set<string>,
+): string {
   const parts = [`${key.isBlack ? "Black" : "White"} piano key ${key.id}`];
 
   if (key.id === selectedNoteId) {
@@ -58,6 +87,18 @@ function getKeyAriaLabel(key: PianoKey, selectedNoteId?: string, revealedNoteId?
 
   if (revealedNoteId !== undefined && key.id === revealedNoteId) {
     parts.push("target note");
+  }
+
+  if (rangeNoteIds?.has(key.id)) {
+    parts.push("inside selected range");
+  }
+
+  if (key.id === rangeStartNoteId) {
+    parts.push("range start");
+  }
+
+  if (key.id === rangeEndNoteId) {
+    parts.push("range end");
   }
 
   return parts.join(", ");
@@ -69,6 +110,11 @@ function PianoKeybed({
   whiteKeyStart,
   whiteKeyCount,
   disabled,
+  activeRangeEdge,
+  rangeEndNoteId,
+  rangeNoteIds,
+  rangeStartNoteId,
+  selectableKeyIds,
   selectedNoteId,
   revealedNoteId,
   isCorrect,
@@ -77,36 +123,78 @@ function PianoKeybed({
   return (
     <div className="piano-keybed" style={{ "--piano-white-key-count": whiteKeyCount } as KeybedStyle}>
       <div className="piano-white-keys">
-        {whiteKeys.map((key) => (
-          <button
-            className={`piano-key white-key ${getKeyStateClass(key, selectedNoteId, revealedNoteId, isCorrect)}`}
-            key={key.id}
-            type="button"
-            aria-label={getKeyAriaLabel(key, selectedNoteId, revealedNoteId, isCorrect)}
-            aria-disabled={disabled}
-            onClick={() => {
-              if (!disabled) onKeySelect(key.id);
-            }}
-          >
-            <span>{getVisibleKeyLabel(key)}</span>
-          </button>
-        ))}
+        {whiteKeys.map((key) => {
+          const keyDisabled = disabled || (selectableKeyIds !== undefined && !selectableKeyIds.has(key.id));
+
+          return (
+            <button
+              className={`piano-key white-key ${getKeyStateClass(
+                key,
+                selectedNoteId,
+                revealedNoteId,
+                isCorrect,
+                rangeStartNoteId,
+                rangeEndNoteId,
+                rangeNoteIds,
+                activeRangeEdge,
+              )}`}
+              key={key.id}
+              type="button"
+              aria-label={getKeyAriaLabel(
+                key,
+                selectedNoteId,
+                revealedNoteId,
+                isCorrect,
+                rangeStartNoteId,
+                rangeEndNoteId,
+                rangeNoteIds,
+              )}
+              aria-disabled={keyDisabled}
+              onClick={() => {
+                if (!keyDisabled) onKeySelect(key.id);
+              }}
+            >
+              <span>{getVisibleKeyLabel(key)}</span>
+            </button>
+          );
+        })}
       </div>
 
       <div className="piano-black-keys">
-        {blackKeys.map((key) => (
-          <button
-            className={`piano-key black-key ${getKeyStateClass(key, selectedNoteId, revealedNoteId, isCorrect)}`}
-            key={key.id}
-            type="button"
-            style={{ "--black-key-left": getBlackKeyLeft(key, whiteKeyStart, whiteKeyCount) } as KeyPositionStyle}
-            aria-label={getKeyAriaLabel(key, selectedNoteId, revealedNoteId, isCorrect)}
-            aria-disabled={disabled}
-            onClick={() => {
-              if (!disabled) onKeySelect(key.id);
-            }}
-          />
-        ))}
+        {blackKeys.map((key) => {
+          const keyDisabled = disabled || (selectableKeyIds !== undefined && !selectableKeyIds.has(key.id));
+
+          return (
+            <button
+              className={`piano-key black-key ${getKeyStateClass(
+                key,
+                selectedNoteId,
+                revealedNoteId,
+                isCorrect,
+                rangeStartNoteId,
+                rangeEndNoteId,
+                rangeNoteIds,
+                activeRangeEdge,
+              )}`}
+              key={key.id}
+              type="button"
+              style={{ "--black-key-left": getBlackKeyLeft(key, whiteKeyStart, whiteKeyCount) } as KeyPositionStyle}
+              aria-label={getKeyAriaLabel(
+                key,
+                selectedNoteId,
+                revealedNoteId,
+                isCorrect,
+                rangeStartNoteId,
+                rangeEndNoteId,
+                rangeNoteIds,
+              )}
+              aria-disabled={keyDisabled}
+              onClick={() => {
+                if (!keyDisabled) onKeySelect(key.id);
+              }}
+            />
+          );
+        })}
       </div>
     </div>
   );

@@ -9,6 +9,7 @@ function MusicStaff({ note }: MusicStaffProps) {
   const clefLabel = note.clef === "treble" ? "Treble" : "Bass";
   const clefSymbol = note.clef === "treble" ? "𝄞" : "𝄢";
   const clefY = note.clef === "treble" ? 119 : 112;
+  const ledgerLineYs = note.ledgerLineYs ?? (note.ledgerLineY === undefined ? [] : [note.ledgerLineY]);
 
   return (
     <svg className="staff" viewBox="0 0 420 184" role="img" aria-label={`${clefLabel} staff note ${note.id}`}>
@@ -18,9 +19,9 @@ function MusicStaff({ note }: MusicStaffProps) {
       {staffLines.map((lineY) => (
         <line key={lineY} x1="34" x2="386" y1={lineY} y2={lineY} className="staff-line" />
       ))}
-      {note.ledgerLineY !== undefined && (
-        <line x1="212" x2="276" y1={note.ledgerLineY} y2={note.ledgerLineY} className="staff-line" />
-      )}
+      {ledgerLineYs.map((ledgerLineY) => (
+        <line key={ledgerLineY} x1="212" x2="276" y1={ledgerLineY} y2={ledgerLineY} className="staff-line" />
+      ))}
       <ellipse
         cx="244"
         cy={note.staffY}

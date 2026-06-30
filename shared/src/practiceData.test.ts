@@ -61,11 +61,19 @@ describe("catalog-less normalization (server path)", () => {
     expect(isReadingRange("treble-one-octave")).toBe(true);
     expect(isReadingRange("bass-one-octave")).toBe(true);
     expect(isReadingRange("grand-starter")).toBe(true);
+    expect(isReadingRange("custom")).toBe(true);
     expect(isReadingRange("wide-range")).toBe(false);
 
-    expect(normalizeSettings({ roundLength: 45, readingRange: "nope" })).toMatchObject({
+    expect(
+      normalizeSettings({
+        roundLength: 45,
+        readingRange: "nope",
+        customReadingRange: { startNoteId: "not-a-note", endNoteId: "F4" },
+      }),
+    ).toMatchObject({
       roundLength: 60,
       readingRange: "treble-starter",
+      customReadingRange: { startNoteId: "C3", endNoteId: "F4" },
     });
   });
 
@@ -75,7 +83,11 @@ describe("catalog-less normalization (server path)", () => {
         schemaVersion: 1,
         exportedAt: "2026-06-05T10:00:00.000Z",
         progress: { reading: {}, pitch: {}, history: [] },
-        settings: { roundLength: 90, readingRange: "grand-starter" },
+        settings: {
+          roundLength: 90,
+          readingRange: "custom",
+          customReadingRange: { startNoteId: "D3", endNoteId: "A4" },
+        },
       }),
       createEmptyPracticeProgress(),
     );
@@ -84,7 +96,11 @@ describe("catalog-less normalization (server path)", () => {
     if (!result.ok) {
       throw new Error(result.error);
     }
-    expect(result.data.settings).toMatchObject({ roundLength: 90, readingRange: "grand-starter" });
+    expect(result.data.settings).toMatchObject({
+      roundLength: 90,
+      readingRange: "custom",
+      customReadingRange: { startNoteId: "D3", endNoteId: "A4" },
+    });
     expect(result.data.progress.reading.noteStats).toEqual({});
   });
 });

@@ -2,6 +2,11 @@ import { describe, expect, it } from "vitest";
 import {
   BASS_STARTER_NOTES,
   BASS_ONE_OCTAVE_NOTES,
+  CUSTOM_READING_KEY_IDS,
+  CUSTOM_READING_MAX_NOTE_ID,
+  CUSTOM_READING_MIN_NOTE_ID,
+  CUSTOM_READING_NOTES,
+  DEFAULT_CUSTOM_READING_RANGE,
   DEFAULT_READING_RANGE,
   GRAND_STARTER_NOTES,
   PITCH_ANSWER_OPTIONS,
@@ -16,10 +21,12 @@ import {
   emptyPitchProgress,
   emptyProgress,
   emptyReadingProgress,
+  getCustomReadingNotes,
   getReadingNotes,
   getReadingRange,
   getPianoKeyById,
   isReadingRange,
+  normalizeCustomReadingRange,
 } from "./noteData";
 
 function noteIds(notes: Array<{ id: string }>): string[] {
@@ -35,6 +42,7 @@ describe("noteData", () => {
       "treble-one-octave",
       "bass-one-octave",
       "grand-starter",
+      "custom",
     ]);
     expect(getReadingRange("treble-starter")).toMatchObject({
       label: "Treble",
@@ -63,13 +71,33 @@ describe("noteData", () => {
       detail: "Mixed clef C3-B4",
       notes: GRAND_STARTER_NOTES,
     });
+    expect(getReadingRange("custom", { startNoteId: "D3", endNoteId: "F4" })).toMatchObject({
+      label: "Custom",
+      detail: "Custom D3-F4",
+      notes: getCustomReadingNotes({ startNoteId: "D3", endNoteId: "F4" }),
+    });
   });
 
   it("returns treble notes by default and falls back to the default range for unsafe values", () => {
     expect(getReadingNotes()).toBe(STARTER_NOTES);
     expect(getReadingNotes("bass-starter")).toBe(BASS_STARTER_NOTES);
     expect(getReadingNotes("grand-starter")).toBe(GRAND_STARTER_NOTES);
+    expect(noteIds(getReadingNotes("custom", { startNoteId: "A3", endNoteId: "C4" }))).toEqual(["A3", "B3", "C4"]);
     expect(getReadingRange("wide-range" as never)).toBe(getReadingRange(DEFAULT_READING_RANGE));
+  });
+
+  it("normalizes custom reading ranges to supported natural piano keys", () => {
+    expect(DEFAULT_CUSTOM_READING_RANGE).toEqual({ startNoteId: "C3", endNoteId: "B4" });
+    expect(CUSTOM_READING_MIN_NOTE_ID).toBe("C2");
+    expect(CUSTOM_READING_MAX_NOTE_ID).toBe("B5");
+    expect(noteIds(CUSTOM_READING_NOTES).slice(0, 3)).toEqual(["C2", "D2", "E2"]);
+    expect(noteIds(CUSTOM_READING_NOTES).slice(-3)).toEqual(["G5", "A5", "B5"]);
+    expect(CUSTOM_READING_KEY_IDS).toEqual(noteIds(CUSTOM_READING_NOTES));
+    expect(normalizeCustomReadingRange({ startNoteId: "B4", endNoteId: "C3" })).toEqual({
+      startNoteId: "C3",
+      endNoteId: "B4",
+    });
+    expect(normalizeCustomReadingRange({ startNoteId: "A0", endNoteId: "C8" })).toEqual(DEFAULT_CUSTOM_READING_RANGE);
   });
 
   it("validates reading range ids defensively", () => {
@@ -78,6 +106,7 @@ describe("noteData", () => {
     expect(isReadingRange("treble-one-octave")).toBe(true);
     expect(isReadingRange("bass-one-octave")).toBe(true);
     expect(isReadingRange("grand-starter")).toBe(true);
+    expect(isReadingRange("custom")).toBe(true);
     expect(isReadingRange("wide-range")).toBe(false);
     expect(isReadingRange(undefined)).toBe(false);
   });

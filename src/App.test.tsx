@@ -1,4 +1,4 @@
-import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor, within } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import App from "./App";
 import { playTone } from "./audio";
@@ -114,6 +114,7 @@ describe("App", () => {
   it("persists settings changes and updates the visible reading range", () => {
     render(<App />);
 
+    fireEvent.click(screen.getByRole("button", { name: "Settings" }));
     fireEvent.click(screen.getByRole("button", { name: "30s" }));
     fireEvent.click(screen.getByRole("button", { name: "Grand" }));
 
@@ -126,12 +127,32 @@ describe("App", () => {
     expect(screen.getAllByText("Mixed clef C3-B4")).not.toHaveLength(0);
   });
 
+  it("sets a custom reading range from piano keys", () => {
+    render(<App />);
+
+    fireEvent.click(screen.getByRole("button", { name: "Custom" }));
+    const customRangeCard = screen.getByLabelText("Custom range endpoint").closest(".custom-range-card");
+    if (customRangeCard === null) {
+      throw new Error("Missing custom range card.");
+    }
+
+    fireEvent.click(within(customRangeCard as HTMLElement).getByRole("button", { name: /^White piano key G3/ }));
+    fireEvent.click(within(customRangeCard as HTMLElement).getByRole("button", { name: /^White piano key C4/ }));
+
+    expect(readStoredJson<typeof defaultSettings>(SETTINGS_STORAGE_KEY)).toMatchObject({
+      readingRange: "custom",
+      customReadingRange: { startNoteId: "G3", endNoteId: "C4" },
+    });
+    expect(screen.getAllByText("Custom G3-C4")).not.toHaveLength(0);
+  });
+
   it("surfaces a storage warning when settings cannot be saved", () => {
     vi.spyOn(Storage.prototype, "setItem").mockImplementation(() => {
       throw new DOMException("Storage unavailable", "SecurityError");
     });
 
     render(<App />);
+    fireEvent.click(screen.getByRole("button", { name: "Settings" }));
     fireEvent.click(screen.getByRole("button", { name: "30s" }));
 
     expect(screen.getByRole("status")).toHaveTextContent("Progress is not being saved on this device right now.");
@@ -153,6 +174,7 @@ describe("App", () => {
     const playToneMock = vi.mocked(playTone);
     render(<App />);
 
+    fireEvent.click(screen.getByRole("button", { name: "Settings" }));
     fireEvent.click(screen.getByLabelText("Reveal pitch answer"));
     fireEvent.click(screen.getByRole("button", { name: "Pitch training" }));
     fireEvent.click(screen.getByRole("button", { name: "Start drill" }));
@@ -193,9 +215,11 @@ describe("App", () => {
     );
 
     render(<App />);
+    fireEvent.click(screen.getByRole("button", { name: "Data" }));
     fireEvent.change(screen.getByLabelText("Import data file"), { target: { files: [file] } });
 
     await waitFor(() => expect(screen.getByRole("status")).toHaveTextContent("Progress imported."));
+    fireEvent.click(screen.getByRole("button", { name: "Settings" }));
     expect(screen.getByRole("button", { name: "90s" })).toHaveAttribute("aria-pressed", "true");
     expect(screen.getAllByText("Bass clef C3-G3")).not.toHaveLength(0);
     expect(readStoredJson<PracticeProgress>(PROGRESS_STORAGE_KEY).reading.totalAttempts).toBe(7);
@@ -209,6 +233,7 @@ describe("App", () => {
 
     confirm.mockReturnValueOnce(false);
     render(<App />);
+    fireEvent.click(screen.getByRole("button", { name: "Data" }));
     fireEvent.click(screen.getByRole("button", { name: "Reset progress" }));
     expect(readStoredJson<PracticeProgress>(PROGRESS_STORAGE_KEY).reading.totalAttempts).toBe(4);
 
