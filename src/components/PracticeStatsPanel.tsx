@@ -1,6 +1,5 @@
-import { useRef, type ChangeEvent } from "react";
+import { useState } from "react";
 import { getReadingRange } from "../noteData";
-import { ROUND_LENGTHS } from "../practiceEngine";
 import type {
   DataStatus,
   DailyGoalSummary,
@@ -17,8 +16,10 @@ import type {
 } from "../types";
 import DailyGoal from "./DailyGoal";
 import MasteryMap from "./MasteryMap";
+import PracticeDataView from "./PracticeDataView";
 import PracticeCoach from "./PracticeCoach";
 import PracticeInsights from "./PracticeInsights";
+import PracticeSettingsView from "./PracticeSettingsView";
 import SessionHistory from "./SessionHistory";
 import StatTile from "./StatTile";
 
@@ -27,6 +28,16 @@ type FocusItem = {
   accuracy: number;
   attempts: number;
 };
+
+type PanelView = "overview" | "map" | "history" | "settings" | "data";
+
+const PANEL_VIEWS: Array<{ id: PanelView; label: string }> = [
+  { id: "overview", label: "Overview" },
+  { id: "map", label: "Map" },
+  { id: "history", label: "History" },
+  { id: "settings", label: "Settings" },
+  { id: "data", label: "Data" },
+];
 
 type PracticeStatsPanelProps = {
   activeProgress: ModeProgress;
@@ -67,18 +78,8 @@ function PracticeStatsPanel({
   onResetProgress,
   onSettingsChange,
 }: PracticeStatsPanelProps) {
-  const importInputRef = useRef<HTMLInputElement>(null);
-  const readingRange = getReadingRange(settings.readingRange);
-
-  function handleImportInputChange(event: ChangeEvent<HTMLInputElement>) {
-    const importFile = event.currentTarget.files?.[0];
-
-    if (importFile) {
-      onImportData(importFile);
-    }
-
-    event.currentTarget.value = "";
-  }
+  const [activeView, setActiveView] = useState<PanelView>("overview");
+  const readingRange = getReadingRange(settings.readingRange, settings.customReadingRange);
 
   return (
     <aside className="stats-panel" aria-label="Practice progress">
@@ -94,128 +95,90 @@ function PracticeStatsPanel({
         <StatTile label="Best" value={activeProgress.bestRoundScore} />
       </div>
 
-      <DailyGoal summary={dailyGoalSummary} />
+      <div className="panel-tabs" aria-label="Progress views">
+        {PANEL_VIEWS.map((view) => (
+          <button
+            key={view.id}
+            type="button"
+            aria-pressed={activeView === view.id}
+            className={activeView === view.id ? "active" : ""}
+            onClick={() => setActiveView(view.id)}
+          >
+            {view.label}
+          </button>
+        ))}
+      </div>
 
-      {lastSummary && lastSummary.mode === mode && (
-        <div className="summary-card" aria-live="polite">
-          <h3>Last round</h3>
-          <div className="summary-grid">
-            <StatTile label="Score" value={`${lastSummary.score}/${lastSummary.attempts}`} />
-            <StatTile label="Accuracy" value={`${lastSummary.accuracy}%`} />
-            <StatTile label="Best streak" value={lastSummary.bestStreak} />
-          </div>
-          <p>{lastSummary.suggestion}</p>
-        </div>
+      {dataStatus && (
+        <p className={`data-status ${dataStatus.tone}`} role="status">
+          {dataStatus.message}
+        </p>
       )}
 
-      <SessionHistory modeLabel={modeLabel} summary={historySummary} />
-      <PracticeInsights modeLabel={modeLabel} summary={insightSummary} />
-      <PracticeCoach mode={mode} modeLabel={modeLabel} plan={practicePlan} />
-      <MasteryMap mode={mode} modeLabel={modeLabel} summary={masterySummary} />
+      <div className="stats-view">
+        {activeView === "overview" && (
+          <>
+            <DailyGoal summary={dailyGoalSummary} />
 
-      <div className="settings-card">
-        <h3>Drill settings</h3>
-        <div className="setting-row">
-          <span>Round length</span>
-          <div className="length-options" aria-label="Round length">
-            {ROUND_LENGTHS.map((length) => (
-              <button
-                key={length}
-                type="button"
-                aria-pressed={settings.roundLength === length}
-                className={settings.roundLength === length ? "active" : ""}
-                onClick={() => onSettingsChange({ roundLength: length })}
-              >
-                {length}s
-              </button>
-            ))}
-          </div>
-        </div>
-
-        <label className="toggle-row">
-          <input
-            type="checkbox"
-            checked={settings.adaptivePractice}
-            onChange={(event) => onSettingsChange({ adaptivePractice: event.currentTarget.checked })}
-          />
-          <span>Adaptive practice</span>
-        </label>
-
-        <label className="toggle-row">
-          <input
-            type="checkbox"
-            checked={settings.autoPlayPitch}
-            onChange={(event) => onSettingsChange({ autoPlayPitch: event.currentTarget.checked })}
-          />
-          <span>Auto-play pitch</span>
-        </label>
-
-        <label className="toggle-row">
-          <input
-            type="checkbox"
-            checked={settings.revealPitchAfterAnswer}
-            onChange={(event) => onSettingsChange({ revealPitchAfterAnswer: event.currentTarget.checked })}
-          />
-          <span>Reveal pitch answer</span>
-        </label>
-      </div>
-
-      <div className="weak-notes">
-        <h3>{mode === "reading" ? "Focus notes" : "Focus pitches"}</h3>
-        {focusItems.length === 0 ? (
-          <p className="empty-state">Finish a few questions and NoteSense will show what needs extra attention.</p>
-        ) : (
-          <ul>
-            {focusItems.map(({ note, accuracy, attempts }) => (
-              <li key={note.id}>
-                <span>{note.id}</span>
-                <div className="meter" aria-hidden="true">
-                  <span style={{ width: `${accuracy}%` }} />
+            {lastSummary && lastSummary.mode === mode && (
+              <div className="summary-card" aria-live="polite">
+                <h3>Last round</h3>
+                <div className="summary-grid">
+                  <StatTile label="Score" value={`${lastSummary.score}/${lastSummary.attempts}`} />
+                  <StatTile label="Accuracy" value={`${lastSummary.accuracy}%`} />
+                  <StatTile label="Best streak" value={lastSummary.bestStreak} />
                 </div>
-                <strong>{accuracy}%</strong>
-                <em>{attempts} tries</em>
-              </li>
-            ))}
-          </ul>
-        )}
-      </div>
+                <p>{lastSummary.suggestion}</p>
+              </div>
+            )}
 
-      <div className="range-card">
-        <h3>Starter range</h3>
-        <p>
-          {mode === "reading"
-            ? `${readingRange.detail} note reading.`
-            : "Pitch recognition across one natural-note octave from C4 to B4."}
-        </p>
-      </div>
+            <PracticeCoach mode={mode} modeLabel={modeLabel} plan={practicePlan} />
 
-      <div className="data-card">
-        <h3>Data</h3>
-        {dataStatus && (
-          <p className={`data-status ${dataStatus.tone}`} role="status">
-            {dataStatus.message}
-          </p>
+            <div className="weak-notes">
+              <h3>{mode === "reading" ? "Focus notes" : "Focus pitches"}</h3>
+              {focusItems.length === 0 ? (
+                <p className="empty-state">
+                  Finish a few questions and NoteSense will show what needs extra attention.
+                </p>
+              ) : (
+                <ul>
+                  {focusItems.map(({ note, accuracy, attempts }) => (
+                    <li key={note.id}>
+                      <span>{note.id}</span>
+                      <div className="meter" aria-hidden="true">
+                        <span style={{ width: `${accuracy}%` }} />
+                      </div>
+                      <strong>{accuracy}%</strong>
+                      <em>{attempts} tries</em>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+          </>
         )}
-        <div className="data-actions">
-          <button className="secondary-button" type="button" onClick={onExportData}>
-            Export data
-          </button>
-          <button className="secondary-button" type="button" onClick={() => importInputRef.current?.click()}>
-            Import data
-          </button>
-          <input
-            ref={importInputRef}
-            aria-label="Import data file"
-            className="file-input"
-            type="file"
-            tabIndex={-1}
-            accept="application/json,.json"
-            onChange={handleImportInputChange}
+
+        {activeView === "map" && <MasteryMap mode={mode} modeLabel={modeLabel} summary={masterySummary} />}
+
+        {activeView === "history" && (
+          <>
+            <SessionHistory modeLabel={modeLabel} summary={historySummary} />
+            <PracticeInsights modeLabel={modeLabel} summary={insightSummary} />
+          </>
+        )}
+
+        {activeView === "settings" && (
+          <PracticeSettingsView
+            mode={mode}
+            rangeDetail={readingRange.detail}
+            settings={settings}
+            onSettingsChange={onSettingsChange}
           />
-          <button className="ghost-button" type="button" onClick={onResetProgress}>
-            Reset progress
-          </button>
-        </div>
+        )}
+
+        {activeView === "data" && (
+          <PracticeDataView onExportData={onExportData} onImportData={onImportData} onResetProgress={onResetProgress} />
+        )}
       </div>
     </aside>
   );

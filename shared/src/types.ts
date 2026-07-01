@@ -6,7 +6,12 @@ export type ReadingNoteName = NoteName;
 export type PracticeMode = "reading" | "pitch";
 export type RoundLength = 30 | 60 | 90;
 export type ReadingRange =
-  "treble-starter" | "bass-starter" | "treble-one-octave" | "bass-one-octave" | "grand-starter";
+  "treble-starter" | "bass-starter" | "treble-one-octave" | "bass-one-octave" | "grand-starter" | "custom";
+
+export type CustomReadingRange = {
+  startNoteId: string;
+  endNoteId: string;
+};
 
 export type AttemptProgress = {
   attempts: number;
@@ -41,6 +46,7 @@ export type PracticeProgress = {
 export type PracticeSettings = {
   roundLength: RoundLength;
   readingRange: ReadingRange;
+  customReadingRange: CustomReadingRange;
   adaptivePractice: boolean;
   autoPlayPitch: boolean;
   revealPitchAfterAnswer: boolean;

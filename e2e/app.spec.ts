@@ -41,6 +41,8 @@ test("loads with no automated accessibility violations", async ({ page }) => {
   await expect(page.getByText(/0\/1\s+round/)).toBeVisible();
   await expect(page.getByRole("heading", { name: "Build baseline" })).toBeVisible();
   await expect(page.getByText("5 more answers")).toBeVisible();
+  await expect(page.getByRole("button", { name: "Map" })).toBeVisible();
+  await page.getByRole("button", { name: "Map" }).click();
   await expect(page.getByRole("heading", { name: "Mastery map" })).toBeVisible();
   await expect(page.getByRole("listitem", { name: "C4 New, no attempts yet" })).toBeVisible();
   await expect(page.getByRole("group", { name: "88-key piano keyboard" })).toBeVisible();
@@ -67,6 +69,7 @@ test("runs the note-reading practice loop", async ({ page }) => {
   await expect(page.getByRole("heading", { name: "Last round" })).toBeVisible();
   await expect(page.getByText(/1\/1\s+round/)).toBeVisible();
   await expect(page.getByText("Goal complete. Keep the streak alive tomorrow.")).toBeVisible();
+  await page.getByRole("button", { name: "History" }).click();
   await expect(page.getByRole("heading", { name: "Practice history" })).toBeVisible();
   await expect(page.getByRole("listitem", { name: /Note reading session/ })).toBeVisible();
 
@@ -74,6 +77,7 @@ test("runs the note-reading practice loop", async ({ page }) => {
   expect(postRoundAccessibilityScanResults.violations).toEqual([]);
 
   await page.reload({ waitUntil: "domcontentloaded" });
+  await page.getByRole("button", { name: "History" }).click();
   await expect(page.getByRole("listitem", { name: /Note reading session/ })).toBeVisible();
 });
 
@@ -200,6 +204,29 @@ test("switches to a wider mixed reading drill range", async ({ page }) => {
   await expect(page.getByLabel(/(?:Treble|Bass) staff note [A-G][34]/)).toBeVisible();
 });
 
+test("sets a custom reading drill range from piano keys", async ({ page }) => {
+  await page.goto("/", { waitUntil: "domcontentloaded" });
+
+  await page.getByRole("button", { name: "Custom" }).click();
+  const customRangeCard = page.locator(".custom-range-card");
+
+  await expect(customRangeCard.getByText("Custom C3-B4")).toBeVisible();
+  await customRangeCard.getByRole("button", { name: /^White piano key G3/ }).click();
+  await expect(customRangeCard.getByRole("button", { name: "Start G3" })).toHaveAttribute("aria-pressed", "false");
+  await expect(customRangeCard.getByRole("button", { name: "End B4" })).toHaveAttribute("aria-pressed", "true");
+  await customRangeCard.getByRole("button", { name: /^White piano key C4/ }).click();
+
+  await expect(page.getByText("Adaptive | Custom G3-C4")).toBeVisible();
+  await expect(customRangeCard.getByText("4 notes")).toBeVisible();
+
+  await page.getByRole("button", { name: "Start drill" }).click();
+  await expect(page.getByLabel(/(?:Treble|Bass) staff note [GABC][34]/)).toBeVisible();
+
+  await page.reload({ waitUntil: "domcontentloaded" });
+  await expect(page.getByRole("button", { name: "Custom" })).toHaveAttribute("aria-pressed", "true");
+  await expect(page.getByText("Adaptive | Custom G3-C4")).toBeVisible();
+});
+
 test("keeps the selected reading range after switching during feedback", async ({ page }) => {
   await page.goto("/", { waitUntil: "domcontentloaded" });
 
@@ -217,6 +244,7 @@ test("keeps the selected reading range after switching during feedback", async (
 test("exports local practice data", async ({ page }) => {
   await page.goto("/", { waitUntil: "domcontentloaded" });
 
+  await page.getByRole("button", { name: "Data" }).click();
   const downloadPromise = page.waitForEvent("download");
   await page.getByRole("button", { name: "Export data" }).click();
   const download = await downloadPromise;
@@ -227,6 +255,7 @@ test("exports local practice data", async ({ page }) => {
 test("imports local practice data", async ({ page }) => {
   await page.goto("/", { waitUntil: "domcontentloaded" });
 
+  await page.getByRole("button", { name: "Data" }).click();
   await page.locator('input[type="file"]').setInputFiles({
     name: "notesense-progress.json",
     mimeType: "application/json",
@@ -289,6 +318,7 @@ test("imports local practice data", async ({ page }) => {
         settings: {
           roundLength: 30,
           readingRange: "bass-starter",
+          customReadingRange: { startNoteId: "C3", endNoteId: "B4" },
           adaptivePractice: false,
           autoPlayPitch: true,
           revealPitchAfterAnswer: true,
@@ -302,9 +332,12 @@ test("imports local practice data", async ({ page }) => {
   await expect(progressPanel.getByText("12")).toBeVisible();
   await expect(page.getByRole("button", { exact: true, name: "Bass" })).toHaveAttribute("aria-pressed", "true");
   await expect(page.getByText("Random | Bass clef C3-G3")).toBeVisible();
+  await progressPanel.getByRole("button", { name: "Overview" }).click();
   await expect(progressPanel.getByRole("heading", { name: "Focus C3" })).toBeVisible();
   await expect(progressPanel.getByText("85% on C3")).toBeVisible();
+  await progressPanel.getByRole("button", { name: "Map" }).click();
   await expect(progressPanel.getByRole("listitem", { name: "C3 Focus, 67% accuracy across 6 attempts" })).toBeVisible();
+  await progressPanel.getByRole("button", { name: "History" }).click();
   await expect(progressPanel.getByRole("heading", { name: "Practice insight" })).toBeVisible();
   await expect(progressPanel.getByText("+20%")).toBeVisible();
   await expect(
@@ -312,13 +345,15 @@ test("imports local practice data", async ({ page }) => {
       name: "Note reading accuracy trend across 3 saved rounds, latest 80 percent.",
     }),
   ).toBeVisible();
-  await expect(page.getByRole("button", { name: "30s" })).toHaveAttribute("aria-pressed", "true");
   await expect(
     progressPanel.getByRole("listitem", { name: "Note reading session 8 out of 10, 80% accuracy" }),
   ).toBeVisible();
+  await progressPanel.getByRole("button", { name: "Settings" }).click();
+  await expect(page.getByRole("button", { name: "30s" })).toHaveAttribute("aria-pressed", "true");
 
   await page.reload({ waitUntil: "domcontentloaded" });
   await expect(progressPanel.getByText("12")).toBeVisible();
+  await progressPanel.getByRole("button", { name: "Settings" }).click();
   await expect(page.getByRole("button", { name: "30s" })).toHaveAttribute("aria-pressed", "true");
   await expect(page.getByRole("button", { exact: true, name: "Bass" })).toHaveAttribute("aria-pressed", "true");
 });
@@ -326,6 +361,7 @@ test("imports local practice data", async ({ page }) => {
 test("rejects invalid imported practice data", async ({ page }) => {
   await page.goto("/", { waitUntil: "domcontentloaded" });
 
+  await page.getByRole("button", { name: "Data" }).click();
   await page.locator('input[type="file"]').setInputFiles({
     name: "broken-notesense-progress.json",
     mimeType: "application/json",

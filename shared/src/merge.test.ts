@@ -6,6 +6,7 @@ import type { ModeProgress, PracticeDataExport, PracticeSessionRecord, PracticeS
 const baseSettings: PracticeSettings = {
   roundLength: 60,
   readingRange: "treble-starter",
+  customReadingRange: { startNoteId: "C3", endNoteId: "B4" },
   adaptivePractice: true,
   autoPlayPitch: true,
   revealPitchAfterAnswer: true,

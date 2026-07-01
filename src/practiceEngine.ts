@@ -1,5 +1,6 @@
 import { DEFAULT_READING_RANGE, PITCH_NOTES, getReadingNotes, getReadingRange } from "./noteData";
 import type {
+  CustomReadingRange,
   DailyGoalSummary,
   MasteryItem,
   MasteryStatus,
@@ -34,6 +35,7 @@ type CreateSessionRecordInput = Omit<PracticeSessionRecord, "id" | "completedAt"
   Partial<Pick<PracticeSessionRecord, "id" | "completedAt">>;
 
 type SelectNoteOptions = {
+  customReadingRange?: CustomReadingRange;
   previousNoteId?: string;
   progress?: ModeProgress;
   readingRange?: ReadingRange;
@@ -43,6 +45,7 @@ type SelectNoteOptions = {
 
 type GetPracticePlanInput = {
   adaptivePractice: boolean;
+  customReadingRange?: CustomReadingRange;
   mode: PracticeMode;
   progress: PracticeProgress;
   readingRange?: ReadingRange;
@@ -101,16 +104,21 @@ export function getNoteAccuracy(progress: ModeProgress, noteId: string): number 
   return Math.round((stat.correct / stat.attempts) * 100);
 }
 
-function getPracticeSourceNotes(mode: PracticeMode, readingRange: ReadingRange = DEFAULT_READING_RANGE) {
-  return mode === "reading" ? getReadingNotes(readingRange) : PITCH_NOTES;
+function getPracticeSourceNotes(
+  mode: PracticeMode,
+  readingRange: ReadingRange = DEFAULT_READING_RANGE,
+  customReadingRange?: CustomReadingRange,
+) {
+  return mode === "reading" ? getReadingNotes(readingRange, customReadingRange) : PITCH_NOTES;
 }
 
 export function getFocusItems(
   mode: PracticeMode,
   modeProgress: ModeProgress,
   readingRange: ReadingRange = DEFAULT_READING_RANGE,
+  customReadingRange?: CustomReadingRange,
 ) {
-  const sourceNotes = getPracticeSourceNotes(mode, readingRange);
+  const sourceNotes = getPracticeSourceNotes(mode, readingRange, customReadingRange);
 
   return sourceNotes
     .map((note) => ({
@@ -143,8 +151,9 @@ export function getMasterySummary(
   mode: PracticeMode,
   modeProgress: ModeProgress,
   readingRange: ReadingRange = DEFAULT_READING_RANGE,
+  customReadingRange?: CustomReadingRange,
 ): MasterySummary {
-  const items: MasteryItem[] = getPracticeSourceNotes(mode, readingRange).map((note) => {
+  const items: MasteryItem[] = getPracticeSourceNotes(mode, readingRange, customReadingRange).map((note) => {
     const attempts = modeProgress.noteStats[note.id]?.attempts ?? 0;
     const accuracy = getNoteAccuracy(modeProgress, note.id);
 
@@ -323,6 +332,7 @@ export function getPracticeInsightSummary(
 
 export function getPracticePlan({
   adaptivePractice,
+  customReadingRange,
   mode,
   progress,
   readingRange = DEFAULT_READING_RANGE,
@@ -330,11 +340,11 @@ export function getPracticePlan({
 }: GetPracticePlanInput): PracticePlan {
   const modeLabel = getModeLabel(mode).toLowerCase();
   const modeProgress = progress[mode];
-  const focusItems = getFocusItems(mode, modeProgress, readingRange);
+  const focusItems = getFocusItems(mode, modeProgress, readingRange, customReadingRange);
   const weakestItem = focusItems.find((entry) => entry.accuracy < FOCUS_ACCURACY_TARGET);
   const historySummary = getSessionHistorySummary(progress.history, mode);
   const insightSummary = getPracticeInsightSummary(progress.history, mode);
-  const scope = mode === "reading" ? getReadingRange(readingRange).detail : "Natural notes C4-B4";
+  const scope = mode === "reading" ? getReadingRange(readingRange, customReadingRange).detail : "Natural notes C4-B4";
 
   if (modeProgress.totalAttempts < BASELINE_ATTEMPT_TARGET) {
     const remainingAttempts = BASELINE_ATTEMPT_TARGET - modeProgress.totalAttempts;
@@ -441,7 +451,7 @@ function selectPracticeNote<TNote extends { id: string }>(notes: TNote[], option
 }
 
 export function selectReadingNote(options: SelectNoteOptions = {}): TrainingNote {
-  return selectPracticeNote(getReadingNotes(options.readingRange), options);
+  return selectPracticeNote(getReadingNotes(options.readingRange, options.customReadingRange), options);
 }
 
 export function selectPitchNote(options: SelectNoteOptions = {}): PitchNote {
@@ -455,8 +465,11 @@ export function createSessionSummary(
   attempts: number,
   bestStreak: number,
   readingRange: ReadingRange = DEFAULT_READING_RANGE,
+  customReadingRange?: CustomReadingRange,
 ): SessionSummary {
-  const focusItem = getFocusItems(mode, progress[mode], readingRange).find((entry) => entry.accuracy < 85)?.note.id;
+  const focusItem = getFocusItems(mode, progress[mode], readingRange, customReadingRange).find(
+    (entry) => entry.accuracy < 85,
+  )?.note.id;
   const accuracy = attempts > 0 ? Math.round((score / attempts) * 100) : 0;
   const suggestion =
     attempts === 0

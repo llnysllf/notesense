@@ -149,6 +149,18 @@ describe("practiceEngine", () => {
     expect(note.clef).toBe("bass");
   });
 
+  it("selects custom-range reading notes from the chosen piano span", () => {
+    const note = selectReadingNote({
+      customReadingRange: { startNoteId: "A3", endNoteId: "C4" },
+      readingRange: "custom",
+      rng: () => 0.99,
+      useAdaptive: false,
+    });
+
+    expect(note.id).toBe("C4");
+    expect(note.clef).toBe("treble");
+  });
+
   it("sorts focus items by weakest accuracy first", () => {
     const progress = freshProgress();
     progress.pitch.noteStats.C4 = { attempts: 10, correct: 9 };
@@ -168,6 +180,19 @@ describe("practiceEngine", () => {
       "C3",
       "D3",
     ]);
+  });
+
+  it("scopes reading focus items to a custom range", () => {
+    const progress = freshProgress();
+    progress.reading.noteStats.G3 = { attempts: 10, correct: 2 };
+    progress.reading.noteStats.C4 = { attempts: 10, correct: 10 };
+    progress.reading.noteStats.D4 = { attempts: 10, correct: 1 };
+
+    expect(
+      getFocusItems("reading", progress.reading, "custom", { startNoteId: "G3", endNoteId: "C4" }).map(
+        (entry) => entry.note.id,
+      ),
+    ).toEqual(["G3", "C4"]);
   });
 
   it("classifies mastery states from attempts and accuracy", () => {
@@ -397,6 +422,21 @@ describe("practiceEngine", () => {
       title: "Build baseline",
       focus: "Treble clef C4-G4",
       target: "5 more answers",
+    });
+  });
+
+  it("uses the custom range detail in practice plans", () => {
+    expect(
+      getPracticePlan({
+        adaptivePractice: true,
+        customReadingRange: { startNoteId: "G3", endNoteId: "C4" },
+        mode: "reading",
+        progress: freshProgress(),
+        readingRange: "custom",
+        roundLength: 60,
+      }),
+    ).toMatchObject({
+      focus: "Custom G3-C4",
     });
   });
 

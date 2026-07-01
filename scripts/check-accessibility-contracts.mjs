@@ -105,21 +105,32 @@ requireSnippets("src/App.tsx", [
   'aria-label="Practice mode"',
   'aria-pressed={mode === "reading"}',
   'aria-pressed={mode === "pitch"}',
-  'aria-label="Reading drill range"',
-  "aria-pressed={settings.readingRange === range.id}",
   'aria-label="Current round status"',
   "aria-label={`Answer ${answer}`}",
+]);
+
+requireSnippets("src/components/ReadingRangeSelector.tsx", [
+  'aria-label="Reading drill range"',
+  "aria-pressed={settings.readingRange === range.id}",
+  'aria-label="Custom range endpoint"',
+  'aria-pressed={customRangeEdge === "start"}',
+  'aria-pressed={customRangeEdge === "end"}',
 ]);
 
 requireSnippets("src/components/PracticeStatsPanel.tsx", [
   'aria-label="Practice progress"',
   'aria-live="polite"',
+  'aria-label="Progress views"',
+  "aria-pressed={activeView === view.id}",
+  'role="status"',
+]);
+
+requireSnippets("src/components/PracticeSettingsView.tsx", [
   'aria-label="Round length"',
   "aria-pressed={settings.roundLength === length}",
-  'role="status"',
-  'aria-label="Import data file"',
-  "tabIndex={-1}",
 ]);
+
+requireSnippets("src/components/PracticeDataView.tsx", ['aria-label="Import data file"', "tabIndex={-1}"]);
 
 requireSnippets("src/components/ErrorBoundary.tsx", [
   'aria-labelledby="error-title"',

@@ -79,6 +79,7 @@ for (const field of [
 for (const field of [
   "roundLength: RoundLength",
   "readingRange: ReadingRange",
+  "customReadingRange: CustomReadingRange",
   "adaptivePractice: boolean",
   "autoPlayPitch: boolean",
   "revealPitchAfterAnswer: boolean",

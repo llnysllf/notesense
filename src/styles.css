@@ -333,9 +333,7 @@ h3 {
   font-size: 1rem;
 }
 
-.mode-switch,
-.reading-range-switch,
-.length-options {
+:is(.mode-switch, .reading-range-switch, .length-options, .panel-tabs, .range-edge-switch) {
   display: grid;
   gap: 6px;
   padding: 6px;
@@ -348,14 +346,11 @@ h3 {
   background: var(--color-control);
 }
 
-.reading-range-switch,
-.length-options {
+:is(.reading-range-switch, .length-options, .panel-tabs, .range-edge-switch) {
   background: var(--color-control-soft);
 }
 
-.mode-switch button,
-.reading-range-switch button,
-.length-options button {
+:is(.mode-switch, .reading-range-switch, .length-options, .panel-tabs, .range-edge-switch) button {
   border-radius: var(--radius-control);
   background: transparent;
   color: var(--color-muted-strong);
@@ -363,9 +358,8 @@ h3 {
   font-weight: 850;
 }
 
-.mode-switch button.active,
-.reading-range-switch button.active,
-.length-options button.active {
+/* .mode-switch button.active is covered by this shared active selector. */
+:is(.mode-switch, .reading-range-switch, .length-options, .panel-tabs, .range-edge-switch) button.active {
   background: var(--color-surface);
   color: var(--color-text);
   box-shadow: var(--shadow-control);
@@ -376,19 +370,24 @@ h3 {
 }
 
 .reading-range-switch {
-  grid-template-columns: repeat(5, minmax(0, 1fr));
+  grid-template-columns: repeat(6, minmax(0, 1fr));
 }
 
-.reading-range-switch button {
+:is(.reading-range-switch, .panel-tabs, .range-edge-switch) button {
   min-width: 0;
   min-height: 38px;
   padding: 0 8px;
-  border-radius: var(--radius-control);
-  background: transparent;
-  color: var(--color-muted-strong);
-  cursor: pointer;
   font-size: 0.82rem;
   overflow-wrap: anywhere;
+}
+
+.custom-range-card {
+  display: grid;
+  gap: 10px;
+}
+
+.range-edge-switch {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
 .round-strip,
@@ -663,6 +662,21 @@ h3 {
   box-shadow: inset 0 0 0 2px var(--color-success-border);
 }
 
+.piano-key.range-key,
+.piano-overview-key.overview-range-key {
+  border-color: var(--color-accent);
+  background: var(--color-accent-bg);
+}
+
+.piano-key.range-boundary {
+  border-color: var(--color-brand-strong);
+  box-shadow: inset 0 0 0 2px var(--color-brand);
+}
+
+.piano-overview-key.overview-range-boundary {
+  background: var(--color-accent);
+}
+
 .piano-overview-rail {
   display: grid;
   width: 100%;
@@ -869,6 +883,15 @@ h3 {
 
 .lifetime-grid {
   grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.panel-tabs {
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+}
+
+.stats-view {
+  display: grid;
+  gap: 14px;
 }
 
 .weak-notes,
@@ -1504,6 +1527,7 @@ h3 {
   .round-strip,
   .answer-grid,
   .reading-range-switch,
+  .panel-tabs,
   .insight-metrics,
   .summary-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));

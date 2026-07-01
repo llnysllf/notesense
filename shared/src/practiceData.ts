@@ -8,6 +8,7 @@ import type {
   PracticeSessionRecord,
   PracticeSettings,
   ReadingRange,
+  CustomReadingRange,
 } from "./types";
 
 export const DATA_EXPORT_SCHEMA_VERSION = 1;
@@ -21,12 +22,15 @@ export const READING_RANGE_IDS: readonly ReadingRange[] = [
   "treble-one-octave",
   "bass-one-octave",
   "grand-starter",
+  "custom",
 ];
 export const DEFAULT_READING_RANGE: ReadingRange = "treble-starter";
+export const DEFAULT_CUSTOM_READING_RANGE: CustomReadingRange = { startNoteId: "C3", endNoteId: "B4" };
 
 export const defaultSettings: PracticeSettings = {
   roundLength: 60,
   readingRange: DEFAULT_READING_RANGE,
+  customReadingRange: DEFAULT_CUSTOM_READING_RANGE,
   adaptivePractice: true,
   autoPlayPitch: true,
   revealPitchAfterAnswer: true,
@@ -42,6 +46,21 @@ function isPracticeMode(value: unknown): value is PracticeMode {
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return Boolean(value) && typeof value === "object" && !Array.isArray(value);
+}
+
+function isNoteId(value: unknown): value is string {
+  return typeof value === "string" && /^[A-G]#?\d$/.test(value);
+}
+
+function normalizeCustomReadingRange(value: unknown): CustomReadingRange {
+  if (!isRecord(value)) {
+    return defaultSettings.customReadingRange;
+  }
+
+  return {
+    startNoteId: isNoteId(value.startNoteId) ? value.startNoteId : defaultSettings.customReadingRange.startNoteId,
+    endNoteId: isNoteId(value.endNoteId) ? value.endNoteId : defaultSettings.customReadingRange.endNoteId,
+  };
 }
 
 function toSafeWholeNumber(value: unknown): number {
@@ -181,6 +200,7 @@ export function normalizeSettings(settings: unknown): PracticeSettings {
     readingRange: isReadingRange(settingsRecord.readingRange)
       ? settingsRecord.readingRange
       : defaultSettings.readingRange,
+    customReadingRange: normalizeCustomReadingRange(settingsRecord.customReadingRange),
     adaptivePractice:
       typeof settingsRecord.adaptivePractice === "boolean"
         ? settingsRecord.adaptivePractice

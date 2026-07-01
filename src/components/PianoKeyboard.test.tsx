@@ -80,6 +80,34 @@ describe("PianoKeyboard", () => {
     expect(onKeySelect).toHaveBeenNthCalledWith(2, "C#4");
   });
 
+  it("highlights custom ranges and ignores unselectable keys", () => {
+    const onKeySelect = vi.fn();
+
+    render(
+      <PianoKeyboard
+        activeRangeEdge="start"
+        disabled={false}
+        rangeEndNoteId="C4"
+        rangeNoteIds={new Set(["G3", "A3", "B3", "C4"])}
+        rangeStartNoteId="G3"
+        selectableKeyIds={new Set(["G3", "A3", "B3", "C4"])}
+        onKeySelect={onKeySelect}
+      />,
+    );
+
+    fireEvent.click(screen.getByRole("button", { name: /White piano key G3/ }));
+    fireEvent.click(screen.getByRole("button", { name: "Black piano key G#3" }));
+
+    expect(screen.getByRole("button", { name: /White piano key G3/ })).toHaveClass(
+      "range-key",
+      "range-active-boundary",
+    );
+    expect(screen.getByRole("button", { name: /White piano key C4/ })).toHaveClass("range-key", "range-boundary");
+    expect(screen.getByRole("button", { name: "Black piano key G#3" })).toHaveAttribute("aria-disabled", "true");
+    expect(onKeySelect).toHaveBeenCalledTimes(1);
+    expect(onKeySelect).toHaveBeenCalledWith("G3");
+  });
+
   it("positions black keys across the full keyboard instead of stacking them", () => {
     render(<PianoKeyboard disabled onKeySelect={vi.fn()} />);
 

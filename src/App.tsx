@@ -3,12 +3,13 @@ import MusicStaff from "./components/MusicStaff";
 import PitchPrompt from "./components/PitchPrompt";
 import PianoKeyboard from "./components/PianoKeyboard";
 import PracticeStatsPanel from "./components/PracticeStatsPanel";
+import ReadingRangeSelector from "./components/ReadingRangeSelector";
 import StatTile from "./components/StatTile";
 import { useDataPortability } from "./hooks/useDataPortability";
 import { usePracticeProgress } from "./hooks/usePracticeProgress";
 import { usePracticeSession } from "./hooks/usePracticeSession";
 import { useSettings } from "./hooks/useSettings";
-import { PITCH_ANSWER_OPTIONS, READING_RANGES, getReadingRange } from "./noteData";
+import { PITCH_ANSWER_OPTIONS, getReadingRange, normalizeCustomReadingRange } from "./noteData";
 import {
   formatAccuracy,
   getDailyGoalSummary,
@@ -20,7 +21,7 @@ import {
   getSessionHistorySummary,
 } from "./practiceEngine";
 import { resetProgress } from "./storage";
-import type { DataStatus, PracticeProgress, PracticeSettings } from "./types";
+import type { CustomReadingRange, DataStatus, PracticeProgress, PracticeSettings, ReadingRange } from "./types";
 
 const STORAGE_WARNING = "Progress is not being saved on this device right now.";
 
@@ -79,12 +80,26 @@ function App() {
 
   function updateSettings(patch: Partial<PracticeSettings>) {
     const next = { ...settings, ...patch };
+    const readingRangeChanged = patch.readingRange !== undefined && patch.readingRange !== settings.readingRange;
+    const customRangeChanged =
+      patch.customReadingRange !== undefined &&
+      (patch.customReadingRange.startNoteId !== settings.customReadingRange.startNoteId ||
+        patch.customReadingRange.endNoteId !== settings.customReadingRange.endNoteId);
+
     if (!persistSettings(next)) setDataStatus({ message: STORAGE_WARNING, tone: "warning" });
     setSettings(next);
     if (!isRunning && patch.roundLength !== undefined) session.setTimeRemaining(patch.roundLength);
-    if (patch.readingRange !== undefined && patch.readingRange !== settings.readingRange) {
+    if (readingRangeChanged || customRangeChanged) {
       session.resetSession(next, progress);
     }
+  }
+
+  function handleReadingRangeChange(readingRange: ReadingRange) {
+    updateSettings({ readingRange });
+  }
+
+  function handleCustomReadingRangeChange(customReadingRange: CustomReadingRange) {
+    updateSettings({ customReadingRange, readingRange: "custom" });
   }
 
   function handleResetProgress() {
@@ -101,14 +116,21 @@ function App() {
   const roundAccuracy = formatAccuracy(roundCorrect, roundAttempts);
   const lifetimeAccuracy = formatAccuracy(activeProgress.totalCorrect, activeProgress.totalAttempts);
   const modeLabel = getModeLabel(mode);
-  const readingRange = useMemo(() => getReadingRange(settings.readingRange), [settings.readingRange]);
+  const normalizedCustomRange = useMemo(
+    () => normalizeCustomReadingRange(settings.customReadingRange),
+    [settings.customReadingRange],
+  );
+  const readingRange = useMemo(
+    () => getReadingRange(settings.readingRange, normalizedCustomRange),
+    [normalizedCustomRange, settings.readingRange],
+  );
   const focusItems = useMemo(
-    () => getFocusItems(mode, progress[mode], settings.readingRange),
-    [mode, progress, settings.readingRange],
+    () => getFocusItems(mode, progress[mode], settings.readingRange, normalizedCustomRange),
+    [mode, normalizedCustomRange, progress, settings.readingRange],
   );
   const masterySummary = useMemo(
-    () => getMasterySummary(mode, progress[mode], settings.readingRange),
-    [mode, progress, settings.readingRange],
+    () => getMasterySummary(mode, progress[mode], settings.readingRange, normalizedCustomRange),
+    [mode, normalizedCustomRange, progress, settings.readingRange],
   );
   const dailyGoalSummary = useMemo(() => getDailyGoalSummary(progress.history), [progress.history]);
   const historySummary = useMemo(() => getSessionHistorySummary(progress.history, mode), [mode, progress.history]);
@@ -117,12 +139,13 @@ function App() {
     () =>
       getPracticePlan({
         adaptivePractice: settings.adaptivePractice,
+        customReadingRange: normalizedCustomRange,
         mode,
         progress,
         readingRange: settings.readingRange,
         roundLength: settings.roundLength,
       }),
-    [mode, progress, settings.adaptivePractice, settings.readingRange, settings.roundLength],
+    [mode, normalizedCustomRange, progress, settings.adaptivePractice, settings.readingRange, settings.roundLength],
   );
   const promptDetail =
     mode === "reading"
@@ -182,19 +205,11 @@ function App() {
         </div>
 
         {mode === "reading" && (
-          <div className="reading-range-switch" aria-label="Reading drill range">
-            {READING_RANGES.map((range) => (
-              <button
-                key={range.id}
-                type="button"
-                aria-pressed={settings.readingRange === range.id}
-                className={settings.readingRange === range.id ? "active" : ""}
-                onClick={() => updateSettings({ readingRange: range.id })}
-              >
-                {range.label}
-              </button>
-            ))}
-          </div>
+          <ReadingRangeSelector
+            settings={settings}
+            onCustomRangeChange={handleCustomReadingRangeChange}
+            onRangeChange={handleReadingRangeChange}
+          />
         )}
 
         <div className="round-strip" aria-label="Current round status">
@@ -225,7 +240,7 @@ function App() {
 
           {mode === "reading" ? (
             <PianoKeyboard
-              key={settings.readingRange}
+              key={`${settings.readingRange}-${normalizedCustomRange.startNoteId}-${normalizedCustomRange.endNoteId}`}
               disabled={!isRunning || Boolean(feedback)}
               isCorrect={feedback?.isCorrect}
               revealedNoteId={feedback ? activeNote.id : undefined}

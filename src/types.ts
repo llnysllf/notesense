@@ -3,6 +3,7 @@ import type { NoteName, PracticeMode, PracticeSessionRecord, ReadingNoteName } f
 // Re-export the framework-agnostic data contract so existing `./types` imports keep working.
 export type {
   AttemptProgress,
+  CustomReadingRange,
   ModeProgress,
   NoteName,
   PracticeDataExport,
@@ -26,6 +27,7 @@ export type TrainingNote = {
   staffY: number;
   clef: StaffClef;
   ledgerLineY?: number;
+  ledgerLineYs?: number[];
   keyboardShortcut: string;
 };
 

@@ -52,7 +52,7 @@ export function usePracticeSession({
 }: UsePracticeSessionOptions): UsePracticeSessionResult {
   const [mode, setMode] = useState<PracticeMode>("reading");
   const [currentReadingNote, setCurrentReadingNote] = useState<TrainingNote>(() =>
-    selectReadingNote({ readingRange: settings.readingRange }),
+    selectReadingNote({ customReadingRange: settings.customReadingRange, readingRange: settings.readingRange }),
   );
   const [currentPitchNote, setCurrentPitchNote] = useState<PitchNote>(() => selectPitchNote());
   const [feedback, setFeedback] = useState<FeedbackState>(null);
@@ -99,6 +99,7 @@ export function usePracticeSession({
       roundAttempts,
       bestRoundStreak,
       settings.readingRange,
+      settings.customReadingRange,
     );
     onProgressChange(nextProgress);
     setLastSummary(summary);
@@ -117,6 +118,7 @@ export function usePracticeSession({
     roundCorrect,
     roundStartedAt,
     settings.readingRange,
+    settings.customReadingRange,
     settings.roundLength,
     timeRemaining,
   ]);
@@ -133,6 +135,7 @@ export function usePracticeSession({
 
   function getNextReadingNote(previousNoteId?: string, nextProgress = progress): TrainingNote {
     const opts = {
+      customReadingRange: settings.customReadingRange,
       progress: nextProgress.reading,
       readingRange: settings.readingRange,
       useAdaptive: settings.adaptivePractice,
@@ -244,6 +247,7 @@ export function usePracticeSession({
     setCurrentReadingNote(
       selectReadingNote({
         progress: nextProgress.reading,
+        customReadingRange: nextSettings.customReadingRange,
         readingRange: nextSettings.readingRange,
         useAdaptive: nextSettings.adaptivePractice,
       }),
@@ -261,7 +265,8 @@ export function usePracticeSession({
 
   // No dependency array so the handler always has current closure values.
   useEffect(() => {
-    const shortcutSource = mode === "reading" ? getReadingNotes(settings.readingRange) : PITCH_NOTES;
+    const shortcutSource =
+      mode === "reading" ? getReadingNotes(settings.readingRange, settings.customReadingRange) : PITCH_NOTES;
 
     function handleKeyDown(event: KeyboardEvent) {
       const key = event.key.toUpperCase() as NoteName;
