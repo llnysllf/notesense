@@ -1,4 +1,4 @@
-import { useState } from "react";
+import type { ReactNode } from "react";
 import { getReadingRange } from "../noteData";
 import type {
   DataStatus,
@@ -29,18 +29,11 @@ type FocusItem = {
   attempts: number;
 };
 
-type PanelView = "overview" | "map" | "history" | "settings" | "data";
-
-const PANEL_VIEWS: Array<{ id: PanelView; label: string }> = [
-  { id: "overview", label: "Overview" },
-  { id: "map", label: "Map" },
-  { id: "history", label: "History" },
-  { id: "settings", label: "Settings" },
-  { id: "data", label: "Data" },
-];
+export type PracticePanelView = "overview" | "map" | "history" | "settings" | "data";
 
 type PracticeStatsPanelProps = {
   activeProgress: ModeProgress;
+  activeView: PracticePanelView;
   dailyGoalSummary: DailyGoalSummary;
   focusItems: FocusItem[];
   historySummary: SessionHistorySummary;
@@ -51,6 +44,7 @@ type PracticeStatsPanelProps = {
   mode: PracticeMode;
   modeLabel: string;
   practicePlan: PracticePlan;
+  readingRangeControls?: ReactNode;
   settings: PracticeSettings;
   dataStatus: DataStatus;
   onExportData: () => void;
@@ -61,6 +55,7 @@ type PracticeStatsPanelProps = {
 
 function PracticeStatsPanel({
   activeProgress,
+  activeView,
   dailyGoalSummary,
   focusItems,
   historySummary,
@@ -71,6 +66,7 @@ function PracticeStatsPanel({
   mode,
   modeLabel,
   practicePlan,
+  readingRangeControls,
   settings,
   dataStatus,
   onExportData,
@@ -78,7 +74,6 @@ function PracticeStatsPanel({
   onResetProgress,
   onSettingsChange,
 }: PracticeStatsPanelProps) {
-  const [activeView, setActiveView] = useState<PanelView>("overview");
   const readingRange = getReadingRange(settings.readingRange, settings.customReadingRange);
 
   return (
@@ -93,20 +88,6 @@ function PracticeStatsPanel({
         <StatTile label="Correct" value={activeProgress.totalCorrect} />
         <StatTile label="Accuracy" value={lifetimeAccuracy} />
         <StatTile label="Best" value={activeProgress.bestRoundScore} />
-      </div>
-
-      <div className="panel-tabs" aria-label="Progress views">
-        {PANEL_VIEWS.map((view) => (
-          <button
-            key={view.id}
-            type="button"
-            aria-pressed={activeView === view.id}
-            className={activeView === view.id ? "active" : ""}
-            onClick={() => setActiveView(view.id)}
-          >
-            {view.label}
-          </button>
-        ))}
       </div>
 
       {dataStatus && (
@@ -171,6 +152,7 @@ function PracticeStatsPanel({
           <PracticeSettingsView
             mode={mode}
             rangeDetail={readingRange.detail}
+            readingRangeControls={readingRangeControls}
             settings={settings}
             onSettingsChange={onSettingsChange}
           />

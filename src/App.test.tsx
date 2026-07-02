@@ -97,6 +97,7 @@ describe("App", () => {
     fireEvent.click(screen.getByRole("button", { name: "Finish round" }));
 
     expect(screen.getByText("Round saved")).toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: "Progress" }));
     expect(screen.getByRole("heading", { level: 3, name: "Last round" })).toBeInTheDocument();
     expect(readStoredJson<PracticeProgress>(PROGRESS_STORAGE_KEY).history).toHaveLength(1);
   });
@@ -176,6 +177,7 @@ describe("App", () => {
 
     fireEvent.click(screen.getByRole("button", { name: "Settings" }));
     fireEvent.click(screen.getByLabelText("Reveal pitch answer"));
+    fireEvent.click(screen.getByRole("button", { name: "Practice" }));
     fireEvent.click(screen.getByRole("button", { name: "Pitch training" }));
     fireEvent.click(screen.getByRole("button", { name: "Start drill" }));
     const playedFrequency = playToneMock.mock.calls.at(-1)?.[0];

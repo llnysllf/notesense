@@ -146,7 +146,7 @@ input:focus-visible {
 .app-shell {
   display: grid;
   width: min(100%, 1480px);
-  grid-template-columns: minmax(0, 1fr) minmax(320px, 380px);
+  grid-template-columns: minmax(0, 1fr);
   gap: var(--space-panel);
   min-height: 100vh;
   margin: 0 auto;
@@ -159,12 +159,19 @@ input:focus-visible {
   grid-template-columns: minmax(0, 1fr);
 }
 
+.app-header-panel,
 .practice-panel,
 .stats-panel {
   border: 1px solid var(--color-border);
   border-radius: var(--radius-card);
   background: var(--color-surface-raised);
   box-shadow: var(--shadow-panel);
+}
+
+.app-header-panel {
+  display: grid;
+  gap: 18px;
+  padding: var(--space-page);
 }
 
 .practice-panel {
@@ -333,7 +340,7 @@ h3 {
   font-size: 1rem;
 }
 
-:is(.mode-switch, .reading-range-switch, .length-options, .panel-tabs, .range-edge-switch) {
+:is(.sections, .mode-switch, .reading-range-switch, .length-options, .range-edge-switch) {
   display: grid;
   gap: 6px;
   padding: 6px;
@@ -346,11 +353,11 @@ h3 {
   background: var(--color-control);
 }
 
-:is(.reading-range-switch, .length-options, .panel-tabs, .range-edge-switch) {
+:is(.sections, .reading-range-switch, .length-options, .range-edge-switch) {
   background: var(--color-control-soft);
 }
 
-:is(.mode-switch, .reading-range-switch, .length-options, .panel-tabs, .range-edge-switch) button {
+:is(.sections, .mode-switch, .reading-range-switch, .length-options, .range-edge-switch) button {
   border-radius: var(--radius-control);
   background: transparent;
   color: var(--color-muted-strong);
@@ -359,7 +366,7 @@ h3 {
 }
 
 /* .mode-switch button.active is covered by this shared active selector. */
-:is(.mode-switch, .reading-range-switch, .length-options, .panel-tabs, .range-edge-switch) button.active {
+:is(.sections, .mode-switch, .reading-range-switch, .length-options, .range-edge-switch) button.active {
   background: var(--color-surface);
   color: var(--color-text);
   box-shadow: var(--shadow-control);
@@ -369,11 +376,15 @@ h3 {
   min-height: 44px;
 }
 
+.sections {
+  grid-template-columns: repeat(6, minmax(82px, 1fr));
+}
+
 .reading-range-switch {
   grid-template-columns: repeat(6, minmax(0, 1fr));
 }
 
-:is(.reading-range-switch, .panel-tabs, .range-edge-switch) button {
+:is(.sections, .reading-range-switch, .range-edge-switch) button {
   min-width: 0;
   min-height: 38px;
   padding: 0 8px;
@@ -881,14 +892,6 @@ h3 {
   min-height: 76px;
 }
 
-.lifetime-grid {
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-}
-
-.panel-tabs {
-  grid-template-columns: repeat(5, minmax(0, 1fr));
-}
-
 .stats-view {
   display: grid;
   gap: 14px;
@@ -913,6 +916,11 @@ h3 {
 .settings-card {
   display: grid;
   gap: 14px;
+}
+
+.range-group {
+  display: grid;
+  gap: 12px;
 }
 
 .setting-row {
@@ -1476,7 +1484,6 @@ h3 {
 
 @media (max-width: 940px) {
   .app-shell {
-    grid-template-columns: 1fr;
     padding: 18px;
   }
 }
@@ -1490,6 +1497,7 @@ h3 {
     font-size: 2.3rem;
   }
 
+  .app-header-panel,
   .practice-panel,
   .stats-panel {
     padding: 18px;
@@ -1526,8 +1534,9 @@ h3 {
 
   .round-strip,
   .answer-grid,
+  .sections,
   .reading-range-switch,
-  .panel-tabs,
+  .lifetime-grid,
   .insight-metrics,
   .summary-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));

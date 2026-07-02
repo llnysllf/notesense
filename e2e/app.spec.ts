@@ -37,14 +37,22 @@ test("loads with no automated accessibility violations", async ({ page }) => {
 
   await expect(page.getByRole("heading", { name: "NoteSense" })).toBeVisible();
   await expect(page.getByRole("button", { name: "Start drill" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Practice" })).toHaveAttribute("aria-pressed", "true");
+  await expect(page.getByRole("button", { name: "Progress" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Map" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "History" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Settings" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Data" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Daily goal" })).not.toBeVisible();
+  await page.getByRole("button", { name: "Progress" }).click();
   await expect(page.getByRole("heading", { name: "Daily goal" })).toBeVisible();
   await expect(page.getByText(/0\/1\s+round/)).toBeVisible();
   await expect(page.getByRole("heading", { name: "Build baseline" })).toBeVisible();
   await expect(page.getByText("5 more answers")).toBeVisible();
-  await expect(page.getByRole("button", { name: "Map" })).toBeVisible();
   await page.getByRole("button", { name: "Map" }).click();
   await expect(page.getByRole("heading", { name: "Mastery map" })).toBeVisible();
   await expect(page.getByRole("listitem", { name: "C4 New, no attempts yet" })).toBeVisible();
+  await page.getByRole("button", { name: "Practice" }).click();
   await expect(page.getByRole("group", { name: "88-key piano keyboard" })).toBeVisible();
 
   const accessibilityScanResults = await new AxeBuilder({ page }).analyze();
@@ -66,6 +74,7 @@ test("runs the note-reading practice loop", async ({ page }) => {
   await expect(page.getByTestId("practice-feedback")).not.toHaveText("Listening");
 
   await page.getByRole("button", { name: "Finish round" }).click();
+  await page.getByRole("button", { name: "Progress" }).click();
   await expect(page.getByRole("heading", { name: "Last round" })).toBeVisible();
   await expect(page.getByText(/1\/1\s+round/)).toBeVisible();
   await expect(page.getByText("Goal complete. Keep the streak alive tomorrow.")).toBeVisible();
@@ -330,14 +339,16 @@ test("imports local practice data", async ({ page }) => {
   const progressPanel = page.getByLabel("Practice progress");
   await expect(progressPanel.getByRole("status")).toHaveText("Progress imported.");
   await expect(progressPanel.getByText("12")).toBeVisible();
+  await page.getByRole("button", { name: "Settings" }).click();
   await expect(page.getByRole("button", { exact: true, name: "Bass" })).toHaveAttribute("aria-pressed", "true");
+  await page.getByRole("button", { name: "Practice" }).click();
   await expect(page.getByText("Random | Bass clef C3-G3")).toBeVisible();
-  await progressPanel.getByRole("button", { name: "Overview" }).click();
+  await page.getByRole("button", { name: "Progress" }).click();
   await expect(progressPanel.getByRole("heading", { name: "Focus C3" })).toBeVisible();
   await expect(progressPanel.getByText("85% on C3")).toBeVisible();
-  await progressPanel.getByRole("button", { name: "Map" }).click();
+  await page.getByRole("button", { name: "Map" }).click();
   await expect(progressPanel.getByRole("listitem", { name: "C3 Focus, 67% accuracy across 6 attempts" })).toBeVisible();
-  await progressPanel.getByRole("button", { name: "History" }).click();
+  await page.getByRole("button", { name: "History" }).click();
   await expect(progressPanel.getByRole("heading", { name: "Practice insight" })).toBeVisible();
   await expect(progressPanel.getByText("+20%")).toBeVisible();
   await expect(
@@ -348,12 +359,13 @@ test("imports local practice data", async ({ page }) => {
   await expect(
     progressPanel.getByRole("listitem", { name: "Note reading session 8 out of 10, 80% accuracy" }),
   ).toBeVisible();
-  await progressPanel.getByRole("button", { name: "Settings" }).click();
+  await page.getByRole("button", { name: "Settings" }).click();
   await expect(page.getByRole("button", { name: "30s" })).toHaveAttribute("aria-pressed", "true");
 
   await page.reload({ waitUntil: "domcontentloaded" });
+  await page.getByRole("button", { name: "Progress" }).click();
   await expect(progressPanel.getByText("12")).toBeVisible();
-  await progressPanel.getByRole("button", { name: "Settings" }).click();
+  await page.getByRole("button", { name: "Settings" }).click();
   await expect(page.getByRole("button", { name: "30s" })).toHaveAttribute("aria-pressed", "true");
   await expect(page.getByRole("button", { exact: true, name: "Bass" })).toHaveAttribute("aria-pressed", "true");
 });

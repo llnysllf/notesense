@@ -1,16 +1,31 @@
+import type { ReactNode } from "react";
 import { ROUND_LENGTHS } from "../practiceEngine";
 import type { PracticeMode, PracticeSettings } from "../types";
 
 type PracticeSettingsViewProps = {
   mode: PracticeMode;
   rangeDetail: string;
+  readingRangeControls?: ReactNode;
   settings: PracticeSettings;
   onSettingsChange: (patch: Partial<PracticeSettings>) => void;
 };
 
-function PracticeSettingsView({ mode, rangeDetail, settings, onSettingsChange }: PracticeSettingsViewProps) {
+function PracticeSettingsView({
+  mode,
+  rangeDetail,
+  readingRangeControls,
+  settings,
+  onSettingsChange,
+}: PracticeSettingsViewProps) {
   return (
     <>
+      {mode === "reading" && readingRangeControls && (
+        <div className="range-group">
+          <h3>Reading range</h3>
+          {readingRangeControls}
+        </div>
+      )}
+
       <div className="settings-card">
         <h3>Drill settings</h3>
         <div className="setting-row">
