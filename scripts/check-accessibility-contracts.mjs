@@ -99,9 +99,14 @@ requireSnippets("src/styles.css", [
   "@media (max-width: 640px)",
 ]);
 
-requireSnippets("src/App.tsx", [
-  'aria-labelledby="app-title"',
-  'aria-live="polite"',
+requireSnippets("src/App.tsx", ['aria-labelledby="app-title"', 'aria-live="polite"']);
+
+requireSnippets("src/components/AppSectionNav.tsx", [
+  'aria-label="NoteSense sections"',
+  "aria-pressed={activeSection === section.id}",
+]);
+
+requireSnippets("src/components/PracticeWorkspace.tsx", [
   'aria-label="Practice mode"',
   'aria-pressed={mode === "reading"}',
   'aria-pressed={mode === "pitch"}',
@@ -120,8 +125,6 @@ requireSnippets("src/components/ReadingRangeSelector.tsx", [
 requireSnippets("src/components/PracticeStatsPanel.tsx", [
   'aria-label="Practice progress"',
   'aria-live="polite"',
-  'aria-label="Progress views"',
-  "aria-pressed={activeView === view.id}",
   'role="status"',
 ]);
 

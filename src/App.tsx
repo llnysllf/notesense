@@ -1,15 +1,15 @@
 import { useCallback, useMemo, useState } from "react";
-import MusicStaff from "./components/MusicStaff";
-import PitchPrompt from "./components/PitchPrompt";
-import PianoKeyboard from "./components/PianoKeyboard";
+import AppSectionNav from "./components/AppSectionNav";
+import type { AppSection } from "./components/AppSectionNav";
 import PracticeStatsPanel from "./components/PracticeStatsPanel";
+import type { PracticePanelView } from "./components/PracticeStatsPanel";
+import PracticeWorkspace from "./components/PracticeWorkspace";
 import ReadingRangeSelector from "./components/ReadingRangeSelector";
-import StatTile from "./components/StatTile";
 import { useDataPortability } from "./hooks/useDataPortability";
 import { usePracticeProgress } from "./hooks/usePracticeProgress";
 import { usePracticeSession } from "./hooks/usePracticeSession";
 import { useSettings } from "./hooks/useSettings";
-import { PITCH_ANSWER_OPTIONS, getReadingRange, normalizeCustomReadingRange } from "./noteData";
+import { getReadingRange, normalizeCustomReadingRange } from "./noteData";
 import {
   formatAccuracy,
   getDailyGoalSummary,
@@ -24,6 +24,19 @@ import { resetProgress } from "./storage";
 import type { CustomReadingRange, DataStatus, PracticeProgress, PracticeSettings, ReadingRange } from "./types";
 
 const STORAGE_WARNING = "Progress is not being saved on this device right now.";
+const STATS_SECTION_BY_APP_SECTION: Record<Exclude<AppSection, "practice">, PracticePanelView> = {
+  progress: "overview",
+  map: "map",
+  history: "history",
+  settings: "settings",
+  data: "data",
+};
+
+function getStatsView(section: AppSection): PracticePanelView {
+  if (section === "practice") return "overview";
+
+  return STATS_SECTION_BY_APP_SECTION[section];
+}
 
 const shouldForceRenderError = () =>
   import.meta.env.MODE === "resilience" && window.sessionStorage.getItem("notesense.forceRenderError") === "true";
@@ -34,6 +47,7 @@ function App() {
   }
 
   const [dataStatus, setDataStatus] = useState<DataStatus>(null);
+  const [activeSection, setActiveSection] = useState<AppSection>("practice");
 
   const { settings, setSettings, persistSettings } = useSettings();
   const { progress, setProgress, persistProgress } = usePracticeProgress();
@@ -111,7 +125,6 @@ function App() {
   }
 
   const activeProgress = progress[mode];
-  const answerOptions = PITCH_ANSWER_OPTIONS;
   const activeNote = mode === "reading" ? currentReadingNote : currentPitchNote;
   const roundAccuracy = formatAccuracy(roundCorrect, roundAttempts);
   const lifetimeAccuracy = formatAccuracy(activeProgress.totalCorrect, activeProgress.totalAttempts);
@@ -157,6 +170,15 @@ function App() {
   const sessionStateLabel = isRunning ? "Live round" : lastSummary?.mode === mode ? "Round saved" : "Ready";
   const sessionStateTone = isRunning ? "live" : lastSummary?.mode === mode ? "saved" : "";
   const replayButtonLabel = mode === "reading" ? "Play note" : "Replay pitch";
+  const activeStatsView = getStatsView(activeSection);
+  const readingRangeControls =
+    mode === "reading" ? (
+      <ReadingRangeSelector
+        settings={settings}
+        onCustomRangeChange={handleCustomReadingRangeChange}
+        onRangeChange={handleReadingRangeChange}
+      />
+    ) : null;
 
   function getFeedbackText() {
     if (!feedback) return isRunning ? "Listening" : "Ready";
@@ -166,8 +188,10 @@ function App() {
   }
 
   return (
-    <main className={`app-shell ${mode === "reading" ? "reading-layout" : "pitch-layout"}`}>
-      <section className="practice-panel" aria-labelledby="app-title">
+    <main
+      className={`app-shell app-section-${activeSection} ${mode === "reading" ? "reading-layout" : "pitch-layout"}`}
+    >
+      <section className="app-header-panel" aria-labelledby="app-title">
         <header className="topbar">
           <div className="brand-lockup">
             <p className="eyebrow">Adaptive sight reading + ear training</p>
@@ -185,118 +209,62 @@ function App() {
           </div>
         </header>
 
-        <div className="mode-switch" aria-label="Practice mode">
-          <button
-            type="button"
-            aria-pressed={mode === "reading"}
-            className={mode === "reading" ? "active" : ""}
-            onClick={() => setPracticeMode("reading")}
-          >
-            Note reading
-          </button>
-          <button
-            type="button"
-            aria-pressed={mode === "pitch"}
-            className={mode === "pitch" ? "active" : ""}
-            onClick={() => setPracticeMode("pitch")}
-          >
-            Pitch training
-          </button>
-        </div>
+        <AppSectionNav activeSection={activeSection} onSectionChange={setActiveSection} />
 
-        {mode === "reading" && (
-          <ReadingRangeSelector
-            settings={settings}
-            onCustomRangeChange={handleCustomReadingRangeChange}
-            onRangeChange={handleReadingRangeChange}
-          />
+        {activeSection === "practice" && dataStatus && (
+          <p className={`data-status ${dataStatus.tone}`} role="status">
+            {dataStatus.message}
+          </p>
         )}
-
-        <div className="round-strip" aria-label="Current round status">
-          <StatTile label="Time" value={`${timeRemaining}s`} />
-          <StatTile label="Round" value={`${roundCorrect}/${roundAttempts}`} />
-          <StatTile label="Accuracy" value={roundAccuracy} />
-          <StatTile label="Streak" value={currentStreak} />
-        </div>
-
-        <div className={`staff-card ${mode === "pitch" ? "pitch-card" : ""}`}>
-          {mode === "reading" ? (
-            <MusicStaff note={currentReadingNote} />
-          ) : (
-            <PitchPrompt note={currentPitchNote} reveal={shouldRevealPitch} />
-          )}
-
-          <div className="prompt-row">
-            <div>
-              <span className="prompt-label">
-                {mode === "reading" ? "Find this note on the piano." : "Name the pitch you hear."}
-              </span>
-              <p>{promptDetail}</p>
-            </div>
-            <span className={`feedback ${feedbackClass}`} aria-live="polite" data-testid="practice-feedback">
-              {getFeedbackText()}
-            </span>
-          </div>
-
-          {mode === "reading" ? (
-            <PianoKeyboard
-              key={`${settings.readingRange}-${normalizedCustomRange.startNoteId}-${normalizedCustomRange.endNoteId}`}
-              disabled={!isRunning || Boolean(feedback)}
-              isCorrect={feedback?.isCorrect}
-              revealedNoteId={feedback ? activeNote.id : undefined}
-              selectedNoteId={feedback?.answerId}
-              onKeySelect={handleReadingKeyAnswer}
-            />
-          ) : (
-            <div className="answer-grid pitch-answer-grid">
-              {answerOptions.map((answer, index) => (
-                <button
-                  className="answer-button"
-                  key={answer}
-                  type="button"
-                  aria-label={`Answer ${answer}`}
-                  disabled={!isRunning || Boolean(feedback)}
-                  onClick={() => handleAnswer(answer)}
-                >
-                  <strong>{answer}</strong>
-                  <span>{index + 1}</span>
-                </button>
-              ))}
-            </div>
-          )}
-
-          <div className="action-row">
-            <button className="primary-button" type="button" onClick={startRound}>
-              {isRunning ? "Restart round" : "Start drill"}
-            </button>
-            {isRunning && (
-              <button className="secondary-button" type="button" onClick={finishRound}>
-                Finish round
-              </button>
-            )}
-          </div>
-        </div>
       </section>
 
-      <PracticeStatsPanel
-        activeProgress={activeProgress}
-        dailyGoalSummary={dailyGoalSummary}
-        dataStatus={dataStatus}
-        focusItems={focusItems}
-        historySummary={historySummary}
-        insightSummary={insightSummary}
-        lastSummary={lastSummary}
-        lifetimeAccuracy={lifetimeAccuracy}
-        masterySummary={masterySummary}
-        mode={mode}
-        modeLabel={modeLabel}
-        practicePlan={practicePlan}
-        settings={settings}
-        onExportData={handleExportData}
-        onImportData={handleImportData}
-        onResetProgress={handleResetProgress}
-        onSettingsChange={updateSettings}
-      />
+      {activeSection === "practice" ? (
+        <PracticeWorkspace
+          currentPitchNote={currentPitchNote}
+          currentReadingNote={currentReadingNote}
+          currentStreak={currentStreak}
+          feedback={feedback}
+          feedbackClass={feedbackClass}
+          feedbackText={getFeedbackText()}
+          isRunning={isRunning}
+          keyboardResetKey={`${settings.readingRange}-${normalizedCustomRange.startNoteId}-${normalizedCustomRange.endNoteId}`}
+          mode={mode}
+          promptDetail={promptDetail}
+          rangeControls={readingRangeControls}
+          roundAccuracy={roundAccuracy}
+          roundAttempts={roundAttempts}
+          roundCorrect={roundCorrect}
+          shouldRevealPitch={shouldRevealPitch}
+          timeRemaining={timeRemaining}
+          onAnswer={handleAnswer}
+          onFinishRound={finishRound}
+          onModeChange={setPracticeMode}
+          onReadingKeyAnswer={handleReadingKeyAnswer}
+          onStartRound={startRound}
+        />
+      ) : (
+        <PracticeStatsPanel
+          activeProgress={activeProgress}
+          activeView={activeStatsView}
+          dailyGoalSummary={dailyGoalSummary}
+          dataStatus={dataStatus}
+          focusItems={focusItems}
+          historySummary={historySummary}
+          insightSummary={insightSummary}
+          lastSummary={lastSummary}
+          lifetimeAccuracy={lifetimeAccuracy}
+          masterySummary={masterySummary}
+          mode={mode}
+          modeLabel={modeLabel}
+          practicePlan={practicePlan}
+          readingRangeControls={readingRangeControls}
+          settings={settings}
+          onExportData={handleExportData}
+          onImportData={handleImportData}
+          onResetProgress={handleResetProgress}
+          onSettingsChange={updateSettings}
+        />
+      )}
     </main>
   );
 }
