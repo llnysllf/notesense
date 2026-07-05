@@ -68,7 +68,8 @@
     "verify": "npm run security:supply-chain && npm run check && npm run test:e2e:resilience && npm run build:pages && npm run security:policy && npm run metadata:check && npm run pwa:check && npm run runtime:check && npm run perf:budget && npm run test:e2e:pages",
     "build": "tsc -b && vite build",
     "build:pages": "npm run typecheck && vite build --base=/notesense/",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "deploy": "npm run build && npx --yes wrangler@4.107.0 deploy"
   },
   "dependencies": {
     "react": "^19.1.1",
