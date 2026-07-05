@@ -4,8 +4,6 @@ import type { Plugin } from "vite";
 import { VitePWA } from "vite-plugin-pwa";
 import { defineConfig } from "vitest/config";
 
-import { cloudflare } from "@cloudflare/vite-plugin";
-
 const sharedEntry = fileURLToPath(new URL("./shared/src/index.ts", import.meta.url));
 
 export const CONTENT_SECURITY_POLICY = [
@@ -42,16 +40,20 @@ export default defineConfig({
       "@notesense/shared": sharedEntry,
     },
   },
-  plugins: [react(), VitePWA({
-    registerType: "autoUpdate",
-    injectRegister: null,
-    manifest: false,
-    workbox: {
-      globPatterns: ["**/*.{js,css,html,svg,webmanifest,txt,xml}"],
-      navigateFallback: null,
-    },
-    devOptions: { enabled: false },
-  }), notesenseSecurityPolicyPlugin(), cloudflare()],
+  plugins: [
+    react(),
+    VitePWA({
+      registerType: "autoUpdate",
+      injectRegister: null,
+      manifest: false,
+      workbox: {
+        globPatterns: ["**/*.{js,css,html,svg,webmanifest,txt,xml}"],
+        navigateFallback: null,
+      },
+      devOptions: { enabled: false },
+    }),
+    notesenseSecurityPolicyPlugin(),
+  ],
   test: {
     environment: "jsdom",
     globals: true,
