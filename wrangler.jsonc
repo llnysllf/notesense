@@ -1,0 +1,14 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "notesense",
+  "compatibility_date": "2026-07-05",
+  "observability": {
+    "enabled": true,
+  },
+  "assets": {
+    "directory": "./dist",
+    "not_found_handling": "single-page-application",
+  },
+  "pages_build_output_dir": "./dist",
+  "compatibility_flags": ["nodejs_compat"],
+}

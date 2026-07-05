@@ -11,3 +11,9 @@ playwright-report
 test-results
 vite.config.js
 vite.config.d.ts
+
+# wrangler files
+.wrangler
+.dev.vars*
+!.dev.vars.example
+!.env.example

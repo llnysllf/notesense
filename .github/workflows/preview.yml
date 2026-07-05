@@ -30,17 +30,34 @@ jobs:
           node-version-file: .nvmrc
           cache: npm
 
-      # Cleanly skip (green, non-blocking) until the Cloudflare secrets are configured.
-      - name: Check Cloudflare credentials
+      # Cleanly skip (green, non-blocking) until the Cloudflare Pages preview target is configured.
+      - name: Check Cloudflare preview configuration
         id: creds
         env:
           CF_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CF_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          CF_PAGES_PROJECT: ${{ vars.CLOUDFLARE_PAGES_PROJECT }}
         run: |
-          if [ -n "$CF_API_TOKEN" ]; then
+          missing=()
+
+          if [ -z "$CF_API_TOKEN" ]; then
+            missing+=("CLOUDFLARE_API_TOKEN secret")
+          fi
+
+          if [ -z "$CF_ACCOUNT_ID" ]; then
+            missing+=("CLOUDFLARE_ACCOUNT_ID secret")
+          fi
+
+          if [ -z "$CF_PAGES_PROJECT" ]; then
+            missing+=("CLOUDFLARE_PAGES_PROJECT repository variable")
+          fi
+
+          if [ "${#missing[@]}" -eq 0 ]; then
             echo "configured=true" >> "$GITHUB_OUTPUT"
+            echo "project=$CF_PAGES_PROJECT" >> "$GITHUB_OUTPUT"
           else
             echo "configured=false" >> "$GITHUB_OUTPUT"
-            echo "CLOUDFLARE_API_TOKEN is not set; skipping preview deploy until secrets are configured."
+            printf "Skipping preview deploy until configured: %s\n" "${missing[*]}"
           fi
 
       - name: Install dependencies
@@ -58,7 +75,7 @@ jobs:
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          command: pages deploy dist --project-name=notesense --branch=${{ github.head_ref }}
+          command: pages deploy dist --project-name=${{ steps.creds.outputs.project }} --branch=${{ github.head_ref }}
 
       - name: Comment preview URL
         if: steps.creds.outputs.configured == 'true'
