@@ -210,12 +210,6 @@ function App() {
         </header>
 
         <AppSectionNav activeSection={activeSection} onSectionChange={setActiveSection} />
-
-        {activeSection === "practice" && dataStatus && (
-          <p className={`data-status ${dataStatus.tone}`} role="status">
-            {dataStatus.message}
-          </p>
-        )}
       </section>
 
       {activeSection === "practice" ? (
@@ -223,6 +217,7 @@ function App() {
           currentPitchNote={currentPitchNote}
           currentReadingNote={currentReadingNote}
           currentStreak={currentStreak}
+          dataStatus={dataStatus}
           feedback={feedback}
           feedbackClass={feedbackClass}
           feedbackText={getFeedbackText()}
