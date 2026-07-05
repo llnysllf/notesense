@@ -402,6 +402,17 @@ test("surfaces storage failures without crashing", async ({ page }) => {
   await clickCurrentReadingPianoKey(page);
 
   await expect(page.getByRole("status")).toHaveText("Progress is not being saved on this device right now.");
+  const practiceHeaderHeight = await page
+    .locator(".app-header-panel")
+    .evaluate((header) => header.getBoundingClientRect().height);
+
+  await page.getByRole("button", { name: "Data" }).click();
+  await expect(page.getByRole("status")).toHaveText("Progress is not being saved on this device right now.");
+  const dataHeaderHeight = await page
+    .locator(".app-header-panel")
+    .evaluate((header) => header.getBoundingClientRect().height);
+
+  expect(dataHeaderHeight).toBeCloseTo(practiceHeaderHeight, 3);
 });
 
 test("runs the pitch-training practice loop", async ({ page }) => {

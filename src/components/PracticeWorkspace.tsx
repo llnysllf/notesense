@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 import { PITCH_ANSWER_OPTIONS } from "../noteData";
-import type { FeedbackState, NoteName, PitchNote, PracticeMode, TrainingNote } from "../types";
+import type { DataStatus, FeedbackState, NoteName, PitchNote, PracticeMode, TrainingNote } from "../types";
 import MusicStaff from "./MusicStaff";
 import PianoKeyboard from "./PianoKeyboard";
 import PitchPrompt from "./PitchPrompt";
@@ -10,6 +10,7 @@ type PracticeWorkspaceProps = {
   currentPitchNote: PitchNote;
   currentReadingNote: TrainingNote;
   currentStreak: number;
+  dataStatus: DataStatus;
   feedback: FeedbackState;
   feedbackClass: string;
   feedbackText: string;
@@ -34,6 +35,7 @@ function PracticeWorkspace({
   currentPitchNote,
   currentReadingNote,
   currentStreak,
+  dataStatus,
   feedback,
   feedbackClass,
   feedbackText,
@@ -75,6 +77,12 @@ function PracticeWorkspace({
           Pitch training
         </button>
       </div>
+
+      {dataStatus && (
+        <p className={`data-status ${dataStatus.tone}`} role="status">
+          {dataStatus.message}
+        </p>
+      )}
 
       {mode === "reading" && rangeControls}
 
