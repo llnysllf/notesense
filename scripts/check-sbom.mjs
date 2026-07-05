@@ -16,7 +16,7 @@ function readJson(file) {
 
 function runNpmSbom() {
   try {
-    return execFileSync("npm", ["sbom", "--sbom-format", "spdx", "--json"], {
+    return execFileSync("npm", ["sbom", "--sbom-format", "spdx", "--json", "--package-lock-only"], {
       encoding: "utf8",
       maxBuffer: MAX_SBOM_BYTES,
       stdio: ["ignore", "pipe", "pipe"],
