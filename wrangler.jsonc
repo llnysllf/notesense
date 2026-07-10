@@ -1,3 +1,12 @@
+// Cloudflare configuration for NoteSense preview/deploy infrastructure.
+// Production hosting remains GitHub Pages; Cloudflare serves the static
+// build for previews. Two deploy paths intentionally share this file:
+// - `npm run deploy` runs `wrangler deploy` (Workers static assets) and
+//   uses the `assets` block below.
+// - `.github/workflows/preview.yml` runs `wrangler pages deploy` for PR
+//   previews and uses `pages_build_output_dir`.
+// This is an assets-only configuration: there is no Worker script
+// (`main`), so no code executes at the edge.
 {
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "notesense",
@@ -10,5 +19,4 @@
     "not_found_handling": "single-page-application",
   },
   "pages_build_output_dir": "./dist",
-  "compatibility_flags": ["nodejs_compat"],
 }
