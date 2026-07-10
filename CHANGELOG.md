@@ -6,7 +6,8 @@ All notable changes to NoteSense are documented here. The format follows [Keep a
 
 ### Changed
 
-- Nothing yet — changes for the next release accumulate here
+- Re-themed the interface in indigo and amber, replacing the green conservatory palette in both light and dark modes
+- Pinned the app header to one height across all sections instead of stretching on short pages
 
 ## [0.17.0] — 2026-07-10
 
