@@ -54,7 +54,9 @@ Visual-regression coverage protects the note-reading and pitch-training shells i
 - mobile light
 - mobile dark
 
-Intentional UI changes should refresh screenshots with `npm run test:e2e:visual:update`, review the images, and run `npm run test:e2e:visual`. README screenshots should be refreshed with `npm run docs:screenshots` when the documented product surface changes.
+Brand-accent element snapshots (mode switch and primary button) additionally protect the brand palette itself. Brand-colored controls cover a small share of full-page pixels, so the page-level diff ratio alone can miss a re-theme; the accent snapshots are dominated by brand fills and fail loudly when the palette drifts.
+
+Intentional UI changes should refresh screenshots with `npm run test:e2e:visual:update`, review the images, and run `npm run test:e2e:visual`. Palette changes may pass a stale-baseline comparison when backgrounds stay close in luminance; if `--update-snapshots` reports no changes after an intentional re-theme, delete the snapshot directory and regenerate from scratch. README screenshots should be refreshed with `npm run docs:screenshots` when the documented product surface changes.
 
 ## Change Process
 
