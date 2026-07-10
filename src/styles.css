@@ -75,7 +75,7 @@
     --color-muted-strong: #bcbfab;
     --color-brand: #8cc4a1;
     --color-brand-strong: #d5e9d6;
-    --color-brand-wash: #1b241d;
+    --color-brand-wash: #22301f;
     --color-accent: #dcae57;
     --color-accent-bg: #2b2313;
     --color-canvas: #101310;
@@ -370,9 +370,15 @@ h3 {
 }
 
 .sections {
+  align-content: center;
   padding: 4px;
   border: 0;
   background: transparent;
+}
+
+.sections button {
+  height: 40px;
+  align-self: center;
 }
 
 :is(.sections, .mode-switch, .reading-range-switch, .length-options, .range-edge-switch) button {
