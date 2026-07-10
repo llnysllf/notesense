@@ -14,7 +14,7 @@ NoteSense should feel calm, precise, and practice-focused. The design system is 
 
 Shared CSS custom properties in `src/styles.css` own the app-wide design language:
 
-- Color tokens: text, ink, muted text, brand, accent, canvas, surface, control, feedback, meter, border, focus, success, and danger.
+- Color tokens: text, ink, muted text, brand, accent, action, canvas, surface, control, feedback, meter, border, focus, success, and danger.
 - Radius tokens: card, control, and pill shapes.
 - Shadow tokens: panel, control, action, and sound-ring elevation.
 - Spacing tokens: page, panel, card, control, and gap spacing.
