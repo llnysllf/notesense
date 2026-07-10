@@ -4,8 +4,20 @@ All notable changes to NoteSense are documented here. The format follows [Keep a
 
 ## [Unreleased]
 
+### Changed
+
+- Nothing yet — changes for the next release accumulate here
+
+## [0.17.0] — 2026-07-10
+
 ### Added
 
+- Component tests for the app section navigation, piano keybed, practice workspace, settings, data, and reading-range views, with all practice components now behind the per-file coverage gate
+- Custom reading ranges selected directly on the piano keyboard, alongside treble, bass, one-octave, and grand preset ranges
+- App section navigation that organizes practice, progress, mastery map, history, settings, and data into focused views
+- Automatic post-deploy verification: the Pages deploy workflow now runs the live-deployment verifier against the freshly published site with retries
+- Cloudflare Pages PR preview deploys with a sticky preview-URL comment, skipping cleanly for forks and until credentials are configured
+- Cloudflare Workers static-asset configuration for the preview/deploy infrastructure
 - 88-key piano keyboard answers for note-reading practice, including exact-octave location checks and post-answer key reveal
 - Foundation polish for the app shell, responsive behavior, session status affordance, dark-mode tokens, and refreshed visual/docs screenshots
 - Design-system contract with `docs/DESIGN_SYSTEM.md`, `npm run design:check`, and ADR coverage for tokens, component states, accessibility affordances, and protected visual surfaces
@@ -54,9 +66,14 @@ All notable changes to NoteSense are documented here. The format follows [Keep a
 - `npm run docs:screenshots` reproducibly captures the light and dark README screenshots from a production build
 - `CHANGELOG.md` to track all notable changes going forward
 
+### Fixed
+
+- Keyboard and assistive-technology activation of the mobile piano overview rail now recenters on C4 instead of jumping the window to the far left of the 88 keys
+
 ### Changed
 
-- Observability and product-learning contract checks now verify Markdown headings and npm script wiring structurally instead of relying on exact prose snippets for those stable contracts.
+- Redesigned the visual theme around a warm conservatory palette: ivory canvas, deep pine brand, brass accents, distinct navigation tiers, and consistent section-nav pills in both light and dark modes
+- Documentation contract checks now verify Markdown structure, cross-doc links, and npm script wiring instead of exact prose sentences, so doc rewording no longer produces fake gate failures
 - Extracted `usePracticeSession`, `useSettings`, `usePracticeProgress`, and `useDataPortability` custom hooks from `App.tsx` — `App` is now a thin coordinator rather than a god component
 - `color-scheme` meta tag updated to `light dark` so browsers render system controls in the correct scheme
 
