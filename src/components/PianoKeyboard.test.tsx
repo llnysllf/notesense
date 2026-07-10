@@ -176,8 +176,21 @@ describe("PianoKeyboard", () => {
       toJSON: () => ({}),
     });
 
-    fireEvent.click(overviewRail, { clientX: 700 });
+    fireEvent.click(overviewRail, { clientX: 700, detail: 1 });
     expect(container.querySelector(".piano-mobile-layout")).toHaveAttribute("data-window-center-note-id", "G6");
+  });
+
+  it("recenters on C4 when the overview rail is activated by keyboard", () => {
+    mockMobilePianoLayout();
+
+    const { container } = render(<PianoKeyboard disabled={false} onKeySelect={vi.fn()} />);
+
+    fireEvent.click(screen.getByRole("button", { name: "Move piano window left" }));
+    expect(container.querySelector(".piano-mobile-layout")).toHaveAttribute("data-window-center-note-id", "C3");
+
+    // Keyboard activation dispatches a click with detail 0 and no coordinates.
+    fireEvent.click(screen.getByRole("button", { name: "Move piano window on full 88-key overview" }), { detail: 0 });
+    expect(container.querySelector(".piano-mobile-layout")).toHaveAttribute("data-window-center-note-id", "C4");
   });
 
   it("marks revealed and selected keys on the phone overview after feedback", () => {

@@ -130,6 +130,13 @@ function PianoKeyboard({
   }
 
   function handleOverviewClick(event: MouseEvent<HTMLButtonElement>) {
+    // Keyboard and assistive-tech activation dispatch clicks without pointer
+    // coordinates (detail 0); recenter on C4 instead of jumping to the far left.
+    if (event.detail === 0) {
+      setMobileCenterNoteId(MOBILE_DEFAULT_CENTER_NOTE_ID);
+      return;
+    }
+
     const railRect = event.currentTarget.getBoundingClientRect();
 
     setMobileCenterNoteId(getOverviewCenterNoteId(event.clientX, railRect.left, railRect.width));
