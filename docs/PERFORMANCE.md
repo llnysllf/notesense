@@ -16,7 +16,7 @@ NoteSense should feel instant enough for short practice sessions on desktop and 
 Current per-file budgets:
 
 - JavaScript asset: 260 KiB raw, 85 KiB gzip
-- CSS asset: 24 KiB raw, 5 KiB gzip
+- CSS asset: 28 KiB raw, 6 KiB gzip
 - HTML shell: 4 KiB raw, 1 KiB gzip
 - web metadata asset: 6 KiB raw, 3 KiB gzip
 - service worker: 8 KiB raw, 4 KiB gzip
