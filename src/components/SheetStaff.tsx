@@ -8,21 +8,24 @@ type SheetStaffProps = {
   currentStatus?: "idle" | "wrong";
 };
 
-const STAFF_LINES = [56, 72, 88, 104, 120];
-const WINDOW_SIZE = 8;
-const FIRST_EVENT_X = 128;
-const EVENT_SPACING = 62;
+// The whole song renders as a static score split across staff systems, like
+// printed sheet music: notes never move while playing. The current event is
+// shown by coloring the note itself and a caret under the staff, so the
+// staff lines stay fully visible.
+const STAFF_LINE_OFFSETS = [56, 72, 88, 104, 120];
+const EVENTS_PER_SYSTEM = 10;
+const SYSTEM_HEIGHT = 172;
+const SHEET_WIDTH = 640;
+const FIRST_EVENT_X = 118;
+const EVENT_SPACING = 52;
+const STAFF_X_START = 18;
+const STAFF_X_END = 622;
 const STEM_LENGTH = 42;
 const HEAD_RX = 10;
 const HEAD_RY = 7;
 // Stems point up for notes on the lower half of the staff (middle line B4
-// treble sits at Y 88) and down above it, following engraving convention.
-const STEM_FLIP_Y = 88;
-
-function getWindowStart(currentIndex: number, totalEvents: number): number {
-  const lastStart = Math.max(0, totalEvents - WINDOW_SIZE);
-  return Math.min(Math.max(0, currentIndex - 1), lastStart);
-}
+// treble sits at offset 88) and down above it, per engraving convention.
+const STEM_FLIP_OFFSET = 88;
 
 type EventState = "done" | "current" | "upcoming";
 
@@ -33,9 +36,9 @@ function getEventState(eventIndex: number, currentIndex: number): EventState {
 
 function SheetStaff({ song, currentIndex, currentStatus = "idle" }: SheetStaffProps) {
   const clefSymbol = song.clef === "treble" ? "𝄞" : "𝄢";
-  const clefY = song.clef === "treble" ? 119 : 112;
-  const windowStart = getWindowStart(currentIndex, song.events.length);
-  const windowEvents = song.events.slice(windowStart, windowStart + WINDOW_SIZE);
+  const clefOffset = song.clef === "treble" ? 119 : 112;
+  const systemCount = Math.max(1, Math.ceil(song.events.length / EVENTS_PER_SYSTEM));
+  const sheetHeight = systemCount * SYSTEM_HEIGHT;
   const currentEvent = song.events[currentIndex];
   const progressLabel = `event ${Math.min(currentIndex + 1, song.events.length)} of ${song.events.length}`;
   const currentLabel = currentEvent ? `Current: ${describeSongEvent(currentEvent)}.` : "Song complete.";
@@ -43,19 +46,36 @@ function SheetStaff({ song, currentIndex, currentStatus = "idle" }: SheetStaffPr
   return (
     <svg
       className="sheet-staff"
-      viewBox="0 0 640 184"
+      viewBox={`0 0 ${SHEET_WIDTH} ${sheetHeight}`}
       role="img"
       aria-label={`Sheet music for ${song.title}, ${progressLabel}. ${currentLabel}`}
     >
-      <text className={`clef ${song.clef}-clef sheet-clef`} x="34" y={clefY} aria-hidden="true">
-        {clefSymbol}
-      </text>
-      {STAFF_LINES.map((lineY) => (
-        <line key={lineY} x1="18" x2="622" y1={lineY} y2={lineY} className="staff-line" />
-      ))}
+      {Array.from({ length: systemCount }, (_, systemIndex) => {
+        const systemY = systemIndex * SYSTEM_HEIGHT;
 
-      {windowEvents.map((event, slot) => {
-        const eventIndex = windowStart + slot;
+        return (
+          <g key={systemIndex}>
+            <text className={`clef ${song.clef}-clef sheet-clef`} x="34" y={systemY + clefOffset} aria-hidden="true">
+              {clefSymbol}
+            </text>
+            {STAFF_LINE_OFFSETS.map((lineOffset) => (
+              <line
+                key={lineOffset}
+                x1={STAFF_X_START}
+                x2={STAFF_X_END}
+                y1={systemY + lineOffset}
+                y2={systemY + lineOffset}
+                className="staff-line"
+              />
+            ))}
+          </g>
+        );
+      })}
+
+      {song.events.map((event, eventIndex) => {
+        const systemIndex = Math.floor(eventIndex / EVENTS_PER_SYSTEM);
+        const slot = eventIndex % EVENTS_PER_SYSTEM;
+        const systemY = systemIndex * SYSTEM_HEIGHT;
         const eventX = FIRST_EVENT_X + slot * EVENT_SPACING;
         const state = getEventState(eventIndex, currentIndex);
         const placements = event.noteIds
@@ -66,23 +86,29 @@ function SheetStaff({ song, currentIndex, currentStatus = "idle" }: SheetStaffPr
 
         if (placements.length === 0) return null;
 
-        const staffYs = placements.map((entry) => entry.placement.staffY);
-        const topY = Math.min(...staffYs);
-        const bottomY = Math.max(...staffYs);
-        const stemUp = bottomY >= STEM_FLIP_Y;
+        const noteYs = placements.map((entry) => systemY + entry.placement.staffY);
+        const topY = Math.min(...noteYs);
+        const bottomY = Math.max(...noteYs);
+        const stemUp = bottomY - systemY >= STEM_FLIP_OFFSET;
         const stemX = stemUp ? eventX + HEAD_RX - 1 : eventX - HEAD_RX + 1;
         const stemStartY = stemUp ? bottomY - 3 : topY + 3;
         const stemEndY = stemUp ? topY - STEM_LENGTH : bottomY + STEM_LENGTH;
         const hasStem = event.duration !== "whole";
         const hasFlag = event.duration === "eighth";
         const isHollow = event.duration === "whole" || event.duration === "half";
-        const ledgerYs = [...new Set(placements.flatMap((entry) => entry.placement.ledgerLineYs))];
+        const ledgerYs = [...new Set(placements.flatMap((entry) => entry.placement.ledgerLineYs))].map(
+          (ledgerOffset) => systemY + ledgerOffset,
+        );
         const stateClass = state === "current" ? `current ${currentStatus === "wrong" ? "wrong" : ""}` : state;
+        const caretY = systemY + STAFF_LINE_OFFSETS[STAFF_LINE_OFFSETS.length - 1]! + 26;
 
         return (
           <g key={eventIndex} className={`sheet-event ${stateClass}`} data-event-index={eventIndex}>
             {state === "current" && (
-              <rect className="sheet-current-highlight" x={eventX - 24} y="30" width="48" height="124" rx="10" />
+              <path
+                className="sheet-cursor"
+                d={`M ${eventX - 7} ${caretY + 10} L ${eventX + 7} ${caretY + 10} L ${eventX} ${caretY} Z`}
+              />
             )}
             {ledgerYs.map((ledgerY) => (
               <line key={ledgerY} x1={eventX - 16} x2={eventX + 16} y1={ledgerY} y2={ledgerY} className="staff-line" />
@@ -97,17 +123,22 @@ function SheetStaff({ song, currentIndex, currentStatus = "idle" }: SheetStaffPr
             {placements.map(({ noteId, placement }) => (
               <g key={noteId}>
                 {placement.isSharp && (
-                  <text className="sheet-accidental" x={eventX - 24} y={placement.staffY + 5} aria-hidden="true">
+                  <text
+                    className="sheet-accidental"
+                    x={eventX - 24}
+                    y={systemY + placement.staffY + 5}
+                    aria-hidden="true"
+                  >
                     ♯
                   </text>
                 )}
                 <ellipse
                   className={`sheet-note-head ${isHollow ? "hollow" : ""}`}
                   cx={eventX}
-                  cy={placement.staffY}
+                  cy={systemY + placement.staffY}
                   rx={HEAD_RX}
                   ry={HEAD_RY}
-                  transform={`rotate(-18 ${eventX} ${placement.staffY})`}
+                  transform={`rotate(-18 ${eventX} ${systemY + placement.staffY})`}
                 />
               </g>
             ))}

@@ -34,13 +34,16 @@ describe("SheetStaff", () => {
     ).toBeInTheDocument();
   });
 
-  it("marks done, current, and upcoming events", () => {
+  it("marks done, current, and upcoming events with a single cursor caret", () => {
     const { container } = render(<SheetStaff song={makeSong()} currentIndex={1} />);
 
     expect(getEventGroup(container, 0)).toHaveClass("done");
     expect(getEventGroup(container, 1)).toHaveClass("current");
     expect(getEventGroup(container, 2)).toHaveClass("upcoming");
-    expect(container.querySelectorAll(".sheet-current-highlight")).toHaveLength(1);
+    expect(container.querySelectorAll(".sheet-cursor")).toHaveLength(1);
+    expect(getEventGroup(container, 1)!.querySelector(".sheet-cursor")).not.toBeNull();
+    // No filled box may cover the staff lines behind the current event.
+    expect(container.querySelector(".sheet-current-highlight")).toBeNull();
   });
 
   it("flags a wrong answer on the current event only", () => {
@@ -106,21 +109,26 @@ describe("SheetStaff", () => {
     expect(c4Event.querySelectorAll(".staff-line").length).toBeGreaterThanOrEqual(1);
   });
 
-  it("windows long songs around the current event", () => {
+  it("renders the whole song statically across systems and never moves notes", () => {
     const longSong = makeSong({
       events: Array.from({ length: 30 }, (_, index) => ({
         noteIds: [index % 2 === 0 ? "C4" : "E4"],
         duration: "quarter" as const,
       })),
     });
-    const { container } = render(<SheetStaff song={longSong} currentIndex={15} />);
+    const { container, rerender } = render(<SheetStaff song={longSong} currentIndex={0} />);
 
-    const rendered = [...container.querySelectorAll("[data-event-index]")].map((el) =>
-      Number(el.getAttribute("data-event-index")),
-    );
-    expect(rendered).toHaveLength(8);
-    expect(rendered[0]).toBe(14); // current - 1
-    expect(rendered).toContain(15);
+    // Every event is on the sheet, split into 10-per-system rows.
+    expect(container.querySelectorAll("[data-event-index]")).toHaveLength(30);
+    expect(container.querySelector("svg")?.getAttribute("viewBox")).toBe("0 0 640 516");
+
+    const positionOf = (index: number) =>
+      getEventGroup(container, index)!.querySelector(".sheet-note-head")!.getAttribute("cx");
+    const before = [positionOf(0), positionOf(9), positionOf(15)];
+
+    rerender(<SheetStaff song={longSong} currentIndex={15} />);
+    expect([positionOf(0), positionOf(9), positionOf(15)]).toEqual(before);
+    expect(getEventGroup(container, 15)!.querySelector(".sheet-cursor")).not.toBeNull();
   });
 
   it("renders a bass clef song with the bass symbol", () => {

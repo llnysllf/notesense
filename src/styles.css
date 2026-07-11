@@ -868,15 +868,28 @@ h3 {
   opacity: 0.38;
 }
 
-.sheet-current-highlight {
-  fill: var(--color-brand-wash);
-  stroke: var(--color-brand);
-  stroke-width: 1.5;
+.sheet-event.current {
+  --sheet-cursor-ink: var(--color-brand);
 }
 
-.sheet-event.current.wrong .sheet-current-highlight {
-  fill: var(--color-danger-bg);
-  stroke: var(--color-danger);
+.sheet-event.current.wrong {
+  --sheet-cursor-ink: var(--color-danger);
+}
+
+.sheet-event.current .sheet-note-head,
+.sheet-event.current .sheet-accidental,
+.sheet-event.current .sheet-cursor {
+  fill: var(--sheet-cursor-ink);
+}
+
+.sheet-event.current .sheet-note-head.hollow {
+  fill: var(--color-surface);
+  stroke: var(--sheet-cursor-ink);
+}
+
+.sheet-event.current .sheet-stem,
+.sheet-event.current .sheet-flag {
+  stroke: var(--sheet-cursor-ink);
 }
 
 .song-library {
