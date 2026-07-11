@@ -15,6 +15,10 @@ export type {
   ReadingNoteName,
   ReadingRange,
   RoundLength,
+  Song,
+  SongEvent,
+  SongProgress,
+  SongProgressEntry,
 } from "@notesense/shared";
 
 export type StaffClef = "treble" | "bass";

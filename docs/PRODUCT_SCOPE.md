@@ -20,6 +20,8 @@ Product-learning expectations live in [PRODUCT_LEARNING.md](PRODUCT_LEARNING.md)
 - Adaptive or random practice selection.
 - Configurable 30, 60, or 90 second rounds.
 - Local progress, daily goal, session history, practice insight chart, practice plan coach, and mastery map.
+- Self-paced song sheet reading from a built-in public-domain song library, with rhythm notation and sheet accidentals.
+- Per-song local progress: best accuracy and completion counts.
 - Local JSON import/export.
 - Static GitHub Pages deployment.
 - Installable PWA with offline practice after the first load.
@@ -31,7 +33,7 @@ These are not part of the current supported product surface:
 - account sign-in or user profiles
 - cloud sync or hosted practice storage
 - backend APIs, PostgreSQL, AWS services, or direct database access
-- sharps, flats, scales, chords, rhythm drills, MIDI input, or expanded lesson content
+- sharps and flats in the single-note drills, scales, chord entry, timed rhythm scoring, MIDI file upload, MIDI device input, or lesson content beyond the built-in song library
 - translated UI, locale selector, runtime locale negotiation, right-to-left layout, or localized music notation
 - analytics, telemetry, advertising pixels, or third-party tracking
 - payments, subscriptions, social sharing, or classroom management

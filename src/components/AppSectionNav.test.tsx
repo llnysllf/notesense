@@ -8,8 +8,8 @@ describe("AppSectionNav", () => {
 
     const nav = screen.getByRole("navigation", { name: "NoteSense sections" });
     expect(nav).toBeInTheDocument();
-    expect(screen.getAllByRole("button")).toHaveLength(6);
-    for (const label of ["Practice", "Progress", "Map", "History", "Settings", "Data"]) {
+    expect(screen.getAllByRole("button")).toHaveLength(7);
+    for (const label of ["Practice", "Songs", "Progress", "Map", "History", "Settings", "Data"]) {
       expect(screen.getByRole("button", { name: label })).toBeInTheDocument();
     }
   });

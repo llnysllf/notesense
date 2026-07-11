@@ -1,0 +1,140 @@
+import { render, screen } from "@testing-library/react";
+import { describe, expect, it } from "vitest";
+import type { Song } from "@notesense/shared";
+import SheetStaff from "./SheetStaff";
+
+function makeSong(overrides: Partial<Song> = {}): Song {
+  return {
+    id: "builtin-test",
+    title: "Test Song",
+    source: "builtin",
+    clef: "treble",
+    events: [
+      { noteIds: ["C4"], duration: "quarter" },
+      { noteIds: ["D4"], duration: "half" },
+      { noteIds: ["E4"], duration: "whole" },
+      { noteIds: ["F#4"], duration: "eighth" },
+    ],
+    ...overrides,
+  };
+}
+
+function getEventGroup(container: HTMLElement, index: number) {
+  return container.querySelector(`[data-event-index="${index}"]`);
+}
+
+describe("SheetStaff", () => {
+  it("describes the sheet and current event for screen readers", () => {
+    render(<SheetStaff song={makeSong()} currentIndex={1} />);
+
+    expect(
+      screen.getByRole("img", {
+        name: "Sheet music for Test Song, event 2 of 4. Current: D4, half note.",
+      }),
+    ).toBeInTheDocument();
+  });
+
+  it("marks done, current, and upcoming events", () => {
+    const { container } = render(<SheetStaff song={makeSong()} currentIndex={1} />);
+
+    expect(getEventGroup(container, 0)).toHaveClass("done");
+    expect(getEventGroup(container, 1)).toHaveClass("current");
+    expect(getEventGroup(container, 2)).toHaveClass("upcoming");
+    expect(container.querySelectorAll(".sheet-current-highlight")).toHaveLength(1);
+  });
+
+  it("flags a wrong answer on the current event only", () => {
+    const { container } = render(<SheetStaff song={makeSong()} currentIndex={0} currentStatus="wrong" />);
+
+    expect(getEventGroup(container, 0)).toHaveClass("current", "wrong");
+    expect(getEventGroup(container, 1)).not.toHaveClass("wrong");
+  });
+
+  it("renders rhythm glyphs per duration", () => {
+    const { container } = render(<SheetStaff song={makeSong()} currentIndex={0} />);
+
+    const quarter = getEventGroup(container, 0)!;
+    const half = getEventGroup(container, 1)!;
+    const whole = getEventGroup(container, 2)!;
+    const eighth = getEventGroup(container, 3)!;
+
+    expect(quarter.querySelector(".sheet-stem")).not.toBeNull();
+    expect(quarter.querySelector(".sheet-note-head")).not.toHaveClass("hollow");
+    expect(half.querySelector(".sheet-note-head")).toHaveClass("hollow");
+    expect(half.querySelector(".sheet-stem")).not.toBeNull();
+    expect(whole.querySelector(".sheet-stem")).toBeNull();
+    expect(whole.querySelector(".sheet-note-head")).toHaveClass("hollow");
+    expect(eighth.querySelector(".sheet-flag")).not.toBeNull();
+  });
+
+  it("draws an accidental for sharp notes", () => {
+    const { container } = render(<SheetStaff song={makeSong()} currentIndex={3} />);
+
+    const sharpEvent = getEventGroup(container, 3)!;
+    expect(sharpEvent.querySelector(".sheet-accidental")).toHaveTextContent("♯");
+  });
+
+  it("stacks chord notes on a shared stem", () => {
+    const chordSong = makeSong({
+      events: [
+        { noteIds: ["C4", "E4", "G4"], duration: "quarter" },
+        { noteIds: ["D4"], duration: "quarter" },
+        { noteIds: ["E4"], duration: "quarter" },
+        { noteIds: ["F4"], duration: "quarter" },
+      ],
+    });
+    const { container } = render(<SheetStaff song={chordSong} currentIndex={0} />);
+
+    const chord = getEventGroup(container, 0)!;
+    expect(chord.querySelectorAll(".sheet-note-head")).toHaveLength(3);
+    expect(chord.querySelectorAll(".sheet-stem")).toHaveLength(1);
+  });
+
+  it("draws ledger lines for notes outside the staff", () => {
+    const lowSong = makeSong({
+      events: [
+        { noteIds: ["C4"], duration: "quarter" },
+        { noteIds: ["A3"], duration: "quarter" },
+        { noteIds: ["B3"], duration: "quarter" },
+        { noteIds: ["C4"], duration: "quarter" },
+      ],
+    });
+    const { container } = render(<SheetStaff song={lowSong} currentIndex={0} />);
+
+    // C4 below the treble staff needs one ledger line inside its event group.
+    const c4Event = getEventGroup(container, 0)!;
+    expect(c4Event.querySelectorAll(".staff-line").length).toBeGreaterThanOrEqual(1);
+  });
+
+  it("windows long songs around the current event", () => {
+    const longSong = makeSong({
+      events: Array.from({ length: 30 }, (_, index) => ({
+        noteIds: [index % 2 === 0 ? "C4" : "E4"],
+        duration: "quarter" as const,
+      })),
+    });
+    const { container } = render(<SheetStaff song={longSong} currentIndex={15} />);
+
+    const rendered = [...container.querySelectorAll("[data-event-index]")].map((el) =>
+      Number(el.getAttribute("data-event-index")),
+    );
+    expect(rendered).toHaveLength(8);
+    expect(rendered[0]).toBe(14); // current - 1
+    expect(rendered).toContain(15);
+  });
+
+  it("renders a bass clef song with the bass symbol", () => {
+    const bassSong = makeSong({
+      clef: "bass",
+      events: [
+        { noteIds: ["C3"], duration: "quarter" },
+        { noteIds: ["D3"], duration: "quarter" },
+        { noteIds: ["E3"], duration: "quarter" },
+        { noteIds: ["F3"], duration: "quarter" },
+      ],
+    });
+    const { container } = render(<SheetStaff song={bassSong} currentIndex={0} />);
+
+    expect(container.querySelector(".bass-clef")).not.toBeNull();
+  });
+});

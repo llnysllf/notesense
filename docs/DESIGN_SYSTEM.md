@@ -35,6 +35,7 @@ The primary app shell must keep these states intentional:
 - Feedback/status chips: ready, listening/live, saved, correct, wrong, and storage/error text.
 - Stats panel: stat tiles, mastery map, insight chart, session history, and empty states.
 - Data controls: import/export controls stay reachable and visibly focused.
+- Song sheet: current-event highlight, wrong-answer flash, completed-event dimming, rhythm glyphs, and accidental markings stay legible in both themes.
 
 ## Accessibility And Motion
 

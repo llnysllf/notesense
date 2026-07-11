@@ -36,6 +36,16 @@ test("matches the pitch-training shell", async ({ page }) => {
   });
 });
 
+test("matches the songs shell", async ({ page }) => {
+  await page.goto("/");
+  await page.getByRole("button", { name: "Songs" }).click();
+  await expect(page.getByRole("heading", { name: "Song library" })).toBeVisible();
+
+  await expect(page).toHaveScreenshot("songs-shell.png", {
+    fullPage: true,
+  });
+});
+
 // Brand-colored controls are a small share of full-page pixels, so a palette
 // change can slip under the page-level diff ratio. These element snapshots
 // are dominated by brand fills: any re-theme flips most of their pixels.

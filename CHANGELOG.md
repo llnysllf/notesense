@@ -4,6 +4,10 @@ All notable changes to NoteSense are documented here. The format follows [Keep a
 
 ## [Unreleased]
 
+### Added
+
+- Song sheet reading: a new Songs section with a built-in public-domain song library (Ode to Joy, Twinkle Twinkle, Mary Had a Little Lamb, Amazing Grace, When the Saints, Fur Elise opening), self-paced note-by-note play-through on a rendered staff with rhythm notation, sheet accidentals, wrong-note feedback, and per-song best accuracy and completion tracking stored locally
+
 ### Changed
 
 - Re-themed the interface in indigo and amber, replacing the green conservatory palette in both light and dark modes
