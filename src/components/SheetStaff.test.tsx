@@ -118,9 +118,9 @@ describe("SheetStaff", () => {
     });
     const { container, rerender } = render(<SheetStaff song={longSong} currentIndex={0} />);
 
-    // Every event is on the sheet, split into 10-per-system rows.
+    // Every event is on the sheet, split into 12-per-system rows.
     expect(container.querySelectorAll("[data-event-index]")).toHaveLength(30);
-    expect(container.querySelector("svg")?.getAttribute("viewBox")).toBe("0 0 640 516");
+    expect(container.querySelector("svg")?.getAttribute("viewBox")).toBe("0 0 800 450");
 
     const positionOf = (index: number) =>
       getEventGroup(container, index)!.querySelector(".sheet-note-head")!.getAttribute("cx");

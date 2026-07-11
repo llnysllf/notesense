@@ -13,13 +13,13 @@ type SheetStaffProps = {
 // shown by coloring the note itself and a caret under the staff, so the
 // staff lines stay fully visible.
 const STAFF_LINE_OFFSETS = [56, 72, 88, 104, 120];
-const EVENTS_PER_SYSTEM = 10;
-const SYSTEM_HEIGHT = 172;
-const SHEET_WIDTH = 640;
-const FIRST_EVENT_X = 118;
-const EVENT_SPACING = 52;
+const EVENTS_PER_SYSTEM = 12;
+const SYSTEM_HEIGHT = 150;
+const SHEET_WIDTH = 800;
+const FIRST_EVENT_X = 112;
+const EVENT_SPACING = 56;
 const STAFF_X_START = 18;
-const STAFF_X_END = 622;
+const STAFF_X_END = 782;
 const STEM_LENGTH = 42;
 const HEAD_RX = 10;
 const HEAD_RY = 7;
