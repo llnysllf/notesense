@@ -843,39 +843,43 @@ h3 {
   font-size: 72px;
 }
 
+/* Every mark on the printed score (lines, noteheads, stems, barlines,
+   accidentals, time signature) shares one ink color with .staff-line,
+   the way a single pen draws real sheet music. Mixing in --color-ink
+   here reads as a faint, inconsistent tint against a dark background. */
 .sheet-note-head {
-  fill: var(--color-ink);
+  fill: var(--color-text);
 }
 
 .sheet-note-head.hollow {
   fill: var(--color-surface);
-  stroke: var(--color-ink);
+  stroke: var(--color-text);
   stroke-width: 2.5;
 }
 
 .sheet-stem,
 .sheet-flag {
-  stroke: var(--color-ink);
+  stroke: var(--color-text);
   fill: none;
   stroke-linecap: round;
   stroke-width: 3;
 }
 
 .sheet-accidental {
-  fill: var(--color-ink);
+  fill: var(--color-text);
   font-size: 20px;
   font-weight: 700;
 }
 
 .sheet-time-signature {
-  fill: var(--color-ink);
+  fill: var(--color-text);
   font-size: 22px;
   font-weight: 800;
   text-anchor: middle;
 }
 
 .sheet-barline {
-  stroke: var(--color-ink);
+  stroke: var(--color-text);
   stroke-width: 2;
   opacity: 0.5;
 }
