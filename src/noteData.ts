@@ -379,6 +379,32 @@ function createPianoKeys(): PianoKey[] {
 export const PIANO_KEYS = createPianoKeys();
 export const PIANO_WHITE_KEY_COUNT = PIANO_KEYS.filter((key) => !key.isBlack).length;
 
+// Sheet placement for any 88-key note id ("C4", "F#3"): sharps sit on the
+// same staff line as their natural letter and carry an accidental glyph.
+export type SheetNotePlacement = {
+  staffY: number;
+  ledgerLineYs: number[];
+  isSharp: boolean;
+};
+
+export function getNoteFrequency(noteId: string): number | undefined {
+  const key = getPianoKeyById(noteId);
+  return key ? getFrequencyFromMidi(key.midi) : undefined;
+}
+
+export function getSheetNotePlacement(noteId: string, clef: StaffClef): SheetNotePlacement | undefined {
+  const key = getPianoKeyById(noteId);
+  if (!key) return undefined;
+
+  const staffY = getStaffY(key.naturalName, key.octave, clef);
+
+  return {
+    staffY,
+    ledgerLineYs: getLedgerLineYs(staffY),
+    isSharp: key.isBlack,
+  };
+}
+
 export function getPianoKeyById(noteId: string): PianoKey | undefined {
   return PIANO_KEYS.find((key) => key.id === noteId);
 }

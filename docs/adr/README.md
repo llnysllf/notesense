@@ -69,3 +69,4 @@ Architecture Decision Records document durable product and engineering decisions
 - [ADR 0052: Add Accessibility Conformance Review Contract](0052-add-accessibility-conformance-review-contract.md) - Accepted
 - [ADR 0053: Add I18n Readiness Contract](0053-add-i18n-readiness-contract.md) - Accepted
 - [ADR 0054: Add SBOM Generation Gate](0054-add-sbom-generation-gate.md) - Accepted
+- [ADR 0055: Add Song Sheet Reading](0055-add-song-sheet-reading.md) - Accepted

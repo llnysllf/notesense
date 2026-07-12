@@ -7,8 +7,11 @@ export default defineConfig({
   expect: {
     timeout: 5_000,
     toHaveScreenshot: {
-      maxDiffPixelRatio: 0.01,
-      threshold: 0.2,
+      // Tight enough that accent-scale changes (active pills, buttons,
+      // ribbons) fail the full-page shells: a 0.01 ratio once let a full
+      // brand re-theme pass because changed accents covered <1% of pixels.
+      maxDiffPixelRatio: 0.002,
+      threshold: 0.12,
     },
   },
   reporter: process.env.CI ? "github" : [["list"], ["html", { open: "never" }]],
