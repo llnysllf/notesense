@@ -93,13 +93,13 @@ describe("SheetStaff", () => {
     expect(chord.querySelectorAll(".sheet-stem")).toHaveLength(1);
   });
 
-  it("draws ledger lines for notes outside the staff", () => {
+  it("draws ledger lines for notes outside the staff without clipping them into the next system", () => {
     const lowSong = makeSong({
       events: [
         { noteIds: ["C4"], duration: "quarter" },
         { noteIds: ["A3"], duration: "quarter" },
-        { noteIds: ["B3"], duration: "quarter" },
-        { noteIds: ["C4"], duration: "quarter" },
+        { noteIds: ["G3"], duration: "quarter" },
+        { noteIds: ["F3"], duration: "quarter" },
       ],
     });
     const { container } = render(<SheetStaff song={lowSong} currentIndex={0} />);
@@ -107,6 +107,13 @@ describe("SheetStaff", () => {
     // C4 below the treble staff needs one ledger line inside its event group.
     const c4Event = getEventGroup(container, 0)!;
     expect(c4Event.querySelectorAll(".staff-line").length).toBeGreaterThanOrEqual(1);
+
+    // The lowest note (F3, three ledger lines below the staff) plus its
+    // cursor caret must stay inside the single system's height.
+    const f3Event = getEventGroup(container, 3)!;
+    const noteHeadY = Number(f3Event.querySelector(".sheet-note-head")!.getAttribute("cy"));
+    const systemHeight = Number(container.querySelector("svg")!.getAttribute("viewBox")!.split(" ")[3]);
+    expect(noteHeadY).toBeLessThan(systemHeight);
   });
 
   it("renders the whole song statically across systems and never moves notes", () => {
@@ -120,7 +127,7 @@ describe("SheetStaff", () => {
 
     // Every event is on the sheet, split into 12-per-system rows.
     expect(container.querySelectorAll("[data-event-index]")).toHaveLength(30);
-    expect(container.querySelector("svg")?.getAttribute("viewBox")).toBe("0 0 800 450");
+    expect(container.querySelector("svg")?.getAttribute("viewBox")).toBe("0 0 800 630");
 
     const positionOf = (index: number) =>
       getEventGroup(container, index)!.querySelector(".sheet-note-head")!.getAttribute("cx");

@@ -65,8 +65,8 @@ describe("SongLibrary", () => {
   it("shows difficulty chips and note ranges, ordered easiest to hardest", () => {
     const { container } = render(<SongLibrary songs={BUILT_IN_SONGS} songProgress={{}} onOpenSong={vi.fn()} />);
 
-    expect(screen.getAllByText("Beginner").length).toBeGreaterThanOrEqual(3);
-    expect(screen.getAllByText("Intermediate").length).toBeGreaterThanOrEqual(2);
+    expect(screen.getAllByText("Beginner").length).toBeGreaterThanOrEqual(6);
+    expect(screen.getAllByText("Intermediate").length).toBeGreaterThanOrEqual(8);
     expect(screen.getAllByText("Advanced").length).toBeGreaterThanOrEqual(2);
     expect(screen.getByText(/14 notes \| Treble clef \| C4-A4/)).toBeInTheDocument();
 

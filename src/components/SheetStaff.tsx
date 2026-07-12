@@ -14,7 +14,7 @@ type SheetStaffProps = {
 // staff lines stay fully visible.
 const STAFF_LINE_OFFSETS = [56, 72, 88, 104, 120];
 const EVENTS_PER_SYSTEM = 12;
-const SYSTEM_HEIGHT = 150;
+const SYSTEM_HEIGHT = 210;
 const SHEET_WIDTH = 800;
 const FIRST_EVENT_X = 112;
 const EVENT_SPACING = 56;

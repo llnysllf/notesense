@@ -117,7 +117,7 @@ describe("describeSongEvent", () => {
 
 describe("BUILT_IN_SONGS", () => {
   it("provides at least ten validated public-domain songs", () => {
-    expect(BUILT_IN_SONGS.length).toBeGreaterThanOrEqual(10);
+    expect(BUILT_IN_SONGS.length).toBeGreaterThanOrEqual(18);
     for (const builtIn of BUILT_IN_SONGS) {
       expect(builtIn.source).toBe("builtin");
       expect(builtIn.events.length).toBeGreaterThanOrEqual(4);
