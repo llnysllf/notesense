@@ -159,6 +159,64 @@ export function normalizeImportedSongs(value: unknown): Song[] {
   return songs;
 }
 
+export type SongDifficulty = "beginner" | "intermediate" | "advanced";
+
+export type SongNoteRange = {
+  lowestNoteId: string;
+  highestNoteId: string;
+};
+
+// Lowest and highest note across the song, for library display and for
+// matching songs against a learner's comfortable keyboard range.
+export function getSongNoteRange(song: Song): SongNoteRange {
+  let lowest: { noteId: string; midi: number } | undefined;
+  let highest: { noteId: string; midi: number } | undefined;
+
+  for (const event of song.events) {
+    for (const noteId of event.noteIds) {
+      const midi = noteIdToMidi(noteId);
+      if (midi === undefined) continue;
+      if (!lowest || midi < lowest.midi) lowest = { noteId, midi };
+      if (!highest || midi > highest.midi) highest = { noteId, midi };
+    }
+  }
+
+  return {
+    lowestNoteId: lowest?.noteId ?? "C4",
+    highestNoteId: highest?.noteId ?? "C4",
+  };
+}
+
+// Difficulty is derived from measurable song properties instead of being
+// hand-assigned, so imported songs are graded by the same rules as
+// built-ins: range span, length, accidentals, eighth notes, and chords
+// each add difficulty points.
+export function getSongDifficulty(song: Song): SongDifficulty {
+  const range = getSongNoteRange(song);
+  const span = (noteIdToMidi(range.highestNoteId) ?? 60) - (noteIdToMidi(range.lowestNoteId) ?? 60);
+
+  let score = 0;
+  if (span >= 15) score += 2;
+  else if (span >= 10) score += 1;
+
+  if (song.events.length > 40) score += 2;
+  else if (song.events.length > 16) score += 1;
+
+  if (song.events.some((event) => event.noteIds.some((noteId) => noteId.includes("#")))) score += 1;
+  if (song.events.some((event) => event.duration === "eighth")) score += 1;
+  if (song.events.some((event) => event.noteIds.length > 1)) score += 1;
+
+  if (score <= 1) return "beginner";
+  return score <= 3 ? "intermediate" : "advanced";
+}
+
+const DIFFICULTY_RANK: Record<SongDifficulty, number> = { beginner: 0, intermediate: 1, advanced: 2 };
+
+export function compareSongsByDifficulty(a: Song, b: Song): number {
+  const rankDelta = DIFFICULTY_RANK[getSongDifficulty(a)] - DIFFICULTY_RANK[getSongDifficulty(b)];
+  return rankDelta !== 0 ? rankDelta : a.events.length - b.events.length;
+}
+
 function clampAccuracy(value: unknown): number {
   const numeric = typeof value === "number" && Number.isFinite(value) ? value : 0;
   return Math.min(100, Math.max(0, Math.round(numeric)));

@@ -53,11 +53,26 @@ describe("SongLibrary", () => {
     expect(screen.getByText(/4 notes \| Bass clef/)).toBeInTheDocument();
   });
 
-  it("opens the chosen song", () => {
+  it("opens the chosen song from the sorted list", () => {
     const onOpenSong = vi.fn();
     render(<SongLibrary songs={BUILT_IN_SONGS} songProgress={{}} onOpenSong={onOpenSong} />);
 
     fireEvent.click(screen.getAllByRole("button", { name: "Practice" })[0]!);
-    expect(onOpenSong).toHaveBeenCalledWith(BUILT_IN_SONGS[0]);
+    // The list is sorted easiest-first, so the first card is the shortest beginner song.
+    expect(onOpenSong).toHaveBeenCalledWith(BUILT_IN_SONGS.find((song) => song.id === "builtin-twinkle-twinkle"));
+  });
+
+  it("shows difficulty chips and note ranges, ordered easiest to hardest", () => {
+    const { container } = render(<SongLibrary songs={BUILT_IN_SONGS} songProgress={{}} onOpenSong={vi.fn()} />);
+
+    expect(screen.getAllByText("Beginner").length).toBeGreaterThanOrEqual(3);
+    expect(screen.getAllByText("Intermediate").length).toBeGreaterThanOrEqual(2);
+    expect(screen.getAllByText("Advanced").length).toBeGreaterThanOrEqual(2);
+    expect(screen.getByText(/14 notes \| Treble clef \| C4-A4/)).toBeInTheDocument();
+
+    const chips = [...container.querySelectorAll(".difficulty-chip")].map((chip) => chip.textContent);
+    const firstAdvanced = chips.indexOf("Advanced");
+    const lastBeginner = chips.lastIndexOf("Beginner");
+    expect(lastBeginner).toBeLessThan(firstAdvanced);
   });
 });

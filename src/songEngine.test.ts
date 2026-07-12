@@ -8,6 +8,7 @@ import {
   getPlaythroughSummary,
   startPlaythrough,
 } from "./songEngine";
+import { getSongDifficulty } from "./songEngine";
 import { BUILT_IN_SONGS, buildBuiltInSongs, getSongById } from "./songLibraryData";
 
 const song: Song = {
@@ -115,8 +116,8 @@ describe("describeSongEvent", () => {
 });
 
 describe("BUILT_IN_SONGS", () => {
-  it("provides at least six validated public-domain songs", () => {
-    expect(BUILT_IN_SONGS.length).toBeGreaterThanOrEqual(6);
+  it("provides at least ten validated public-domain songs", () => {
+    expect(BUILT_IN_SONGS.length).toBeGreaterThanOrEqual(10);
     for (const builtIn of BUILT_IN_SONGS) {
       expect(builtIn.source).toBe("builtin");
       expect(builtIn.events.length).toBeGreaterThanOrEqual(4);
@@ -138,6 +139,11 @@ describe("BUILT_IN_SONGS", () => {
     expect(() => buildBuiltInSongs([{ id: "builtin-bad", title: " ", events: [] }])).toThrow(
       "Built-in song failed validation: builtin-bad",
     );
+  });
+
+  it("covers all three difficulty levels", () => {
+    const difficulties = new Set(BUILT_IN_SONGS.map((builtIn) => getSongDifficulty(builtIn)));
+    expect(difficulties).toEqual(new Set(["beginner", "intermediate", "advanced"]));
   });
 
   it("keeps all built-ins single-note in the foundation release", () => {

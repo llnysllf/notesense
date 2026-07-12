@@ -6,7 +6,7 @@ All notable changes to NoteSense are documented here. The format follows [Keep a
 
 ### Added
 
-- Song sheet reading: a new Songs section with a built-in public-domain song library (Ode to Joy, Twinkle Twinkle, Mary Had a Little Lamb, Amazing Grace, When the Saints, Fur Elise opening), self-paced note-by-note play-through on a rendered staff with rhythm notation, sheet accidentals, wrong-note feedback, and per-song best accuracy and completion tracking stored locally
+- Song sheet reading: a new Songs section with eleven built-in public-domain songs (Ode to Joy, Twinkle Twinkle, Mary Had a Little Lamb, Amazing Grace, When the Saints, Jingle Bells, Yankee Doodle, Row Row Row Your Boat, Silent Night, Greensleeves, Fur Elise opening), self-paced note-by-note play-through on a static printed-style score with rhythm notation, sheet accidentals, wrong-note feedback, derived difficulty levels (beginner/intermediate/advanced), per-song note ranges, and per-song best accuracy and completion tracking stored locally
 
 ### Changed
 

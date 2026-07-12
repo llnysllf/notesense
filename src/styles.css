@@ -935,6 +935,36 @@ h3 {
   font-size: 0.92rem;
 }
 
+.song-card-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.difficulty-chip {
+  padding: 2px 10px;
+  border-radius: var(--radius-pill);
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+}
+
+.difficulty-beginner {
+  background: var(--color-success-bg);
+  color: var(--color-success);
+}
+
+.difficulty-intermediate {
+  background: var(--color-accent-bg);
+  color: var(--color-accent);
+}
+
+.difficulty-advanced {
+  background: var(--color-danger-bg);
+  color: var(--color-danger);
+}
+
 .song-player-header {
   display: flex;
   align-items: flex-start;

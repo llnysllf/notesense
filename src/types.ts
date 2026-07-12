@@ -16,6 +16,7 @@ export type {
   ReadingRange,
   RoundLength,
   Song,
+  SongDifficulty,
   SongEvent,
   SongProgress,
   SongProgressEntry,
