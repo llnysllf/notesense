@@ -1,5 +1,5 @@
 import type { Song, SongProgress } from "../types";
-import { compareSongsByDifficulty, getSongDifficulty, getSongNoteRange } from "../songEngine";
+import { compareSongsByDifficulty, getSongDifficulty, getSongNoteRange, getTimeSignatureLabel } from "../songEngine";
 
 type SongLibraryProps = {
   songs: Song[];
@@ -38,7 +38,7 @@ function SongLibrary({ songs, songProgress, onOpenSong }: SongLibraryProps) {
                 </div>
                 <span className="song-meta">
                   {song.events.length} notes | {song.clef === "treble" ? "Treble clef" : "Bass clef"} |{" "}
-                  {range.lowestNoteId}-{range.highestNoteId}
+                  {range.lowestNoteId}-{range.highestNoteId} | {getTimeSignatureLabel(song.timeSignature)} time
                   {progress
                     ? ` | Best ${progress.bestAccuracy}% | Completed ${progress.completions}x`
                     : " | Not played yet"}

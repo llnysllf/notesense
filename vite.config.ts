@@ -90,6 +90,7 @@ export default defineConfig({
         "src/hooks/useSongSession.ts",
         "shared/src/practiceData.ts",
         "shared/src/songData.ts",
+        "shared/src/songAnalysis.ts",
         "shared/src/merge.ts",
       ],
       thresholds: {

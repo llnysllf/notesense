@@ -27,7 +27,15 @@ const LEGACY_STORAGE_KEY = "notesense.progress.v1";
 const SETTINGS_STORAGE_KEY = "notesense.settings.v3";
 const SONG_PROGRESS_STORAGE_KEY = "notesense.songProgress.v1";
 
-export { compareSongsByDifficulty, getSongDifficulty, getSongNoteRange, normalizeSong } from "@notesense/shared";
+export {
+  compareSongsByDifficulty,
+  DEFAULT_TIME_SIGNATURE,
+  getEventMeasureStarts,
+  getSongDifficulty,
+  getSongNoteRange,
+  getTimeSignatureLabel,
+  normalizeSong,
+} from "@notesense/shared";
 export {
   createExportFileName,
   defaultSettings,

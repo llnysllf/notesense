@@ -1,5 +1,6 @@
 import { fireEvent, render, screen } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
+import { DEFAULT_TIME_SIGNATURE } from "../songEngine";
 import type { Song } from "../types";
 import { startPlaythrough, type SongPlaythrough } from "../songEngine";
 import SongPlayer from "./SongPlayer";
@@ -9,6 +10,7 @@ const song: Song = {
   title: "Player Test",
   source: "builtin",
   clef: "treble",
+  timeSignature: DEFAULT_TIME_SIGNATURE,
   events: [
     { noteIds: ["C4"], duration: "quarter" },
     { noteIds: ["D4"], duration: "quarter" },

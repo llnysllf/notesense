@@ -1,8 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
-  compareSongsByDifficulty,
-  getSongDifficulty,
-  getSongNoteRange,
+  DEFAULT_TIME_SIGNATURE,
   MAX_CHORD_SIZE,
   MAX_IMPORTED_SONGS,
   MAX_SONG_EVENTS,
@@ -110,6 +108,51 @@ describe("normalizeSong", () => {
     expect(song?.events).toHaveLength(MAX_SONG_EVENTS);
     expect(song?.title).toHaveLength(MAX_SONG_TITLE_LENGTH);
   });
+
+  it("defaults to 4/4 time when no time signature is given", () => {
+    const song = normalizeSong({ title: "No Time Sig", events: makeEvents(4) }, "builtin");
+    expect(song?.timeSignature).toEqual(DEFAULT_TIME_SIGNATURE);
+  });
+
+  it("accepts a valid custom time signature", () => {
+    const song = normalizeSong(
+      { title: "Waltz", events: makeEvents(4), timeSignature: { beatsPerMeasure: 3, beatUnit: "quarter" } },
+      "builtin",
+    );
+    expect(song?.timeSignature).toEqual({ beatsPerMeasure: 3, beatUnit: "quarter" });
+  });
+
+  it("accepts a compound time signature", () => {
+    const song = normalizeSong(
+      { title: "Jig", events: makeEvents(4), timeSignature: { beatsPerMeasure: 6, beatUnit: "eighth" } },
+      "builtin",
+    );
+    expect(song?.timeSignature).toEqual({ beatsPerMeasure: 6, beatUnit: "eighth" });
+  });
+
+  it("falls back to 4/4 for an invalid time signature", () => {
+    expect(
+      normalizeSong(
+        { title: "Bad 1", events: makeEvents(4), timeSignature: { beatsPerMeasure: 0, beatUnit: "quarter" } },
+        "builtin",
+      )?.timeSignature,
+    ).toEqual(DEFAULT_TIME_SIGNATURE);
+    expect(
+      normalizeSong(
+        { title: "Bad 2", events: makeEvents(4), timeSignature: { beatsPerMeasure: 4, beatUnit: "sixteenth" } },
+        "builtin",
+      )?.timeSignature,
+    ).toEqual(DEFAULT_TIME_SIGNATURE);
+    expect(
+      normalizeSong(
+        { title: "Bad 3", events: makeEvents(4), timeSignature: { beatsPerMeasure: 4.5, beatUnit: "quarter" } },
+        "builtin",
+      )?.timeSignature,
+    ).toEqual(DEFAULT_TIME_SIGNATURE);
+    expect(
+      normalizeSong({ title: "Bad 4", events: makeEvents(4), timeSignature: "4/4" }, "builtin")?.timeSignature,
+    ).toEqual(DEFAULT_TIME_SIGNATURE);
+  });
 });
 
 describe("normalizeImportedSongs", () => {
@@ -166,82 +209,5 @@ describe("normalizeSongProgress", () => {
 
     expect(progress).toEqual({});
     expect(normalizeSongProgress(null)).toEqual({});
-  });
-});
-
-function makeSong(events: unknown[], title = "Made"): ReturnType<typeof normalizeSong> {
-  return normalizeSong({ title, events }, "builtin");
-}
-
-describe("getSongNoteRange", () => {
-  it("finds the lowest and highest notes across events and chords", () => {
-    const song = makeSong([
-      { noteIds: ["E4"], duration: "quarter" },
-      { noteIds: ["G3", "C5"], duration: "quarter" },
-      { noteIds: ["A4"], duration: "quarter" },
-      { noteIds: ["B4"], duration: "quarter" },
-    ]);
-
-    expect(getSongNoteRange(song!)).toEqual({ lowestNoteId: "G3", highestNoteId: "C5" });
-  });
-});
-
-describe("getSongDifficulty", () => {
-  it("grades a short narrow natural melody as beginner", () => {
-    const song = makeSong([
-      { noteIds: ["C4"], duration: "quarter" },
-      { noteIds: ["D4"], duration: "quarter" },
-      { noteIds: ["E4"], duration: "quarter" },
-      { noteIds: ["G4"], duration: "half" },
-    ]);
-    expect(getSongDifficulty(song!)).toBe("beginner");
-  });
-
-  it("grades wider or eighth-note melodies as intermediate", () => {
-    const song = makeSong([
-      { noteIds: ["G3"], duration: "quarter" },
-      { noteIds: ["C4"], duration: "eighth" },
-      { noteIds: ["E4"], duration: "eighth" },
-      { noteIds: ["G4"], duration: "quarter" },
-    ]);
-    expect(getSongDifficulty(song!)).toBe("intermediate");
-  });
-
-  it("grades accidental-heavy wide melodies as advanced", () => {
-    const song = makeSong(
-      Array.from({ length: 20 }, (_, index) => ({
-        noteIds: [index % 2 === 0 ? "C4" : index % 3 === 0 ? "F#5" : "E5"],
-        duration: index % 4 === 0 ? "eighth" : "quarter",
-      })),
-    );
-    expect(getSongDifficulty(song!)).toBe("advanced");
-  });
-});
-
-describe("compareSongsByDifficulty", () => {
-  it("orders by difficulty then by length", () => {
-    const easyShort = makeSong(
-      [
-        { noteIds: ["C4"], duration: "quarter" },
-        { noteIds: ["D4"], duration: "quarter" },
-        { noteIds: ["E4"], duration: "quarter" },
-        { noteIds: ["F4"], duration: "quarter" },
-      ],
-      "Easy Short",
-    )!;
-    const easyLong = makeSong(
-      Array.from({ length: 30 }, () => ({ noteIds: ["C4"], duration: "quarter" })),
-      "Easy Long",
-    )!;
-    const hard = makeSong(
-      Array.from({ length: 20 }, (_, index) => ({
-        noteIds: [index % 2 === 0 ? "C4" : "F#5"],
-        duration: "eighth",
-      })),
-      "Hard",
-    )!;
-
-    const sorted = [hard, easyLong, easyShort].sort(compareSongsByDifficulty);
-    expect(sorted.map((song) => song.title)).toEqual(["Easy Short", "Easy Long", "Hard"]);
   });
 });

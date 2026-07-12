@@ -14,11 +14,20 @@ export type SongClef = "treble" | "bass";
 
 export type SongSource = "builtin" | "imported";
 
+// The beat unit is expressed as the note duration worth one beat (quarter
+// for 4/4 and 3/4, eighth for compound meters like 6/8), matching how time
+// signatures are actually notated: beatsPerMeasure / beatUnit.
+export type TimeSignature = {
+  beatsPerMeasure: number;
+  beatUnit: NoteDuration;
+};
+
 export type Song = {
   id: string;
   title: string;
   source: SongSource;
   clef: SongClef;
+  timeSignature: TimeSignature;
   events: SongEvent[];
 };
 
@@ -38,6 +47,11 @@ export const MAX_SONG_TITLE_LENGTH = 80;
 export const MAX_MIDI_FILE_BYTES = 512 * 1024;
 
 export const NOTE_DURATIONS: NoteDuration[] = ["whole", "half", "quarter", "eighth"];
+
+export const DEFAULT_TIME_SIGNATURE: TimeSignature = { beatsPerMeasure: 4, beatUnit: "quarter" };
+
+const MIN_BEATS_PER_MEASURE = 1;
+const MAX_BEATS_PER_MEASURE = 16;
 
 const NOTE_ID_PATTERN = /^([A-G]#?)(-?\d)$/;
 const SEMITONE_BY_NAME: Record<string, number> = {
@@ -101,6 +115,26 @@ function normalizeSongEvent(value: unknown): SongEvent | undefined {
   };
 }
 
+function normalizeTimeSignature(value: unknown): TimeSignature {
+  if (typeof value !== "object" || value === null) return DEFAULT_TIME_SIGNATURE;
+
+  const candidate = value as { beatsPerMeasure?: unknown; beatUnit?: unknown };
+  const beatsPerMeasure = candidate.beatsPerMeasure;
+  const beatUnit = candidate.beatUnit;
+
+  if (
+    typeof beatsPerMeasure !== "number" ||
+    !Number.isInteger(beatsPerMeasure) ||
+    beatsPerMeasure < MIN_BEATS_PER_MEASURE ||
+    beatsPerMeasure > MAX_BEATS_PER_MEASURE ||
+    !isNoteDuration(beatUnit)
+  ) {
+    return DEFAULT_TIME_SIGNATURE;
+  }
+
+  return { beatsPerMeasure, beatUnit };
+}
+
 export function deriveSongClef(events: SongEvent[]): SongClef {
   const midis = events
     .flatMap((event) => event.noteIds)
@@ -118,7 +152,7 @@ export function deriveSongClef(events: SongEvent[]): SongClef {
 export function normalizeSong(value: unknown, source: SongSource): Song | undefined {
   if (typeof value !== "object" || value === null) return undefined;
 
-  const candidate = value as { id?: unknown; title?: unknown; events?: unknown };
+  const candidate = value as { id?: unknown; title?: unknown; events?: unknown; timeSignature?: unknown };
   if (typeof candidate.title !== "string" || !Array.isArray(candidate.events)) return undefined;
 
   const title = candidate.title.trim().slice(0, MAX_SONG_TITLE_LENGTH);
@@ -135,7 +169,14 @@ export function normalizeSong(value: unknown, source: SongSource): Song | undefi
       ? candidate.id.trim().slice(0, 120)
       : `${source}-${title.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`;
 
-  return { id, title, source, clef: deriveSongClef(events), events };
+  return {
+    id,
+    title,
+    source,
+    clef: deriveSongClef(events),
+    timeSignature: normalizeTimeSignature(candidate.timeSignature),
+    events,
+  };
 }
 
 export function normalizeImportedSongs(value: unknown): Song[] {
@@ -157,64 +198,6 @@ export function normalizeImportedSongs(value: unknown): Song[] {
   }
 
   return songs;
-}
-
-export type SongDifficulty = "beginner" | "intermediate" | "advanced";
-
-export type SongNoteRange = {
-  lowestNoteId: string;
-  highestNoteId: string;
-};
-
-// Lowest and highest note across the song, for library display and for
-// matching songs against a learner's comfortable keyboard range.
-export function getSongNoteRange(song: Song): SongNoteRange {
-  let lowest: { noteId: string; midi: number } | undefined;
-  let highest: { noteId: string; midi: number } | undefined;
-
-  for (const event of song.events) {
-    for (const noteId of event.noteIds) {
-      const midi = noteIdToMidi(noteId);
-      if (midi === undefined) continue;
-      if (!lowest || midi < lowest.midi) lowest = { noteId, midi };
-      if (!highest || midi > highest.midi) highest = { noteId, midi };
-    }
-  }
-
-  return {
-    lowestNoteId: lowest?.noteId ?? "C4",
-    highestNoteId: highest?.noteId ?? "C4",
-  };
-}
-
-// Difficulty is derived from measurable song properties instead of being
-// hand-assigned, so imported songs are graded by the same rules as
-// built-ins: range span, length, accidentals, eighth notes, and chords
-// each add difficulty points.
-export function getSongDifficulty(song: Song): SongDifficulty {
-  const range = getSongNoteRange(song);
-  const span = (noteIdToMidi(range.highestNoteId) ?? 60) - (noteIdToMidi(range.lowestNoteId) ?? 60);
-
-  let score = 0;
-  if (span >= 15) score += 2;
-  else if (span >= 10) score += 1;
-
-  if (song.events.length > 40) score += 2;
-  else if (song.events.length > 16) score += 1;
-
-  if (song.events.some((event) => event.noteIds.some((noteId) => noteId.includes("#")))) score += 1;
-  if (song.events.some((event) => event.duration === "eighth")) score += 1;
-  if (song.events.some((event) => event.noteIds.length > 1)) score += 1;
-
-  if (score <= 1) return "beginner";
-  return score <= 3 ? "intermediate" : "advanced";
-}
-
-const DIFFICULTY_RANK: Record<SongDifficulty, number> = { beginner: 0, intermediate: 1, advanced: 2 };
-
-export function compareSongsByDifficulty(a: Song, b: Song): number {
-  const rankDelta = DIFFICULTY_RANK[getSongDifficulty(a)] - DIFFICULTY_RANK[getSongDifficulty(b)];
-  return rankDelta !== 0 ? rankDelta : a.events.length - b.events.length;
 }
 
 function clampAccuracy(value: unknown): number {

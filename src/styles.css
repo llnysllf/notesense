@@ -867,6 +867,19 @@ h3 {
   font-weight: 700;
 }
 
+.sheet-time-signature {
+  fill: var(--color-ink);
+  font-size: 22px;
+  font-weight: 800;
+  text-anchor: middle;
+}
+
+.sheet-barline {
+  stroke: var(--color-ink);
+  stroke-width: 2;
+  opacity: 0.5;
+}
+
 .sheet-event.done {
   opacity: 0.38;
 }

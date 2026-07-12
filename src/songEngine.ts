@@ -1,6 +1,13 @@
 import type { Song, SongEvent } from "./types";
 
-export { compareSongsByDifficulty, getSongDifficulty, getSongNoteRange } from "./storage";
+export {
+  compareSongsByDifficulty,
+  DEFAULT_TIME_SIGNATURE,
+  getEventMeasureStarts,
+  getSongDifficulty,
+  getSongNoteRange,
+  getTimeSignatureLabel,
+} from "./storage";
 
 // Pure playthrough logic for song sheet reading. Framework-free, like
 // practiceEngine.ts: the hook layer owns timers, audio, and persistence.

@@ -1,5 +1,5 @@
 import { normalizeSong } from "./storage";
-import type { Song, SongEvent } from "./types";
+import type { Song, SongEvent, TimeSignature } from "./types";
 
 // Built-in practice songs. Every melody here is public domain: traditional
 // tunes or works whose composers died well over a century ago (Beethoven,
@@ -8,6 +8,7 @@ import type { Song, SongEvent } from "./types";
 export type RawSong = {
   id: string;
   title: string;
+  timeSignature?: TimeSignature;
   events: SongEvent[];
 };
 
@@ -107,6 +108,7 @@ const RAW_BUILT_IN_SONGS: RawSong[] = [
   {
     id: "builtin-amazing-grace",
     title: "Amazing Grace",
+    timeSignature: { beatsPerMeasure: 3, beatUnit: "quarter" },
     events: [
       note("G3"),
       note("C4", "half"),
@@ -245,6 +247,7 @@ const RAW_BUILT_IN_SONGS: RawSong[] = [
   {
     id: "builtin-silent-night",
     title: "Silent Night",
+    timeSignature: { beatsPerMeasure: 3, beatUnit: "quarter" },
     events: [
       note("G4", "half"),
       note("A4", "eighth"),
@@ -274,6 +277,7 @@ const RAW_BUILT_IN_SONGS: RawSong[] = [
   {
     id: "builtin-greensleeves",
     title: "Greensleeves",
+    timeSignature: { beatsPerMeasure: 6, beatUnit: "eighth" },
     events: [
       note("D4"),
       note("F4", "half"),

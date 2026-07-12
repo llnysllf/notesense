@@ -1,6 +1,6 @@
 import type { Song } from "../types";
 import { getSheetNotePlacement } from "../noteData";
-import { describeSongEvent } from "../songEngine";
+import { describeSongEvent, getEventMeasureStarts, getTimeSignatureLabel } from "../songEngine";
 
 type SheetStaffProps = {
   song: Song;
@@ -11,7 +11,8 @@ type SheetStaffProps = {
 // The whole song renders as a static score split across staff systems, like
 // printed sheet music: notes never move while playing. The current event is
 // shown by coloring the note itself and a caret under the staff, so the
-// staff lines stay fully visible.
+// staff lines stay fully visible. Barlines divide the events into measures
+// according to the song's time signature, shown once per system.
 const STAFF_LINE_OFFSETS = [56, 72, 88, 104, 120];
 const EVENTS_PER_SYSTEM = 12;
 const SYSTEM_HEIGHT = 210;
@@ -26,6 +27,10 @@ const HEAD_RY = 7;
 // Stems point up for notes on the lower half of the staff (middle line B4
 // treble sits at offset 88) and down above it, per engraving convention.
 const STEM_FLIP_OFFSET = 88;
+const TIME_SIGNATURE_X = 76;
+const BARLINE_ROW_START_X = 96;
+const BARLINE_TOP_OFFSET = 56;
+const BARLINE_BOTTOM_OFFSET = 120;
 
 type EventState = "done" | "current" | "upcoming";
 
@@ -41,14 +46,17 @@ function SheetStaff({ song, currentIndex, currentStatus = "idle" }: SheetStaffPr
   const sheetHeight = systemCount * SYSTEM_HEIGHT;
   const currentEvent = song.events[currentIndex];
   const progressLabel = `event ${Math.min(currentIndex + 1, song.events.length)} of ${song.events.length}`;
+  const [timeSignatureNumerator, timeSignatureDenominator] = getTimeSignatureLabel(song.timeSignature).split("/");
+  const timeSignatureLabel = `${getTimeSignatureLabel(song.timeSignature)} time`;
   const currentLabel = currentEvent ? `Current: ${describeSongEvent(currentEvent)}.` : "Song complete.";
+  const measureStarts = getEventMeasureStarts(song);
 
   return (
     <svg
       className="sheet-staff"
       viewBox={`0 0 ${SHEET_WIDTH} ${sheetHeight}`}
       role="img"
-      aria-label={`Sheet music for ${song.title}, ${progressLabel}. ${currentLabel}`}
+      aria-label={`Sheet music for ${song.title} in ${timeSignatureLabel}, ${progressLabel}. ${currentLabel}`}
     >
       {Array.from({ length: systemCount }, (_, systemIndex) => {
         const systemY = systemIndex * SYSTEM_HEIGHT;
@@ -68,6 +76,12 @@ function SheetStaff({ song, currentIndex, currentStatus = "idle" }: SheetStaffPr
                 className="staff-line"
               />
             ))}
+            <text className="sheet-time-signature" x={TIME_SIGNATURE_X} y={systemY + 80} aria-hidden="true">
+              {timeSignatureNumerator}
+            </text>
+            <text className="sheet-time-signature" x={TIME_SIGNATURE_X} y={systemY + 112} aria-hidden="true">
+              {timeSignatureDenominator}
+            </text>
           </g>
         );
       })}
@@ -78,6 +92,8 @@ function SheetStaff({ song, currentIndex, currentStatus = "idle" }: SheetStaffPr
         const systemY = systemIndex * SYSTEM_HEIGHT;
         const eventX = FIRST_EVENT_X + slot * EVENT_SPACING;
         const state = getEventState(eventIndex, currentIndex);
+        const showBarline = eventIndex > 0 && measureStarts[eventIndex] === true;
+        const barlineX = slot === 0 ? BARLINE_ROW_START_X : eventX - EVENT_SPACING / 2;
         const placements = event.noteIds
           .map((noteId) => ({ noteId, placement: getSheetNotePlacement(noteId, song.clef) }))
           .filter((entry): entry is { noteId: string; placement: NonNullable<typeof entry.placement> } =>
@@ -104,6 +120,16 @@ function SheetStaff({ song, currentIndex, currentStatus = "idle" }: SheetStaffPr
 
         return (
           <g key={eventIndex} className={`sheet-event ${stateClass}`} data-event-index={eventIndex}>
+            {showBarline && (
+              <line
+                className="sheet-barline"
+                data-barline="true"
+                x1={barlineX}
+                x2={barlineX}
+                y1={systemY + BARLINE_TOP_OFFSET}
+                y2={systemY + BARLINE_BOTTOM_OFFSET}
+              />
+            )}
             {state === "current" && (
               <path
                 className="sheet-cursor"

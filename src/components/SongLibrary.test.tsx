@@ -1,5 +1,6 @@
 import { fireEvent, render, screen } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
+import { DEFAULT_TIME_SIGNATURE } from "../songEngine";
 import { BUILT_IN_SONGS } from "../songLibraryData";
 import SongLibrary from "./SongLibrary";
 
@@ -28,6 +29,14 @@ describe("SongLibrary", () => {
     expect(screen.getAllByText(/Not played yet/).length).toBe(BUILT_IN_SONGS.length - 1);
   });
 
+  it("shows a non-default time signature for 3/4 songs", () => {
+    render(<SongLibrary songs={BUILT_IN_SONGS} songProgress={{}} onOpenSong={vi.fn()} />);
+
+    expect(screen.getByText(/Amazing Grace/)).toBeInTheDocument();
+    // Amazing Grace and Silent Night are both traditionally 3/4.
+    expect(screen.getAllByText(/3\/4 time/).length).toBeGreaterThanOrEqual(2);
+  });
+
   it("labels bass clef songs", () => {
     render(
       <SongLibrary
@@ -37,6 +46,7 @@ describe("SongLibrary", () => {
             title: "Bass Song",
             source: "builtin",
             clef: "bass",
+            timeSignature: DEFAULT_TIME_SIGNATURE,
             events: [
               { noteIds: ["C3"], duration: "quarter" },
               { noteIds: ["D3"], duration: "quarter" },
@@ -68,7 +78,7 @@ describe("SongLibrary", () => {
     expect(screen.getAllByText("Beginner").length).toBeGreaterThanOrEqual(6);
     expect(screen.getAllByText("Intermediate").length).toBeGreaterThanOrEqual(8);
     expect(screen.getAllByText("Advanced").length).toBeGreaterThanOrEqual(2);
-    expect(screen.getByText(/14 notes \| Treble clef \| C4-A4/)).toBeInTheDocument();
+    expect(screen.getByText(/14 notes \| Treble clef \| C4-A4 \| 4\/4 time/)).toBeInTheDocument();
 
     const chips = [...container.querySelectorAll(".difficulty-chip")].map((chip) => chip.textContent);
     const firstAdvanced = chips.indexOf("Advanced");

@@ -1,6 +1,7 @@
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 import type { Song } from "@notesense/shared";
+import { DEFAULT_TIME_SIGNATURE } from "@notesense/shared";
 import SheetStaff from "./SheetStaff";
 
 function makeSong(overrides: Partial<Song> = {}): Song {
@@ -9,6 +10,7 @@ function makeSong(overrides: Partial<Song> = {}): Song {
     title: "Test Song",
     source: "builtin",
     clef: "treble",
+    timeSignature: DEFAULT_TIME_SIGNATURE,
     events: [
       { noteIds: ["C4"], duration: "quarter" },
       { noteIds: ["D4"], duration: "half" },
@@ -24,14 +26,55 @@ function getEventGroup(container: HTMLElement, index: number) {
 }
 
 describe("SheetStaff", () => {
-  it("describes the sheet and current event for screen readers", () => {
+  it("describes the sheet, time signature, and current event for screen readers", () => {
     render(<SheetStaff song={makeSong()} currentIndex={1} />);
 
     expect(
       screen.getByRole("img", {
-        name: "Sheet music for Test Song, event 2 of 4. Current: D4, half note.",
+        name: "Sheet music for Test Song in 4/4 time, event 2 of 4. Current: D4, half note.",
       }),
     ).toBeInTheDocument();
+  });
+
+  it("shows the time signature on every staff system", () => {
+    const longSong = makeSong({
+      timeSignature: { beatsPerMeasure: 3, beatUnit: "quarter" },
+      events: Array.from({ length: 15 }, () => ({ noteIds: ["C4"], duration: "quarter" as const })),
+    });
+    const { container } = render(<SheetStaff song={longSong} currentIndex={0} />);
+
+    expect(container.querySelectorAll(".sheet-time-signature")).toHaveLength(4); // 2 systems x (numerator + denominator)
+    const glyphs = [...container.querySelectorAll(".sheet-time-signature")].map((el) => el.textContent);
+    expect(glyphs).toEqual(["3", "4", "3", "4"]);
+  });
+
+  it("draws a barline at every measure boundary but never before the first note", () => {
+    const song = makeSong({
+      events: Array.from({ length: 9 }, () => ({ noteIds: ["C4"], duration: "quarter" as const })),
+    });
+    const { container } = render(<SheetStaff song={song} currentIndex={0} />);
+
+    // 4/4, quarter notes: measures start at events 0, 4, 8; only 4 and 8 draw a barline.
+    expect(getEventGroup(container, 0)!.querySelector("[data-barline]")).toBeNull();
+    expect(getEventGroup(container, 1)!.querySelector("[data-barline]")).toBeNull();
+    expect(getEventGroup(container, 4)!.querySelector("[data-barline]")).not.toBeNull();
+    expect(getEventGroup(container, 8)!.querySelector("[data-barline]")).not.toBeNull();
+  });
+
+  it("draws barlines for a 3/4 waltz and a compound 6/8 meter", () => {
+    const waltz = makeSong({
+      timeSignature: { beatsPerMeasure: 3, beatUnit: "quarter" },
+      events: Array.from({ length: 6 }, () => ({ noteIds: ["C4"], duration: "quarter" as const })),
+    });
+    const { container: waltzContainer } = render(<SheetStaff song={waltz} currentIndex={0} />);
+    expect(waltzContainer.querySelectorAll("[data-barline]")).toHaveLength(1); // one barline before event 3
+
+    const jig = makeSong({
+      timeSignature: { beatsPerMeasure: 6, beatUnit: "eighth" },
+      events: Array.from({ length: 12 }, () => ({ noteIds: ["C4"], duration: "eighth" as const })),
+    });
+    const { container: jigContainer } = render(<SheetStaff song={jig} currentIndex={0} />);
+    expect(jigContainer.querySelectorAll("[data-barline]")).toHaveLength(1); // one barline before event 6
   });
 
   it("marks done, current, and upcoming events with a single cursor caret", () => {
@@ -141,6 +184,7 @@ describe("SheetStaff", () => {
   it("renders a bass clef song with the bass symbol", () => {
     const bassSong = makeSong({
       clef: "bass",
+      timeSignature: DEFAULT_TIME_SIGNATURE,
       events: [
         { noteIds: ["C3"], duration: "quarter" },
         { noteIds: ["D3"], duration: "quarter" },

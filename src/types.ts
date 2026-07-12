@@ -20,6 +20,7 @@ export type {
   SongEvent,
   SongProgress,
   SongProgressEntry,
+  TimeSignature,
 } from "@notesense/shared";
 
 export type StaffClef = "treble" | "bass";

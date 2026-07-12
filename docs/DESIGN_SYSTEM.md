@@ -35,7 +35,7 @@ The primary app shell must keep these states intentional:
 - Feedback/status chips: ready, listening/live, saved, correct, wrong, and storage/error text.
 - Stats panel: stat tiles, mastery map, insight chart, session history, and empty states.
 - Data controls: import/export controls stay reachable and visibly focused.
-- Song sheet: the current note is shown in the brand color with a caret under the staff (never a fill that hides staff lines), wrong answers recolor the current note in the danger color, completed events dim, and rhythm glyphs plus accidental markings stay legible in both themes; the score is static and notes never move while playing.
+- Song sheet: the current note is shown in the brand color with a caret under the staff (never a fill that hides staff lines), wrong answers recolor the current note in the danger color, completed events dim, and rhythm glyphs plus accidental markings stay legible in both themes; the score is static and notes never move while playing. The time signature is shown at the start of every staff system, with barlines dividing events into measures.
 
 ## Accessibility And Motion
 

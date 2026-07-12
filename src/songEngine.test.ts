@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import type { Song } from "@notesense/shared";
+import { DEFAULT_TIME_SIGNATURE } from "@notesense/shared";
 import {
   applyAnswer,
   checkAnswer,
@@ -16,6 +17,7 @@ const song: Song = {
   title: "Test",
   source: "builtin",
   clef: "treble",
+  timeSignature: DEFAULT_TIME_SIGNATURE,
   events: [
     { noteIds: ["C4"], duration: "quarter" },
     { noteIds: ["C4", "E4", "G4"], duration: "half" },
