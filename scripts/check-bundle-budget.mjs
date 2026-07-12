@@ -16,7 +16,7 @@ const budgets = [
   {
     name: "CSS asset",
     matches: (file) => file.startsWith("assets/") && file.endsWith(".css"),
-    rawBytes: 28 * KIB,
+    rawBytes: 30 * KIB,
     gzipBytes: 6 * KIB,
   },
   {

@@ -4,12 +4,16 @@ import type { AppSection } from "./components/AppSectionNav";
 import PracticeStatsPanel from "./components/PracticeStatsPanel";
 import type { PracticePanelView } from "./components/PracticeStatsPanel";
 import PracticeWorkspace from "./components/PracticeWorkspace";
+import SongLibrary from "./components/SongLibrary";
+import SongPlayer from "./components/SongPlayer";
 import ReadingRangeSelector from "./components/ReadingRangeSelector";
 import { useDataPortability } from "./hooks/useDataPortability";
+import { useSongSession } from "./hooks/useSongSession";
 import { usePracticeProgress } from "./hooks/usePracticeProgress";
 import { usePracticeSession } from "./hooks/usePracticeSession";
 import { useSettings } from "./hooks/useSettings";
 import { getReadingRange, normalizeCustomReadingRange } from "./noteData";
+import { BUILT_IN_SONGS } from "./songLibraryData";
 import {
   formatAccuracy,
   getDailyGoalSummary,
@@ -24,7 +28,7 @@ import { resetProgress } from "./storage";
 import type { CustomReadingRange, DataStatus, PracticeProgress, PracticeSettings, ReadingRange } from "./types";
 
 const STORAGE_WARNING = "Progress is not being saved on this device right now.";
-const STATS_SECTION_BY_APP_SECTION: Record<Exclude<AppSection, "practice">, PracticePanelView> = {
+const STATS_SECTION_BY_APP_SECTION: Record<Exclude<AppSection, "practice" | "songs">, PracticePanelView> = {
   progress: "overview",
   map: "map",
   history: "history",
@@ -33,7 +37,7 @@ const STATS_SECTION_BY_APP_SECTION: Record<Exclude<AppSection, "practice">, Prac
 };
 
 function getStatsView(section: AppSection): PracticePanelView {
-  if (section === "practice") return "overview";
+  if (section === "practice" || section === "songs") return "overview";
 
   return STATS_SECTION_BY_APP_SECTION[section];
 }
@@ -50,6 +54,7 @@ function App() {
   const [activeSection, setActiveSection] = useState<AppSection>("practice");
 
   const { settings, setSettings, persistSettings } = useSettings();
+  const songSession = useSongSession();
   const { progress, setProgress, persistProgress } = usePracticeProgress();
 
   const handleProgressChange = useCallback(
@@ -212,7 +217,29 @@ function App() {
         <AppSectionNav activeSection={activeSection} onSectionChange={setActiveSection} />
       </section>
 
-      {activeSection === "practice" ? (
+      {activeSection === "songs" ? (
+        songSession.activeSong && songSession.playthrough ? (
+          <SongPlayer
+            song={songSession.activeSong}
+            playthrough={songSession.playthrough}
+            status={songSession.status}
+            summary={songSession.summary}
+            songProgress={songSession.songProgress}
+            storageWarning={songSession.storageWarning}
+            onAnswer={songSession.answerCurrentEvent}
+            onRestart={songSession.restartSong}
+            onExit={songSession.closeSong}
+          />
+        ) : (
+          <section className="practice-panel" aria-label="Song library">
+            <SongLibrary
+              songs={BUILT_IN_SONGS}
+              songProgress={songSession.songProgress}
+              onOpenSong={songSession.openSong}
+            />
+          </section>
+        )
+      ) : activeSection === "practice" ? (
         <PracticeWorkspace
           currentPitchNote={currentPitchNote}
           currentReadingNote={currentReadingNote}

@@ -1,5 +1,6 @@
 import {
   createPracticeDataExport as createSharedExport,
+  normalizeSongProgress,
   defaultSettings,
   normalizeProgress,
   normalizeSettings,
@@ -10,6 +11,7 @@ import {
 import { emptyProgress, getPianoKeyById } from "./noteData";
 import type {
   NoteName,
+  SongProgress,
   PitchNote,
   PracticeDataExport,
   PracticeMode,
@@ -23,7 +25,17 @@ import type {
 const STORAGE_KEY = "notesense.progress.v2";
 const LEGACY_STORAGE_KEY = "notesense.progress.v1";
 const SETTINGS_STORAGE_KEY = "notesense.settings.v3";
+const SONG_PROGRESS_STORAGE_KEY = "notesense.songProgress.v1";
 
+export {
+  compareSongsByDifficulty,
+  DEFAULT_TIME_SIGNATURE,
+  getEventMeasureStarts,
+  getSongDifficulty,
+  getSongNoteRange,
+  getTimeSignatureLabel,
+  normalizeSong,
+} from "@notesense/shared";
 export {
   createExportFileName,
   defaultSettings,
@@ -53,6 +65,46 @@ export function saveProgress(progress: PracticeProgress): boolean {
   } catch {
     return false;
   }
+}
+
+export function loadSongProgress(): SongProgress {
+  try {
+    const stored = window.localStorage.getItem(SONG_PROGRESS_STORAGE_KEY);
+    if (!stored) {
+      return {};
+    }
+
+    return normalizeSongProgress(JSON.parse(stored) as unknown);
+  } catch {
+    return {};
+  }
+}
+
+export function saveSongProgress(songProgress: SongProgress): boolean {
+  try {
+    window.localStorage.setItem(SONG_PROGRESS_STORAGE_KEY, JSON.stringify(songProgress));
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+export function recordSongCompletion(
+  songProgress: SongProgress,
+  songId: string,
+  accuracy: number,
+  now: Date = new Date(),
+): SongProgress {
+  const existing = songProgress[songId];
+
+  return {
+    ...songProgress,
+    [songId]: {
+      bestAccuracy: Math.max(existing?.bestAccuracy ?? 0, Math.min(100, Math.max(0, Math.round(accuracy)))),
+      completions: (existing?.completions ?? 0) + 1,
+      lastPlayedAt: now.toISOString(),
+    },
+  };
 }
 
 export function loadSettings(): PracticeSettings {

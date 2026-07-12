@@ -435,3 +435,33 @@ test("keeps the responsive layout inside the viewport", async ({ page }) => {
     .poll(() => page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth))
     .toBe(true);
 });
+
+test("plays a song from the library start to finish", async ({ page }) => {
+  await page.goto("/", { waitUntil: "domcontentloaded" });
+
+  await page.getByRole("button", { name: "Songs" }).click();
+  await expect(page.getByRole("heading", { name: "Song library" })).toBeVisible();
+
+  const twinkleCard = page.locator(".song-card", { hasText: "Twinkle, Twinkle, Little Star" });
+  await expect(twinkleCard.getByText(/Not played yet/)).toBeVisible();
+  await twinkleCard.getByRole("button", { name: "Practice" }).click();
+
+  await expect(page.getByRole("region", { name: "Song practice: Twinkle, Twinkle, Little Star" })).toBeVisible();
+  await expect(page.getByText("Play: C4, quarter note")).toBeVisible();
+
+  // A wrong key flags the sheet but does not advance.
+  await page.getByRole("button", { name: "White piano key B4" }).click();
+  await expect(page.locator(".sheet-event.current.wrong")).toBeVisible();
+  await expect(page.getByText("1/14")).toBeVisible();
+
+  const melody = ["C4", "C4", "G4", "G4", "A4", "A4", "G4", "F4", "F4", "E4", "E4", "D4", "D4", "C4"];
+  for (const noteId of melody) {
+    await page.getByRole("button", { name: `White piano key ${noteId}` }).click();
+  }
+
+  await expect(page.getByText(/Finished with \d+% accuracy\./)).toBeVisible();
+  await expect(page.getByRole("button", { name: "Play again" })).toBeVisible();
+
+  await page.getByRole("button", { name: "Back to songs" }).click();
+  await expect(twinkleCard.getByText(/Best 9[0-9]% \| Completed 1x/)).toBeVisible();
+});
