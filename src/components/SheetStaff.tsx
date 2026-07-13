@@ -45,7 +45,15 @@ function getEventState(eventIndex: number, currentIndex: number): EventState {
 // glyphs (𝄽 etc.): those characters render as invisible tofu in several
 // browser/font combinations, while these vector shapes always show up and
 // stay legible at small sizes.
-function RestShape({ eventX, anchorY, duration }: { eventX: number; anchorY: number; duration: Song["events"][number]["duration"] }) {
+function RestShape({
+  eventX,
+  anchorY,
+  duration,
+}: {
+  eventX: number;
+  anchorY: number;
+  duration: Song["events"][number]["duration"];
+}) {
   if (duration === "whole") {
     return <rect className="sheet-rest" x={eventX - 8} y={anchorY - 20} width={16} height={7} />;
   }
@@ -63,7 +71,16 @@ function RestShape({ eventX, anchorY, duration }: { eventX: number; anchorY: num
     );
   }
 
-  return <rect className="sheet-rest" x={eventX - 3} y={anchorY - 16} width={6} height={28} transform={`rotate(18 ${eventX} ${anchorY})`} />;
+  return (
+    <rect
+      className="sheet-rest"
+      x={eventX - 3}
+      y={anchorY - 16}
+      width={6}
+      height={28}
+      transform={`rotate(18 ${eventX} ${anchorY})`}
+    />
+  );
 }
 
 function SheetStaff({ song, currentIndex, currentStatus = "idle" }: SheetStaffProps) {

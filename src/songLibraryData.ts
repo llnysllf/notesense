@@ -1056,7 +1056,11 @@ const MIXOLYDIAN_STEPS = [0, 2, 4, 5, 7, 9, 10, 12];
 const MAJOR_TRIAD = [0, 4, 7];
 const MINOR_TRIAD = [0, 3, 7];
 
-function scaleUpDownEvents(rootMidi: number, steps: number[], turnRest: SongEvent["duration"] = "quarter"): SongEvent[] {
+function scaleUpDownEvents(
+  rootMidi: number,
+  steps: number[],
+  turnRest: SongEvent["duration"] = "quarter",
+): SongEvent[] {
   const up = steps.map((offset) => note(noteIdFromMidi(rootMidi + offset)));
   const descendingSteps = steps.slice(0, -1).reverse();
   const down = descendingSteps.map((offset, index) =>
@@ -1206,12 +1210,7 @@ const GENERATED_SONGS: RawSong[] = GENERATOR_KEYS.flatMap(({ label, rootMidi }) 
     buildIntervalDrillSong(`builtin-intervals-fifths-${safeLabel}`, `Fifths in ${label}`, rootMidi, 7),
     buildIntervalDrillSong(`builtin-intervals-sixths-${safeLabel}`, `Sixths in ${label}`, rootMidi, 9),
     buildRhythmRestEtudeSong(`builtin-rhythm-rest-${safeLabel}`, `Rhythm and Rest Etude in ${label}`, rootMidi),
-    buildBrokenChordWaltzSong(
-      `builtin-waltz-${safeLabel}`,
-      `Broken Chord Waltz in ${label}`,
-      rootMidi,
-      MAJOR_TRIAD,
-    ),
+    buildBrokenChordWaltzSong(`builtin-waltz-${safeLabel}`, `Broken Chord Waltz in ${label}`, rootMidi, MAJOR_TRIAD),
   ];
 });
 
