@@ -884,6 +884,10 @@ h3 {
   opacity: 0.5;
 }
 
+.sheet-rest {
+  fill: var(--color-text);
+}
+
 .sheet-event.done {
   opacity: 0.38;
 }
@@ -898,7 +902,8 @@ h3 {
 
 .sheet-event.current .sheet-note-head,
 .sheet-event.current .sheet-accidental,
-.sheet-event.current .sheet-cursor {
+.sheet-event.current .sheet-cursor,
+.sheet-event.current .sheet-rest {
   fill: var(--sheet-cursor-ink);
 }
 

@@ -1,6 +1,6 @@
 import { fireEvent, render, screen } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
-import { DEFAULT_TIME_SIGNATURE } from "../songEngine";
+import { DEFAULT_TIME_SIGNATURE, compareSongsByDifficulty } from "../songEngine";
 import { BUILT_IN_SONGS } from "../songLibraryData";
 import SongLibrary from "./SongLibrary";
 
@@ -10,8 +10,10 @@ describe("SongLibrary", () => {
 
     expect(screen.getByRole("heading", { name: "Song library" })).toBeInTheDocument();
     expect(screen.getAllByRole("button", { name: "Practice" })).toHaveLength(BUILT_IN_SONGS.length);
-    expect(screen.getByText("Ode to Joy (Beethoven)")).toBeInTheDocument();
-    expect(screen.getByText(/30 notes \| Treble clef/)).toBeInTheDocument();
+    const odeToJoyHeading = screen.getByText("Ode to Joy (Beethoven)");
+    const odeToJoyCard = odeToJoyHeading.closest(".song-card");
+    expect(odeToJoyCard).not.toBeNull();
+    expect(odeToJoyCard).toHaveTextContent(/30 notes \| Treble clef/);
   });
 
   it("shows saved progress and a not-played hint", () => {
@@ -68,8 +70,10 @@ describe("SongLibrary", () => {
     render(<SongLibrary songs={BUILT_IN_SONGS} songProgress={{}} onOpenSong={onOpenSong} />);
 
     fireEvent.click(screen.getAllByRole("button", { name: "Practice" })[0]!);
-    // The list is sorted easiest-first, so the first card is the shortest beginner song.
-    expect(onOpenSong).toHaveBeenCalledWith(BUILT_IN_SONGS.find((song) => song.id === "builtin-twinkle-twinkle"));
+    // The list is sorted easiest-first, so the first card is whichever built-in
+    // song that same comparator ranks first.
+    const easiestSong = [...BUILT_IN_SONGS].sort(compareSongsByDifficulty)[0];
+    expect(onOpenSong).toHaveBeenCalledWith(easiestSong);
   });
 
   it("shows difficulty chips and note ranges, ordered easiest to hardest", () => {
