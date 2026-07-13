@@ -20,6 +20,7 @@ Release safety and provenance expectations live in [RELEASE_SAFETY.md](RELEASE_S
 - GitHub Actions updates run weekly on Monday at 09:30 Pacific/Auckland time.
 - Dependabot keeps at most five open npm update pull requests and five open GitHub Actions update pull requests.
 - Routine npm updates are grouped into app runtime dependencies and tooling dependencies.
+- CodeQL GitHub Actions updates are grouped so `github/codeql-action/init` and `github/codeql-action/analyze` move together.
 - npm major upgrades are ignored by Dependabot and should be opened as intentional engineering tasks.
 
 ## Update Classes
@@ -28,6 +29,7 @@ Release safety and provenance expectations live in [RELEASE_SAFETY.md](RELEASE_S
 - Major npm upgrades should explain peer dependency, browser coverage, bundling, Playwright, Vitest, Vite, ESLint, TypeScript, and migration risk before implementation.
 - Node or npm runtime upgrades should update `.nvmrc`, package engines, `packageManager`, lockfile metadata, GitHub Actions behavior, documentation, and ADRs together.
 - GitHub Actions updates should preserve full-SHA pinning, source-version comments, least-privilege token permissions, concurrency, timeouts, and artifact-retention controls.
+- CodeQL workflow updates should keep `github/codeql-action/init` and `github/codeql-action/analyze` pinned to the same commit SHA.
 - New production dependencies should explain learner value, security posture, license acceptability, bundle impact, and why the behavior should not stay in project code.
 - Dependency license compliance does not grant project source-code rights; the root project license stays governed by [LEGAL.md](LEGAL.md) and [../LICENSE](../LICENSE).
 

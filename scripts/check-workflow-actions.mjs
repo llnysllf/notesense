@@ -4,6 +4,7 @@ import { extname, join } from "node:path";
 const WORKFLOW_DIR = ".github/workflows";
 const FULL_SHA_PATTERN = /^[a-f0-9]{40}$/;
 const USES_PATTERN = /^\s*uses:\s*([^#\s]+)(?:\s+#\s*(.+))?\s*$/;
+const CODEQL_ACTION_STEPS = ["github/codeql-action/init", "github/codeql-action/analyze"];
 
 function assert(condition, message) {
   if (!condition) {
@@ -44,6 +45,7 @@ console.log("Workflow action policy report");
 
 const failures = [];
 const pinnedActions = [];
+const codeqlActionPins = new Map();
 const workflowFiles = getWorkflowFiles();
 
 for (const file of workflowFiles) {
@@ -77,14 +79,40 @@ for (const file of workflowFiles) {
       continue;
     }
 
+    if (CODEQL_ACTION_STEPS.includes(action)) {
+      const locations = codeqlActionPins.get(action) ?? [];
+      locations.push(`${file}:${lineNumber} ${action}@${ref}`);
+      codeqlActionPins.set(action, locations);
+    }
+
     pinnedActions.push(`${file}:${lineNumber} ${action}@${ref} (${versionComment.trim()})`);
   }
 }
 
 assert(pinnedActions.length > 0, "No GitHub Actions references were found to verify");
 
+const seenCodeqlActions = [...codeqlActionPins.keys()];
+if (seenCodeqlActions.length > 0) {
+  for (const action of CODEQL_ACTION_STEPS) {
+    if (!codeqlActionPins.has(action)) {
+      failures.push(`CodeQL workflow action policy found ${seenCodeqlActions.join(", ")} but not ${action}`);
+    }
+  }
+
+  const codeqlRefs = new Set(
+    [...codeqlActionPins.values()].flat().map((location) => location.slice(location.lastIndexOf("@") + 1)),
+  );
+
+  if (codeqlRefs.size > 1) {
+    failures.push(
+      `CodeQL init and analyze actions must use the same pinned SHA: ${[...codeqlActionPins.values()].flat().join("; ")}`,
+    );
+  }
+}
+
 console.log(`- workflow files checked: ${workflowFiles.length}`);
 console.log(`- action references checked: ${pinnedActions.length}`);
+console.log(`- CodeQL action steps checked: ${seenCodeqlActions.length}`);
 
 if (failures.length > 0) {
   console.error("\nWorkflow action policy failed:");
