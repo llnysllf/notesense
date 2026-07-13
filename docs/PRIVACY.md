@@ -9,7 +9,10 @@ Security/privacy readiness expectations live in [SECURITY_PRIVACY.md](SECURITY_P
 The app stores data in the learner's browser:
 
 - Practice progress, note stats, pitch stats, and session history are saved in LocalStorage under `notesense.progress.v2`.
-- Practice settings are saved in LocalStorage under `notesense.settings.v3`. They include selected drill ranges, including the custom piano span.
+- Practice settings are saved in LocalStorage under `notesense.settings.v3`.
+
+Song practice results (best accuracy, completions, last played time) are saved in LocalStorage under `notesense.songProgress.v1`. They include selected drill ranges, including the custom piano span.
+
 - Older local progress may be read from `notesense.progress.v1` and normalized into the current shape.
 - Data stays on the current browser profile unless the learner exports it.
 - The service worker cache stores reviewed static app assets only. It does not cache practice progress, exported data, or imported files.
