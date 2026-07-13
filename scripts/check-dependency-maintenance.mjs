@@ -33,6 +33,7 @@ requireSnippets("docs/DEPENDENCY_MAINTENANCE.md", [
   "## Change Rules",
   "## Verification",
   "SBOM or provenance changes should be generated from the committed lockfile, validated with `npm run security:sbom`, and reviewed with dependency-maintenance evidence.",
+  "CodeQL GitHub Actions updates are grouped so `github/codeql-action/init` and `github/codeql-action/analyze` move together.",
   "Run `npm run dependencies:check` after dependency-maintenance, Dependabot, lockfile-policy, license-policy, SBOM-policy, or workflow-update-policy changes.",
 ]);
 
@@ -60,6 +61,8 @@ requireSnippets(".github/dependabot.yml", [
   "open-pull-requests-limit: 5",
   "app-runtime:",
   "tooling:",
+  "codeql-action:",
+  '"github/codeql-action/*"',
   "update-types:",
   "- minor",
   "- patch",
