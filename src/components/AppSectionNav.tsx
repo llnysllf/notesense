@@ -1,7 +1,8 @@
-export type AppSection = "practice" | "progress" | "map" | "history" | "settings" | "data";
+export type AppSection = "practice" | "songs" | "progress" | "map" | "history" | "settings" | "data";
 
 const APP_SECTIONS: Array<{ id: AppSection; label: string }> = [
   { id: "practice", label: "Practice" },
+  { id: "songs", label: "Songs" },
   { id: "progress", label: "Progress" },
   { id: "map", label: "Map" },
   { id: "history", label: "History" },

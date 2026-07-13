@@ -24,7 +24,7 @@ The current product does three things well:
 - Trains recognition of natural piano pitches from C4 to B4.
 - Keeps progress local, portable, and resilient when browser storage behaves badly.
 
-The product deliberately does not include accounts, sync, a backend, analytics, payments, classroom tools, sharps/flats, MIDI, translated UI, or runtime locale switching yet. Those can come later, but only after the foundation and product evidence justify them.
+The product deliberately does not include accounts, sync, a backend, analytics, payments, classroom tools, sharps/flats in the single-note drills, chord entry, timed rhythm scoring, MIDI, translated UI, or runtime locale switching yet. Those can come later, but only after the foundation and product evidence justify them.
 
 ## Current Capabilities
 
@@ -34,6 +34,7 @@ The product deliberately does not include accounts, sync, a backend, analytics, 
 - Web Audio playback for pitch association.
 - Instant feedback, optional pitch reveal, and round summaries.
 - Daily goal, streak, recent history, practice insight chart, practice-plan coach, and mastery map.
+- Self-paced song sheet reading with rhythm notation across a built-in public-domain song library.
 - Local JSON import/export with schema validation and migration support.
 - Safe LocalStorage failure handling with learner-facing recovery.
 - Automatic light/dark theme, installable PWA, and offline practice after first load.

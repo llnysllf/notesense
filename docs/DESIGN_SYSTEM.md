@@ -35,6 +35,7 @@ The primary app shell must keep these states intentional:
 - Feedback/status chips: ready, listening/live, saved, correct, wrong, and storage/error text.
 - Stats panel: stat tiles, mastery map, insight chart, session history, and empty states.
 - Data controls: import/export controls stay reachable and visibly focused.
+- Song sheet: the current note is shown in the brand color with a caret under the staff (never a fill that hides staff lines), wrong answers recolor the current note in the danger color, completed events dim, and rhythm glyphs plus accidental markings stay legible in both themes; the score is static and notes never move while playing. The time signature is shown at the start of every staff system, with barlines dividing events into measures.
 
 ## Accessibility And Motion
 
@@ -54,7 +55,9 @@ Visual-regression coverage protects the note-reading and pitch-training shells i
 - mobile light
 - mobile dark
 
-Intentional UI changes should refresh screenshots with `npm run test:e2e:visual:update`, review the images, and run `npm run test:e2e:visual`. README screenshots should be refreshed with `npm run docs:screenshots` when the documented product surface changes.
+Brand-accent element snapshots (mode switch and primary button) additionally protect the brand palette itself. Brand-colored controls cover a small share of full-page pixels, so the page-level diff ratio alone can miss a re-theme; the accent snapshots are dominated by brand fills and fail loudly when the palette drifts.
+
+Intentional UI changes should refresh screenshots with `npm run test:e2e:visual:update`, review the images, and run `npm run test:e2e:visual`. Palette changes may pass a stale-baseline comparison when backgrounds stay close in luminance; if `--update-snapshots` reports no changes after an intentional re-theme, delete the snapshot directory and regenerate from scratch. README screenshots should be refreshed with `npm run docs:screenshots` when the documented product surface changes.
 
 ## Change Process
 

@@ -123,8 +123,13 @@ requireTokenizedThemeColors("src/styles.css");
 requireSnippets("e2e/visual.spec.ts", [
   'test("matches the note-reading shell"',
   'test("matches the pitch-training shell"',
+  'test("matches the brand accent controls"',
+  'test("matches the songs shell"',
   'toHaveScreenshot("note-reading-shell.png"',
   'toHaveScreenshot("pitch-training-shell.png"',
+  'toHaveScreenshot("brand-mode-switch.png"',
+  'toHaveScreenshot("songs-shell.png"',
+  'toHaveScreenshot("brand-primary-button.png"',
 ]);
 
 requireSnippets("playwright.visual.config.ts", [
@@ -136,6 +141,14 @@ requireSnippets("playwright.visual.config.ts", [
 ]);
 
 requireSnapshotNames("e2e/visual.spec.ts-snapshots", [
+  "songs-shell-visual-desktop-light",
+  "songs-shell-visual-desktop-dark",
+  "songs-shell-visual-mobile-light",
+  "songs-shell-visual-mobile-dark",
+  "brand-mode-switch-visual-desktop-light",
+  "brand-mode-switch-visual-desktop-dark",
+  "brand-primary-button-visual-desktop-light",
+  "brand-primary-button-visual-desktop-dark",
   "note-reading-shell-visual-desktop-light",
   "note-reading-shell-visual-desktop-dark",
   "note-reading-shell-visual-mobile-light",
