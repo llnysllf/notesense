@@ -217,6 +217,7 @@ describe("App", () => {
     );
 
     render(<App />);
+    fireEvent.click(screen.getByRole("button", { name: "Settings" }));
     fireEvent.click(screen.getByRole("button", { name: "Data" }));
     fireEvent.change(screen.getByLabelText("Import data file"), { target: { files: [file] } });
 
@@ -235,6 +236,7 @@ describe("App", () => {
 
     confirm.mockReturnValueOnce(false);
     render(<App />);
+    fireEvent.click(screen.getByRole("button", { name: "Settings" }));
     fireEvent.click(screen.getByRole("button", { name: "Data" }));
     fireEvent.click(screen.getByRole("button", { name: "Reset progress" }));
     expect(readStoredJson<PracticeProgress>(PROGRESS_STORAGE_KEY).reading.totalAttempts).toBe(4);

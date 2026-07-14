@@ -39,12 +39,15 @@ test("loads with no automated accessibility violations", async ({ page }) => {
   await expect(page.getByRole("button", { name: "Start drill" })).toBeVisible();
   await expect(page.getByRole("button", { name: "Practice" })).toHaveAttribute("aria-pressed", "true");
   await expect(page.getByRole("button", { name: "Progress" })).toBeVisible();
-  await expect(page.getByRole("button", { name: "Map" })).toBeVisible();
-  await expect(page.getByRole("button", { name: "History" })).toBeVisible();
   await expect(page.getByRole("button", { name: "Settings" })).toBeVisible();
-  await expect(page.getByRole("button", { name: "Data" })).toBeVisible();
+  // The practice group is active by default, so only its views show.
+  await expect(page.getByRole("button", { name: "Drills" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Songs" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Map" })).not.toBeVisible();
   await expect(page.getByRole("heading", { name: "Daily goal" })).not.toBeVisible();
   await page.getByRole("button", { name: "Progress" }).click();
+  await expect(page.getByRole("button", { name: "Map" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "History" })).toBeVisible();
   await expect(page.getByRole("heading", { name: "Daily goal" })).toBeVisible();
   await expect(page.getByText(/0\/1\s+round/)).toBeVisible();
   await expect(page.getByRole("heading", { name: "Build baseline" })).toBeVisible();
@@ -86,6 +89,7 @@ test("runs the note-reading practice loop", async ({ page }) => {
   expect(postRoundAccessibilityScanResults.violations).toEqual([]);
 
   await page.reload({ waitUntil: "domcontentloaded" });
+  await page.getByRole("button", { name: "Progress" }).click();
   await page.getByRole("button", { name: "History" }).click();
   await expect(page.getByRole("listitem", { name: /Note reading session/ })).toBeVisible();
 });
@@ -253,6 +257,7 @@ test("keeps the selected reading range after switching during feedback", async (
 test("exports local practice data", async ({ page }) => {
   await page.goto("/", { waitUntil: "domcontentloaded" });
 
+  await page.getByRole("button", { name: "Settings" }).click();
   await page.getByRole("button", { name: "Data" }).click();
   const downloadPromise = page.waitForEvent("download");
   await page.getByRole("button", { name: "Export data" }).click();
@@ -264,6 +269,7 @@ test("exports local practice data", async ({ page }) => {
 test("imports local practice data", async ({ page }) => {
   await page.goto("/", { waitUntil: "domcontentloaded" });
 
+  await page.getByRole("button", { name: "Settings" }).click();
   await page.getByRole("button", { name: "Data" }).click();
   await page.locator('input[type="file"]').setInputFiles({
     name: "notesense-progress.json",
@@ -373,6 +379,7 @@ test("imports local practice data", async ({ page }) => {
 test("rejects invalid imported practice data", async ({ page }) => {
   await page.goto("/", { waitUntil: "domcontentloaded" });
 
+  await page.getByRole("button", { name: "Settings" }).click();
   await page.getByRole("button", { name: "Data" }).click();
   await page.locator('input[type="file"]').setInputFiles({
     name: "broken-notesense-progress.json",
@@ -406,6 +413,7 @@ test("surfaces storage failures without crashing", async ({ page }) => {
     .locator(".app-header-panel")
     .evaluate((header) => header.getBoundingClientRect().height);
 
+  await page.getByRole("button", { name: "Settings" }).click();
   await page.getByRole("button", { name: "Data" }).click();
   await expect(page.getByRole("status")).toHaveText("Progress is not being saved on this device right now.");
   const dataHeaderHeight = await page
