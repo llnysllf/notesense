@@ -148,9 +148,17 @@ describe("BUILT_IN_SONGS", () => {
     expect(difficulties).toEqual(new Set(["beginner", "intermediate", "advanced"]));
   });
 
-  it("keeps all built-ins single-note in the foundation release", () => {
+  it("caps every chord at the max chord size and keeps rests note-free", () => {
     for (const builtIn of BUILT_IN_SONGS) {
-      expect(builtIn.events.every((event) => event.noteIds.length === 1)).toBe(true);
+      for (const event of builtIn.events) {
+        expect(event.noteIds.length).toBeLessThanOrEqual(4);
+        if (event.isRest) expect(event.noteIds).toHaveLength(0);
+      }
     }
+  });
+
+  it("includes songs with rests and songs with chords", () => {
+    expect(BUILT_IN_SONGS.some((builtIn) => builtIn.events.some((event) => event.isRest))).toBe(true);
+    expect(BUILT_IN_SONGS.some((builtIn) => builtIn.events.some((event) => event.noteIds.length > 1))).toBe(true);
   });
 });

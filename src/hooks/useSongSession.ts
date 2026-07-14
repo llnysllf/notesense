@@ -14,6 +14,7 @@ import {
 import { loadSongProgress, recordSongCompletion, saveSongProgress } from "../storage";
 
 const WRONG_FEEDBACK_MS = 650;
+const REST_HOLD_MS = 500;
 
 export type { SongSessionStatus } from "../songEngine";
 
@@ -101,6 +102,17 @@ export function useSongSession(): UseSongSessionResult {
     },
     [activeSong, playthrough, songProgress, status],
   );
+
+  // A rest has no keys to press: just hold the silence for a beat, then
+  // move on, the way a player counts through it rather than tapping a key.
+  useEffect(() => {
+    if (!activeSong || !playthrough || status !== "idle") return undefined;
+    const event = getCurrentEvent(activeSong, playthrough);
+    if (!event?.isRest) return undefined;
+
+    const timer = setTimeout(() => answerCurrentEvent([]), REST_HOLD_MS);
+    return () => clearTimeout(timer);
+  }, [activeSong, playthrough, status, answerCurrentEvent]);
 
   const summary =
     activeSong && playthrough && status === "complete" ? getPlaythroughSummary(playthrough, activeSong) : null;

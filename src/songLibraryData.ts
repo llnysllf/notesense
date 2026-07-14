@@ -16,6 +16,14 @@ function note(noteId: string, duration: SongEvent["duration"] = "quarter"): Song
   return { noteIds: [noteId], duration };
 }
 
+function chord(noteIds: string[], duration: SongEvent["duration"] = "quarter"): SongEvent {
+  return { noteIds, duration };
+}
+
+function rest(duration: SongEvent["duration"] = "quarter"): SongEvent {
+  return { noteIds: [], duration, isRest: true };
+}
+
 const RAW_BUILT_IN_SONGS: RawSong[] = [
   {
     id: "builtin-ode-to-joy",
@@ -578,7 +586,633 @@ const RAW_BUILT_IN_SONGS: RawSong[] = [
       note("C5", "half"),
     ],
   },
+  {
+    id: "builtin-london-bridge",
+    title: "London Bridge Is Falling Down",
+    events: [
+      note("G4"),
+      note("A4"),
+      note("G4"),
+      note("F4"),
+      note("E4"),
+      note("F4"),
+      note("G4", "half"),
+      note("D4"),
+      note("E4"),
+      note("F4", "half"),
+      note("E4"),
+      note("F4"),
+      note("G4", "half"),
+      note("G4"),
+      note("A4"),
+      note("G4"),
+      note("F4"),
+      note("E4"),
+      note("F4"),
+      note("G4"),
+      note("D4"),
+      note("G3"),
+      note("C4", "whole"),
+    ],
+  },
+  {
+    id: "builtin-skip-to-my-lou",
+    title: "Skip to My Lou",
+    events: [
+      note("G4"),
+      note("G4"),
+      note("A4"),
+      note("G4"),
+      note("E4", "half"),
+      rest("quarter"),
+      note("G4"),
+      note("G4"),
+      note("A4"),
+      note("G4"),
+      note("E4", "half"),
+      rest("quarter"),
+      note("G4"),
+      note("G4"),
+      note("A4"),
+      note("G4"),
+      note("E4"),
+      note("D4"),
+      note("C4", "half"),
+      note("D4"),
+      note("E4"),
+      note("F4"),
+      note("G4", "whole"),
+    ],
+  },
+  {
+    id: "builtin-oh-my-darling-clementine",
+    title: "Oh My Darling, Clementine",
+    timeSignature: { beatsPerMeasure: 3, beatUnit: "quarter" },
+    events: [
+      note("G4"),
+      note("C5"),
+      note("C5"),
+      note("B4"),
+      note("A4"),
+      note("G4", "half"),
+      note("A4"),
+      note("A4"),
+      note("G4"),
+      note("F4"),
+      note("E4", "half"),
+      note("F4"),
+      note("G4"),
+      note("E4"),
+      note("C4", "half"),
+      note("D4"),
+      note("E4"),
+      note("F4"),
+      note("G4", "half"),
+      note("A4"),
+      note("G4"),
+      note("F4"),
+      note("E4"),
+      note("D4"),
+      note("C4", "whole"),
+    ],
+  },
+  {
+    id: "builtin-down-in-the-valley",
+    title: "Down in the Valley",
+    timeSignature: { beatsPerMeasure: 3, beatUnit: "quarter" },
+    events: [
+      note("C4", "half"),
+      note("E4"),
+      note("G4", "half"),
+      note("G4"),
+      note("A4", "half"),
+      note("G4"),
+      note("F4", "half"),
+      note("E4"),
+      note("D4", "half"),
+      note("C4"),
+      note("C4", "half"),
+      rest("quarter"),
+      note("F4", "half"),
+      note("F4"),
+      note("G4", "half"),
+      note("A4"),
+      note("G4", "half"),
+      note("F4"),
+      note("E4", "half"),
+      note("D4"),
+      note("C4", "whole"),
+    ],
+  },
+  {
+    id: "builtin-swing-low-sweet-chariot",
+    title: "Swing Low, Sweet Chariot",
+    events: [
+      note("C4"),
+      note("E4"),
+      note("G4"),
+      note("C5", "half"),
+      note("A4"),
+      note("G4", "half"),
+      note("E4"),
+      note("G4"),
+      note("E4"),
+      note("C4", "whole"),
+      rest("quarter"),
+      note("C4"),
+      note("E4"),
+      note("G4"),
+      note("C5", "half"),
+      note("A4"),
+      note("G4", "half"),
+      note("E4"),
+      note("D4"),
+      note("C4", "whole"),
+    ],
+  },
+  {
+    id: "builtin-shell-be-comin-round-the-mountain",
+    title: "She'll Be Comin' Round the Mountain",
+    events: [
+      note("C4"),
+      note("C4"),
+      note("C4"),
+      note("D4"),
+      note("E4", "half"),
+      note("E4"),
+      note("D4"),
+      note("E4"),
+      note("F4"),
+      note("G4", "whole"),
+      note("C5"),
+      note("C5"),
+      note("A4"),
+      note("A4"),
+      note("G4", "half"),
+      rest("quarter"),
+      note("G4"),
+      note("E4"),
+      note("E4"),
+      note("C4"),
+      note("D4"),
+      note("E4", "half"),
+      note("D4"),
+      note("C4", "whole"),
+    ],
+  },
+  {
+    id: "builtin-aura-lee",
+    title: "Aura Lee",
+    events: [
+      note("C4"),
+      note("E4"),
+      note("G4"),
+      note("E4"),
+      note("C5", "half"),
+      note("G4"),
+      note("E4", "half"),
+      note("D4"),
+      note("E4"),
+      note("F4"),
+      note("G4", "whole"),
+      note("C4"),
+      note("E4"),
+      note("G4"),
+      note("E4"),
+      note("C5", "half"),
+      note("A4"),
+      note("G4", "half"),
+      note("F4"),
+      note("E4"),
+      note("D4"),
+      note("C4", "whole"),
+    ],
+  },
+  {
+    id: "builtin-joy-to-the-world",
+    title: "Joy to the World (opening phrase)",
+    events: [
+      note("C5"),
+      note("B4"),
+      note("A4"),
+      note("G4"),
+      note("F4"),
+      note("E4"),
+      note("D4"),
+      note("C4", "whole"),
+      rest("quarter"),
+      note("C4"),
+      note("D4"),
+      note("E4"),
+      note("F4", "half"),
+      note("F4"),
+      note("E4"),
+      note("D4"),
+      note("C4", "half"),
+      chord(["C4", "E4", "G4"], "whole"),
+    ],
+  },
+  {
+    id: "builtin-deck-the-halls",
+    title: "Deck the Halls",
+    events: [
+      note("G4"),
+      note("F4"),
+      note("E4"),
+      note("D4"),
+      note("C4"),
+      note("D4"),
+      note("E4", "half"),
+      note("F4"),
+      note("E4"),
+      note("D4"),
+      note("E4"),
+      note("F4"),
+      note("G4"),
+      note("A4", "half"),
+      rest("quarter"),
+      note("G4"),
+      note("F4"),
+      note("E4"),
+      note("D4"),
+      note("C4"),
+      note("D4"),
+      note("E4", "half"),
+      note("D4"),
+      note("C4", "half"),
+      chord(["C4", "E4", "G4"], "whole"),
+    ],
+  },
+  {
+    id: "builtin-good-king-wenceslas",
+    title: "Good King Wenceslas",
+    events: [
+      note("G3"),
+      note("C4"),
+      note("C4"),
+      note("D4"),
+      note("C4"),
+      note("B3"),
+      note("A3", "half"),
+      note("G3"),
+      note("C4"),
+      note("C4"),
+      note("D4"),
+      note("C4"),
+      note("B3"),
+      note("A3", "half"),
+      note("A3"),
+      note("B3"),
+      note("C4"),
+      note("A3"),
+      note("G3", "whole"),
+      note("D4"),
+      note("D4"),
+      note("E4"),
+      note("D4"),
+      note("C4"),
+      note("B3"),
+      note("C4", "whole"),
+    ],
+  },
+  {
+    id: "builtin-jolly-old-saint-nicholas",
+    title: "Jolly Old Saint Nicholas",
+    events: [
+      note("G4"),
+      note("E4"),
+      note("F4"),
+      note("G4"),
+      note("A4"),
+      note("G4"),
+      note("F4", "half"),
+      note("E4"),
+      note("C4"),
+      note("D4"),
+      note("E4"),
+      note("F4"),
+      note("E4"),
+      note("D4", "half"),
+      rest("quarter"),
+      note("G4"),
+      note("E4"),
+      note("F4"),
+      note("G4"),
+      note("A4"),
+      note("G4"),
+      note("F4", "half"),
+      note("E4"),
+      note("D4"),
+      note("C4"),
+      note("D4"),
+      note("E4"),
+      note("D4"),
+      note("C4", "whole"),
+    ],
+  },
+  {
+    id: "builtin-home-on-the-range",
+    title: "Home on the Range",
+    timeSignature: { beatsPerMeasure: 3, beatUnit: "quarter" },
+    events: [
+      note("C4"),
+      note("E4"),
+      note("G4"),
+      note("A4", "half"),
+      note("G4"),
+      note("F4", "half"),
+      note("E4"),
+      note("D4", "half"),
+      note("C4"),
+      rest("quarter"),
+      note("E4"),
+      note("G4"),
+      note("C5", "half"),
+      note("A4"),
+      note("G4", "half"),
+      note("F4"),
+      note("E4", "half"),
+      note("D4"),
+      note("C4", "whole"),
+    ],
+  },
+  {
+    id: "builtin-my-bonnie",
+    title: "My Bonnie Lies over the Ocean",
+    timeSignature: { beatsPerMeasure: 3, beatUnit: "quarter" },
+    events: [
+      note("D4"),
+      note("G4"),
+      note("A4"),
+      note("B4", "half"),
+      note("A4"),
+      note("G4", "half"),
+      note("E4"),
+      note("D4"),
+      note("E4"),
+      note("F#4", "half"),
+      note("G4"),
+      rest("quarter"),
+      note("D4"),
+      note("G4"),
+      note("A4"),
+      note("B4", "half"),
+      note("A4"),
+      note("G4", "half"),
+      note("E4"),
+      note("D4"),
+      note("E4"),
+      note("D4", "half"),
+      chord(["G3", "D4", "G4"], "whole"),
+    ],
+  },
+  {
+    id: "builtin-go-tell-it-on-the-mountain",
+    title: "Go Tell It on the Mountain",
+    events: [
+      note("C4"),
+      note("C4"),
+      note("C4"),
+      note("D4"),
+      note("E4", "half"),
+      note("D4"),
+      note("C4", "half"),
+      rest("quarter"),
+      note("E4"),
+      note("F4"),
+      note("G4"),
+      note("G4"),
+      note("A4", "half"),
+      note("G4"),
+      note("F4", "half"),
+      rest("quarter"),
+      note("C4"),
+      note("C4"),
+      note("C4"),
+      note("D4"),
+      note("E4", "half"),
+      note("D4"),
+      note("C4"),
+      note("G3"),
+      note("C4", "whole"),
+    ],
+  },
+  {
+    id: "builtin-simple-gifts",
+    title: "Simple Gifts",
+    events: [
+      note("C4"),
+      note("F4"),
+      note("F4"),
+      note("G4"),
+      note("A4", "half"),
+      note("F4"),
+      note("A4"),
+      note("G4"),
+      note("F4", "half"),
+      note("E4"),
+      note("D4"),
+      note("E4"),
+      note("F4", "half"),
+      rest("quarter"),
+      note("C4"),
+      note("F4"),
+      note("F4"),
+      note("G4"),
+      note("A4"),
+      note("C5", "half"),
+      note("A4"),
+      note("F4", "half"),
+      note("G4"),
+      note("F4"),
+      chord(["F4", "A4", "C5"], "whole"),
+    ],
+  },
 ];
+
+// Procedurally generated practice etudes: scales, arpeggios, chord
+// progressions, interval drills, and rhythm studies across all twelve
+// keys. Unlike the named tunes above these are original pedagogical
+// material (not transcriptions), which lets the library grow to a couple
+// hundred songs while staying honest about what each piece actually is.
+// Keys are spelled with sharps only, matching this app's note-id format
+// (the same convention already used for "A#4" in Greensleeves).
+const CHROMATIC_NAMES = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"];
+
+function noteIdFromMidi(midi: number): string {
+  const pitchClass = ((midi % 12) + 12) % 12;
+  const octave = Math.floor(midi / 12) - 1;
+  return `${CHROMATIC_NAMES[pitchClass]}${octave}`;
+}
+
+// One root per chromatic key, anchored an octave above middle C so scales
+// and two-octave runs stay comfortably inside the 88-key range.
+const GENERATOR_KEYS = CHROMATIC_NAMES.map((label, index) => ({ label, rootMidi: 60 + index }));
+
+const MAJOR_STEPS = [0, 2, 4, 5, 7, 9, 11, 12];
+const NATURAL_MINOR_STEPS = [0, 2, 3, 5, 7, 8, 10, 12];
+const DORIAN_STEPS = [0, 2, 3, 5, 7, 9, 10, 12];
+const MIXOLYDIAN_STEPS = [0, 2, 4, 5, 7, 9, 10, 12];
+const MAJOR_TRIAD = [0, 4, 7];
+const MINOR_TRIAD = [0, 3, 7];
+
+function scaleUpDownEvents(
+  rootMidi: number,
+  steps: number[],
+  turnRest: SongEvent["duration"] = "quarter",
+): SongEvent[] {
+  const up = steps.map((offset) => note(noteIdFromMidi(rootMidi + offset)));
+  const descendingSteps = steps.slice(0, -1).reverse();
+  const down = descendingSteps.map((offset, index) =>
+    note(noteIdFromMidi(rootMidi + offset), index === descendingSteps.length - 1 ? "whole" : "quarter"),
+  );
+  return [...up, rest(turnRest), ...down];
+}
+
+function buildScaleSong(id: string, title: string, rootMidi: number, steps: number[]): RawSong {
+  return { id, title, events: scaleUpDownEvents(rootMidi, steps) };
+}
+
+function buildTwoOctaveMajorSong(id: string, title: string, rootMidi: number): RawSong {
+  const twoOctaveSteps = [...MAJOR_STEPS, ...MAJOR_STEPS.slice(1).map((offset) => offset + 12)];
+  return { id, title, events: scaleUpDownEvents(rootMidi, twoOctaveSteps, "half") };
+}
+
+function buildArpeggioSong(id: string, title: string, rootMidi: number, triad: number[]): RawSong {
+  const [root, third, fifth] = triad as [number, number, number];
+  const chordTones = [root, third, fifth].map((offset) => noteIdFromMidi(rootMidi + offset));
+
+  return {
+    id,
+    title,
+    events: [
+      note(noteIdFromMidi(rootMidi + root)),
+      note(noteIdFromMidi(rootMidi + third)),
+      note(noteIdFromMidi(rootMidi + fifth)),
+      note(noteIdFromMidi(rootMidi + root + 12)),
+      rest("quarter"),
+      chord(chordTones, "half"),
+      rest("quarter"),
+      note(noteIdFromMidi(rootMidi + root + 12)),
+      note(noteIdFromMidi(rootMidi + fifth)),
+      note(noteIdFromMidi(rootMidi + third)),
+      chord(chordTones, "whole"),
+    ],
+  };
+}
+
+function triadChord(rootMidi: number, degreeOffset: number, triad: number[]): string[] {
+  return triad.map((offset) => noteIdFromMidi(rootMidi + degreeOffset + offset));
+}
+
+function buildChordProgressionSong(
+  id: string,
+  title: string,
+  rootMidi: number,
+  tonicTriad: number[],
+  subdominantOffset: number,
+  subdominantTriad: number[],
+): RawSong {
+  const iChord = triadChord(rootMidi, 0, tonicTriad);
+  const ivChord = triadChord(rootMidi, subdominantOffset, subdominantTriad);
+  const vChord = triadChord(rootMidi, 7, MAJOR_TRIAD);
+  const phrase: SongEvent[] = [
+    chord(iChord, "half"),
+    rest("quarter"),
+    chord(ivChord, "half"),
+    rest("quarter"),
+    chord(vChord, "half"),
+    rest("quarter"),
+    chord(iChord, "whole"),
+  ];
+
+  return { id, title, events: [...phrase, ...phrase] };
+}
+
+function buildIntervalDrillSong(id: string, title: string, rootMidi: number, intervalSemitones: number): RawSong {
+  const events: SongEvent[] = [];
+  MAJOR_STEPS.slice(0, 7).forEach((offset, index) => {
+    events.push(note(noteIdFromMidi(rootMidi + offset), "eighth"));
+    events.push(note(noteIdFromMidi(rootMidi + offset + intervalSemitones), index === 6 ? "quarter" : "eighth"));
+    if (index === 3) events.push(rest("eighth"));
+  });
+  return { id, title, events };
+}
+
+function buildRhythmRestEtudeSong(id: string, title: string, rootMidi: number): RawSong {
+  const degree = (index: number) => noteIdFromMidi(rootMidi + MAJOR_STEPS[index]!);
+
+  return {
+    id,
+    title,
+    events: [
+      note(degree(0)),
+      note(degree(1)),
+      rest("quarter"),
+      note(degree(2), "half"),
+      note(degree(3), "eighth"),
+      note(degree(4), "eighth"),
+      rest("half"),
+      note(degree(5)),
+      note(degree(6)),
+      rest("quarter"),
+      note(degree(7), "whole"),
+    ],
+  };
+}
+
+function buildBrokenChordWaltzSong(id: string, title: string, rootMidi: number, triad: number[]): RawSong {
+  const measure = (degreeOffset: number): SongEvent[] => {
+    const tones = triadChord(rootMidi, degreeOffset, triad);
+    return [note(tones[0]!, "quarter"), note(tones[1]!, "quarter"), note(tones[2]!, "quarter")];
+  };
+
+  return {
+    id,
+    title,
+    timeSignature: { beatsPerMeasure: 3, beatUnit: "quarter" },
+    events: [...measure(0), ...measure(5), ...measure(7), ...measure(0)],
+  };
+}
+
+const GENERATED_SONGS: RawSong[] = GENERATOR_KEYS.flatMap(({ label, rootMidi }) => {
+  const safeLabel = label.replace("#", "-sharp");
+
+  return [
+    buildScaleSong(`builtin-scale-major-${safeLabel}`, `${label} Major Scale`, rootMidi, MAJOR_STEPS),
+    buildScaleSong(`builtin-scale-minor-${safeLabel}`, `${label} Minor Scale`, rootMidi, NATURAL_MINOR_STEPS),
+    buildScaleSong(`builtin-scale-dorian-${safeLabel}`, `${label} Dorian Scale`, rootMidi, DORIAN_STEPS),
+    buildScaleSong(`builtin-scale-mixolydian-${safeLabel}`, `${label} Mixolydian Scale`, rootMidi, MIXOLYDIAN_STEPS),
+    buildTwoOctaveMajorSong(
+      `builtin-scale-major-two-octave-${safeLabel}`,
+      `${label} Major Scale, Two Octaves`,
+      rootMidi,
+    ),
+    buildArpeggioSong(`builtin-arpeggio-major-${safeLabel}`, `${label} Major Arpeggio`, rootMidi, MAJOR_TRIAD),
+    buildArpeggioSong(`builtin-arpeggio-minor-${safeLabel}`, `${label} Minor Arpeggio`, rootMidi, MINOR_TRIAD),
+    buildChordProgressionSong(
+      `builtin-chords-major-${safeLabel}`,
+      `Chord Progression in ${label} Major`,
+      rootMidi,
+      MAJOR_TRIAD,
+      5,
+      MAJOR_TRIAD,
+    ),
+    buildChordProgressionSong(
+      `builtin-chords-minor-${safeLabel}`,
+      `Chord Progression in ${label} Minor`,
+      rootMidi,
+      MINOR_TRIAD,
+      5,
+      MINOR_TRIAD,
+    ),
+    buildIntervalDrillSong(`builtin-intervals-thirds-${safeLabel}`, `Thirds in ${label}`, rootMidi, 4),
+    buildIntervalDrillSong(`builtin-intervals-fifths-${safeLabel}`, `Fifths in ${label}`, rootMidi, 7),
+    buildIntervalDrillSong(`builtin-intervals-sixths-${safeLabel}`, `Sixths in ${label}`, rootMidi, 9),
+    buildRhythmRestEtudeSong(`builtin-rhythm-rest-${safeLabel}`, `Rhythm and Rest Etude in ${label}`, rootMidi),
+    buildBrokenChordWaltzSong(`builtin-waltz-${safeLabel}`, `Broken Chord Waltz in ${label}`, rootMidi, MAJOR_TRIAD),
+  ];
+});
 
 export function buildBuiltInSongs(rawSongs: RawSong[]): Song[] {
   return rawSongs.map((raw) => {
@@ -590,7 +1224,7 @@ export function buildBuiltInSongs(rawSongs: RawSong[]): Song[] {
   });
 }
 
-export const BUILT_IN_SONGS: Song[] = buildBuiltInSongs(RAW_BUILT_IN_SONGS);
+export const BUILT_IN_SONGS: Song[] = buildBuiltInSongs([...RAW_BUILT_IN_SONGS, ...GENERATED_SONGS]);
 
 export function getSongById(songs: Song[], songId: string): Song | undefined {
   return songs.find((song) => song.id === songId);

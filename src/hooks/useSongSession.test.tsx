@@ -22,6 +22,19 @@ const song: Song = {
   ],
 };
 
+const songWithRest: Song = {
+  id: "builtin-hook-rest-test",
+  title: "Hook Rest Test",
+  source: "builtin",
+  clef: "treble",
+  timeSignature: DEFAULT_TIME_SIGNATURE,
+  events: [
+    { noteIds: ["C4"], duration: "quarter" },
+    { noteIds: [], duration: "quarter", isRest: true },
+    { noteIds: ["D4"], duration: "quarter" },
+  ],
+};
+
 beforeEach(() => {
   window.localStorage.clear();
   vi.useFakeTimers();
@@ -52,6 +65,32 @@ describe("useSongSession", () => {
 
     expect(result.current.playthrough?.index).toBe(1);
     expect(playTone).toHaveBeenCalledTimes(1);
+  });
+
+  it("auto-advances past a rest after a short hold, without pressing a key", () => {
+    const { result } = renderHook(() => useSongSession());
+
+    act(() => result.current.openSong(songWithRest));
+    act(() => result.current.answerCurrentEvent(["C4"]));
+    expect(result.current.playthrough?.index).toBe(1);
+
+    act(() => vi.advanceTimersByTime(500));
+
+    expect(result.current.playthrough?.index).toBe(2);
+  });
+
+  it("cancels the pending rest timer when the song is closed first", () => {
+    const { result } = renderHook(() => useSongSession());
+
+    act(() => result.current.openSong(songWithRest));
+    act(() => result.current.answerCurrentEvent(["C4"]));
+    expect(result.current.playthrough?.index).toBe(1);
+
+    act(() => result.current.closeSong());
+    act(() => vi.advanceTimersByTime(500));
+
+    expect(result.current.activeSong).toBeNull();
+    expect(result.current.playthrough).toBeNull();
   });
 
   it("flags wrong answers and clears the flag after the feedback delay", () => {

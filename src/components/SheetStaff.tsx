@@ -31,12 +31,56 @@ const TIME_SIGNATURE_X = 76;
 const BARLINE_ROW_START_X = 96;
 const BARLINE_TOP_OFFSET = 56;
 const BARLINE_BOTTOM_OFFSET = 120;
+// Middle line (B4 in treble), the anchor every rest shape is drawn around.
+const REST_ANCHOR_OFFSET = 88;
 
 type EventState = "done" | "current" | "upcoming";
 
 function getEventState(eventIndex: number, currentIndex: number): EventState {
   if (eventIndex < currentIndex) return "done";
   return eventIndex === currentIndex ? "current" : "upcoming";
+}
+
+// Rests are drawn as simple filled shapes instead of the Unicode rest
+// glyphs (𝄽 etc.): those characters render as invisible tofu in several
+// browser/font combinations, while these vector shapes always show up and
+// stay legible at small sizes.
+function RestShape({
+  eventX,
+  anchorY,
+  duration,
+}: {
+  eventX: number;
+  anchorY: number;
+  duration: Song["events"][number]["duration"];
+}) {
+  if (duration === "whole") {
+    return <rect className="sheet-rest" x={eventX - 8} y={anchorY - 20} width={16} height={7} />;
+  }
+
+  if (duration === "half") {
+    return <rect className="sheet-rest" x={eventX - 8} y={anchorY - 4} width={16} height={7} />;
+  }
+
+  if (duration === "eighth") {
+    return (
+      <g className="sheet-rest">
+        <rect x={eventX - 3} y={anchorY - 14} width={6} height={16} transform={`rotate(-24 ${eventX} ${anchorY})`} />
+        <circle cx={eventX + 6} cy={anchorY - 12} r={3.5} />
+      </g>
+    );
+  }
+
+  return (
+    <rect
+      className="sheet-rest"
+      x={eventX - 3}
+      y={anchorY - 16}
+      width={6}
+      height={28}
+      transform={`rotate(18 ${eventX} ${anchorY})`}
+    />
+  );
 }
 
 function SheetStaff({ song, currentIndex, currentStatus = "idle" }: SheetStaffProps) {
@@ -94,6 +138,33 @@ function SheetStaff({ song, currentIndex, currentStatus = "idle" }: SheetStaffPr
         const state = getEventState(eventIndex, currentIndex);
         const showBarline = eventIndex > 0 && measureStarts[eventIndex] === true;
         const barlineX = slot === 0 ? BARLINE_ROW_START_X : eventX - EVENT_SPACING / 2;
+        const stateClass = state === "current" ? `current ${currentStatus === "wrong" ? "wrong" : ""}` : state;
+        const caretY = systemY + STAFF_LINE_OFFSETS[STAFF_LINE_OFFSETS.length - 1]! + 26;
+
+        if (event.isRest) {
+          return (
+            <g key={eventIndex} className={`sheet-event ${stateClass}`} data-event-index={eventIndex}>
+              {showBarline && (
+                <line
+                  className="sheet-barline"
+                  data-barline="true"
+                  x1={barlineX}
+                  x2={barlineX}
+                  y1={systemY + BARLINE_TOP_OFFSET}
+                  y2={systemY + BARLINE_BOTTOM_OFFSET}
+                />
+              )}
+              {state === "current" && (
+                <path
+                  className="sheet-cursor"
+                  d={`M ${eventX - 7} ${caretY + 10} L ${eventX + 7} ${caretY + 10} L ${eventX} ${caretY} Z`}
+                />
+              )}
+              <RestShape eventX={eventX} anchorY={systemY + REST_ANCHOR_OFFSET} duration={event.duration} />
+            </g>
+          );
+        }
+
         const placements = event.noteIds
           .map((noteId) => ({ noteId, placement: getSheetNotePlacement(noteId, song.clef) }))
           .filter((entry): entry is { noteId: string; placement: NonNullable<typeof entry.placement> } =>
@@ -115,8 +186,6 @@ function SheetStaff({ song, currentIndex, currentStatus = "idle" }: SheetStaffPr
         const ledgerYs = [...new Set(placements.flatMap((entry) => entry.placement.ledgerLineYs))].map(
           (ledgerOffset) => systemY + ledgerOffset,
         );
-        const stateClass = state === "current" ? `current ${currentStatus === "wrong" ? "wrong" : ""}` : state;
-        const caretY = systemY + STAFF_LINE_OFFSETS[STAFF_LINE_OFFSETS.length - 1]! + 26;
 
         return (
           <g key={eventIndex} className={`sheet-event ${stateClass}`} data-event-index={eventIndex}>

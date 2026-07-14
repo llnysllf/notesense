@@ -8,6 +8,9 @@ export type NoteDuration = "whole" | "half" | "quarter" | "eighth";
 export type SongEvent = {
   noteIds: string[];
   duration: NoteDuration;
+  // A rest: no keys to press, just a held silence for the event's duration.
+  // noteIds is always [] when this is true.
+  isRest?: boolean;
 };
 
 export type SongClef = "treble" | "bass";
@@ -101,7 +104,13 @@ function isNoteDuration(value: unknown): value is NoteDuration {
 function normalizeSongEvent(value: unknown): SongEvent | undefined {
   if (typeof value !== "object" || value === null) return undefined;
 
-  const candidate = value as { noteIds?: unknown; duration?: unknown };
+  const candidate = value as { noteIds?: unknown; duration?: unknown; isRest?: unknown };
+  const duration = isNoteDuration(candidate.duration) ? candidate.duration : "quarter";
+
+  if (candidate.isRest === true) {
+    return { noteIds: [], duration, isRest: true };
+  }
+
   if (!Array.isArray(candidate.noteIds)) return undefined;
 
   const uniqueIds = [...new Set(candidate.noteIds.filter(isValidNoteId))];
@@ -109,10 +118,7 @@ function normalizeSongEvent(value: unknown): SongEvent | undefined {
 
   uniqueIds.sort((a, b) => (noteIdToMidi(a) ?? 0) - (noteIdToMidi(b) ?? 0));
 
-  return {
-    noteIds: uniqueIds,
-    duration: isNoteDuration(candidate.duration) ? candidate.duration : "quarter",
-  };
+  return { noteIds: uniqueIds, duration };
 }
 
 function normalizeTimeSignature(value: unknown): TimeSignature {

@@ -131,6 +131,8 @@ export function getPlaythroughSummary(playthrough: SongPlaythrough, song: Song):
 // Human label for an event, reused by the sheet aria description and the
 // player prompt ("C4 and E4, quarter note").
 export function describeSongEvent(event: SongEvent): string {
+  if (event.isRest) return `Rest, ${event.duration} note`;
+
   const notes =
     event.noteIds.length === 1
       ? event.noteIds[0]
