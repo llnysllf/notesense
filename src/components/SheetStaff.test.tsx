@@ -136,6 +136,45 @@ describe("SheetStaff", () => {
     expect(chord.querySelectorAll(".sheet-stem")).toHaveLength(1);
   });
 
+  it("draws a distinct rest shape for every duration", () => {
+    const restSong = makeSong({
+      events: [
+        { noteIds: [], duration: "whole", isRest: true },
+        { noteIds: [], duration: "half", isRest: true },
+        { noteIds: [], duration: "quarter", isRest: true },
+        { noteIds: [], duration: "eighth", isRest: true },
+      ],
+    });
+    const { container } = render(<SheetStaff song={restSong} currentIndex={0} />);
+
+    for (let index = 0; index < 4; index += 1) {
+      const event = getEventGroup(container, index)!;
+      expect(event.querySelector(".sheet-rest")).not.toBeNull();
+      expect(event.querySelector(".sheet-note-head")).toBeNull();
+    }
+    // The eighth rest is the only shape built from two elements (a flag and a dot).
+    expect(getEventGroup(container, 3)!.querySelectorAll(".sheet-rest rect, .sheet-rest circle")).toHaveLength(2);
+  });
+
+  it("shows the cursor and barline on a rest that is the current event", () => {
+    const restSong = makeSong({
+      // 3/4 time so the rest at index 3 starts the second measure and gets a barline.
+      timeSignature: { beatsPerMeasure: 3, beatUnit: "quarter" },
+      events: [
+        { noteIds: ["C4"], duration: "quarter" },
+        { noteIds: ["D4"], duration: "quarter" },
+        { noteIds: ["E4"], duration: "quarter" },
+        { noteIds: [], duration: "quarter", isRest: true },
+      ],
+    });
+    const { container } = render(<SheetStaff song={restSong} currentIndex={3} />);
+
+    const restEvent = getEventGroup(container, 3)!;
+    expect(restEvent).toHaveClass("current");
+    expect(restEvent.querySelector(".sheet-cursor")).not.toBeNull();
+    expect(restEvent.querySelector("[data-barline]")).not.toBeNull();
+  });
+
   it("draws ledger lines for notes outside the staff without clipping them into the next system", () => {
     const lowSong = makeSong({
       events: [

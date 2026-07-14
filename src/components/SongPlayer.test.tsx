@@ -19,6 +19,19 @@ const song: Song = {
   ],
 };
 
+const chordSong: Song = {
+  id: "builtin-chord-player-test",
+  title: "Chord Player Test",
+  source: "builtin",
+  clef: "treble",
+  timeSignature: DEFAULT_TIME_SIGNATURE,
+  events: [
+    { noteIds: ["C4", "E4", "G4"], duration: "quarter" },
+    { noteIds: [], duration: "quarter", isRest: true },
+    { noteIds: ["D4"], duration: "quarter" },
+  ],
+};
+
 type PlayerProps = Parameters<typeof SongPlayer>[0];
 
 function renderPlayer(overrides: Partial<PlayerProps> = {}) {
@@ -99,6 +112,43 @@ describe("SongPlayer", () => {
     expect(screen.getByText(/4\/4 notes in 30s\. Best on this song: 95%/)).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Play again" })).toBeInTheDocument();
     expect(screen.queryByRole("group", { name: "88-key piano keyboard" })).not.toBeInTheDocument();
+  });
+
+  it("accumulates held chord keys and answers once every key is down", () => {
+    const { props } = renderPlayer({ song: chordSong, playthrough: startPlaythrough(chordSong) });
+
+    fireEvent.click(screen.getByRole("button", { name: /White piano key C4/ }));
+    expect(props.onAnswer).not.toHaveBeenCalled();
+    expect(screen.getByRole("button", { name: /White piano key C4/ })).toHaveClass("range-key");
+
+    // Pressing the same key again while it's already held changes nothing.
+    fireEvent.click(screen.getByRole("button", { name: /White piano key C4/ }));
+    expect(props.onAnswer).not.toHaveBeenCalled();
+
+    fireEvent.click(screen.getByRole("button", { name: /White piano key E4/ }));
+    fireEvent.click(screen.getByRole("button", { name: /White piano key G4/ }));
+
+    expect(props.onAnswer).toHaveBeenCalledTimes(1);
+    expect(vi.mocked(props.onAnswer).mock.calls[0]![0]).toEqual(expect.arrayContaining(["C4", "E4", "G4"]));
+    expect(screen.getByRole("button", { name: /White piano key C4/ })).not.toHaveClass("range-key");
+  });
+
+  it("drops a partially held chord when the current event changes", () => {
+    const { props, rerender } = renderPlayer({ song: chordSong, playthrough: startPlaythrough(chordSong) });
+
+    fireEvent.click(screen.getByRole("button", { name: /White piano key C4/ }));
+    expect(screen.getByRole("button", { name: /White piano key C4/ })).toHaveClass("range-key");
+
+    rerender(<SongPlayer {...props} playthrough={{ ...startPlaythrough(chordSong), index: 2 }} />);
+
+    expect(screen.getByRole("button", { name: /White piano key C4/ })).not.toHaveClass("range-key");
+  });
+
+  it("shows the rest prompt and disables the keyboard during a rest", () => {
+    renderPlayer({ song: chordSong, playthrough: { ...startPlaythrough(chordSong), index: 1 } });
+
+    expect(screen.getByText("Rest — wait a beat.")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /White piano key C4/ })).toHaveAttribute("aria-disabled", "true");
   });
 
   it("celebrates a perfect run", () => {
