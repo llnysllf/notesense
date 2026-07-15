@@ -31,7 +31,7 @@ The primary app shell must keep these states intentional:
 - Header: brand lockup, current practice context, session status, and note replay action.
 - Mode switch: selected state, hover state, keyboard focus state, and disabled-free toggling.
 - Staff card: protected prompt surface with stable dimensions and a clear visual anchor.
-- Answer buttons: hover, active, disabled, keyboard focus, label wrapping, and score feedback compatibility.
+- Piano keys: hover, active, disabled, keyboard focus, selected-range, exact-answer, and score-feedback states.
 - Feedback/status chips: ready, listening/live, saved, correct, wrong, and storage/error text.
 - Stats panel: stat tiles, mastery map, insight chart, session history, and empty states.
 - Data controls: import/export controls stay reachable and visibly focused.

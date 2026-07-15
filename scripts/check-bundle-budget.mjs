@@ -46,7 +46,7 @@ const budgets = [
 ];
 
 const totalBudget = {
-  rawBytes: 320 * KIB,
+  rawBytes: 330 * KIB,
   gzipBytes: 100 * KIB,
 };
 

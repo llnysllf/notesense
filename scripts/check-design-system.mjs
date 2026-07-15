@@ -113,7 +113,7 @@ requireSnippets("src/styles.css", [
   ".staff-card::before",
   ".feedback.correct",
   ".feedback.wrong",
-  ".answer-button:disabled",
+  '.piano-key[aria-disabled="true"]',
   "@media (max-width: 940px)",
   "@media (max-width: 640px)",
 ]);

@@ -78,6 +78,7 @@ export default defineConfig({
         "src/components/SheetStaff.tsx",
         "src/components/SongLibrary.tsx",
         "src/components/SongPlayer.tsx",
+        "src/components/SongsWorkspace.tsx",
         "src/components/PracticeWorkspace.tsx",
         "src/components/ReadingRangeSelector.tsx",
         "src/noteData.ts",
