@@ -7,8 +7,16 @@ export type PracticeMode = "reading" | "pitch";
 export type RoundLength = 30 | 60 | 90;
 export type ReadingRange =
   "treble-starter" | "bass-starter" | "treble-one-octave" | "bass-one-octave" | "grand-starter" | "custom";
+export type PitchRange = "natural" | "chromatic" | "two-octaves" | "full" | "custom";
+export type PitchExercise = "single" | "melody";
+export type MelodyLength = 3 | 4 | 5;
 
 export type CustomReadingRange = {
+  startNoteId: string;
+  endNoteId: string;
+};
+
+export type CustomPitchRange = {
   startNoteId: string;
   endNoteId: string;
 };
@@ -47,6 +55,10 @@ export type PracticeSettings = {
   roundLength: RoundLength;
   readingRange: ReadingRange;
   customReadingRange: CustomReadingRange;
+  pitchRange: PitchRange;
+  customPitchRange: CustomPitchRange;
+  pitchExercise: PitchExercise;
+  melodyLength: MelodyLength;
   adaptivePractice: boolean;
   autoPlayPitch: boolean;
   revealPitchAfterAnswer: boolean;

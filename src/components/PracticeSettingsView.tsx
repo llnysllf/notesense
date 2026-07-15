@@ -5,7 +5,7 @@ import type { PracticeMode, PracticeSettings } from "../types";
 type PracticeSettingsViewProps = {
   mode: PracticeMode;
   rangeDetail: string;
-  readingRangeControls?: ReactNode;
+  rangeControls?: ReactNode;
   settings: PracticeSettings;
   onSettingsChange: (patch: Partial<PracticeSettings>) => void;
 };
@@ -13,16 +13,16 @@ type PracticeSettingsViewProps = {
 function PracticeSettingsView({
   mode,
   rangeDetail,
-  readingRangeControls,
+  rangeControls,
   settings,
   onSettingsChange,
 }: PracticeSettingsViewProps) {
   return (
     <>
-      {mode === "reading" && readingRangeControls && (
+      {rangeControls && (
         <div className="range-group">
-          <h3>Reading range</h3>
-          {readingRangeControls}
+          <h3>{mode === "reading" ? "Reading range" : "Pitch training"}</h3>
+          {rangeControls}
         </div>
       )}
 
@@ -75,11 +75,7 @@ function PracticeSettingsView({
 
       <div className="range-card">
         <h3>Active range</h3>
-        <p>
-          {mode === "reading"
-            ? `${rangeDetail} note reading.`
-            : "Pitch recognition across one natural-note octave from C4 to B4."}
-        </p>
+        <p>{mode === "reading" ? `${rangeDetail} note reading.` : `${rangeDetail} pitch recognition.`}</p>
       </div>
     </>
   );

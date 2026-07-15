@@ -1,5 +1,4 @@
 import type { ReactNode } from "react";
-import { getReadingRange } from "../noteData";
 import type {
   DataStatus,
   DailyGoalSummary,
@@ -44,7 +43,8 @@ type PracticeStatsPanelProps = {
   mode: PracticeMode;
   modeLabel: string;
   practicePlan: PracticePlan;
-  readingRangeControls?: ReactNode;
+  rangeControls?: ReactNode;
+  rangeDetail: string;
   settings: PracticeSettings;
   dataStatus: DataStatus;
   onExportData: () => void;
@@ -66,7 +66,8 @@ function PracticeStatsPanel({
   mode,
   modeLabel,
   practicePlan,
-  readingRangeControls,
+  rangeControls,
+  rangeDetail,
   settings,
   dataStatus,
   onExportData,
@@ -74,8 +75,6 @@ function PracticeStatsPanel({
   onResetProgress,
   onSettingsChange,
 }: PracticeStatsPanelProps) {
-  const readingRange = getReadingRange(settings.readingRange, settings.customReadingRange);
-
   return (
     <aside className="stats-panel" aria-label="Practice progress">
       <div className="panel-heading">
@@ -151,8 +150,8 @@ function PracticeStatsPanel({
         {activeView === "settings" && (
           <PracticeSettingsView
             mode={mode}
-            rangeDetail={readingRange.detail}
-            readingRangeControls={readingRangeControls}
+            rangeDetail={rangeDetail}
+            rangeControls={rangeControls}
             settings={settings}
             onSettingsChange={onSettingsChange}
           />

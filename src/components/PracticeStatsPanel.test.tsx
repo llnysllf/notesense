@@ -114,6 +114,7 @@ function makeProps(overrides: Partial<PracticeStatsPanelProps> = {}): PracticeSt
       target: "Finish one round",
       steps: ["Start the drill", "Answer carefully"],
     },
+    rangeDetail: "Treble clef C4-G4",
     settings: defaultSettings,
     dataStatus: null,
     onExportData: vi.fn(),
@@ -128,6 +129,7 @@ describe("PracticeStatsPanel", () => {
   it("renders saved progress, matching last-round summary, and reading range context", () => {
     const props = makeProps({
       lastSummary: makeLastSummary(),
+      rangeDetail: "Bass clef C3-G3",
       settings: { ...defaultSettings, readingRange: "bass-starter" },
     });
     const { rerender } = render(<PracticeStatsPanel {...props} />);
@@ -152,12 +154,13 @@ describe("PracticeStatsPanel", () => {
           activeView: "settings",
           mode: "pitch",
           modeLabel: "Pitch training",
+          rangeDetail: "Chromatic pitches C4-B4",
         })}
       />,
     );
 
     expect(screen.queryByRole("heading", { level: 3, name: "Last round" })).not.toBeInTheDocument();
-    expect(screen.getByText("Pitch recognition across one natural-note octave from C4 to B4.")).toBeInTheDocument();
+    expect(screen.getByText("Chromatic pitches C4-B4 pitch recognition.")).toBeInTheDocument();
   });
 
   it("switches map and history into separate panel views", () => {

@@ -6,7 +6,7 @@
 [![CodeQL](https://github.com/llnysllf/notesense/actions/workflows/codeql.yml/badge.svg)](https://github.com/llnysllf/notesense/actions/workflows/codeql.yml)
 [![Dependency Review](https://github.com/llnysllf/notesense/actions/workflows/dependency-review.yml/badge.svg)](https://github.com/llnysllf/notesense/actions/workflows/dependency-review.yml)
 
-NoteSense is a local-first piano sight-reading and ear-training app for beginner musicians. It helps learners practice starter staff notes, recognize natural pitches, and build repeatable practice habits without accounts, tracking, or a backend.
+NoteSense is a local-first piano sight-reading and ear-training app for beginner musicians. It helps learners practice starter staff notes, recognize piano pitches, transcribe short melodies, and build repeatable practice habits without accounts, tracking, or a backend.
 
 Live app: [llnysllf.github.io/notesense](https://llnysllf.github.io/notesense/)
 
@@ -21,14 +21,16 @@ NoteSense is intentionally small, but it is treated like a production product. T
 The current product does three things well:
 
 - Gives beginners short note-reading drills for starter treble and bass ranges.
-- Trains recognition of natural piano pitches from C4 to B4.
+- Trains exact pitch recognition across configurable natural, chromatic, two-octave, custom, or full 88-key ranges.
+- Builds melodic memory through short three-to-five-note transcription drills.
 - Keeps progress local, portable, and resilient when browser storage behaves badly.
 
-The product deliberately does not include accounts, sync, a backend, analytics, payments, classroom tools, sharps/flats in the single-note drills, chord entry, timed rhythm scoring, MIDI, translated UI, or runtime locale switching yet. Those can come later, but only after the foundation and product evidence justify them.
+The product deliberately does not include accounts, sync, a backend, analytics, payments, classroom tools, chord entry, timed rhythm scoring, MIDI, translated UI, or runtime locale switching yet. Those can come later, but only after the foundation and product evidence justify them.
 
 ## Current Capabilities
 
-- Timed note-reading and pitch-training rounds.
+- Timed note-reading, single-pitch, and short melody-dictation rounds.
+- Configurable pitch ranges from seven natural notes through the full 88-key piano, including custom endpoints.
 - Adaptive or random item selection that can focus weaker notes.
 - Keyboard and on-screen answers.
 - Web Audio playback for pitch association.

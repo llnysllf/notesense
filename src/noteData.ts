@@ -1,8 +1,10 @@
 import type {
+  CustomPitchRange,
   CustomReadingRange,
   ModeProgress,
   NoteName,
   PitchNote,
+  PitchRange,
   PracticeProgress,
   ReadingNoteName,
   ReadingRange,
@@ -35,6 +37,7 @@ export type PianoKey = {
 };
 
 export const DEFAULT_CUSTOM_READING_RANGE: CustomReadingRange = { startNoteId: "C3", endNoteId: "B4" };
+export const DEFAULT_CUSTOM_PITCH_RANGE: CustomPitchRange = { startNoteId: "C3", endNoteId: "B4" };
 
 type ReadingRangeConfig = {
   id: ReadingRange;
@@ -44,7 +47,15 @@ type ReadingRangeConfig = {
   notes: TrainingNote[];
 };
 
+export type PitchRangeConfig = {
+  id: PitchRange;
+  label: string;
+  detail: string;
+  notes: PitchNote[];
+};
+
 export const DEFAULT_READING_RANGE: ReadingRange = "treble-starter";
+export const DEFAULT_PITCH_RANGE: PitchRange = "chromatic";
 
 function getPianoKeyNaturalName(name: PianoKeyName): NoteName {
   return name[0] as NoteName;
@@ -296,58 +307,6 @@ export const READING_NOTES = Array.from(
 export const READING_ANSWER_OPTIONS: ReadingNoteName[] = ["C", "D", "E", "F", "G", "A", "B"];
 export const PITCH_ANSWER_OPTIONS: NoteName[] = ["C", "D", "E", "F", "G", "A", "B"];
 
-export const PITCH_NOTES: PitchNote[] = [
-  {
-    id: "C4",
-    name: "C",
-    octave: 4,
-    frequency: 261.63,
-    keyboardShortcut: "1",
-  },
-  {
-    id: "D4",
-    name: "D",
-    octave: 4,
-    frequency: 293.66,
-    keyboardShortcut: "2",
-  },
-  {
-    id: "E4",
-    name: "E",
-    octave: 4,
-    frequency: 329.63,
-    keyboardShortcut: "3",
-  },
-  {
-    id: "F4",
-    name: "F",
-    octave: 4,
-    frequency: 349.23,
-    keyboardShortcut: "4",
-  },
-  {
-    id: "G4",
-    name: "G",
-    octave: 4,
-    frequency: 392,
-    keyboardShortcut: "5",
-  },
-  {
-    id: "A4",
-    name: "A",
-    octave: 4,
-    frequency: 440,
-    keyboardShortcut: "6",
-  },
-  {
-    id: "B4",
-    name: "B",
-    octave: 4,
-    frequency: 493.88,
-    keyboardShortcut: "7",
-  },
-];
-
 function createPianoKeys(): PianoKey[] {
   let whiteKeyIndex = 0;
 
@@ -378,6 +337,13 @@ function createPianoKeys(): PianoKey[] {
 
 export const PIANO_KEYS = createPianoKeys();
 export const PIANO_WHITE_KEY_COUNT = PIANO_KEYS.filter((key) => !key.isBlack).length;
+export const PITCH_NOTES: PitchNote[] = PIANO_KEYS.map((key) => ({
+  id: key.id,
+  name: key.naturalName,
+  octave: key.octave,
+  frequency: getFrequencyFromMidi(key.midi),
+  keyboardShortcut: "",
+}));
 
 // Sheet placement for any 88-key note id ("C4", "F#3"): sharps sit on the
 // same staff line as their natural letter and carry an accidental glyph.
@@ -407,6 +373,95 @@ export function getSheetNotePlacement(noteId: string, clef: StaffClef): SheetNot
 
 export function getPianoKeyById(noteId: string): PianoKey | undefined {
   return PIANO_KEYS.find((key) => key.id === noteId);
+}
+
+function getPitchNotesBetween(startNoteId: string, endNoteId: string, naturalOnly = false): PitchNote[] {
+  const startMidi = getPianoKeyById(startNoteId)?.midi ?? PIANO_MIDI_START;
+  const endMidi = getPianoKeyById(endNoteId)?.midi ?? PIANO_MIDI_END;
+
+  return PITCH_NOTES.filter((note) => {
+    const key = getPianoKeyById(note.id);
+    return key !== undefined && key.midi >= startMidi && key.midi <= endMidi && (!naturalOnly || !key.isBlack);
+  });
+}
+
+const defaultPitchNotes = getPitchNotesBetween("C4", "B4");
+const customPitchRangeConfig: PitchRangeConfig = {
+  id: "custom",
+  label: "Custom",
+  detail: "Custom C3-B4",
+  notes: getPitchNotesBetween(DEFAULT_CUSTOM_PITCH_RANGE.startNoteId, DEFAULT_CUSTOM_PITCH_RANGE.endNoteId),
+};
+
+export const PITCH_RANGES: PitchRangeConfig[] = [
+  {
+    id: "natural",
+    label: "Natural 7",
+    detail: "Natural notes C4-B4",
+    notes: getPitchNotesBetween("C4", "B4", true),
+  },
+  {
+    id: "chromatic",
+    label: "Chromatic 12",
+    detail: "Chromatic pitches C4-B4",
+    notes: defaultPitchNotes,
+  },
+  {
+    id: "two-octaves",
+    label: "Two octaves",
+    detail: "Chromatic pitches C3-B4",
+    notes: getPitchNotesBetween("C3", "B4"),
+  },
+  {
+    id: "full",
+    label: "Full 88",
+    detail: "Full piano A0-C8",
+    notes: PITCH_NOTES,
+  },
+  customPitchRangeConfig,
+];
+
+function getSupportedPitchKey(noteId: string | undefined, fallbackNoteId: string): PianoKey {
+  return getPianoKeyById(noteId ?? "") ?? getPianoKeyById(fallbackNoteId)!;
+}
+
+export function normalizeCustomPitchRange(range: CustomPitchRange = DEFAULT_CUSTOM_PITCH_RANGE): CustomPitchRange {
+  const startKey = getSupportedPitchKey(range.startNoteId, DEFAULT_CUSTOM_PITCH_RANGE.startNoteId);
+  const endKey = getSupportedPitchKey(range.endNoteId, DEFAULT_CUSTOM_PITCH_RANGE.endNoteId);
+
+  if (startKey.midi > endKey.midi) {
+    return { startNoteId: endKey.id, endNoteId: startKey.id };
+  }
+
+  return { startNoteId: startKey.id, endNoteId: endKey.id };
+}
+
+export function getPitchRange(
+  range: PitchRange = DEFAULT_PITCH_RANGE,
+  customPitchRange: CustomPitchRange = DEFAULT_CUSTOM_PITCH_RANGE,
+): PitchRangeConfig {
+  if (range === "custom") {
+    const normalizedRange = normalizeCustomPitchRange(customPitchRange);
+
+    return {
+      ...customPitchRangeConfig,
+      detail: `Custom ${normalizedRange.startNoteId}-${normalizedRange.endNoteId}`,
+      notes: getPitchNotesBetween(normalizedRange.startNoteId, normalizedRange.endNoteId),
+    };
+  }
+
+  return PITCH_RANGES.find((rangeConfig) => rangeConfig.id === range) ?? PITCH_RANGES[1]!;
+}
+
+export function getPitchNotes(
+  range: PitchRange = DEFAULT_PITCH_RANGE,
+  customPitchRange: CustomPitchRange = DEFAULT_CUSTOM_PITCH_RANGE,
+): PitchNote[] {
+  return getPitchRange(range, customPitchRange).notes;
+}
+
+export function isPitchRange(value: unknown): value is PitchRange {
+  return PITCH_RANGES.some((range) => range.id === value);
 }
 
 const defaultReadingRangeConfig = READING_RANGES.find((range) => range.id === DEFAULT_READING_RANGE)!;

@@ -1,12 +1,13 @@
 import { fireEvent, render, screen, waitFor, within } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import App from "./App";
-import { playTone } from "./audio";
+import { playMelody, playTone } from "./audio";
 import { PITCH_NOTES, emptyProgress } from "./noteData";
 import { defaultSettings, serializePracticeDataExport } from "./storage";
 import type { PracticeProgress } from "./types";
 
 vi.mock("./audio", () => ({
+  playMelody: vi.fn(),
   playTone: vi.fn(),
 }));
 
@@ -200,15 +201,34 @@ describe("App", () => {
     fireEvent.click(screen.getByRole("button", { name: "Start drill" }));
     const playedFrequency = playToneMock.mock.calls.at(-1)?.[0];
     const expectedNote = PITCH_NOTES.find((note) => note.frequency === playedFrequency);
-    const wrongAnswer = ["C", "D", "E", "F", "G", "A", "B"].find((answer) => answer !== expectedNote?.name);
+    const wrongAnswer = ["C4", "C#4", "D4"].find((answer) => answer !== expectedNote?.id);
 
     if (wrongAnswer === undefined) {
       throw new Error("Could not choose a wrong pitch answer.");
     }
 
-    fireEvent.click(screen.getByRole("button", { name: `Answer ${wrongAnswer}` }));
+    fireEvent.click(
+      screen.getByRole("button", { name: new RegExp(`piano key ${wrongAnswer}, inside selected range`) }),
+    );
 
     expect(screen.getByTestId("practice-feedback")).toHaveTextContent("Try the next one");
+  });
+
+  it("runs melody dictation and persists each entered note", () => {
+    const playMelodyMock = vi.mocked(playMelody);
+    render(<App />);
+
+    fireEvent.click(screen.getByRole("button", { name: "Pitch training" }));
+    fireEvent.click(screen.getByRole("button", { name: "Melody" }));
+    fireEvent.click(screen.getByRole("button", { name: "Start drill" }));
+    for (const noteId of ["C4", "C#4", "D4"]) {
+      fireEvent.click(screen.getByRole("button", { name: new RegExp(`piano key ${noteId}, inside selected range`) }));
+    }
+    fireEvent.click(screen.getByRole("button", { name: "Submit melody" }));
+
+    expect(playMelodyMock).toHaveBeenCalledTimes(1);
+    expect(readStoredJson<PracticeProgress>(PROGRESS_STORAGE_KEY).pitch.totalAttempts).toBe(3);
+    expect(screen.getByTestId("practice-feedback")).not.toHaveTextContent("Listening");
   });
 
   it("replays notes and can switch back to note reading from pitch training", () => {

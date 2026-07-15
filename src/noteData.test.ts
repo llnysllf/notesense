@@ -6,11 +6,14 @@ import {
   CUSTOM_READING_MAX_NOTE_ID,
   CUSTOM_READING_MIN_NOTE_ID,
   CUSTOM_READING_NOTES,
+  DEFAULT_CUSTOM_PITCH_RANGE,
   DEFAULT_CUSTOM_READING_RANGE,
+  DEFAULT_PITCH_RANGE,
   DEFAULT_READING_RANGE,
   GRAND_STARTER_NOTES,
   PITCH_ANSWER_OPTIONS,
   PITCH_NOTES,
+  PITCH_RANGES,
   PIANO_KEYS,
   PIANO_WHITE_KEY_COUNT,
   READING_ANSWER_OPTIONS,
@@ -22,10 +25,13 @@ import {
   emptyProgress,
   emptyReadingProgress,
   getCustomReadingNotes,
+  getPitchNotes,
+  getPitchRange,
   getReadingNotes,
   getReadingRange,
   getPianoKeyById,
   isReadingRange,
+  normalizeCustomPitchRange,
   normalizeCustomReadingRange,
 } from "./noteData";
 
@@ -132,12 +138,35 @@ describe("noteData", () => {
       "A4",
       "B4",
     ]);
-    expect(noteIds(PITCH_NOTES)).toEqual(["C4", "D4", "E4", "F4", "G4", "A4", "B4"]);
+    expect(PITCH_NOTES).toHaveLength(88);
+    expect(noteIds(PITCH_NOTES).slice(0, 3)).toEqual(["A0", "A#0", "B0"]);
+    expect(noteIds(PITCH_NOTES).slice(-3)).toEqual(["A#7", "B7", "C8"]);
     expect(READING_ANSWER_OPTIONS).toEqual(["C", "D", "E", "F", "G", "A", "B"]);
     expect(PITCH_ANSWER_OPTIONS).toEqual(["C", "D", "E", "F", "G", "A", "B"]);
     expect(STARTER_NOTES.map((note) => note.keyboardShortcut)).toEqual(["1", "2", "3", "4", "5"]);
     expect(TREBLE_ONE_OCTAVE_NOTES.map((note) => note.keyboardShortcut)).toEqual(["1", "2", "3", "4", "5", "6", "7"]);
-    expect(PITCH_NOTES.map((note) => note.keyboardShortcut)).toEqual(["1", "2", "3", "4", "5", "6", "7"]);
+    expect(PITCH_NOTES.every((note) => note.keyboardShortcut === "")).toBe(true);
+  });
+
+  it("supports expanded and custom pitch ranges", () => {
+    expect(DEFAULT_PITCH_RANGE).toBe("chromatic");
+    expect(DEFAULT_CUSTOM_PITCH_RANGE).toEqual({ startNoteId: "C3", endNoteId: "B4" });
+    expect(PITCH_RANGES.map((range) => range.id)).toEqual(["natural", "chromatic", "two-octaves", "full", "custom"]);
+    expect(noteIds(getPitchNotes("natural"))).toEqual(["C4", "D4", "E4", "F4", "G4", "A4", "B4"]);
+    expect(getPitchNotes("chromatic")).toHaveLength(12);
+    expect(getPitchNotes("two-octaves")).toHaveLength(24);
+    expect(getPitchNotes("full")).toHaveLength(88);
+    expect(normalizeCustomPitchRange({ startNoteId: "G4", endNoteId: "C#4" })).toEqual({
+      startNoteId: "C#4",
+      endNoteId: "G4",
+    });
+    expect(getPitchRange("custom", { startNoteId: "C#4", endNoteId: "E4" }).detail).toBe("Custom C#4-E4");
+    expect(noteIds(getPitchNotes("custom", { startNoteId: "C#4", endNoteId: "E4" }))).toEqual([
+      "C#4",
+      "D4",
+      "D#4",
+      "E4",
+    ]);
   });
 
   it("models the full 88-key piano range from A0 to C8", () => {

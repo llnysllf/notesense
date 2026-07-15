@@ -1,12 +1,13 @@
 import { act, renderHook } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { playTone } from "../audio";
+import { playMelody, playTone } from "../audio";
 import { emptyProgress } from "../noteData";
 import { defaultSettings } from "../storage";
 import type { PracticeProgress, PracticeSettings } from "../types";
 import { usePracticeSession } from "./usePracticeSession";
 
 vi.mock("../audio", () => ({
+  playMelody: vi.fn(),
   playTone: vi.fn(),
 }));
 
@@ -125,6 +126,18 @@ describe("usePracticeSession", () => {
     expect(playToneMock).toHaveBeenLastCalledWith(result.current.currentPitchNote.frequency);
   });
 
+  it("replays the complete melody on demand", () => {
+    const playMelodyMock = vi.mocked(playMelody);
+    const { result } = renderPracticeSession({
+      settings: { ...defaultSettings, pitchExercise: "melody" },
+    });
+
+    act(() => result.current.setPracticeMode("pitch"));
+    act(() => result.current.playCurrentNote());
+
+    expect(playMelodyMock).toHaveBeenCalledWith(result.current.currentMelody.map((note) => note.frequency));
+  });
+
   it("switches modes and auto-plays pitch rounds when configured", () => {
     const playToneMock = vi.mocked(playTone);
     const { result } = renderPracticeSession({
@@ -161,6 +174,67 @@ describe("usePracticeSession", () => {
     act(() => vi.advanceTimersByTime(650));
 
     expect(result.current.feedback).toBeNull();
+  });
+
+  it("records exact single-pitch piano answers", () => {
+    const { result, onProgressChange } = renderPracticeSession();
+
+    act(() => result.current.setPracticeMode("pitch"));
+    act(() => result.current.startRound());
+    const answerNoteId = result.current.currentPitchNote.id;
+    act(() => result.current.handlePitchKeyAnswer(answerNoteId));
+
+    const nextProgress = onProgressChange.mock.calls[0]?.[0] as PracticeProgress;
+    expect(result.current.feedback).toMatchObject({ answerId: answerNoteId, isCorrect: true });
+    expect(nextProgress.pitch.noteStats[answerNoteId]).toEqual({ attempts: 1, correct: 1 });
+  });
+
+  it("plays, collects, and scores a melody as note-level attempts", () => {
+    const playMelodyMock = vi.mocked(playMelody);
+    const { result, onProgressChange } = renderPracticeSession({
+      settings: { ...defaultSettings, pitchExercise: "melody", melodyLength: 3 },
+    });
+
+    act(() => result.current.setPracticeMode("pitch"));
+    act(() => result.current.startRound());
+    const melody = result.current.currentMelody.map((note) => note.id);
+    melody.forEach((noteId) => act(() => result.current.handleMelodyNoteInput(noteId)));
+    act(() => result.current.submitMelodyAnswer());
+
+    const nextProgress = onProgressChange.mock.calls[0]?.[0] as PracticeProgress;
+    expect(playMelodyMock).toHaveBeenCalledWith(result.current.currentMelody.map((note) => note.frequency));
+    expect(result.current.feedback).toMatchObject({ answerId: melody.join(" "), isCorrect: true });
+    expect(result.current.roundAttempts).toBe(3);
+    expect(result.current.roundCorrect).toBe(3);
+    expect(nextProgress.pitch.totalAttempts).toBe(3);
+    expect(nextProgress.pitch.totalCorrect).toBe(3);
+
+    act(() => vi.advanceTimersByTime(1400));
+    expect(result.current.feedback).toBeNull();
+    expect(result.current.melodyAnswerNoteIds).toEqual([]);
+    expect(playMelodyMock).toHaveBeenCalledTimes(2);
+  });
+
+  it("edits melody answers and ignores unavailable notes", () => {
+    const { result, onProgressChange } = renderPracticeSession({
+      settings: { ...defaultSettings, pitchExercise: "melody", pitchRange: "natural" },
+    });
+
+    act(() => result.current.setPracticeMode("pitch"));
+    act(() => result.current.startRound());
+    act(() => result.current.submitMelodyAnswer());
+    expect(onProgressChange).not.toHaveBeenCalled();
+
+    act(() => result.current.handleMelodyNoteInput("C#4"));
+    expect(result.current.melodyAnswerNoteIds).toEqual([]);
+
+    act(() => result.current.handleMelodyNoteInput("C4"));
+    act(() => result.current.handleMelodyNoteInput("D4"));
+    act(() => result.current.undoMelodyAnswer());
+    expect(result.current.melodyAnswerNoteIds).toEqual(["C4"]);
+
+    act(() => result.current.clearMelodyAnswer());
+    expect(result.current.melodyAnswerNoteIds).toEqual([]);
   });
 
   it("submits keyboard shortcut answers while a round is running", () => {

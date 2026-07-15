@@ -110,3 +110,29 @@ describe("playTone", () => {
     expect(context.createGain).toHaveBeenCalledTimes(2);
   });
 });
+
+describe("playMelody", () => {
+  it("schedules each note in order on one audio context", async () => {
+    const { AudioContextMock, gains, oscillators } = installAudioContextMock();
+    const { playMelody } = await import("./audio");
+
+    playMelody([261.63, 329.63, 392]);
+
+    expect(AudioContextMock).toHaveBeenCalledTimes(1);
+    expect(oscillators).toHaveLength(3);
+    expect(gains).toHaveLength(3);
+    expect(oscillators[0]?.frequency.setValueAtTime).toHaveBeenCalledWith(261.63, 12.5);
+    expect(oscillators[1]?.frequency.setValueAtTime).toHaveBeenCalledWith(329.63, 13.22);
+    expect(oscillators[2]?.frequency.setValueAtTime).toHaveBeenCalledWith(392, 13.94);
+    expect(oscillators[2]?.stop).toHaveBeenCalledWith(14.559999999999999);
+  });
+
+  it("does not create an audio context for an empty melody", async () => {
+    const { AudioContextMock } = installAudioContextMock();
+    const { playMelody } = await import("./audio");
+
+    playMelody([]);
+
+    expect(AudioContextMock).not.toHaveBeenCalled();
+  });
+});

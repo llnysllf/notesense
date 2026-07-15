@@ -1,16 +1,12 @@
 import { fireEvent, render, screen } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
+import { defaultSettings } from "../storage";
 import type { PracticeSettings } from "../types";
 import PracticeSettingsView from "./PracticeSettingsView";
 
 function makeSettings(overrides: Partial<PracticeSettings> = {}): PracticeSettings {
   return {
-    roundLength: 60,
-    readingRange: "treble-starter",
-    customReadingRange: { startNoteId: "C3", endNoteId: "B4" },
-    adaptivePractice: true,
-    autoPlayPitch: true,
-    revealPitchAfterAnswer: true,
+    ...defaultSettings,
     ...overrides,
   };
 }
@@ -60,7 +56,7 @@ describe("PracticeSettingsView", () => {
   it("shows reading range controls in reading mode", () => {
     renderSettingsView({
       mode: "reading",
-      readingRangeControls: <div data-testid="reading-range-controls" />,
+      rangeControls: <div data-testid="reading-range-controls" />,
     });
 
     expect(screen.getByRole("heading", { name: "Reading range" })).toBeInTheDocument();
@@ -68,14 +64,15 @@ describe("PracticeSettingsView", () => {
     expect(screen.getByText("Treble clef C4-G4 note reading.")).toBeInTheDocument();
   });
 
-  it("hides reading range controls in pitch mode and describes the pitch range", () => {
+  it("shows pitch controls and describes the active pitch range", () => {
     renderSettingsView({
       mode: "pitch",
-      readingRangeControls: <div data-testid="reading-range-controls" />,
+      rangeDetail: "Chromatic pitches C4-B4",
+      rangeControls: <div data-testid="pitch-range-controls" />,
     });
 
-    expect(screen.queryByTestId("reading-range-controls")).not.toBeInTheDocument();
-    expect(screen.queryByRole("heading", { name: "Reading range" })).not.toBeInTheDocument();
-    expect(screen.getByText("Pitch recognition across one natural-note octave from C4 to B4.")).toBeInTheDocument();
+    expect(screen.getByTestId("pitch-range-controls")).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Pitch training" })).toBeInTheDocument();
+    expect(screen.getByText("Chromatic pitches C4-B4 pitch recognition.")).toBeInTheDocument();
   });
 });
