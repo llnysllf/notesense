@@ -7,59 +7,28 @@ import type {
   PracticeProgress,
   PracticeSessionRecord,
   PracticeSettings,
-  ReadingRange,
-  CustomReadingRange,
-  CustomPitchRange,
-  MelodyLength,
-  PitchExercise,
-  PitchRange,
 } from "./types";
+import { normalizeSettings } from "./practiceSettings";
+
+export {
+  DEFAULT_CUSTOM_PITCH_RANGE,
+  DEFAULT_CUSTOM_READING_RANGE,
+  DEFAULT_MELODY_LENGTH,
+  DEFAULT_PITCH_EXERCISE,
+  DEFAULT_PITCH_RANGE,
+  DEFAULT_READING_RANGE,
+  PITCH_RANGE_IDS,
+  READING_RANGE_IDS,
+  defaultSettings,
+  isPitchRange,
+  isReadingRange,
+  normalizeSettings,
+} from "./practiceSettings";
 
 export const DATA_EXPORT_SCHEMA_VERSION = 1;
 export const SESSION_HISTORY_LIMIT = 20;
 export const INVALID_IMPORT_ERROR = "Choose a valid NoteSense export file.";
 export const UNSUPPORTED_IMPORT_ERROR = "This NoteSense export version is not supported.";
-
-export const READING_RANGE_IDS: readonly ReadingRange[] = [
-  "treble-starter",
-  "bass-starter",
-  "treble-one-octave",
-  "bass-one-octave",
-  "grand-starter",
-  "custom",
-];
-export const DEFAULT_READING_RANGE: ReadingRange = "treble-starter";
-export const DEFAULT_CUSTOM_READING_RANGE: CustomReadingRange = { startNoteId: "C3", endNoteId: "B4" };
-export const PITCH_RANGE_IDS: readonly PitchRange[] = ["natural", "chromatic", "two-octaves", "full", "custom"];
-export const DEFAULT_PITCH_RANGE: PitchRange = "chromatic";
-export const DEFAULT_CUSTOM_PITCH_RANGE: CustomPitchRange = { startNoteId: "C3", endNoteId: "B4" };
-export const DEFAULT_PITCH_EXERCISE: PitchExercise = "single";
-export const DEFAULT_MELODY_LENGTH: MelodyLength = 3;
-
-export const defaultSettings: PracticeSettings = {
-  roundLength: 60,
-  readingRange: DEFAULT_READING_RANGE,
-  customReadingRange: DEFAULT_CUSTOM_READING_RANGE,
-  pitchRange: DEFAULT_PITCH_RANGE,
-  customPitchRange: DEFAULT_CUSTOM_PITCH_RANGE,
-  pitchExercise: DEFAULT_PITCH_EXERCISE,
-  melodyLength: DEFAULT_MELODY_LENGTH,
-  adaptivePractice: true,
-  autoPlayPitch: true,
-  revealPitchAfterAnswer: true,
-};
-
-export function isReadingRange(value: unknown): value is ReadingRange {
-  return READING_RANGE_IDS.includes(value as ReadingRange);
-}
-
-export function isPitchRange(value: unknown): value is PitchRange {
-  return PITCH_RANGE_IDS.includes(value as PitchRange);
-}
-
-function isPitchExercise(value: unknown): value is PitchExercise {
-  return value === "single" || value === "melody";
-}
 
 function isPracticeMode(value: unknown): value is PracticeMode {
   return value === "reading" || value === "pitch";
@@ -67,32 +36,6 @@ function isPracticeMode(value: unknown): value is PracticeMode {
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return Boolean(value) && typeof value === "object" && !Array.isArray(value);
-}
-
-function isNoteId(value: unknown): value is string {
-  return typeof value === "string" && /^[A-G]#?\d$/.test(value);
-}
-
-function normalizeCustomReadingRange(value: unknown): CustomReadingRange {
-  if (!isRecord(value)) {
-    return defaultSettings.customReadingRange;
-  }
-
-  return {
-    startNoteId: isNoteId(value.startNoteId) ? value.startNoteId : defaultSettings.customReadingRange.startNoteId,
-    endNoteId: isNoteId(value.endNoteId) ? value.endNoteId : defaultSettings.customReadingRange.endNoteId,
-  };
-}
-
-function normalizeCustomPitchRange(value: unknown): CustomPitchRange {
-  if (!isRecord(value)) {
-    return defaultSettings.customPitchRange;
-  }
-
-  return {
-    startNoteId: isNoteId(value.startNoteId) ? value.startNoteId : defaultSettings.customPitchRange.startNoteId,
-    endNoteId: isNoteId(value.endNoteId) ? value.endNoteId : defaultSettings.customPitchRange.endNoteId,
-  };
 }
 
 function toSafeWholeNumber(value: unknown): number {
@@ -218,39 +161,6 @@ export function normalizeProgress(progress: unknown, emptyProgress: PracticeProg
     reading: normalizeModeProgress(progressRecord, "reading", emptyProgress),
     pitch: normalizeModeProgress(undefined, "pitch", emptyProgress),
     history: [],
-  };
-}
-
-export function normalizeSettings(settings: unknown): PracticeSettings {
-  const settingsRecord = isRecord(settings) ? settings : {};
-  const roundLength = [30, 60, 90].includes(Number(settingsRecord.roundLength))
-    ? (Number(settingsRecord.roundLength) as PracticeSettings["roundLength"])
-    : defaultSettings.roundLength;
-
-  return {
-    roundLength,
-    readingRange: isReadingRange(settingsRecord.readingRange)
-      ? settingsRecord.readingRange
-      : defaultSettings.readingRange,
-    customReadingRange: normalizeCustomReadingRange(settingsRecord.customReadingRange),
-    pitchRange: isPitchRange(settingsRecord.pitchRange) ? settingsRecord.pitchRange : defaultSettings.pitchRange,
-    customPitchRange: normalizeCustomPitchRange(settingsRecord.customPitchRange),
-    pitchExercise: isPitchExercise(settingsRecord.pitchExercise)
-      ? settingsRecord.pitchExercise
-      : defaultSettings.pitchExercise,
-    melodyLength: ([3, 4, 5] as const).includes(Number(settingsRecord.melodyLength) as MelodyLength)
-      ? (Number(settingsRecord.melodyLength) as MelodyLength)
-      : defaultSettings.melodyLength,
-    adaptivePractice:
-      typeof settingsRecord.adaptivePractice === "boolean"
-        ? settingsRecord.adaptivePractice
-        : defaultSettings.adaptivePractice,
-    autoPlayPitch:
-      typeof settingsRecord.autoPlayPitch === "boolean" ? settingsRecord.autoPlayPitch : defaultSettings.autoPlayPitch,
-    revealPitchAfterAnswer:
-      typeof settingsRecord.revealPitchAfterAnswer === "boolean"
-        ? settingsRecord.revealPitchAfterAnswer
-        : defaultSettings.revealPitchAfterAnswer,
   };
 }
 

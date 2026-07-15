@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useState } from "react";
 import AppSectionNav from "./components/AppSectionNav";
 import type { AppSection } from "./components/AppSectionNav";
 import AppTopbar from "./components/AppTopbar";
@@ -10,22 +10,12 @@ import SongPlayer from "./components/SongPlayer";
 import PitchTrainingControls from "./components/PitchTrainingControls";
 import ReadingRangeSelector from "./components/ReadingRangeSelector";
 import { useDataPortability } from "./hooks/useDataPortability";
+import { usePracticeDashboard } from "./hooks/usePracticeDashboard";
 import { useSongSession } from "./hooks/useSongSession";
 import { usePracticeProgress } from "./hooks/usePracticeProgress";
 import { usePracticeSession } from "./hooks/usePracticeSession";
 import { useSettings } from "./hooks/useSettings";
-import { getPitchRange, getReadingRange, normalizeCustomPitchRange, normalizeCustomReadingRange } from "./noteData";
 import { BUILT_IN_SONGS } from "./songLibraryData";
-import {
-  formatAccuracy,
-  getDailyGoalSummary,
-  getFocusItems,
-  getMasterySummary,
-  getModeLabel,
-  getPracticeInsightSummary,
-  getPracticePlan,
-  getSessionHistorySummary,
-} from "./practiceEngine";
 import { resetProgress } from "./storage";
 import type { CustomReadingRange, DataStatus, PracticeProgress, PracticeSettings, ReadingRange } from "./types";
 
@@ -152,82 +142,25 @@ function App() {
     session.resetSession(settings, next);
   }
 
-  const activeProgress = progress[mode];
   const activeNote = mode === "reading" ? currentReadingNote : currentPitchNote;
-  const roundAccuracy = formatAccuracy(roundCorrect, roundAttempts);
-  const lifetimeAccuracy = formatAccuracy(activeProgress.totalCorrect, activeProgress.totalAttempts);
-  const modeLabel = getModeLabel(mode);
-  const normalizedCustomRange = useMemo(
-    () => normalizeCustomReadingRange(settings.customReadingRange),
-    [settings.customReadingRange],
-  );
-  const readingRange = useMemo(
-    () => getReadingRange(settings.readingRange, normalizedCustomRange),
-    [normalizedCustomRange, settings.readingRange],
-  );
-  const normalizedCustomPitchRange = useMemo(
-    () => normalizeCustomPitchRange(settings.customPitchRange),
-    [settings.customPitchRange],
-  );
-  const pitchRange = useMemo(
-    () => getPitchRange(settings.pitchRange, normalizedCustomPitchRange),
-    [normalizedCustomPitchRange, settings.pitchRange],
-  );
-  const pitchRangeNoteIds = useMemo(() => new Set(pitchRange.notes.map((note) => note.id)), [pitchRange.notes]);
-  const focusItems = useMemo(
-    () =>
-      getFocusItems(
-        mode,
-        progress[mode],
-        settings.readingRange,
-        normalizedCustomRange,
-        settings.pitchRange,
-        normalizedCustomPitchRange,
-      ),
-    [mode, normalizedCustomPitchRange, normalizedCustomRange, progress, settings.pitchRange, settings.readingRange],
-  );
-  const masterySummary = useMemo(
-    () =>
-      getMasterySummary(
-        mode,
-        progress[mode],
-        settings.readingRange,
-        normalizedCustomRange,
-        settings.pitchRange,
-        normalizedCustomPitchRange,
-      ),
-    [mode, normalizedCustomPitchRange, normalizedCustomRange, progress, settings.pitchRange, settings.readingRange],
-  );
-  const dailyGoalSummary = useMemo(() => getDailyGoalSummary(progress.history), [progress.history]);
-  const historySummary = useMemo(() => getSessionHistorySummary(progress.history, mode), [mode, progress.history]);
-  const insightSummary = useMemo(() => getPracticeInsightSummary(progress.history, mode), [mode, progress.history]);
-  const practicePlan = useMemo(
-    () =>
-      getPracticePlan({
-        adaptivePractice: settings.adaptivePractice,
-        customPitchRange: normalizedCustomPitchRange,
-        customReadingRange: normalizedCustomRange,
-        mode,
-        progress,
-        pitchRange: settings.pitchRange,
-        readingRange: settings.readingRange,
-        roundLength: settings.roundLength,
-      }),
-    [
-      mode,
-      normalizedCustomPitchRange,
-      normalizedCustomRange,
-      progress,
-      settings.adaptivePractice,
-      settings.pitchRange,
-      settings.readingRange,
-      settings.roundLength,
-    ],
-  );
-  const promptDetail =
-    mode === "reading"
-      ? `${settings.adaptivePractice ? "Adaptive" : "Random"} | ${readingRange.detail}`
-      : `${settings.adaptivePractice ? "Adaptive" : "Random"} | ${pitchRange.detail}`;
+  const {
+    activeProgress,
+    dailyGoalSummary,
+    focusItems,
+    historySummary,
+    insightSummary,
+    lifetimeAccuracy,
+    masterySummary,
+    modeLabel,
+    normalizedCustomPitchRange,
+    normalizedCustomRange,
+    pitchRange,
+    pitchRangeNoteIds,
+    practicePlan,
+    promptDetail,
+    readingRange,
+    roundAccuracy,
+  } = usePracticeDashboard({ mode, progress, roundAttempts, roundCorrect, settings });
 
   const handleSelectSection = useCallback((section: AppSection) => {
     setActiveSection(section);
