@@ -1,4 +1,4 @@
-import { expect, test } from "@playwright/test";
+import { expect, test, type Page } from "@playwright/test";
 
 test.beforeEach(async ({ page }) => {
   await page.addInitScript(() => {
@@ -17,6 +17,15 @@ test.beforeEach(async ({ page }) => {
   });
 });
 
+// On phone-sized viewports the sidebar is an off-canvas drawer, so nav
+// buttons are reachable only after tapping the topbar menu button.
+async function openNavDrawerIfNeeded(page: Page) {
+  const toggle = page.getByRole("button", { name: "Open menu" });
+  if (await toggle.isVisible()) {
+    await toggle.click();
+  }
+}
+
 test("matches the note-reading shell", async ({ page }) => {
   await page.goto("/");
   await expect(page.getByRole("heading", { name: "NoteSense" })).toBeVisible();
@@ -28,6 +37,7 @@ test("matches the note-reading shell", async ({ page }) => {
 
 test("matches the pitch-training shell", async ({ page }) => {
   await page.goto("/");
+  await openNavDrawerIfNeeded(page);
   await page.getByRole("button", { name: "Pitch training" }).click();
   await expect(page.getByLabel("Hidden pitch note")).toBeVisible();
 
@@ -38,6 +48,7 @@ test("matches the pitch-training shell", async ({ page }) => {
 
 test("matches the songs shell", async ({ page }) => {
   await page.goto("/");
+  await openNavDrawerIfNeeded(page);
   await page.getByRole("button", { name: "Songs" }).click();
   await expect(page.getByRole("heading", { name: "Song library" })).toBeVisible();
 
@@ -53,10 +64,11 @@ test("matches the brand accent controls", async ({ page }) => {
   await page.goto("/");
   await expect(page.getByRole("heading", { name: "NoteSense" })).toBeVisible();
 
-  await expect(page.locator(".mode-switch")).toHaveScreenshot("brand-mode-switch.png", {
+  await expect(page.locator(".primary-button")).toHaveScreenshot("brand-primary-button.png", {
     maxDiffPixelRatio: 0.02,
   });
-  await expect(page.locator(".primary-button")).toHaveScreenshot("brand-primary-button.png", {
+  await openNavDrawerIfNeeded(page);
+  await expect(page.locator(".sidebar button.active")).toHaveScreenshot("brand-nav-active.png", {
     maxDiffPixelRatio: 0.02,
   });
 });

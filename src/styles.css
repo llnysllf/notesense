@@ -31,6 +31,7 @@
   --color-action: #3a46c4;
   --color-action-deep: #2a34a0;
   --color-action-text: #f7f7ff;
+  --color-scrim: rgba(23, 23, 29, 0.5);
   --color-piano-white-top: #ffffff;
   --color-piano-white-bottom: #f0f0f5;
   --color-piano-white-text: #2a2a33;
@@ -101,6 +102,7 @@
     --color-action: #4653d8;
     --color-action-deep: #333dae;
     --color-action-text: #f2f3ff;
+    --color-scrim: rgba(5, 6, 12, 0.62);
     --color-piano-white-top: #f2f2f6;
     --color-piano-white-bottom: #d6d6de;
     --color-piano-white-text: #22222a;
@@ -155,7 +157,7 @@ input:focus-visible {
   display: grid;
   align-content: start;
   width: min(100%, 1480px);
-  grid-template-columns: minmax(0, 1fr);
+  grid-template-columns: 244px minmax(0, 1fr);
   gap: var(--space-panel);
   min-height: 100vh;
   margin: 0 auto;
@@ -167,7 +169,13 @@ input:focus-visible {
 
 .app-shell.reading-layout {
   width: min(100%, 1680px);
-  grid-template-columns: minmax(0, 1fr);
+}
+
+.app-main {
+  display: grid;
+  min-width: 0;
+  align-content: start;
+  gap: var(--space-panel);
 }
 
 .app-header-panel,
@@ -197,20 +205,26 @@ input:focus-visible {
   gap: 18px;
 }
 
-.reading-layout h1 {
-  font-size: 3.6rem;
-}
-
-.reading-layout .app-subtitle {
-  margin-top: 4px;
-}
-
-.reading-layout .topbar {
+/* With navigation in the sidebar, the header is a single compact row:
+   brand lockup left, session status and replay action right. */
+.app-header-panel .topbar {
   align-items: center;
 }
 
-.reading-layout .mode-switch button {
-  min-height: 40px;
+.topbar h1 {
+  font-size: 1.8rem;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+}
+
+.topbar .app-subtitle {
+  margin-top: 2px;
+  font-size: 0.88rem;
+}
+
+.topbar .eyebrow {
+  margin-bottom: 2px;
+  font-size: 0.68rem;
 }
 
 .stats-panel {
@@ -353,36 +367,16 @@ h3 {
   font-size: 1rem;
 }
 
-:is(.sections, .mode-switch, .reading-range-switch, .length-options, .range-edge-switch) {
+:is(.reading-range-switch, .length-options, .range-edge-switch) {
   display: grid;
   gap: 6px;
   padding: 6px;
   border: 1px solid var(--color-border);
   border-radius: var(--radius-card);
-}
-
-.mode-switch {
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  background: var(--color-control);
-}
-
-:is(.sections, .reading-range-switch, .length-options, .range-edge-switch) {
   background: var(--color-control-soft);
 }
 
-.sections {
-  align-content: center;
-  padding: 4px;
-  border: 0;
-  background: transparent;
-}
-
-.sections button {
-  height: 40px;
-  align-self: center;
-}
-
-:is(.sections, .mode-switch, .reading-range-switch, .length-options, .range-edge-switch) button {
+:is(.reading-range-switch, .length-options, .range-edge-switch) button {
   border-radius: var(--radius-control);
   background: transparent;
   color: var(--color-muted-strong);
@@ -394,35 +388,9 @@ h3 {
     box-shadow 0.15s ease;
 }
 
-:is(.sections, .mode-switch, .reading-range-switch, .length-options, .range-edge-switch) button:not(.active):hover {
+:is(.reading-range-switch, .length-options, .range-edge-switch) button:not(.active):hover {
   background: var(--color-surface);
   color: var(--color-text);
-}
-
-/* .mode-switch button.active is covered by this shared active selector. */
-:is(.sections, .mode-switch, .reading-range-switch, .length-options, .range-edge-switch) button.active {
-  background: var(--color-surface);
-  color: var(--color-text);
-  box-shadow: var(--shadow-control);
-}
-
-.sections button {
-  border-radius: var(--radius-pill);
-}
-
-.sections button:not(.active):hover,
-.sections button.active {
-  background: var(--color-brand-wash);
-  color: var(--color-brand-strong);
-}
-
-.sections button.active {
-  box-shadow: inset 0 0 0 1px var(--color-brand);
-}
-
-.mode-switch button.active {
-  background: var(--color-action);
-  color: var(--color-action-text);
 }
 
 :is(.reading-range-switch, .length-options, .range-edge-switch) button.active {
@@ -431,59 +399,96 @@ h3 {
   box-shadow: inset 0 0 0 1px var(--color-brand);
 }
 
-.mode-switch button {
-  min-height: 44px;
-}
-
-.sections {
-  grid-template-columns: repeat(3, minmax(76px, 1fr));
-}
-
-.sections-nav {
-  display: grid;
-  gap: 2px;
-}
-
-/* The secondary row lists the active group's views: quieter than the
-   primary pills so the hierarchy reads at a glance. */
-.section-subnav {
+/* Sidebar navigation: a persistent rail on wide screens and an off-canvas
+   drawer behind the topbar menu button on small ones. The active item
+   carries the brand action fill, making it the page's brand-accent anchor
+   control (the role the old mode switch played for the visual gate). */
+.sidebar {
+  position: sticky;
+  top: var(--space-page);
   display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 6px;
+  flex-direction: column;
+  gap: 18px;
+  align-self: start;
+  padding: 16px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-card);
+  background: var(--color-surface-raised);
+  box-shadow: var(--shadow-panel);
 }
 
-.section-subnav button {
-  min-height: 32px;
-  padding: 0 14px;
-  border-radius: var(--radius-pill);
+.sidebar-group {
+  display: grid;
+  gap: 4px;
+}
+
+.sidebar-heading {
+  margin: 0 0 2px;
+  padding-inline: 12px;
+  color: var(--color-muted);
+  font-size: 0.72rem;
+  font-weight: 850;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.sidebar button {
+  min-height: 40px;
+  padding: 0 12px;
+  border-radius: var(--radius-control);
   background: transparent;
   color: var(--color-muted-strong);
   cursor: pointer;
-  font-size: 0.78rem;
-  font-weight: 750;
+  font-size: 0.9rem;
+  font-weight: 800;
+  text-align: left;
   transition:
     background 0.15s ease,
     color 0.15s ease,
     box-shadow 0.15s ease;
 }
 
-.section-subnav button:not(.active):hover {
+.sidebar button:not(.active):hover {
   background: var(--color-surface);
   color: var(--color-text);
 }
 
-.section-subnav button.active {
-  background: var(--color-surface);
-  color: var(--color-brand-strong);
-  box-shadow: inset 0 0 0 1px var(--color-brand);
+.sidebar button.active {
+  background: var(--color-action);
+  color: var(--color-action-text);
+  box-shadow: var(--shadow-control);
+}
+
+.nav-toggle {
+  display: none;
+  min-width: 44px;
+  min-height: 44px;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-control);
+  background: var(--color-control-soft);
+  color: var(--color-text);
+  cursor: pointer;
+  font-size: 1.05rem;
+}
+
+.nav-backdrop {
+  display: none;
+  position: fixed;
+  z-index: 50;
+  inset: 0;
+  padding: 0;
+  border: 0;
+  background: var(--color-scrim);
+  cursor: pointer;
 }
 
 .reading-range-switch {
   grid-template-columns: repeat(6, minmax(0, 1fr));
 }
 
-:is(.sections, .reading-range-switch, .range-edge-switch) button {
+:is(.reading-range-switch, .range-edge-switch) button {
   min-width: 0;
   min-height: 38px;
   padding: 0 8px;
@@ -1807,6 +1812,37 @@ h3 {
 @media (max-width: 940px) {
   .app-shell {
     padding: 18px;
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  /* The sidebar becomes an off-canvas drawer: hidden (and unreachable by
+     keyboard or screen reader) until the topbar menu button opens it. */
+  .sidebar {
+    position: fixed;
+    z-index: 60;
+    inset-block: 0;
+    left: 0;
+    width: min(300px, 84vw);
+    border-radius: 0 var(--radius-card) var(--radius-card) 0;
+    overflow-y: auto;
+    visibility: hidden;
+    transform: translateX(-105%);
+    transition:
+      transform 0.2s ease,
+      visibility 0.2s ease;
+  }
+
+  .sidebar.open {
+    visibility: visible;
+    transform: none;
+  }
+
+  .nav-backdrop {
+    display: block;
+  }
+
+  .nav-toggle {
+    display: inline-flex;
   }
 }
 
@@ -1825,11 +1861,20 @@ h3 {
     padding: 18px;
   }
 
-  .topbar,
   .prompt-row,
   .action-row {
     align-items: stretch;
     flex-direction: column;
+  }
+
+  /* The compact topbar keeps the menu button and brand on one row and
+     lets the status/action pair wrap to a stretched second row. */
+  .app-header-panel .topbar {
+    flex-wrap: wrap;
+  }
+
+  .topbar-actions {
+    flex-basis: 100%;
   }
 
   .topbar-actions,

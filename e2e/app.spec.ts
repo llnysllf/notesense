@@ -1,6 +1,6 @@
 import AxeBuilder from "@axe-core/playwright";
 import { expect, test } from "@playwright/test";
-import type { Page } from "@playwright/test";
+import type { Locator, Page } from "@playwright/test";
 
 const ADVANCE_DELAY_MS = 650;
 
@@ -15,9 +15,39 @@ async function getCurrentReadingNoteId(page: Page) {
   return match[1];
 }
 
+// White keys are partially covered by the black keys above them, and the
+// key's center can sit under that overlay once layouts narrow. Click the
+// exposed lower part of the key instead.
+async function clickPianoKey(key: Locator) {
+  const box = await key.boundingBox();
+
+  if (!box) {
+    throw new Error("Piano key is not visible, so it cannot be clicked.");
+  }
+
+  await key.click({ position: { x: box.width / 2, y: box.height - 8 } });
+}
+
 async function clickCurrentReadingPianoKey(page: Page) {
   const noteId = await getCurrentReadingNoteId(page);
-  await page.getByRole("button", { name: `White piano key ${noteId}` }).click();
+  await clickPianoKey(page.getByRole("button", { name: `White piano key ${noteId}` }));
+}
+
+function appNav(page: Page) {
+  return page.getByRole("navigation", { name: "NoteSense sections" });
+}
+
+// On phone-sized viewports the sidebar is an off-canvas drawer, so nav
+// buttons are reachable only after tapping the topbar menu button. Picking
+// a destination closes the drawer again. Lookups stay scoped to the nav
+// with exact names so labels like "Overview" cannot collide with other
+// controls (the piano rail's accessible name also contains "overview").
+async function openAppSection(page: Page, name: string) {
+  const toggle = page.getByRole("button", { name: "Open menu" });
+  if (await toggle.isVisible()) {
+    await toggle.click();
+  }
+  await appNav(page).getByRole("button", { name, exact: true }).click();
 }
 
 test.beforeEach(async ({ page }) => {
@@ -37,25 +67,28 @@ test("loads with no automated accessibility violations", async ({ page }) => {
 
   await expect(page.getByRole("heading", { name: "NoteSense" })).toBeVisible();
   await expect(page.getByRole("button", { name: "Start drill" })).toBeVisible();
-  await expect(page.getByRole("button", { name: "Practice" })).toHaveAttribute("aria-pressed", "true");
-  await expect(page.getByRole("button", { name: "Progress" })).toBeVisible();
-  await expect(page.getByRole("button", { name: "Settings" })).toBeVisible();
-  // The practice group is active by default, so only its views show.
-  await expect(page.getByRole("button", { name: "Drills" })).toBeVisible();
-  await expect(page.getByRole("button", { name: "Songs" })).toBeVisible();
-  await expect(page.getByRole("button", { name: "Map" })).not.toBeVisible();
   await expect(page.getByRole("heading", { name: "Daily goal" })).not.toBeVisible();
-  await page.getByRole("button", { name: "Progress" }).click();
-  await expect(page.getByRole("button", { name: "Map" })).toBeVisible();
-  await expect(page.getByRole("button", { name: "History" })).toBeVisible();
+
+  // Note reading is the active sidebar destination on first load, with the
+  // other activities and views listed alongside it.
+  const menuToggle = page.getByRole("button", { name: "Open menu" });
+  if (await menuToggle.isVisible()) {
+    await menuToggle.click();
+  }
+  const nav = appNav(page);
+  await expect(nav.getByRole("button", { name: "Note reading" })).toHaveAttribute("aria-pressed", "true");
+  for (const label of ["Pitch training", "Songs", "Overview", "Map", "History", "Preferences", "Data"]) {
+    await expect(nav.getByRole("button", { name: label, exact: true })).toBeVisible();
+  }
+  await nav.getByRole("button", { name: "Overview", exact: true }).click();
   await expect(page.getByRole("heading", { name: "Daily goal" })).toBeVisible();
   await expect(page.getByText(/0\/1\s+round/)).toBeVisible();
   await expect(page.getByRole("heading", { name: "Build baseline" })).toBeVisible();
   await expect(page.getByText("5 more answers")).toBeVisible();
-  await page.getByRole("button", { name: "Map" }).click();
+  await openAppSection(page, "Map");
   await expect(page.getByRole("heading", { name: "Mastery map" })).toBeVisible();
   await expect(page.getByRole("listitem", { name: "C4 New, no attempts yet" })).toBeVisible();
-  await page.getByRole("button", { name: "Practice" }).click();
+  await openAppSection(page, "Note reading");
   await expect(page.getByRole("group", { name: "88-key piano keyboard" })).toBeVisible();
 
   const accessibilityScanResults = await new AxeBuilder({ page }).analyze();
@@ -77,11 +110,11 @@ test("runs the note-reading practice loop", async ({ page }) => {
   await expect(page.getByTestId("practice-feedback")).not.toHaveText("Listening");
 
   await page.getByRole("button", { name: "Finish round" }).click();
-  await page.getByRole("button", { name: "Progress" }).click();
+  await openAppSection(page, "Overview");
   await expect(page.getByRole("heading", { name: "Last round" })).toBeVisible();
   await expect(page.getByText(/1\/1\s+round/)).toBeVisible();
   await expect(page.getByText("Goal complete. Keep the streak alive tomorrow.")).toBeVisible();
-  await page.getByRole("button", { name: "History" }).click();
+  await openAppSection(page, "History");
   await expect(page.getByRole("heading", { name: "Practice history" })).toBeVisible();
   await expect(page.getByRole("listitem", { name: /Note reading session/ })).toBeVisible();
 
@@ -89,8 +122,7 @@ test("runs the note-reading practice loop", async ({ page }) => {
   expect(postRoundAccessibilityScanResults.violations).toEqual([]);
 
   await page.reload({ waitUntil: "domcontentloaded" });
-  await page.getByRole("button", { name: "Progress" }).click();
-  await page.getByRole("button", { name: "History" }).click();
+  await openAppSection(page, "History");
   await expect(page.getByRole("listitem", { name: /Note reading session/ })).toBeVisible();
 });
 
@@ -183,7 +215,7 @@ test("answers with keyboard shortcuts in both practice modes", async ({ page }) 
   await expect(page.getByTestId("practice-feedback")).not.toHaveText("Listening");
   await expect(roundTile).toContainText("/1");
 
-  await page.getByRole("button", { name: "Pitch training" }).click();
+  await openAppSection(page, "Pitch training");
   await page.getByRole("button", { name: "Start drill" }).click();
   await page.keyboard.press("7");
   await expect(page.getByTestId("practice-feedback")).not.toHaveText("Listening");
@@ -224,10 +256,10 @@ test("sets a custom reading drill range from piano keys", async ({ page }) => {
   const customRangeCard = page.locator(".custom-range-card");
 
   await expect(customRangeCard.getByText("Custom C3-B4")).toBeVisible();
-  await customRangeCard.getByRole("button", { name: /^White piano key G3/ }).click();
+  await clickPianoKey(customRangeCard.getByRole("button", { name: /^White piano key G3/ }));
   await expect(customRangeCard.getByRole("button", { name: "Start G3" })).toHaveAttribute("aria-pressed", "false");
   await expect(customRangeCard.getByRole("button", { name: "End B4" })).toHaveAttribute("aria-pressed", "true");
-  await customRangeCard.getByRole("button", { name: /^White piano key C4/ }).click();
+  await clickPianoKey(customRangeCard.getByRole("button", { name: /^White piano key C4/ }));
 
   await expect(page.getByText("Adaptive | Custom G3-C4")).toBeVisible();
   await expect(customRangeCard.getByText("4 notes")).toBeVisible();
@@ -257,8 +289,7 @@ test("keeps the selected reading range after switching during feedback", async (
 test("exports local practice data", async ({ page }) => {
   await page.goto("/", { waitUntil: "domcontentloaded" });
 
-  await page.getByRole("button", { name: "Settings" }).click();
-  await page.getByRole("button", { name: "Data" }).click();
+  await openAppSection(page, "Data");
   const downloadPromise = page.waitForEvent("download");
   await page.getByRole("button", { name: "Export data" }).click();
   const download = await downloadPromise;
@@ -269,8 +300,7 @@ test("exports local practice data", async ({ page }) => {
 test("imports local practice data", async ({ page }) => {
   await page.goto("/", { waitUntil: "domcontentloaded" });
 
-  await page.getByRole("button", { name: "Settings" }).click();
-  await page.getByRole("button", { name: "Data" }).click();
+  await openAppSection(page, "Data");
   await page.locator('input[type="file"]').setInputFiles({
     name: "notesense-progress.json",
     mimeType: "application/json",
@@ -345,16 +375,16 @@ test("imports local practice data", async ({ page }) => {
   const progressPanel = page.getByLabel("Practice progress");
   await expect(progressPanel.getByRole("status")).toHaveText("Progress imported.");
   await expect(progressPanel.getByText("12")).toBeVisible();
-  await page.getByRole("button", { name: "Settings" }).click();
+  await openAppSection(page, "Preferences");
   await expect(page.getByRole("button", { exact: true, name: "Bass" })).toHaveAttribute("aria-pressed", "true");
-  await page.getByRole("button", { name: "Practice" }).click();
+  await openAppSection(page, "Note reading");
   await expect(page.getByText("Random | Bass clef C3-G3")).toBeVisible();
-  await page.getByRole("button", { name: "Progress" }).click();
+  await openAppSection(page, "Overview");
   await expect(progressPanel.getByRole("heading", { name: "Focus C3" })).toBeVisible();
   await expect(progressPanel.getByText("85% on C3")).toBeVisible();
-  await page.getByRole("button", { name: "Map" }).click();
+  await openAppSection(page, "Map");
   await expect(progressPanel.getByRole("listitem", { name: "C3 Focus, 67% accuracy across 6 attempts" })).toBeVisible();
-  await page.getByRole("button", { name: "History" }).click();
+  await openAppSection(page, "History");
   await expect(progressPanel.getByRole("heading", { name: "Practice insight" })).toBeVisible();
   await expect(progressPanel.getByText("+20%")).toBeVisible();
   await expect(
@@ -365,13 +395,13 @@ test("imports local practice data", async ({ page }) => {
   await expect(
     progressPanel.getByRole("listitem", { name: "Note reading session 8 out of 10, 80% accuracy" }),
   ).toBeVisible();
-  await page.getByRole("button", { name: "Settings" }).click();
+  await openAppSection(page, "Preferences");
   await expect(page.getByRole("button", { name: "30s" })).toHaveAttribute("aria-pressed", "true");
 
   await page.reload({ waitUntil: "domcontentloaded" });
-  await page.getByRole("button", { name: "Progress" }).click();
+  await openAppSection(page, "Overview");
   await expect(progressPanel.getByText("12")).toBeVisible();
-  await page.getByRole("button", { name: "Settings" }).click();
+  await openAppSection(page, "Preferences");
   await expect(page.getByRole("button", { name: "30s" })).toHaveAttribute("aria-pressed", "true");
   await expect(page.getByRole("button", { exact: true, name: "Bass" })).toHaveAttribute("aria-pressed", "true");
 });
@@ -379,8 +409,7 @@ test("imports local practice data", async ({ page }) => {
 test("rejects invalid imported practice data", async ({ page }) => {
   await page.goto("/", { waitUntil: "domcontentloaded" });
 
-  await page.getByRole("button", { name: "Settings" }).click();
-  await page.getByRole("button", { name: "Data" }).click();
+  await openAppSection(page, "Data");
   await page.locator('input[type="file"]').setInputFiles({
     name: "broken-notesense-progress.json",
     mimeType: "application/json",
@@ -413,8 +442,7 @@ test("surfaces storage failures without crashing", async ({ page }) => {
     .locator(".app-header-panel")
     .evaluate((header) => header.getBoundingClientRect().height);
 
-  await page.getByRole("button", { name: "Settings" }).click();
-  await page.getByRole("button", { name: "Data" }).click();
+  await openAppSection(page, "Data");
   await expect(page.getByRole("status")).toHaveText("Progress is not being saved on this device right now.");
   const dataHeaderHeight = await page
     .locator(".app-header-panel")
@@ -426,7 +454,7 @@ test("surfaces storage failures without crashing", async ({ page }) => {
 test("runs the pitch-training practice loop", async ({ page }) => {
   await page.goto("/", { waitUntil: "domcontentloaded" });
 
-  await page.getByRole("button", { name: "Pitch training" }).click();
+  await openAppSection(page, "Pitch training");
   await expect(page.getByLabel("Hidden pitch note")).toBeVisible();
 
   await page.getByRole("button", { name: "Start drill" }).click();
@@ -447,7 +475,7 @@ test("keeps the responsive layout inside the viewport", async ({ page }) => {
 test("plays a song from the library start to finish", async ({ page }) => {
   await page.goto("/", { waitUntil: "domcontentloaded" });
 
-  await page.getByRole("button", { name: "Songs" }).click();
+  await openAppSection(page, "Songs");
   await expect(page.getByRole("heading", { name: "Song library" })).toBeVisible();
 
   const twinkleCard = page.locator(".song-card", { hasText: "Twinkle, Twinkle, Little Star" });
@@ -458,13 +486,13 @@ test("plays a song from the library start to finish", async ({ page }) => {
   await expect(page.getByText("Play: C4, quarter note")).toBeVisible();
 
   // A wrong key flags the sheet but does not advance.
-  await page.getByRole("button", { name: "White piano key B4" }).click();
+  await clickPianoKey(page.getByRole("button", { name: "White piano key B4" }));
   await expect(page.locator(".sheet-event.current.wrong")).toBeVisible();
   await expect(page.getByText("1/14")).toBeVisible();
 
   const melody = ["C4", "C4", "G4", "G4", "A4", "A4", "G4", "F4", "F4", "E4", "E4", "D4", "D4", "C4"];
   for (const noteId of melody) {
-    await page.getByRole("button", { name: `White piano key ${noteId}` }).click();
+    await clickPianoKey(page.getByRole("button", { name: `White piano key ${noteId}` }));
   }
 
   await expect(page.getByText(/Finished with \d+% accuracy\./)).toBeVisible();

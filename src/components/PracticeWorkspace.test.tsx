@@ -26,7 +26,6 @@ function renderWorkspace(overrides: Partial<WorkspaceProps> = {}) {
     timeRemaining: 60,
     onAnswer: vi.fn(),
     onFinishRound: vi.fn(),
-    onModeChange: vi.fn(),
     onReadingKeyAnswer: vi.fn(),
     onStartRound: vi.fn(),
     ...overrides,
@@ -40,21 +39,12 @@ describe("PracticeWorkspace", () => {
     renderWorkspace();
 
     expect(screen.getByRole("region", { name: "Practice drill" })).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "Note reading" })).toHaveAttribute("aria-pressed", "true");
     expect(screen.getByTestId("range-controls")).toBeInTheDocument();
     expect(screen.getByRole("group", { name: "88-key piano keyboard" })).toBeInTheDocument();
     expect(screen.getByText("Find this note on the piano.")).toBeInTheDocument();
     expect(screen.getByText("Adaptive | Treble clef C4-G4")).toBeInTheDocument();
     expect(screen.getByText("60s")).toBeInTheDocument();
     expect(screen.getByText("0/0")).toBeInTheDocument();
-  });
-
-  it("switches practice modes", () => {
-    const onModeChange = vi.fn();
-    renderWorkspace({ onModeChange });
-
-    fireEvent.click(screen.getByRole("button", { name: "Pitch training" }));
-    expect(onModeChange).toHaveBeenCalledWith("pitch");
   });
 
   it("renders the pitch workspace with answer buttons and no range controls", () => {

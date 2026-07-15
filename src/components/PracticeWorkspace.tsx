@@ -26,7 +26,6 @@ type PracticeWorkspaceProps = {
   timeRemaining: number;
   onAnswer: (answer: NoteName) => void;
   onFinishRound: () => void;
-  onModeChange: (mode: PracticeMode) => void;
   onReadingKeyAnswer: (noteId: string) => void;
   onStartRound: () => void;
 };
@@ -51,7 +50,6 @@ function PracticeWorkspace({
   timeRemaining,
   onAnswer,
   onFinishRound,
-  onModeChange,
   onReadingKeyAnswer,
   onStartRound,
 }: PracticeWorkspaceProps) {
@@ -59,25 +57,6 @@ function PracticeWorkspace({
 
   return (
     <section className="practice-panel" aria-label="Practice drill">
-      <div className="mode-switch" aria-label="Practice mode">
-        <button
-          type="button"
-          aria-pressed={mode === "reading"}
-          className={mode === "reading" ? "active" : ""}
-          onClick={() => onModeChange("reading")}
-        >
-          Note reading
-        </button>
-        <button
-          type="button"
-          aria-pressed={mode === "pitch"}
-          className={mode === "pitch" ? "active" : ""}
-          onClick={() => onModeChange("pitch")}
-        >
-          Pitch training
-        </button>
-      </div>
-
       {dataStatus && (
         <p className={`data-status ${dataStatus.tone}`} role="status">
           {dataStatus.message}
