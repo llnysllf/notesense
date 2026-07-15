@@ -1,27 +1,21 @@
+import { useEffect } from "react";
+import type { PracticeMode } from "../types";
+
 export type AppSection = "practice" | "songs" | "progress" | "map" | "history" | "settings" | "data";
 
-type SectionGroup = {
-  id: "practice" | "progress" | "settings";
-  label: string;
-  sections: Array<{ id: AppSection; label: string }>;
-};
+// Sidebar navigation: one flat, scannable list of destinations under three
+// group headings, replacing the old stacked switcher rows (section pills,
+// sub-tabs, and the in-panel practice-mode toggle). Note reading and Pitch
+// training are nav items here because choosing an activity and choosing a
+// "mode" were the same decision presented twice.
+const PRACTICE_MODES: Array<{ id: PracticeMode; label: string }> = [
+  { id: "reading", label: "Note reading" },
+  { id: "pitch", label: "Pitch training" },
+];
 
-// Two-level navigation: three top-level groups, each with a short row of
-// subsections. Songs lives inside Practice because it is a note-reading
-// activity, not a separate destination; the stats views cluster under
-// Progress and the configuration views under Settings. This keeps the nav
-// two compact rows tall instead of seven pills wrapping down the screen.
-const SECTION_GROUPS: SectionGroup[] = [
+const SECTION_GROUPS: Array<{ label: string; sections: Array<{ id: AppSection; label: string }> }> = [
+  { label: "Practice", sections: [{ id: "songs", label: "Songs" }] },
   {
-    id: "practice",
-    label: "Practice",
-    sections: [
-      { id: "practice", label: "Drills" },
-      { id: "songs", label: "Songs" },
-    ],
-  },
-  {
-    id: "progress",
     label: "Progress",
     sections: [
       { id: "progress", label: "Overview" },
@@ -30,7 +24,6 @@ const SECTION_GROUPS: SectionGroup[] = [
     ],
   },
   {
-    id: "settings",
     label: "Settings",
     sections: [
       { id: "settings", label: "Preferences" },
@@ -39,47 +32,68 @@ const SECTION_GROUPS: SectionGroup[] = [
   },
 ];
 
-function getGroupForSection(section: AppSection): SectionGroup {
-  return SECTION_GROUPS.find((group) => group.sections.some(({ id }) => id === section)) ?? SECTION_GROUPS[0]!;
-}
-
 type AppSectionNavProps = {
   activeSection: AppSection;
-  onSectionChange: (section: AppSection) => void;
+  mode: PracticeMode;
+  isOpen: boolean;
+  onClose: () => void;
+  onSelectSection: (section: AppSection) => void;
+  onSelectPracticeMode: (mode: PracticeMode) => void;
 };
 
-function AppSectionNav({ activeSection, onSectionChange }: AppSectionNavProps) {
-  const activeGroup = getGroupForSection(activeSection);
+function AppSectionNav({
+  activeSection,
+  mode,
+  isOpen,
+  onClose,
+  onSelectSection,
+  onSelectPracticeMode,
+}: AppSectionNavProps) {
+  useEffect(() => {
+    if (!isOpen) return undefined;
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") onClose();
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [isOpen, onClose]);
 
   return (
-    <nav className="sections-nav" aria-label="NoteSense sections">
-      <div className="sections">
+    <>
+      {isOpen && <button type="button" className="nav-backdrop" aria-label="Close menu" onClick={onClose} />}
+      <nav id="app-sidebar" className={`sidebar ${isOpen ? "open" : ""}`} aria-label="NoteSense sections">
         {SECTION_GROUPS.map((group) => (
-          <button
-            key={group.id}
-            type="button"
-            aria-pressed={group.id === activeGroup.id}
-            className={group.id === activeGroup.id ? "active" : ""}
-            onClick={() => onSectionChange(group.sections[0]!.id)}
-          >
-            {group.label}
-          </button>
+          <div className="sidebar-group" key={group.label}>
+            <p className="sidebar-heading">{group.label}</p>
+            {group.label === "Practice" &&
+              PRACTICE_MODES.map((practiceMode) => (
+                <button
+                  key={practiceMode.id}
+                  type="button"
+                  aria-pressed={activeSection === "practice" && mode === practiceMode.id}
+                  className={activeSection === "practice" && mode === practiceMode.id ? "active" : ""}
+                  onClick={() => onSelectPracticeMode(practiceMode.id)}
+                >
+                  {practiceMode.label}
+                </button>
+              ))}
+            {group.sections.map((section) => (
+              <button
+                key={section.id}
+                type="button"
+                aria-pressed={activeSection === section.id}
+                className={activeSection === section.id ? "active" : ""}
+                onClick={() => onSelectSection(section.id)}
+              >
+                {section.label}
+              </button>
+            ))}
+          </div>
         ))}
-      </div>
-      <div className="section-subnav" aria-label={`${activeGroup.label} views`}>
-        {activeGroup.sections.map((section) => (
-          <button
-            key={section.id}
-            type="button"
-            aria-pressed={activeSection === section.id}
-            className={activeSection === section.id ? "active" : ""}
-            onClick={() => onSectionChange(section.id)}
-          >
-            {section.label}
-          </button>
-        ))}
-      </div>
-    </nav>
+      </nav>
+    </>
   );
 }
 

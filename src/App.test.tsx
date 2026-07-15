@@ -73,6 +73,25 @@ describe("App", () => {
     expect(screen.getByRole("button", { name: "White piano key A0" })).toHaveAttribute("aria-disabled", "true");
   });
 
+  it("opens and closes the navigation drawer from the topbar menu button", () => {
+    render(<App />);
+
+    const toggle = screen.getByRole("button", { name: "Open menu" });
+    expect(toggle).toHaveAttribute("aria-expanded", "false");
+
+    fireEvent.click(toggle);
+    expect(toggle).toHaveAttribute("aria-expanded", "true");
+    expect(screen.getByRole("navigation", { name: "NoteSense sections" })).toHaveClass("open");
+
+    fireEvent.click(screen.getByRole("button", { name: "Close menu" }));
+    expect(toggle).toHaveAttribute("aria-expanded", "false");
+
+    fireEvent.click(toggle);
+    fireEvent.click(screen.getByRole("button", { name: "Songs" }));
+    expect(toggle).toHaveAttribute("aria-expanded", "false");
+    expect(screen.getByRole("heading", { name: "Song library" })).toBeInTheDocument();
+  });
+
   it("starts a reading round, records an answer, and persists progress", () => {
     render(<App />);
 
@@ -97,7 +116,7 @@ describe("App", () => {
     fireEvent.click(screen.getByRole("button", { name: "Finish round" }));
 
     expect(screen.getByText("Round saved")).toBeInTheDocument();
-    fireEvent.click(screen.getByRole("button", { name: "Progress" }));
+    fireEvent.click(screen.getByRole("button", { name: "Overview" }));
     expect(screen.getByRole("heading", { level: 3, name: "Last round" })).toBeInTheDocument();
     expect(readStoredJson<PracticeProgress>(PROGRESS_STORAGE_KEY).history).toHaveLength(1);
   });
@@ -115,7 +134,7 @@ describe("App", () => {
   it("persists settings changes and updates the visible reading range", () => {
     render(<App />);
 
-    fireEvent.click(screen.getByRole("button", { name: "Settings" }));
+    fireEvent.click(screen.getByRole("button", { name: "Preferences" }));
     fireEvent.click(screen.getByRole("button", { name: "30s" }));
     fireEvent.click(screen.getByRole("button", { name: "Grand" }));
 
@@ -153,7 +172,7 @@ describe("App", () => {
     });
 
     render(<App />);
-    fireEvent.click(screen.getByRole("button", { name: "Settings" }));
+    fireEvent.click(screen.getByRole("button", { name: "Preferences" }));
     fireEvent.click(screen.getByRole("button", { name: "30s" }));
 
     expect(screen.getByRole("status")).toHaveTextContent("Progress is not being saved on this device right now.");
@@ -175,9 +194,8 @@ describe("App", () => {
     const playToneMock = vi.mocked(playTone);
     render(<App />);
 
-    fireEvent.click(screen.getByRole("button", { name: "Settings" }));
+    fireEvent.click(screen.getByRole("button", { name: "Preferences" }));
     fireEvent.click(screen.getByLabelText("Reveal pitch answer"));
-    fireEvent.click(screen.getByRole("button", { name: "Practice" }));
     fireEvent.click(screen.getByRole("button", { name: "Pitch training" }));
     fireEvent.click(screen.getByRole("button", { name: "Start drill" }));
     const playedFrequency = playToneMock.mock.calls.at(-1)?.[0];
@@ -217,12 +235,11 @@ describe("App", () => {
     );
 
     render(<App />);
-    fireEvent.click(screen.getByRole("button", { name: "Settings" }));
     fireEvent.click(screen.getByRole("button", { name: "Data" }));
     fireEvent.change(screen.getByLabelText("Import data file"), { target: { files: [file] } });
 
     await waitFor(() => expect(screen.getByRole("status")).toHaveTextContent("Progress imported."));
-    fireEvent.click(screen.getByRole("button", { name: "Settings" }));
+    fireEvent.click(screen.getByRole("button", { name: "Preferences" }));
     expect(screen.getByRole("button", { name: "90s" })).toHaveAttribute("aria-pressed", "true");
     expect(screen.getAllByText("Bass clef C3-G3")).not.toHaveLength(0);
     expect(readStoredJson<PracticeProgress>(PROGRESS_STORAGE_KEY).reading.totalAttempts).toBe(7);
@@ -236,7 +253,6 @@ describe("App", () => {
 
     confirm.mockReturnValueOnce(false);
     render(<App />);
-    fireEvent.click(screen.getByRole("button", { name: "Settings" }));
     fireEvent.click(screen.getByRole("button", { name: "Data" }));
     fireEvent.click(screen.getByRole("button", { name: "Reset progress" }));
     expect(readStoredJson<PracticeProgress>(PROGRESS_STORAGE_KEY).reading.totalAttempts).toBe(4);

@@ -2,60 +2,109 @@ import { fireEvent, render, screen } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 import AppSectionNav from "./AppSectionNav";
 
-describe("AppSectionNav", () => {
-  it("renders the three groups and the active group's views", () => {
-    render(<AppSectionNav activeSection="practice" onSectionChange={vi.fn()} />);
+type NavProps = Parameters<typeof AppSectionNav>[0];
 
-    const nav = screen.getByRole("navigation", { name: "NoteSense sections" });
-    expect(nav).toBeInTheDocument();
-    for (const label of ["Practice", "Progress", "Settings", "Drills", "Songs"]) {
+function renderNav(overrides: Partial<NavProps> = {}) {
+  const props: NavProps = {
+    activeSection: "practice",
+    mode: "reading",
+    isOpen: false,
+    onClose: vi.fn(),
+    onSelectSection: vi.fn(),
+    onSelectPracticeMode: vi.fn(),
+    ...overrides,
+  };
+
+  return { ...render(<AppSectionNav {...props} />), props };
+}
+
+describe("AppSectionNav", () => {
+  it("lists every destination under its group heading", () => {
+    renderNav();
+
+    expect(screen.getByRole("navigation", { name: "NoteSense sections" })).toBeInTheDocument();
+    for (const heading of ["Practice", "Progress", "Settings"]) {
+      expect(screen.getByText(heading)).toBeInTheDocument();
+    }
+    for (const label of [
+      "Note reading",
+      "Pitch training",
+      "Songs",
+      "Overview",
+      "Map",
+      "History",
+      "Preferences",
+      "Data",
+    ]) {
       expect(screen.getByRole("button", { name: label })).toBeInTheDocument();
     }
-    // Other groups' views stay hidden until their group is active.
-    expect(screen.queryByRole("button", { name: "Map" })).not.toBeInTheDocument();
-    expect(screen.queryByRole("button", { name: "Data" })).not.toBeInTheDocument();
   });
 
-  it("shows the subsections of whichever group owns the active section", () => {
-    render(<AppSectionNav activeSection="map" onSectionChange={vi.fn()} />);
+  it("marks the active practice mode as pressed", () => {
+    renderNav({ activeSection: "practice", mode: "pitch" });
 
-    expect(screen.getByRole("button", { name: "Progress" })).toHaveAttribute("aria-pressed", "true");
-    expect(screen.getByRole("button", { name: "Practice" })).toHaveAttribute("aria-pressed", "false");
-    for (const label of ["Overview", "Map", "History"]) {
-      expect(screen.getByRole("button", { name: label })).toBeInTheDocument();
-    }
+    expect(screen.getByRole("button", { name: "Pitch training" })).toHaveAttribute("aria-pressed", "true");
+    expect(screen.getByRole("button", { name: "Note reading" })).toHaveAttribute("aria-pressed", "false");
+    expect(screen.getByRole("button", { name: "Songs" })).toHaveAttribute("aria-pressed", "false");
+  });
+
+  it("does not mark a practice mode when another section is active", () => {
+    renderNav({ activeSection: "map", mode: "reading" });
+
+    expect(screen.getByRole("button", { name: "Note reading" })).toHaveAttribute("aria-pressed", "false");
     expect(screen.getByRole("button", { name: "Map" })).toHaveAttribute("aria-pressed", "true");
     expect(screen.getByRole("button", { name: "Map" })).toHaveClass("active");
-    expect(screen.getByRole("button", { name: "Overview" })).toHaveAttribute("aria-pressed", "false");
   });
 
-  it("selects a group's first view when the group button is clicked", () => {
-    const onSectionChange = vi.fn();
+  it("reports section and practice-mode selections", () => {
+    const { props } = renderNav();
 
-    render(<AppSectionNav activeSection="practice" onSectionChange={onSectionChange} />);
-    fireEvent.click(screen.getByRole("button", { name: "Settings" }));
-    fireEvent.click(screen.getByRole("button", { name: "Progress" }));
-
-    expect(onSectionChange).toHaveBeenNthCalledWith(1, "settings");
-    expect(onSectionChange).toHaveBeenNthCalledWith(2, "progress");
-  });
-
-  it("reports the exact section id for subsection clicks", () => {
-    const onSectionChange = vi.fn();
-
-    render(<AppSectionNav activeSection="settings" onSectionChange={onSectionChange} />);
     fireEvent.click(screen.getByRole("button", { name: "Data" }));
+    fireEvent.click(screen.getByRole("button", { name: "Pitch training" }));
 
-    expect(onSectionChange).toHaveBeenCalledWith("data");
+    expect(props.onSelectSection).toHaveBeenCalledWith("data");
+    expect(props.onSelectPracticeMode).toHaveBeenCalledWith("pitch");
   });
 
-  it("keeps Songs inside the Practice group", () => {
-    const onSectionChange = vi.fn();
+  it("shows the drawer backdrop only while open and closes on backdrop click", () => {
+    const { props, rerender } = renderNav();
+    expect(screen.queryByRole("button", { name: "Close menu" })).not.toBeInTheDocument();
 
-    render(<AppSectionNav activeSection="songs" onSectionChange={onSectionChange} />);
+    rerender(
+      <AppSectionNav
+        activeSection="practice"
+        mode="reading"
+        isOpen
+        onClose={props.onClose}
+        onSelectSection={props.onSelectSection}
+        onSelectPracticeMode={props.onSelectPracticeMode}
+      />,
+    );
+    expect(screen.getByRole("navigation", { name: "NoteSense sections" })).toHaveClass("open");
 
-    expect(screen.getByRole("button", { name: "Practice" })).toHaveAttribute("aria-pressed", "true");
-    expect(screen.getByRole("button", { name: "Songs" })).toHaveAttribute("aria-pressed", "true");
-    expect(screen.getByRole("button", { name: "Drills" })).toHaveAttribute("aria-pressed", "false");
+    fireEvent.click(screen.getByRole("button", { name: "Close menu" }));
+    expect(props.onClose).toHaveBeenCalledTimes(1);
+  });
+
+  it("closes on Escape only while open", () => {
+    const { props, rerender } = renderNav();
+
+    fireEvent.keyDown(window, { key: "Escape" });
+    expect(props.onClose).not.toHaveBeenCalled();
+
+    rerender(
+      <AppSectionNav
+        activeSection="practice"
+        mode="reading"
+        isOpen
+        onClose={props.onClose}
+        onSelectSection={props.onSelectSection}
+        onSelectPracticeMode={props.onSelectPracticeMode}
+      />,
+    );
+    fireEvent.keyDown(window, { key: "a" });
+    expect(props.onClose).not.toHaveBeenCalled();
+    fireEvent.keyDown(window, { key: "Escape" });
+    expect(props.onClose).toHaveBeenCalledTimes(1);
   });
 });

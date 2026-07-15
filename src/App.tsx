@@ -1,6 +1,7 @@
 import { useCallback, useMemo, useState } from "react";
 import AppSectionNav from "./components/AppSectionNav";
 import type { AppSection } from "./components/AppSectionNav";
+import AppTopbar from "./components/AppTopbar";
 import PracticeStatsPanel from "./components/PracticeStatsPanel";
 import type { PracticePanelView } from "./components/PracticeStatsPanel";
 import PracticeWorkspace from "./components/PracticeWorkspace";
@@ -52,6 +53,7 @@ function App() {
 
   const [dataStatus, setDataStatus] = useState<DataStatus>(null);
   const [activeSection, setActiveSection] = useState<AppSection>("practice");
+  const [isNavOpen, setIsNavOpen] = useState(false);
 
   const { settings, setSettings, persistSettings } = useSettings();
   const songSession = useSongSession();
@@ -170,6 +172,20 @@ function App() {
       ? `${settings.adaptivePractice ? "Adaptive" : "Random"} | ${readingRange.detail}`
       : `${settings.adaptivePractice ? "Adaptive" : "Random"} | Natural notes C4-B4`;
 
+  const handleSelectSection = useCallback((section: AppSection) => {
+    setActiveSection(section);
+    setIsNavOpen(false);
+  }, []);
+
+  const handleSelectPracticeMode = useCallback(
+    (nextMode: Parameters<typeof setPracticeMode>[0]) => {
+      setActiveSection("practice");
+      setPracticeMode(nextMode);
+      setIsNavOpen(false);
+    },
+    [setPracticeMode],
+  );
+
   const feedbackClass = feedback ? (feedback.isCorrect ? "correct" : "wrong") : "";
   const shouldRevealPitch = Boolean(feedback) && settings.revealPitchAfterAnswer;
   const sessionStateLabel = isRunning ? "Live round" : lastSummary?.mode === mode ? "Round saved" : "Ready";
@@ -196,97 +212,96 @@ function App() {
     <main
       className={`app-shell app-section-${activeSection} ${mode === "reading" ? "reading-layout" : "pitch-layout"}`}
     >
-      <section className="app-header-panel" aria-labelledby="app-title">
-        <header className="topbar">
-          <div className="brand-lockup">
-            <p className="eyebrow">Adaptive sight reading + ear training</p>
-            <h1 id="app-title">NoteSense</h1>
-            <p className="app-subtitle">{mode === "reading" ? readingRange.detail : "Natural notes C4-B4"}</p>
-          </div>
-          <div className="topbar-actions">
-            <span className={`session-pill ${sessionStateTone}`} aria-live="polite">
-              <span aria-hidden="true" />
-              {sessionStateLabel}
-            </span>
-            <button className="secondary-button" type="button" onClick={playCurrentNote}>
-              {replayButtonLabel}
-            </button>
-          </div>
-        </header>
+      <AppSectionNav
+        activeSection={activeSection}
+        mode={mode}
+        isOpen={isNavOpen}
+        onClose={() => setIsNavOpen(false)}
+        onSelectSection={handleSelectSection}
+        onSelectPracticeMode={handleSelectPracticeMode}
+      />
 
-        <AppSectionNav activeSection={activeSection} onSectionChange={setActiveSection} />
-      </section>
+      <div className="app-main">
+        <AppTopbar
+          subtitle={mode === "reading" ? readingRange.detail : "Natural notes C4-B4"}
+          sessionStateLabel={sessionStateLabel}
+          sessionStateTone={sessionStateTone}
+          replayButtonLabel={replayButtonLabel}
+          isNavOpen={isNavOpen}
+          onOpenNav={() => setIsNavOpen(true)}
+          onReplay={playCurrentNote}
+        />
 
-      {activeSection === "songs" ? (
-        songSession.activeSong && songSession.playthrough ? (
-          <SongPlayer
-            song={songSession.activeSong}
-            playthrough={songSession.playthrough}
-            status={songSession.status}
-            summary={songSession.summary}
-            songProgress={songSession.songProgress}
-            storageWarning={songSession.storageWarning}
-            onAnswer={songSession.answerCurrentEvent}
-            onRestart={songSession.restartSong}
-            onExit={songSession.closeSong}
+        {activeSection === "songs" ? (
+          songSession.activeSong && songSession.playthrough ? (
+            <SongPlayer
+              song={songSession.activeSong}
+              playthrough={songSession.playthrough}
+              status={songSession.status}
+              summary={songSession.summary}
+              songProgress={songSession.songProgress}
+              storageWarning={songSession.storageWarning}
+              onAnswer={songSession.answerCurrentEvent}
+              onRestart={songSession.restartSong}
+              onExit={songSession.closeSong}
+            />
+          ) : (
+            <section className="practice-panel" aria-label="Song library">
+              <SongLibrary
+                songs={BUILT_IN_SONGS}
+                songProgress={songSession.songProgress}
+                onOpenSong={songSession.openSong}
+              />
+            </section>
+          )
+        ) : activeSection === "practice" ? (
+          <PracticeWorkspace
+            currentPitchNote={currentPitchNote}
+            currentReadingNote={currentReadingNote}
+            currentStreak={currentStreak}
+            dataStatus={dataStatus}
+            feedback={feedback}
+            feedbackClass={feedbackClass}
+            feedbackText={getFeedbackText()}
+            isRunning={isRunning}
+            keyboardResetKey={`${settings.readingRange}-${normalizedCustomRange.startNoteId}-${normalizedCustomRange.endNoteId}`}
+            mode={mode}
+            promptDetail={promptDetail}
+            rangeControls={readingRangeControls}
+            roundAccuracy={roundAccuracy}
+            roundAttempts={roundAttempts}
+            roundCorrect={roundCorrect}
+            shouldRevealPitch={shouldRevealPitch}
+            timeRemaining={timeRemaining}
+            onAnswer={handleAnswer}
+            onFinishRound={finishRound}
+            onReadingKeyAnswer={handleReadingKeyAnswer}
+            onStartRound={startRound}
           />
         ) : (
-          <section className="practice-panel" aria-label="Song library">
-            <SongLibrary
-              songs={BUILT_IN_SONGS}
-              songProgress={songSession.songProgress}
-              onOpenSong={songSession.openSong}
-            />
-          </section>
-        )
-      ) : activeSection === "practice" ? (
-        <PracticeWorkspace
-          currentPitchNote={currentPitchNote}
-          currentReadingNote={currentReadingNote}
-          currentStreak={currentStreak}
-          dataStatus={dataStatus}
-          feedback={feedback}
-          feedbackClass={feedbackClass}
-          feedbackText={getFeedbackText()}
-          isRunning={isRunning}
-          keyboardResetKey={`${settings.readingRange}-${normalizedCustomRange.startNoteId}-${normalizedCustomRange.endNoteId}`}
-          mode={mode}
-          promptDetail={promptDetail}
-          rangeControls={readingRangeControls}
-          roundAccuracy={roundAccuracy}
-          roundAttempts={roundAttempts}
-          roundCorrect={roundCorrect}
-          shouldRevealPitch={shouldRevealPitch}
-          timeRemaining={timeRemaining}
-          onAnswer={handleAnswer}
-          onFinishRound={finishRound}
-          onModeChange={setPracticeMode}
-          onReadingKeyAnswer={handleReadingKeyAnswer}
-          onStartRound={startRound}
-        />
-      ) : (
-        <PracticeStatsPanel
-          activeProgress={activeProgress}
-          activeView={activeStatsView}
-          dailyGoalSummary={dailyGoalSummary}
-          dataStatus={dataStatus}
-          focusItems={focusItems}
-          historySummary={historySummary}
-          insightSummary={insightSummary}
-          lastSummary={lastSummary}
-          lifetimeAccuracy={lifetimeAccuracy}
-          masterySummary={masterySummary}
-          mode={mode}
-          modeLabel={modeLabel}
-          practicePlan={practicePlan}
-          readingRangeControls={readingRangeControls}
-          settings={settings}
-          onExportData={handleExportData}
-          onImportData={handleImportData}
-          onResetProgress={handleResetProgress}
-          onSettingsChange={updateSettings}
-        />
-      )}
+          <PracticeStatsPanel
+            activeProgress={activeProgress}
+            activeView={activeStatsView}
+            dailyGoalSummary={dailyGoalSummary}
+            dataStatus={dataStatus}
+            focusItems={focusItems}
+            historySummary={historySummary}
+            insightSummary={insightSummary}
+            lastSummary={lastSummary}
+            lifetimeAccuracy={lifetimeAccuracy}
+            masterySummary={masterySummary}
+            mode={mode}
+            modeLabel={modeLabel}
+            practicePlan={practicePlan}
+            readingRangeControls={readingRangeControls}
+            settings={settings}
+            onExportData={handleExportData}
+            onImportData={handleImportData}
+            onResetProgress={handleResetProgress}
+            onSettingsChange={updateSettings}
+          />
+        )}
+      </div>
     </main>
   );
 }

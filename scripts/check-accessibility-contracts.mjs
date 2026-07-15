@@ -99,17 +99,22 @@ requireSnippets("src/styles.css", [
   "@media (max-width: 640px)",
 ]);
 
-requireSnippets("src/App.tsx", ['aria-labelledby="app-title"', 'aria-live="polite"']);
+requireSnippets("src/components/AppTopbar.tsx", [
+  'aria-labelledby="app-title"',
+  'aria-live="polite"',
+  'aria-label="Open menu"',
+  "aria-expanded={isNavOpen}",
+  'aria-controls="app-sidebar"',
+]);
 
 requireSnippets("src/components/AppSectionNav.tsx", [
   'aria-label="NoteSense sections"',
   "aria-pressed={activeSection === section.id}",
+  'aria-pressed={activeSection === "practice" && mode === practiceMode.id}',
+  'aria-label="Close menu"',
 ]);
 
 requireSnippets("src/components/PracticeWorkspace.tsx", [
-  'aria-label="Practice mode"',
-  'aria-pressed={mode === "reading"}',
-  'aria-pressed={mode === "pitch"}',
   'aria-label="Current round status"',
   "aria-label={`Answer ${answer}`}",
 ]);
