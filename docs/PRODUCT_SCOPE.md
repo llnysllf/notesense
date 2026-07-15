@@ -6,7 +6,7 @@ Product-learning expectations live in [PRODUCT_LEARNING.md](PRODUCT_LEARNING.md)
 
 ## Product Promise
 
-- Help a learner practice starter note reading and natural-note pitch recognition quickly.
+- Help a learner practice starter note reading, exact pitch recognition, and short melody transcription quickly.
 - Keep the practice loop fast, calm, local-first, accessible, and usable without an account.
 - Prefer durable quality, testability, privacy, and maintainability over feature volume.
 - Avoid adding features only to make the project look larger.
@@ -16,7 +16,8 @@ Product-learning expectations live in [PRODUCT_LEARNING.md](PRODUCT_LEARNING.md)
 - Two practice modes: note reading and pitch training.
 - Two starter sight-reading clefs: treble and bass.
 - Ten starter reading notes across treble and bass.
-- Seven natural pitch-training notes from C4 to B4.
+- Single-pitch training across natural, chromatic, two-octave, custom, or full 88-key ranges.
+- Three-to-five-note melody transcription across the selected pitch range.
 - Adaptive or random practice selection.
 - Configurable 30, 60, or 90 second rounds.
 - Local progress, daily goal, session history, practice insight chart, practice plan coach, and mastery map.
@@ -33,7 +34,7 @@ These are not part of the current supported product surface:
 - account sign-in or user profiles
 - cloud sync or hosted practice storage
 - backend APIs, PostgreSQL, AWS services, or direct database access
-- sharps and flats in the single-note drills, scales, chord entry, timed rhythm scoring, MIDI file upload, MIDI device input, or lesson content beyond the built-in song library
+- scales, chord entry, timed rhythm scoring, MIDI file upload, MIDI device input, or lesson content beyond the built-in song library
 - translated UI, locale selector, runtime locale negotiation, right-to-left layout, or localized music notation
 - analytics, telemetry, advertising pixels, or third-party tracking
 - payments, subscriptions, social sharing, or classroom management

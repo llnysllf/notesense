@@ -7,13 +7,14 @@ import type { PracticePanelView } from "./components/PracticeStatsPanel";
 import PracticeWorkspace from "./components/PracticeWorkspace";
 import SongLibrary from "./components/SongLibrary";
 import SongPlayer from "./components/SongPlayer";
+import PitchTrainingControls from "./components/PitchTrainingControls";
 import ReadingRangeSelector from "./components/ReadingRangeSelector";
 import { useDataPortability } from "./hooks/useDataPortability";
 import { useSongSession } from "./hooks/useSongSession";
 import { usePracticeProgress } from "./hooks/usePracticeProgress";
 import { usePracticeSession } from "./hooks/usePracticeSession";
 import { useSettings } from "./hooks/useSettings";
-import { getReadingRange, normalizeCustomReadingRange } from "./noteData";
+import { getPitchRange, getReadingRange, normalizeCustomPitchRange, normalizeCustomReadingRange } from "./noteData";
 import { BUILT_IN_SONGS } from "./songLibraryData";
 import {
   formatAccuracy,
@@ -85,6 +86,8 @@ function App() {
     setPracticeMode,
     currentReadingNote,
     currentPitchNote,
+    currentMelody,
+    melodyAnswerNoteIds,
     feedback,
     timeRemaining,
     roundAttempts,
@@ -94,8 +97,12 @@ function App() {
     lastSummary,
     startRound,
     finishRound,
-    handleAnswer,
     handleReadingKeyAnswer,
+    handlePitchKeyAnswer,
+    handleMelodyNoteInput,
+    undoMelodyAnswer,
+    clearMelodyAnswer,
+    submitMelodyAnswer,
     playCurrentNote,
   } = session;
 
@@ -106,11 +113,25 @@ function App() {
       patch.customReadingRange !== undefined &&
       (patch.customReadingRange.startNoteId !== settings.customReadingRange.startNoteId ||
         patch.customReadingRange.endNoteId !== settings.customReadingRange.endNoteId);
+    const pitchRangeChanged = patch.pitchRange !== undefined && patch.pitchRange !== settings.pitchRange;
+    const customPitchRangeChanged =
+      patch.customPitchRange !== undefined &&
+      (patch.customPitchRange.startNoteId !== settings.customPitchRange.startNoteId ||
+        patch.customPitchRange.endNoteId !== settings.customPitchRange.endNoteId);
+    const pitchExerciseChanged =
+      (patch.pitchExercise !== undefined && patch.pitchExercise !== settings.pitchExercise) ||
+      (patch.melodyLength !== undefined && patch.melodyLength !== settings.melodyLength);
 
     if (!persistSettings(next)) setDataStatus({ message: STORAGE_WARNING, tone: "warning" });
     setSettings(next);
     if (!isRunning && patch.roundLength !== undefined) session.setTimeRemaining(patch.roundLength);
-    if (readingRangeChanged || customRangeChanged) {
+    if (
+      readingRangeChanged ||
+      customRangeChanged ||
+      pitchRangeChanged ||
+      customPitchRangeChanged ||
+      pitchExerciseChanged
+    ) {
       session.resetSession(next, progress);
     }
   }
@@ -144,13 +165,38 @@ function App() {
     () => getReadingRange(settings.readingRange, normalizedCustomRange),
     [normalizedCustomRange, settings.readingRange],
   );
+  const normalizedCustomPitchRange = useMemo(
+    () => normalizeCustomPitchRange(settings.customPitchRange),
+    [settings.customPitchRange],
+  );
+  const pitchRange = useMemo(
+    () => getPitchRange(settings.pitchRange, normalizedCustomPitchRange),
+    [normalizedCustomPitchRange, settings.pitchRange],
+  );
+  const pitchRangeNoteIds = useMemo(() => new Set(pitchRange.notes.map((note) => note.id)), [pitchRange.notes]);
   const focusItems = useMemo(
-    () => getFocusItems(mode, progress[mode], settings.readingRange, normalizedCustomRange),
-    [mode, normalizedCustomRange, progress, settings.readingRange],
+    () =>
+      getFocusItems(
+        mode,
+        progress[mode],
+        settings.readingRange,
+        normalizedCustomRange,
+        settings.pitchRange,
+        normalizedCustomPitchRange,
+      ),
+    [mode, normalizedCustomPitchRange, normalizedCustomRange, progress, settings.pitchRange, settings.readingRange],
   );
   const masterySummary = useMemo(
-    () => getMasterySummary(mode, progress[mode], settings.readingRange, normalizedCustomRange),
-    [mode, normalizedCustomRange, progress, settings.readingRange],
+    () =>
+      getMasterySummary(
+        mode,
+        progress[mode],
+        settings.readingRange,
+        normalizedCustomRange,
+        settings.pitchRange,
+        normalizedCustomPitchRange,
+      ),
+    [mode, normalizedCustomPitchRange, normalizedCustomRange, progress, settings.pitchRange, settings.readingRange],
   );
   const dailyGoalSummary = useMemo(() => getDailyGoalSummary(progress.history), [progress.history]);
   const historySummary = useMemo(() => getSessionHistorySummary(progress.history, mode), [mode, progress.history]);
@@ -159,18 +205,29 @@ function App() {
     () =>
       getPracticePlan({
         adaptivePractice: settings.adaptivePractice,
+        customPitchRange: normalizedCustomPitchRange,
         customReadingRange: normalizedCustomRange,
         mode,
         progress,
+        pitchRange: settings.pitchRange,
         readingRange: settings.readingRange,
         roundLength: settings.roundLength,
       }),
-    [mode, normalizedCustomRange, progress, settings.adaptivePractice, settings.readingRange, settings.roundLength],
+    [
+      mode,
+      normalizedCustomPitchRange,
+      normalizedCustomRange,
+      progress,
+      settings.adaptivePractice,
+      settings.pitchRange,
+      settings.readingRange,
+      settings.roundLength,
+    ],
   );
   const promptDetail =
     mode === "reading"
       ? `${settings.adaptivePractice ? "Adaptive" : "Random"} | ${readingRange.detail}`
-      : `${settings.adaptivePractice ? "Adaptive" : "Random"} | Natural notes C4-B4`;
+      : `${settings.adaptivePractice ? "Adaptive" : "Random"} | ${pitchRange.detail}`;
 
   const handleSelectSection = useCallback((section: AppSection) => {
     setActiveSection(section);
@@ -190,21 +247,27 @@ function App() {
   const shouldRevealPitch = Boolean(feedback) && settings.revealPitchAfterAnswer;
   const sessionStateLabel = isRunning ? "Live round" : lastSummary?.mode === mode ? "Round saved" : "Ready";
   const sessionStateTone = isRunning ? "live" : lastSummary?.mode === mode ? "saved" : "";
-  const replayButtonLabel = mode === "reading" ? "Play note" : "Replay pitch";
+  const replayButtonLabel =
+    mode === "reading" ? "Play note" : settings.pitchExercise === "melody" ? "Replay melody" : "Replay pitch";
   const activeStatsView = getStatsView(activeSection);
-  const readingRangeControls =
+  const rangeControls =
     mode === "reading" ? (
       <ReadingRangeSelector
         settings={settings}
         onCustomRangeChange={handleCustomReadingRangeChange}
         onRangeChange={handleReadingRangeChange}
       />
-    ) : null;
+    ) : (
+      <PitchTrainingControls settings={settings} onSettingsChange={updateSettings} />
+    );
 
   function getFeedbackText() {
     if (!feedback) return isRunning ? "Listening" : "Ready";
     if (feedback.isCorrect) return "Correct";
     if (mode === "pitch" && !settings.revealPitchAfterAnswer) return "Try the next one";
+    if (mode === "pitch" && settings.pitchExercise === "melody") {
+      return `It was ${currentMelody.map((note) => note.id).join(" - ")}`;
+    }
     return `It was ${activeNote.id}`;
   }
 
@@ -223,7 +286,7 @@ function App() {
 
       <div className="app-main">
         <AppTopbar
-          subtitle={mode === "reading" ? readingRange.detail : "Natural notes C4-B4"}
+          subtitle={mode === "reading" ? readingRange.detail : pitchRange.detail}
           sessionStateLabel={sessionStateLabel}
           sessionStateTone={sessionStateTone}
           replayButtonLabel={replayButtonLabel}
@@ -257,6 +320,7 @@ function App() {
         ) : activeSection === "practice" ? (
           <PracticeWorkspace
             currentPitchNote={currentPitchNote}
+            currentMelody={currentMelody}
             currentReadingNote={currentReadingNote}
             currentStreak={currentStreak}
             dataStatus={dataStatus}
@@ -264,19 +328,26 @@ function App() {
             feedbackClass={feedbackClass}
             feedbackText={getFeedbackText()}
             isRunning={isRunning}
-            keyboardResetKey={`${settings.readingRange}-${normalizedCustomRange.startNoteId}-${normalizedCustomRange.endNoteId}`}
+            keyboardResetKey={`${mode}-${settings.readingRange}-${normalizedCustomRange.startNoteId}-${normalizedCustomRange.endNoteId}-${settings.pitchRange}-${normalizedCustomPitchRange.startNoteId}-${normalizedCustomPitchRange.endNoteId}`}
+            melodyAnswerNoteIds={melodyAnswerNoteIds}
             mode={mode}
+            pitchExercise={settings.pitchExercise}
+            pitchRangeNoteIds={pitchRangeNoteIds}
             promptDetail={promptDetail}
-            rangeControls={readingRangeControls}
+            rangeControls={rangeControls}
             roundAccuracy={roundAccuracy}
             roundAttempts={roundAttempts}
             roundCorrect={roundCorrect}
             shouldRevealPitch={shouldRevealPitch}
             timeRemaining={timeRemaining}
-            onAnswer={handleAnswer}
+            onClearMelodyAnswer={clearMelodyAnswer}
             onFinishRound={finishRound}
+            onMelodyNoteInput={handleMelodyNoteInput}
+            onPitchKeyAnswer={handlePitchKeyAnswer}
             onReadingKeyAnswer={handleReadingKeyAnswer}
             onStartRound={startRound}
+            onSubmitMelodyAnswer={submitMelodyAnswer}
+            onUndoMelodyAnswer={undoMelodyAnswer}
           />
         ) : (
           <PracticeStatsPanel
@@ -293,7 +364,8 @@ function App() {
             mode={mode}
             modeLabel={modeLabel}
             practicePlan={practicePlan}
-            readingRangeControls={readingRangeControls}
+            rangeControls={rangeControls}
+            rangeDetail={mode === "reading" ? readingRange.detail : pitchRange.detail}
             settings={settings}
             onExportData={handleExportData}
             onImportData={handleImportData}

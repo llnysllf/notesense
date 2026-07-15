@@ -79,7 +79,7 @@ requireSnippets("e2e/app.spec.ts", [
   'test("loads with no automated accessibility violations"',
   "new AxeBuilder({ page }).analyze()",
   "postRoundAccessibilityScanResults",
-  'test("answers with keyboard shortcuts in both practice modes"',
+  'test("answers reading shortcuts and exact pitch keys"',
   'toHaveAttribute("aria-pressed", "true")',
   'test("keeps the responsive layout inside the viewport"',
 ]);
@@ -114,10 +114,9 @@ requireSnippets("src/components/AppSectionNav.tsx", [
   'aria-label="Close menu"',
 ]);
 
-requireSnippets("src/components/PracticeWorkspace.tsx", [
-  'aria-label="Current round status"',
-  "aria-label={`Answer ${answer}`}",
-]);
+requireSnippets("src/components/PracticeWorkspace.tsx", ['aria-label="Current round status"']);
+
+requireSnippets("src/components/PianoKeybed.tsx", ["aria-label={getKeyAriaLabel(", "aria-disabled={keyDisabled}"]);
 
 requireSnippets("src/components/ReadingRangeSelector.tsx", [
   'aria-label="Reading drill range"',

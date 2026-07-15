@@ -3,7 +3,9 @@ import type { NoteName, PracticeMode, PracticeSessionRecord, ReadingNoteName } f
 // Re-export the framework-agnostic data contract so existing `./types` imports keep working.
 export type {
   AttemptProgress,
+  CustomPitchRange,
   CustomReadingRange,
+  MelodyLength,
   ModeProgress,
   NoteName,
   PracticeDataExport,
@@ -12,6 +14,8 @@ export type {
   PracticeProgress,
   PracticeSessionRecord,
   PracticeSettings,
+  PitchExercise,
+  PitchRange,
   ReadingNoteName,
   ReadingRange,
   RoundLength,

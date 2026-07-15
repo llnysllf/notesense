@@ -1,8 +1,21 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { playTone } from "../audio";
-import { PITCH_ANSWER_OPTIONS, PITCH_NOTES, getPianoKeyById, getReadingNotes } from "../noteData";
-import { createSessionRecord, createSessionSummary, selectPitchNote, selectReadingNote } from "../practiceEngine";
-import { completeRound, recordPitchAttempt, recordReadingAttempt, recordReadingLocationAttempt } from "../storage";
+import { playMelody, playTone } from "../audio";
+import { getPianoKeyById, getPitchNotes, getReadingNotes } from "../noteData";
+import {
+  createSessionRecord,
+  createSessionSummary,
+  selectPitchMelody,
+  selectPitchNote,
+  selectReadingNote,
+} from "../practiceEngine";
+import {
+  completeRound,
+  recordPitchAttempt,
+  recordPitchLocationAttempt,
+  recordPitchSequenceAttempt,
+  recordReadingAttempt,
+  recordReadingLocationAttempt,
+} from "../storage";
 import type {
   FeedbackState,
   NoteName,
@@ -16,6 +29,7 @@ import type {
 } from "../types";
 
 const ADVANCE_DELAY_MS = 650;
+const MELODY_ADVANCE_DELAY_MS = 1400;
 
 interface UsePracticeSessionOptions {
   settings: PracticeSettings;
@@ -28,6 +42,8 @@ export interface UsePracticeSessionResult {
   setPracticeMode: (nextMode: PracticeMode) => void;
   currentReadingNote: TrainingNote;
   currentPitchNote: PitchNote;
+  currentMelody: PitchNote[];
+  melodyAnswerNoteIds: string[];
   feedback: FeedbackState;
   timeRemaining: number;
   roundAttempts: number;
@@ -40,6 +56,11 @@ export interface UsePracticeSessionResult {
   finishRound: () => void;
   handleAnswer: (answer: NoteName) => void;
   handleReadingKeyAnswer: (noteId: string) => void;
+  handlePitchKeyAnswer: (noteId: string) => void;
+  handleMelodyNoteInput: (noteId: string) => void;
+  undoMelodyAnswer: () => void;
+  clearMelodyAnswer: () => void;
+  submitMelodyAnswer: () => void;
   playCurrentNote: () => void;
   setTimeRemaining: (n: number) => void;
   resetSession: (nextSettings: PracticeSettings, nextProgress: PracticeProgress) => void;
@@ -54,7 +75,17 @@ export function usePracticeSession({
   const [currentReadingNote, setCurrentReadingNote] = useState<TrainingNote>(() =>
     selectReadingNote({ customReadingRange: settings.customReadingRange, readingRange: settings.readingRange }),
   );
-  const [currentPitchNote, setCurrentPitchNote] = useState<PitchNote>(() => selectPitchNote());
+  const [currentPitchNote, setCurrentPitchNote] = useState<PitchNote>(() =>
+    selectPitchNote({ customPitchRange: settings.customPitchRange, pitchRange: settings.pitchRange }),
+  );
+  const [currentMelody, setCurrentMelody] = useState<PitchNote[]>(() =>
+    selectPitchMelody({
+      customPitchRange: settings.customPitchRange,
+      length: settings.melodyLength,
+      pitchRange: settings.pitchRange,
+    }),
+  );
+  const [melodyAnswerNoteIds, setMelodyAnswerNoteIds] = useState<string[]>([]);
   const [feedback, setFeedback] = useState<FeedbackState>(null);
   const [timeRemaining, setTimeRemaining] = useState<number>(settings.roundLength);
   const [roundAttempts, setRoundAttempts] = useState(0);
@@ -100,6 +131,8 @@ export function usePracticeSession({
       bestRoundStreak,
       settings.readingRange,
       settings.customReadingRange,
+      settings.pitchRange,
+      settings.customPitchRange,
     );
     onProgressChange(nextProgress);
     setLastSummary(summary);
@@ -119,6 +152,8 @@ export function usePracticeSession({
     roundStartedAt,
     settings.readingRange,
     settings.customReadingRange,
+    settings.customPitchRange,
+    settings.pitchRange,
     settings.roundLength,
     timeRemaining,
   ]);
@@ -144,14 +179,31 @@ export function usePracticeSession({
   }
 
   function getNextPitchNote(previousNoteId?: string, nextProgress = progress): PitchNote {
-    const opts = { progress: nextProgress.pitch, useAdaptive: settings.adaptivePractice };
+    const opts = {
+      customPitchRange: settings.customPitchRange,
+      pitchRange: settings.pitchRange,
+      progress: nextProgress.pitch,
+      useAdaptive: settings.adaptivePractice,
+    };
     return selectPitchNote(previousNoteId === undefined ? opts : { ...opts, previousNoteId });
+  }
+
+  function getNextPitchMelody(previousNoteId?: string, nextProgress = progress): PitchNote[] {
+    const opts = {
+      customPitchRange: settings.customPitchRange,
+      length: settings.melodyLength,
+      pitchRange: settings.pitchRange,
+      progress: nextProgress.pitch,
+      useAdaptive: settings.adaptivePractice,
+    };
+    return selectPitchMelody(previousNoteId === undefined ? opts : { ...opts, previousNoteId });
   }
 
   function setPracticeMode(nextMode: PracticeMode) {
     clearAdvanceTimer();
     setMode(nextMode);
     setFeedback(null);
+    setMelodyAnswerNoteIds([]);
     setLastSummary(null);
     setIsRunning(false);
     setRoundAttempts(0);
@@ -179,16 +231,26 @@ export function usePracticeSession({
       return;
     }
 
+    if (settings.pitchExercise === "melody") {
+      const nextMelody = getNextPitchMelody(currentMelody.at(-1)?.id);
+      setCurrentMelody(nextMelody);
+      setMelodyAnswerNoteIds([]);
+      if (settings.autoPlayPitch) playMelody(nextMelody.map((note) => note.frequency));
+      return;
+    }
+
     const nextPitch = getNextPitchNote(currentPitchNote.id);
     setCurrentPitchNote(nextPitch);
-    if (settings.autoPlayPitch) {
-      playTone(nextPitch.frequency);
-    }
+    if (settings.autoPlayPitch) playTone(nextPitch.frequency);
   }
 
   function playCurrentNote() {
-    const activeNote = mode === "reading" ? currentReadingNote : currentPitchNote;
-    playTone(activeNote.frequency);
+    if (mode === "pitch" && settings.pitchExercise === "melody") {
+      playMelody(currentMelody.map((note) => note.frequency));
+      return;
+    }
+
+    playTone(mode === "reading" ? currentReadingNote.frequency : currentPitchNote.frequency);
   }
 
   function recordAnswer(answer: NoteName, answerId?: string) {
@@ -197,16 +259,19 @@ export function usePracticeSession({
     const answeredReadingNote = currentReadingNote;
     const answeredPitchNote = currentPitchNote;
     const expectedAnswer = answeredMode === "reading" ? answeredReadingNote.name : answeredPitchNote.name;
-    const isExactReadingAnswer = answeredMode === "reading" && answerId !== undefined;
-    const isCorrect = isExactReadingAnswer ? answerId === answeredReadingNote.id : answer === expectedAnswer;
+    const isExactAnswer = answerId !== undefined;
+    const expectedAnswerId = answeredMode === "reading" ? answeredReadingNote.id : answeredPitchNote.id;
+    const isCorrect = isExactAnswer ? answerId === expectedAnswerId : answer === expectedAnswer;
     const nextStreak = isCorrect ? currentStreak + 1 : 0;
     const nextBestStreak = Math.max(bestRoundStreak, nextStreak);
     const nextProgress =
-      answeredMode === "reading" && answerId !== undefined
+      answeredMode === "reading" && isExactAnswer
         ? recordReadingLocationAttempt(progress, answeredReadingNote, answerId)
         : answeredMode === "reading"
           ? recordReadingAttempt(progress, answeredReadingNote, answer as ReadingNoteName)
-          : recordPitchAttempt(progress, answeredPitchNote, answer);
+          : isExactAnswer
+            ? recordPitchLocationAttempt(progress, answeredPitchNote, answerId)
+            : recordPitchAttempt(progress, answeredPitchNote, answer);
 
     setFeedback(answerId === undefined ? { answer, isCorrect } : { answer, answerId, isCorrect });
     setRoundAttempts((n) => n + 1);
@@ -242,6 +307,77 @@ export function usePracticeSession({
     recordAnswer(key.naturalName, key.id);
   }
 
+  function handlePitchKeyAnswer(noteId: string) {
+    const key = getPianoKeyById(noteId);
+    if (!key) return;
+
+    recordAnswer(key.naturalName, key.id);
+  }
+
+  function handleMelodyNoteInput(noteId: string) {
+    if (mode !== "pitch" || settings.pitchExercise !== "melody" || !isRunning || feedback !== null) return;
+    if (melodyAnswerNoteIds.length >= currentMelody.length) return;
+    if (!getPitchNotes(settings.pitchRange, settings.customPitchRange).some((note) => note.id === noteId)) return;
+
+    setMelodyAnswerNoteIds((answer) => [...answer, noteId]);
+  }
+
+  function undoMelodyAnswer() {
+    if (feedback !== null) return;
+    setMelodyAnswerNoteIds((answer) => answer.slice(0, -1));
+  }
+
+  function clearMelodyAnswer() {
+    if (feedback !== null) return;
+    setMelodyAnswerNoteIds([]);
+  }
+
+  function submitMelodyAnswer() {
+    if (
+      mode !== "pitch" ||
+      settings.pitchExercise !== "melody" ||
+      !isRunning ||
+      feedback !== null ||
+      melodyAnswerNoteIds.length !== currentMelody.length
+    ) {
+      return;
+    }
+
+    const positionResults = currentMelody.map((note, index) => note.id === melodyAnswerNoteIds[index]);
+    const correctCount = positionResults.filter(Boolean).length;
+    const isCorrect = correctCount === currentMelody.length;
+    const streakResult = positionResults.reduce(
+      (result, positionIsCorrect) => {
+        const streak = positionIsCorrect ? result.streak + 1 : 0;
+        return { streak, best: Math.max(result.best, streak) };
+      },
+      { streak: currentStreak, best: bestRoundStreak },
+    );
+    const nextProgress = recordPitchSequenceAttempt(progress, currentMelody, melodyAnswerNoteIds);
+    const firstAnswerKey = getPianoKeyById(melodyAnswerNoteIds[0] ?? "");
+
+    setFeedback({
+      answer: firstAnswerKey?.naturalName ?? "C",
+      answerId: melodyAnswerNoteIds.join(" "),
+      isCorrect,
+    });
+    setRoundAttempts((attempts) => attempts + currentMelody.length);
+    setRoundCorrect((correct) => correct + correctCount);
+    setCurrentStreak(streakResult.streak);
+    setBestRoundStreak(streakResult.best);
+    onProgressChange(nextProgress);
+
+    clearAdvanceTimer();
+    advanceTimerRef.current = window.setTimeout(() => {
+      advanceTimerRef.current = null;
+      const nextMelody = getNextPitchMelody(currentMelody.at(-1)?.id, nextProgress);
+      setCurrentMelody(nextMelody);
+      setMelodyAnswerNoteIds([]);
+      setFeedback(null);
+      if (settings.autoPlayPitch) playMelody(nextMelody.map((note) => note.frequency));
+    }, MELODY_ADVANCE_DELAY_MS);
+  }
+
   function resetSession(nextSettings: PracticeSettings, nextProgress: PracticeProgress) {
     clearAdvanceTimer();
     setCurrentReadingNote(
@@ -252,6 +388,24 @@ export function usePracticeSession({
         useAdaptive: nextSettings.adaptivePractice,
       }),
     );
+    setCurrentPitchNote(
+      selectPitchNote({
+        customPitchRange: nextSettings.customPitchRange,
+        pitchRange: nextSettings.pitchRange,
+        progress: nextProgress.pitch,
+        useAdaptive: nextSettings.adaptivePractice,
+      }),
+    );
+    setCurrentMelody(
+      selectPitchMelody({
+        customPitchRange: nextSettings.customPitchRange,
+        length: nextSettings.melodyLength,
+        pitchRange: nextSettings.pitchRange,
+        progress: nextProgress.pitch,
+        useAdaptive: nextSettings.adaptivePractice,
+      }),
+    );
+    setMelodyAnswerNoteIds([]);
     setRoundAttempts(0);
     setRoundCorrect(0);
     setCurrentStreak(0);
@@ -265,23 +419,12 @@ export function usePracticeSession({
 
   // No dependency array so the handler always has current closure values.
   useEffect(() => {
-    const shortcutSource =
-      mode === "reading" ? getReadingNotes(settings.readingRange, settings.customReadingRange) : PITCH_NOTES;
+    const shortcutSource = getReadingNotes(settings.readingRange, settings.customReadingRange);
 
     function handleKeyDown(event: KeyboardEvent) {
-      const key = event.key.toUpperCase() as NoteName;
-      const letterOption = PITCH_ANSWER_OPTIONS.find((a) => a === key);
       const shortcutOption = shortcutSource.find((note) => note.keyboardShortcut === event.key);
-      if (mode === "pitch" && letterOption !== undefined) {
-        handleAnswer(letterOption);
-        return;
-      }
-      if (shortcutOption !== undefined) {
-        if (mode === "reading") {
-          handleReadingKeyAnswer(shortcutOption.id);
-          return;
-        }
-        handleAnswer(shortcutOption.name as NoteName);
+      if (mode === "reading" && shortcutOption !== undefined) {
+        handleReadingKeyAnswer(shortcutOption.id);
       }
     }
 
@@ -294,6 +437,8 @@ export function usePracticeSession({
     setPracticeMode,
     currentReadingNote,
     currentPitchNote,
+    currentMelody,
+    melodyAnswerNoteIds,
     feedback,
     timeRemaining,
     setTimeRemaining,
@@ -307,6 +452,11 @@ export function usePracticeSession({
     finishRound,
     handleAnswer,
     handleReadingKeyAnswer,
+    handlePitchKeyAnswer,
+    handleMelodyNoteInput,
+    undoMelodyAnswer,
+    clearMelodyAnswer,
+    submitMelodyAnswer,
     playCurrentNote,
     resetSession,
   };

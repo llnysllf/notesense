@@ -1,16 +1,12 @@
 import { fireEvent, render, screen } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
+import { defaultSettings } from "../storage";
 import type { PracticeSettings } from "../types";
 import ReadingRangeSelector from "./ReadingRangeSelector";
 
 function makeSettings(overrides: Partial<PracticeSettings> = {}): PracticeSettings {
   return {
-    roundLength: 60,
-    readingRange: "treble-starter",
-    customReadingRange: { startNoteId: "C3", endNoteId: "B4" },
-    adaptivePractice: true,
-    autoPlayPitch: true,
-    revealPitchAfterAnswer: true,
+    ...defaultSettings,
     ...overrides,
   };
 }

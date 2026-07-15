@@ -9,6 +9,10 @@ import type {
   PracticeSettings,
   ReadingRange,
   CustomReadingRange,
+  CustomPitchRange,
+  MelodyLength,
+  PitchExercise,
+  PitchRange,
 } from "./types";
 
 export const DATA_EXPORT_SCHEMA_VERSION = 1;
@@ -26,11 +30,20 @@ export const READING_RANGE_IDS: readonly ReadingRange[] = [
 ];
 export const DEFAULT_READING_RANGE: ReadingRange = "treble-starter";
 export const DEFAULT_CUSTOM_READING_RANGE: CustomReadingRange = { startNoteId: "C3", endNoteId: "B4" };
+export const PITCH_RANGE_IDS: readonly PitchRange[] = ["natural", "chromatic", "two-octaves", "full", "custom"];
+export const DEFAULT_PITCH_RANGE: PitchRange = "chromatic";
+export const DEFAULT_CUSTOM_PITCH_RANGE: CustomPitchRange = { startNoteId: "C3", endNoteId: "B4" };
+export const DEFAULT_PITCH_EXERCISE: PitchExercise = "single";
+export const DEFAULT_MELODY_LENGTH: MelodyLength = 3;
 
 export const defaultSettings: PracticeSettings = {
   roundLength: 60,
   readingRange: DEFAULT_READING_RANGE,
   customReadingRange: DEFAULT_CUSTOM_READING_RANGE,
+  pitchRange: DEFAULT_PITCH_RANGE,
+  customPitchRange: DEFAULT_CUSTOM_PITCH_RANGE,
+  pitchExercise: DEFAULT_PITCH_EXERCISE,
+  melodyLength: DEFAULT_MELODY_LENGTH,
   adaptivePractice: true,
   autoPlayPitch: true,
   revealPitchAfterAnswer: true,
@@ -38,6 +51,14 @@ export const defaultSettings: PracticeSettings = {
 
 export function isReadingRange(value: unknown): value is ReadingRange {
   return READING_RANGE_IDS.includes(value as ReadingRange);
+}
+
+export function isPitchRange(value: unknown): value is PitchRange {
+  return PITCH_RANGE_IDS.includes(value as PitchRange);
+}
+
+function isPitchExercise(value: unknown): value is PitchExercise {
+  return value === "single" || value === "melody";
 }
 
 function isPracticeMode(value: unknown): value is PracticeMode {
@@ -60,6 +81,17 @@ function normalizeCustomReadingRange(value: unknown): CustomReadingRange {
   return {
     startNoteId: isNoteId(value.startNoteId) ? value.startNoteId : defaultSettings.customReadingRange.startNoteId,
     endNoteId: isNoteId(value.endNoteId) ? value.endNoteId : defaultSettings.customReadingRange.endNoteId,
+  };
+}
+
+function normalizeCustomPitchRange(value: unknown): CustomPitchRange {
+  if (!isRecord(value)) {
+    return defaultSettings.customPitchRange;
+  }
+
+  return {
+    startNoteId: isNoteId(value.startNoteId) ? value.startNoteId : defaultSettings.customPitchRange.startNoteId,
+    endNoteId: isNoteId(value.endNoteId) ? value.endNoteId : defaultSettings.customPitchRange.endNoteId,
   };
 }
 
@@ -201,6 +233,14 @@ export function normalizeSettings(settings: unknown): PracticeSettings {
       ? settingsRecord.readingRange
       : defaultSettings.readingRange,
     customReadingRange: normalizeCustomReadingRange(settingsRecord.customReadingRange),
+    pitchRange: isPitchRange(settingsRecord.pitchRange) ? settingsRecord.pitchRange : defaultSettings.pitchRange,
+    customPitchRange: normalizeCustomPitchRange(settingsRecord.customPitchRange),
+    pitchExercise: isPitchExercise(settingsRecord.pitchExercise)
+      ? settingsRecord.pitchExercise
+      : defaultSettings.pitchExercise,
+    melodyLength: ([3, 4, 5] as const).includes(Number(settingsRecord.melodyLength) as MelodyLength)
+      ? (Number(settingsRecord.melodyLength) as MelodyLength)
+      : defaultSettings.melodyLength,
     adaptivePractice:
       typeof settingsRecord.adaptivePractice === "boolean"
         ? settingsRecord.adaptivePractice

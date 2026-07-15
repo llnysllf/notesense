@@ -1,15 +1,10 @@
 import { describe, expect, it } from "vitest";
 import { mergePracticeData, mergePracticeProgress } from "./merge";
-import { createEmptyPracticeProgress, SESSION_HISTORY_LIMIT } from "./practiceData";
+import { createEmptyPracticeProgress, defaultSettings, SESSION_HISTORY_LIMIT } from "./practiceData";
 import type { ModeProgress, PracticeDataExport, PracticeSessionRecord, PracticeSettings } from "./types";
 
 const baseSettings: PracticeSettings = {
-  roundLength: 60,
-  readingRange: "treble-starter",
-  customReadingRange: { startNoteId: "C3", endNoteId: "B4" },
-  adaptivePractice: true,
-  autoPlayPitch: true,
-  revealPitchAfterAnswer: true,
+  ...defaultSettings,
 };
 
 function session(overrides: Partial<PracticeSessionRecord> = {}): PracticeSessionRecord {

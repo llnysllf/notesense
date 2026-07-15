@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { BASS_STARTER_NOTES, emptyProgress, PITCH_NOTES, STARTER_NOTES } from "./noteData";
+import { BASS_STARTER_NOTES, emptyProgress, PITCH_NOTES, STARTER_NOTES, getPitchNotes } from "./noteData";
 import {
   createSessionRecord,
   createSessionSummary,
@@ -14,6 +14,7 @@ import {
   getPracticeWeight,
   getSessionHistorySummary,
   selectPitchNote,
+  selectPitchMelody,
   selectReadingNote,
 } from "./practiceEngine";
 import {
@@ -130,12 +131,24 @@ describe("practiceEngine", () => {
   });
 
   it("selects pitch notes deterministically with an injected random source", () => {
+    const pitchNotes = getPitchNotes();
     const note = selectPitchNote({
       rng: () => 0.99,
       useAdaptive: false,
     });
 
-    expect(note.id).toBe(fixtureItem(PITCH_NOTES, PITCH_NOTES.length - 1).id);
+    expect(note.id).toBe(fixtureItem(pitchNotes, pitchNotes.length - 1).id);
+  });
+
+  it("builds pitch melodies inside the selected range without adjacent repeats", () => {
+    const melody = selectPitchMelody({
+      length: 4,
+      pitchRange: "natural",
+      rng: () => 0,
+      useAdaptive: false,
+    });
+
+    expect(melody.map((note) => note.id)).toEqual(["C4", "D4", "C4", "D4"]);
   });
 
   it("selects bass clef reading notes when the bass range is active", () => {
@@ -236,12 +249,18 @@ describe("practiceEngine", () => {
     expect(summary).toMatchObject({
       averageAccuracy: 90,
       strongCount: 1,
-      totalCount: PITCH_NOTES.length,
+      totalCount: getPitchNotes().length,
     });
-    expect(summary.items.slice(0, 2)).toMatchObject([
-      { id: "C4", accuracy: 100, attempts: 5, status: "strong" },
-      { id: "D4", accuracy: 80, attempts: 5, status: "learning" },
-    ]);
+    expect(summary.items.find((item) => item.id === "C4")).toMatchObject({
+      accuracy: 100,
+      attempts: 5,
+      status: "strong",
+    });
+    expect(summary.items.find((item) => item.id === "D4")).toMatchObject({
+      accuracy: 80,
+      attempts: 5,
+      status: "learning",
+    });
   });
 
   it("creates useful round summaries without inventing weak notes", () => {
@@ -523,7 +542,11 @@ describe("storage progress reducers", () => {
   it("records reading and pitch attempts independently", () => {
     let progress = freshProgress();
     progress = recordReadingAttempt(progress, fixtureItem(STARTER_NOTES, 0), "C");
-    progress = recordPitchAttempt(progress, fixtureItem(PITCH_NOTES, 4), "C");
+    progress = recordPitchAttempt(
+      progress,
+      PITCH_NOTES.find((note) => note.id === "G4")!,
+      "C",
+    );
 
     expect(progress.reading).toMatchObject({ totalAttempts: 1, totalCorrect: 1 });
     expect(progress.pitch).toMatchObject({ totalAttempts: 1, totalCorrect: 0 });
