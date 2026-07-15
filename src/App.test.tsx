@@ -74,7 +74,7 @@ describe("App", () => {
     expect(screen.getByRole("button", { name: "White piano key A0" })).toHaveAttribute("aria-disabled", "true");
   });
 
-  it("opens and closes the navigation drawer from the topbar menu button", () => {
+  it("opens and closes the navigation drawer from the topbar menu button", async () => {
     render(<App />);
 
     const toggle = screen.getByRole("button", { name: "Open menu" });
@@ -90,7 +90,7 @@ describe("App", () => {
     fireEvent.click(toggle);
     fireEvent.click(screen.getByRole("button", { name: "Songs" }));
     expect(toggle).toHaveAttribute("aria-expanded", "false");
-    expect(screen.getByRole("heading", { name: "Song library" })).toBeInTheDocument();
+    expect(await screen.findByRole("heading", { name: "Song library" })).toBeInTheDocument();
   });
 
   it("starts a reading round, records an answer, and persists progress", () => {
@@ -109,7 +109,7 @@ describe("App", () => {
     });
   });
 
-  it("finishes a reading round and shows the saved-round summary", () => {
+  it("finishes a reading round and shows the saved-round summary", async () => {
     render(<App />);
 
     fireEvent.click(screen.getByRole("button", { name: "Start drill" }));
@@ -118,7 +118,7 @@ describe("App", () => {
 
     expect(screen.getByText("Round saved")).toBeInTheDocument();
     fireEvent.click(screen.getByRole("button", { name: "Overview" }));
-    expect(screen.getByRole("heading", { level: 3, name: "Last round" })).toBeInTheDocument();
+    expect(await screen.findByRole("heading", { level: 3, name: "Last round" })).toBeInTheDocument();
     expect(readStoredJson<PracticeProgress>(PROGRESS_STORAGE_KEY).history).toHaveLength(1);
   });
 
@@ -132,11 +132,11 @@ describe("App", () => {
     expect(screen.getByTestId("practice-feedback")).toHaveTextContent(`It was ${expectedNoteId}`);
   });
 
-  it("persists settings changes and updates the visible reading range", () => {
+  it("persists settings changes and updates the visible reading range", async () => {
     render(<App />);
 
     fireEvent.click(screen.getByRole("button", { name: "Preferences" }));
-    fireEvent.click(screen.getByRole("button", { name: "30s" }));
+    fireEvent.click(await screen.findByRole("button", { name: "30s" }));
     fireEvent.click(screen.getByRole("button", { name: "Grand" }));
 
     expect(readStoredJson<typeof defaultSettings>(SETTINGS_STORAGE_KEY)).toMatchObject({
@@ -167,14 +167,14 @@ describe("App", () => {
     expect(screen.getAllByText("Custom G3-C4")).not.toHaveLength(0);
   });
 
-  it("surfaces a storage warning when settings cannot be saved", () => {
+  it("surfaces a storage warning when settings cannot be saved", async () => {
     vi.spyOn(Storage.prototype, "setItem").mockImplementation(() => {
       throw new DOMException("Storage unavailable", "SecurityError");
     });
 
     render(<App />);
     fireEvent.click(screen.getByRole("button", { name: "Preferences" }));
-    fireEvent.click(screen.getByRole("button", { name: "30s" }));
+    fireEvent.click(await screen.findByRole("button", { name: "30s" }));
 
     expect(screen.getByRole("status")).toHaveTextContent("Progress is not being saved on this device right now.");
   });
@@ -191,12 +191,12 @@ describe("App", () => {
     expect(playToneMock).toHaveBeenCalledTimes(1);
   });
 
-  it("hides the pitch answer after an incorrect answer when reveal is disabled", () => {
+  it("hides the pitch answer after an incorrect answer when reveal is disabled", async () => {
     const playToneMock = vi.mocked(playTone);
     render(<App />);
 
     fireEvent.click(screen.getByRole("button", { name: "Preferences" }));
-    fireEvent.click(screen.getByLabelText("Reveal pitch answer"));
+    fireEvent.click(await screen.findByLabelText("Reveal pitch answer"));
     fireEvent.click(screen.getByRole("button", { name: "Pitch training" }));
     fireEvent.click(screen.getByRole("button", { name: "Start drill" }));
     const playedFrequency = playToneMock.mock.calls.at(-1)?.[0];
@@ -256,7 +256,7 @@ describe("App", () => {
 
     render(<App />);
     fireEvent.click(screen.getByRole("button", { name: "Data" }));
-    fireEvent.change(screen.getByLabelText("Import data file"), { target: { files: [file] } });
+    fireEvent.change(await screen.findByLabelText("Import data file"), { target: { files: [file] } });
 
     await waitFor(() => expect(screen.getByRole("status")).toHaveTextContent("Progress imported."));
     fireEvent.click(screen.getByRole("button", { name: "Preferences" }));
@@ -265,7 +265,7 @@ describe("App", () => {
     expect(readStoredJson<PracticeProgress>(PROGRESS_STORAGE_KEY).reading.totalAttempts).toBe(7);
   });
 
-  it("resets saved progress only after confirmation", () => {
+  it("resets saved progress only after confirmation", async () => {
     const progress = freshProgress();
     progress.reading.totalAttempts = 4;
     window.localStorage.setItem(PROGRESS_STORAGE_KEY, JSON.stringify(progress));
@@ -274,7 +274,7 @@ describe("App", () => {
     confirm.mockReturnValueOnce(false);
     render(<App />);
     fireEvent.click(screen.getByRole("button", { name: "Data" }));
-    fireEvent.click(screen.getByRole("button", { name: "Reset progress" }));
+    fireEvent.click(await screen.findByRole("button", { name: "Reset progress" }));
     expect(readStoredJson<PracticeProgress>(PROGRESS_STORAGE_KEY).reading.totalAttempts).toBe(4);
 
     confirm.mockReturnValueOnce(true);
