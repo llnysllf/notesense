@@ -1,9 +1,15 @@
 import { useMemo, useState } from "react";
 import { PIANO_KEYS, PITCH_RANGES, getPitchRange, normalizeCustomPitchRange } from "../noteData";
-import type { CustomPitchRange, MelodyLength, PitchExercise, PitchRange, PracticeSettings } from "../types";
+import {
+  MAX_PITCH_SEQUENCE_LENGTH,
+  MIN_PITCH_SEQUENCE_LENGTH,
+  type CustomPitchRange,
+  type PitchExercise,
+  type PitchRange,
+  type PitchSequenceLength,
+  type PracticeSettings,
+} from "../types";
 import PianoKeyboard from "./PianoKeyboard";
-
-const MELODY_LENGTHS: MelodyLength[] = [3, 4, 5];
 
 type PitchTrainingControlsProps = {
   settings: PracticeSettings;
@@ -29,6 +35,14 @@ function PitchTrainingControls({ settings, onSettingsChange }: PitchTrainingCont
 
   function selectRange(pitchRange: PitchRange) {
     onSettingsChange({ pitchRange });
+  }
+
+  function adjustSequenceLength(delta: -1 | 1) {
+    const nextLength = Math.min(
+      MAX_PITCH_SEQUENCE_LENGTH,
+      Math.max(MIN_PITCH_SEQUENCE_LENGTH, settings.melodyLength + delta),
+    ) as PitchSequenceLength;
+    onSettingsChange({ melodyLength: nextLength });
   }
 
   function handleCustomRangeKeySelect(noteId: string) {
@@ -60,23 +74,32 @@ function PitchTrainingControls({ settings, onSettingsChange }: PitchTrainingCont
             className={settings.pitchExercise === "melody" ? "active" : ""}
             onClick={() => selectExercise("melody")}
           >
-            Melody
+            Pitch sequence
           </button>
         </div>
 
         {settings.pitchExercise === "melody" && (
-          <div className="melody-length-switch" aria-label="Melody length">
-            {MELODY_LENGTHS.map((length) => (
-              <button
-                type="button"
-                key={length}
-                aria-pressed={settings.melodyLength === length}
-                className={settings.melodyLength === length ? "active" : ""}
-                onClick={() => onSettingsChange({ melodyLength: length })}
-              >
-                {length} notes
-              </button>
-            ))}
+          <div className="sequence-length-stepper" role="group" aria-label="Sequence length">
+            <button
+              type="button"
+              aria-label="Decrease sequence length"
+              disabled={settings.melodyLength <= MIN_PITCH_SEQUENCE_LENGTH}
+              onClick={() => adjustSequenceLength(-1)}
+            >
+              -
+            </button>
+            <output aria-live="polite">
+              <strong>{settings.melodyLength}</strong>
+              <span>notes</span>
+            </output>
+            <button
+              type="button"
+              aria-label="Increase sequence length"
+              disabled={settings.melodyLength >= MAX_PITCH_SEQUENCE_LENGTH}
+              onClick={() => adjustSequenceLength(1)}
+            >
+              +
+            </button>
           </div>
         )}
       </div>

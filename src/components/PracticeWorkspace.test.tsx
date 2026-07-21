@@ -85,7 +85,7 @@ describe("PracticeWorkspace", () => {
     expect(secondAnswerSet).toHaveAttribute("aria-disabled", "true");
   });
 
-  it("collects and submits a melody answer", () => {
+  it("collects a pitch sequence on the staff and submits it", () => {
     const onMelodyNoteInput = vi.fn();
     const onSubmitMelodyAnswer = vi.fn();
     renderWorkspace({
@@ -97,9 +97,9 @@ describe("PracticeWorkspace", () => {
       onSubmitMelodyAnswer,
     });
 
-    expect(screen.getByText("Write the melody you hear.")).toBeInTheDocument();
-    expect(screen.getByLabelText("Hidden 3-note melody")).toBeInTheDocument();
-    fireEvent.click(screen.getByRole("button", { name: "Submit melody" }));
+    expect(screen.getByText("Transcribe the pitch sequence.")).toBeInTheDocument();
+    expect(screen.getByRole("img", { name: /Pitch sequence answer, 3 of 3 notes entered/ })).toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: "Submit sequence" }));
     expect(onSubmitMelodyAnswer).toHaveBeenCalledTimes(1);
   });
 

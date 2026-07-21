@@ -214,17 +214,18 @@ describe("App", () => {
     expect(screen.getByTestId("practice-feedback")).toHaveTextContent("Try the next one");
   });
 
-  it("runs melody dictation and persists each entered note", () => {
+  it("runs pitch-sequence transcription and persists notes entered during playback", () => {
     const playMelodyMock = vi.mocked(playMelody);
     render(<App />);
 
     fireEvent.click(screen.getByRole("button", { name: "Pitch training" }));
-    fireEvent.click(screen.getByRole("button", { name: "Melody" }));
+    fireEvent.click(screen.getByRole("button", { name: "Pitch sequence" }));
     fireEvent.click(screen.getByRole("button", { name: "Start drill" }));
-    for (const noteId of ["C4", "C#4", "D4"]) {
+    for (const [index, noteId] of ["C4", "C#4", "D4"].entries()) {
       fireEvent.click(screen.getByRole("button", { name: new RegExp(`piano key ${noteId}, inside selected range`) }));
+      expect(screen.getByRole("img", { name: new RegExp(`${index + 1} of 3 notes entered`) })).toBeInTheDocument();
     }
-    fireEvent.click(screen.getByRole("button", { name: "Submit melody" }));
+    fireEvent.click(screen.getByRole("button", { name: "Submit sequence" }));
 
     expect(playMelodyMock).toHaveBeenCalledTimes(1);
     expect(readStoredJson<PracticeProgress>(PROGRESS_STORAGE_KEY).pitch.totalAttempts).toBe(3);

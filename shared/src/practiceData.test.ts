@@ -87,13 +87,13 @@ describe("catalog-less normalization (server path)", () => {
         pitchRange: "full",
         customPitchRange: { startNoteId: "C#3", endNoteId: "F5" },
         pitchExercise: "melody",
-        melodyLength: 5,
+        melodyLength: 12,
       }),
     ).toMatchObject({
       pitchRange: "full",
       customPitchRange: { startNoteId: "C#3", endNoteId: "F5" },
       pitchExercise: "melody",
-      melodyLength: 5,
+      melodyLength: 12,
     });
 
     expect(normalizeSettings({ readingRange: "bass-starter" })).toMatchObject({
@@ -109,7 +109,7 @@ describe("catalog-less normalization (server path)", () => {
         pitchRange: "unsafe",
         customPitchRange: { startNoteId: "bad", endNoteId: "G4" },
         pitchExercise: "unsafe",
-        melodyLength: 12,
+        melodyLength: 17,
       }),
     ).toMatchObject({
       pitchRange: "chromatic",

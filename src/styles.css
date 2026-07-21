@@ -367,14 +367,7 @@ h3 {
   font-size: 1rem;
 }
 
-:is(
-  .reading-range-switch,
-  .pitch-range-switch,
-  .pitch-exercise-switch,
-  .melody-length-switch,
-  .length-options,
-  .range-edge-switch
-) {
+:is(.reading-range-switch, .pitch-range-switch, .pitch-exercise-switch, .length-options, .range-edge-switch) {
   display: grid;
   gap: 6px;
   padding: 6px;
@@ -383,15 +376,7 @@ h3 {
   background: var(--color-control-soft);
 }
 
-:is(
-    .reading-range-switch,
-    .pitch-range-switch,
-    .pitch-exercise-switch,
-    .melody-length-switch,
-    .length-options,
-    .range-edge-switch
-  )
-  button {
+:is(.reading-range-switch, .pitch-range-switch, .pitch-exercise-switch, .length-options, .range-edge-switch) button {
   border-radius: var(--radius-control);
   background: transparent;
   color: var(--color-muted-strong);
@@ -403,27 +388,13 @@ h3 {
     box-shadow 0.15s ease;
 }
 
-:is(
-    .reading-range-switch,
-    .pitch-range-switch,
-    .pitch-exercise-switch,
-    .melody-length-switch,
-    .length-options,
-    .range-edge-switch
-  )
+:is(.reading-range-switch, .pitch-range-switch, .pitch-exercise-switch, .length-options, .range-edge-switch)
   button:not(.active):hover {
   background: var(--color-surface);
   color: var(--color-text);
 }
 
-:is(
-    .reading-range-switch,
-    .pitch-range-switch,
-    .pitch-exercise-switch,
-    .melody-length-switch,
-    .length-options,
-    .range-edge-switch
-  )
+:is(.reading-range-switch, .pitch-range-switch, .pitch-exercise-switch, .length-options, .range-edge-switch)
   button.active {
   background: var(--color-surface);
   color: var(--color-brand-strong);
@@ -519,8 +490,7 @@ h3 {
   grid-template-columns: repeat(6, minmax(0, 1fr));
 }
 
-:is(.reading-range-switch, .pitch-range-switch, .pitch-exercise-switch, .melody-length-switch, .range-edge-switch)
-  button {
+:is(.reading-range-switch, .pitch-range-switch, .pitch-exercise-switch, .range-edge-switch) button {
   min-width: 0;
   min-height: 38px;
   padding: 0 8px;
@@ -543,8 +513,51 @@ h3 {
   grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
-.melody-length-switch {
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+.sequence-length-stepper {
+  display: grid;
+  grid-template-columns: 42px minmax(76px, 1fr) 42px;
+  min-height: 52px;
+  gap: 6px;
+  padding: 6px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-card);
+  background: var(--color-control-soft);
+}
+
+.sequence-length-stepper button {
+  min-width: 0;
+  border: 1px solid transparent;
+  border-radius: var(--radius-control);
+  background: var(--color-surface);
+  color: var(--color-text);
+  cursor: pointer;
+  font-size: 1.35rem;
+  font-weight: 850;
+}
+
+.sequence-length-stepper button:not(:disabled):hover {
+  border-color: var(--color-brand);
+}
+
+.sequence-length-stepper button:disabled {
+  cursor: not-allowed;
+  opacity: 0.42;
+}
+
+.sequence-length-stepper output {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  color: var(--color-muted-strong);
+  font-size: 0.8rem;
+  font-weight: 800;
+}
+
+.sequence-length-stepper output strong {
+  color: var(--color-text);
+  font-size: 1.15rem;
 }
 
 .pitch-range-switch {
@@ -695,93 +708,73 @@ h3 {
   text-align: center;
 }
 
-.melody-prompt-notes {
-  display: flex;
-  max-width: 100%;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 8px;
-}
-
-.melody-prompt-notes strong {
-  min-width: 0;
-  padding: 7px 12px;
-  font-size: 1rem;
-}
-
-.melody-dictation-workspace,
-.melody-answer {
+.sequence-answer {
   display: grid;
   gap: 12px;
 }
 
-.melody-answer {
-  padding: 14px;
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-control);
-  background: var(--color-control-soft);
-}
-
-.melody-answer-heading {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  color: var(--color-muted-strong);
-  font-size: 0.85rem;
-  font-weight: 850;
-}
-
-.melody-slots {
-  display: flex;
-  min-width: 0;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.melody-slots li {
-  display: grid;
-  width: 72px;
-  min-height: 52px;
-  place-items: center;
-  border: 1px solid var(--color-border-strong);
-  border-radius: var(--radius-control);
+.sequence-answer-staff {
+  width: 100%;
   background: var(--color-surface);
-  color: var(--color-text);
-  font-weight: 900;
 }
 
-.melody-slots li.empty {
-  border-style: dashed;
-  color: var(--color-muted);
+.sequence-clef {
+  font-size: 66px;
 }
 
-.melody-slots li.correct {
-  border-color: var(--color-success);
-  background: var(--color-success-bg);
-  color: var(--color-success);
+.sequence-accidental,
+.sequence-octave-marker,
+.sequence-position-label {
+  fill: var(--color-muted-strong);
+  font-weight: 850;
+  text-anchor: middle;
 }
 
-.melody-slots li.wrong {
-  border-color: var(--color-danger);
-  background: var(--color-danger-bg);
-  color: var(--color-danger);
+.sequence-accidental {
+  font-size: 19px;
 }
 
-.melody-edit-actions {
-  display: flex;
+.sequence-empty-position {
+  fill: var(--color-border-strong);
+}
+
+.sequence-entry-cursor {
+  fill: var(--color-brand);
+}
+
+.sequence-written-note.correct .sequence-note-head {
+  fill: var(--color-success);
+}
+
+.sequence-written-note.correct .sequence-note-stem,
+.sequence-written-note.correct .staff-line {
+  stroke: var(--color-success);
+}
+
+.sequence-written-note.wrong .sequence-note-head {
+  fill: var(--color-danger);
+}
+
+.sequence-written-note.wrong .sequence-note-stem,
+.sequence-written-note.wrong .staff-line {
+  stroke: var(--color-danger);
+}
+
+.sequence-written-note.target .sequence-note-head {
+  fill: var(--color-surface);
+  stroke: var(--color-success);
+  stroke-width: 2.5;
+}
+
+.sequence-written-note.target .sequence-note-stem,
+.sequence-written-note.target .staff-line {
+  stroke: var(--color-success);
+}
+
+.sequence-edit-actions {
   flex-wrap: wrap;
   justify-content: flex-end;
   gap: 8px;
-}
-
-.melody-edit-actions .ghost-button,
-.melody-edit-actions .secondary-button {
-  min-height: 38px;
-  padding-inline: 14px;
 }
 
 .piano-keyboard-panel {
@@ -1802,7 +1795,7 @@ h3 {
   }
 
   .prompt-row,
-  .action-row {
+  .action-row:not(.sequence-edit-actions) {
     align-items: stretch;
     flex-direction: column;
   }
@@ -1882,12 +1875,12 @@ h3 {
     flex-direction: column;
   }
 
-  .melody-slots li {
-    flex: 1 1 52px;
-    width: auto;
+  .sequence-answer-heading {
+    align-items: center;
+    flex-direction: row;
   }
 
-  .melody-edit-actions .secondary-button {
+  .sequence-edit-actions .secondary-button {
     width: 100%;
   }
 

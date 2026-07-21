@@ -179,7 +179,7 @@ function App() {
   const sessionStateLabel = isRunning ? "Live round" : lastSummary?.mode === mode ? "Round saved" : "Ready";
   const sessionStateTone = isRunning ? "live" : lastSummary?.mode === mode ? "saved" : "";
   const replayButtonLabel =
-    mode === "reading" ? "Play note" : settings.pitchExercise === "melody" ? "Replay melody" : "Replay pitch";
+    mode === "reading" ? "Play note" : settings.pitchExercise === "melody" ? "Replay sequence" : "Replay pitch";
   const activeStatsView = getStatsView(activeSection);
   const rangeControls =
     mode === "reading" ? (

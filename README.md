@@ -22,14 +22,14 @@ The current product does three things well:
 
 - Gives beginners short note-reading drills for starter treble and bass ranges.
 - Trains exact pitch recognition across configurable natural, chromatic, two-octave, custom, or full 88-key ranges.
-- Builds melodic memory through short three-to-five-note transcription drills.
+- Builds pitch memory through configurable three-to-sixteen-note transcription drills.
 - Keeps progress local, portable, and resilient when browser storage behaves badly.
 
 The product deliberately does not include accounts, sync, a backend, analytics, payments, classroom tools, chord entry, timed rhythm scoring, MIDI, translated UI, or runtime locale switching yet. Those can come later, but only after the foundation and product evidence justify them.
 
 ## Current Capabilities
 
-- Timed note-reading, single-pitch, and short melody-dictation rounds.
+- Timed note-reading, single-pitch, and pitch-sequence transcription rounds.
 - Configurable pitch ranges from seven natural notes through the full 88-key piano, including custom endpoints.
 - Adaptive or random item selection that can focus weaker notes.
 - Keyboard and on-screen answers.

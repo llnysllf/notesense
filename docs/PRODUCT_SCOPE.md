@@ -6,7 +6,7 @@ Product-learning expectations live in [PRODUCT_LEARNING.md](PRODUCT_LEARNING.md)
 
 ## Product Promise
 
-- Help a learner practice starter note reading, exact pitch recognition, and short melody transcription quickly.
+- Help a learner practice starter note reading, exact pitch recognition, and pitch-sequence transcription quickly.
 - Keep the practice loop fast, calm, local-first, accessible, and usable without an account.
 - Prefer durable quality, testability, privacy, and maintainability over feature volume.
 - Avoid adding features only to make the project look larger.
@@ -17,7 +17,7 @@ Product-learning expectations live in [PRODUCT_LEARNING.md](PRODUCT_LEARNING.md)
 - Two starter sight-reading clefs: treble and bass.
 - Ten starter reading notes across treble and bass.
 - Single-pitch training across natural, chromatic, two-octave, custom, or full 88-key ranges.
-- Three-to-five-note melody transcription across the selected pitch range.
+- Three-to-sixteen-note pitch-sequence transcription across the selected pitch range, entered on a grand staff while the sequence plays.
 - Adaptive or random practice selection.
 - Configurable 30, 60, or 90 second rounds.
 - Local progress, daily goal, session history, practice insight chart, practice plan coach, and mastery map.

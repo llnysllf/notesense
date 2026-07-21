@@ -1,10 +1,9 @@
 import type { ReactNode } from "react";
 import type { DataStatus, FeedbackState, PitchExercise, PitchNote, PracticeMode, TrainingNote } from "../types";
-import MelodyAnswer from "./MelodyAnswer";
-import MelodyPrompt from "./MelodyPrompt";
 import MusicStaff from "./MusicStaff";
 import PianoKeyboard from "./PianoKeyboard";
 import PitchPrompt from "./PitchPrompt";
+import PitchSequenceAnswer from "./PitchSequenceAnswer";
 import StatTile from "./StatTile";
 
 type PracticeWorkspaceProps = {
@@ -93,7 +92,15 @@ function PracticeWorkspace({
         {mode === "reading" ? (
           <MusicStaff note={currentReadingNote} />
         ) : pitchExercise === "melody" ? (
-          <MelodyPrompt notes={currentMelody} reveal={shouldRevealPitch} />
+          <PitchSequenceAnswer
+            answerNoteIds={melodyAnswerNoteIds}
+            feedback={feedback}
+            notes={currentMelody}
+            reveal={shouldRevealPitch}
+            onClear={onClearMelodyAnswer}
+            onSubmit={onSubmitMelodyAnswer}
+            onUndo={onUndoMelodyAnswer}
+          />
         ) : (
           <PitchPrompt note={currentPitchNote} reveal={shouldRevealPitch} />
         )}
@@ -104,7 +111,7 @@ function PracticeWorkspace({
               {mode === "reading"
                 ? "Find this note on the piano."
                 : pitchExercise === "melody"
-                  ? "Write the melody you hear."
+                  ? "Transcribe the pitch sequence."
                   : "Find the pitch you hear."}
             </span>
             <p>{promptDetail}</p>
@@ -124,25 +131,14 @@ function PracticeWorkspace({
             onKeySelect={onReadingKeyAnswer}
           />
         ) : pitchExercise === "melody" ? (
-          <div className="melody-dictation-workspace">
-            <MelodyAnswer
-              answerNoteIds={melodyAnswerNoteIds}
-              feedback={feedback}
-              notes={currentMelody}
-              reveal={shouldRevealPitch}
-              onClear={onClearMelodyAnswer}
-              onSubmit={onSubmitMelodyAnswer}
-              onUndo={onUndoMelodyAnswer}
-            />
-            <PianoKeyboard
-              key={keyboardResetKey}
-              disabled={!isRunning || Boolean(feedback) || melodyAnswerNoteIds.length >= currentMelody.length}
-              rangeNoteIds={pitchRangeNoteIds}
-              selectableKeyIds={pitchRangeNoteIds}
-              selectedNoteId={melodyAnswerNoteIds.at(-1)}
-              onKeySelect={onMelodyNoteInput}
-            />
-          </div>
+          <PianoKeyboard
+            key={keyboardResetKey}
+            disabled={!isRunning || Boolean(feedback) || melodyAnswerNoteIds.length >= currentMelody.length}
+            rangeNoteIds={pitchRangeNoteIds}
+            selectableKeyIds={pitchRangeNoteIds}
+            selectedNoteId={melodyAnswerNoteIds.at(-1)}
+            onKeySelect={onMelodyNoteInput}
+          />
         ) : (
           <PianoKeyboard
             key={keyboardResetKey}

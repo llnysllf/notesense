@@ -10,27 +10,35 @@ function renderControls(settings = defaultSettings) {
 }
 
 describe("PitchTrainingControls", () => {
-  it("switches exercises, melody length, and preset ranges", () => {
+  it("switches exercises, adjusts sequence length, and selects preset ranges", () => {
     const onSettingsChange = renderControls({ ...defaultSettings, pitchExercise: "melody" });
 
-    expect(screen.getByRole("button", { name: "Melody" })).toHaveAttribute("aria-pressed", "true");
+    expect(screen.getByRole("button", { name: "Pitch sequence" })).toHaveAttribute("aria-pressed", "true");
     expect(screen.getByRole("button", { name: "Chromatic 12" })).toHaveAttribute("aria-pressed", "true");
     fireEvent.click(screen.getByRole("button", { name: "Single note" }));
-    fireEvent.click(screen.getByRole("button", { name: "5 notes" }));
+    fireEvent.click(screen.getByRole("button", { name: "Increase sequence length" }));
     fireEvent.click(screen.getByRole("button", { name: "Full 88" }));
 
     expect(onSettingsChange).toHaveBeenNthCalledWith(1, { pitchExercise: "single" });
-    expect(onSettingsChange).toHaveBeenNthCalledWith(2, { melodyLength: 5 });
+    expect(onSettingsChange).toHaveBeenNthCalledWith(2, { melodyLength: 4 });
     expect(onSettingsChange).toHaveBeenNthCalledWith(3, { pitchRange: "full" });
   });
 
-  it("hides melody length controls for single-note training", () => {
+  it("hides sequence length controls for single-note training", () => {
     const onSettingsChange = renderControls();
 
-    expect(screen.queryByRole("group", { name: "Melody length" })).not.toBeInTheDocument();
-    expect(screen.queryByRole("button", { name: "5 notes" })).not.toBeInTheDocument();
-    fireEvent.click(screen.getByRole("button", { name: "Melody" }));
+    expect(screen.queryByRole("group", { name: "Sequence length" })).not.toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: "Pitch sequence" }));
     expect(onSettingsChange).toHaveBeenCalledWith({ pitchExercise: "melody" });
+  });
+
+  it("supports pitch sequences up to sixteen notes", () => {
+    const onSettingsChange = renderControls({ ...defaultSettings, pitchExercise: "melody", melodyLength: 16 });
+
+    expect(screen.getByRole("group", { name: "Sequence length" })).toHaveTextContent("16notes");
+    expect(screen.getByRole("button", { name: "Increase sequence length" })).toBeDisabled();
+    fireEvent.click(screen.getByRole("button", { name: "Decrease sequence length" }));
+    expect(onSettingsChange).toHaveBeenCalledWith({ melodyLength: 15 });
   });
 
   it("sets custom pitch endpoints from white and black piano keys", () => {

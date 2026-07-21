@@ -9,7 +9,10 @@ export type ReadingRange =
   "treble-starter" | "bass-starter" | "treble-one-octave" | "bass-one-octave" | "grand-starter" | "custom";
 export type PitchRange = "natural" | "chromatic" | "two-octaves" | "full" | "custom";
 export type PitchExercise = "single" | "melody";
-export type MelodyLength = 3 | 4 | 5;
+export type PitchSequenceLength = 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 14 | 15 | 16;
+// Persisted settings used the original product term. Keep the field-level
+// alias so existing local data and sync clients remain compatible.
+export type MelodyLength = PitchSequenceLength;
 
 export type CustomReadingRange = {
   startNoteId: string;

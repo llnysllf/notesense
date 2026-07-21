@@ -465,20 +465,21 @@ test("runs the pitch-training practice loop", async ({ page }) => {
   await expect(page.getByTestId("practice-feedback")).not.toHaveText("Listening");
 });
 
-test("writes and submits a pitch-training melody", async ({ page }) => {
+test("writes a pitch sequence on the staff while it plays and submits it", async ({ page }) => {
   await page.goto("/", { waitUntil: "domcontentloaded" });
 
   await openAppSection(page, "Pitch training");
-  await page.getByRole("button", { name: "Melody" }).click();
-  await expect(page.getByLabel("Hidden 3-note melody")).toBeVisible();
+  await page.getByRole("button", { name: "Pitch sequence" }).click();
+  await expect(page.getByRole("img", { name: /Pitch sequence answer, 0 of 3 notes entered/ })).toBeVisible();
   await page.getByRole("button", { name: "Start drill" }).click();
 
-  for (const noteId of ["C4", "C#4", "D4"]) {
+  for (const [index, noteId] of ["C4", "C#4", "D4"].entries()) {
     await clickPianoKey(page.getByRole("button", { name: new RegExp(`piano key ${noteId}, inside selected range`) }));
+    await expect(page.getByRole("img", { name: new RegExp(`${index + 1} of 3 notes entered`) })).toBeVisible();
   }
 
   await expect(page.getByText("3/3")).toBeVisible();
-  await page.getByRole("button", { name: "Submit melody" }).click();
+  await page.getByRole("button", { name: "Submit sequence" }).click();
   await expect(page.getByTestId("practice-feedback")).not.toHaveText("Listening");
 });
 

@@ -23,6 +23,8 @@ export const DEFAULT_PITCH_RANGE: PitchRange = "chromatic";
 export const DEFAULT_CUSTOM_PITCH_RANGE: CustomPitchRange = { startNoteId: "C3", endNoteId: "B4" };
 export const DEFAULT_PITCH_EXERCISE: PitchExercise = "single";
 export const DEFAULT_MELODY_LENGTH: MelodyLength = 3;
+export const MIN_PITCH_SEQUENCE_LENGTH = 3;
+export const MAX_PITCH_SEQUENCE_LENGTH = 16;
 
 export const defaultSettings: PracticeSettings = {
   roundLength: 60,
@@ -80,6 +82,7 @@ export function normalizeSettings(settings: unknown): PracticeSettings {
   const roundLength = [30, 60, 90].includes(Number(settingsRecord.roundLength))
     ? (Number(settingsRecord.roundLength) as PracticeSettings["roundLength"])
     : defaultSettings.roundLength;
+  const melodyLength = Number(settingsRecord.melodyLength);
 
   return {
     roundLength,
@@ -92,9 +95,12 @@ export function normalizeSettings(settings: unknown): PracticeSettings {
     pitchExercise: isPitchExercise(settingsRecord.pitchExercise)
       ? settingsRecord.pitchExercise
       : defaultSettings.pitchExercise,
-    melodyLength: ([3, 4, 5] as const).includes(Number(settingsRecord.melodyLength) as MelodyLength)
-      ? (Number(settingsRecord.melodyLength) as MelodyLength)
-      : defaultSettings.melodyLength,
+    melodyLength:
+      Number.isInteger(melodyLength) &&
+      melodyLength >= MIN_PITCH_SEQUENCE_LENGTH &&
+      melodyLength <= MAX_PITCH_SEQUENCE_LENGTH
+        ? (melodyLength as MelodyLength)
+        : defaultSettings.melodyLength,
     adaptivePractice:
       typeof settingsRecord.adaptivePractice === "boolean"
         ? settingsRecord.adaptivePractice
