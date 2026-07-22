@@ -163,10 +163,11 @@ function PianoKeybed({
       <div className="piano-black-keys">
         {blackKeys.map((key) => {
           const keyDisabled = disabled || (selectableKeyIds !== undefined && !selectableKeyIds.has(key.id));
+          const passesThroughToWhiteKey = keyDisabled && selectableKeyIds !== undefined;
 
           return (
             <button
-              className={`piano-key black-key ${getKeyStateClass(
+              className={`piano-key black-key${passesThroughToWhiteKey ? " piano-key-pass-through" : ""} ${getKeyStateClass(
                 key,
                 selectedNoteId,
                 revealedNoteId,
