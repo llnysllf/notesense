@@ -398,7 +398,7 @@ After pushing:
 
 - `docs/DEPENDENCY_MAINTENANCE.md` defines dependency sources, Dependabot policy, update classes, review evidence, and dependency-maintenance verification.
 - `npm run dependencies:check` verifies Dependabot cadence, dependency review evidence, lockfile policy, license policy, SBOM policy, supply-chain gates, and workflow-update expectations stay aligned.
-- Dependabot opens routine npm minor/patch updates and GitHub Actions updates weekly.
+- Dependabot opens routine npm minor/patch updates daily and GitHub Actions updates weekly.
 - Major npm upgrades should be tracked as engineering tasks because they can affect peer dependencies, test tooling, bundling, or browser coverage.
 - Node/npm runtime upgrades should update `.nvmrc`, package engines, workflow behavior, docs, and ADRs together.
 - Dependency PRs are not ready to merge until `npm run verify`, Dependency Review, and remote CodeQL checks pass on the branch.
