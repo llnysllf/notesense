@@ -1,13 +1,15 @@
 import { fireEvent, render, screen } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
-import { PITCH_NOTES, TREBLE_STARTER_NOTES } from "../noteData";
+import { TREBLE_STARTER_NOTES, getPitchNotes } from "../noteData";
 import PracticeWorkspace from "./PracticeWorkspace";
 
 type WorkspaceProps = Parameters<typeof PracticeWorkspace>[0];
 
 function renderWorkspace(overrides: Partial<WorkspaceProps> = {}) {
+  const pitchNotes = getPitchNotes();
   const props: WorkspaceProps = {
-    currentPitchNote: PITCH_NOTES[0]!,
+    currentPitchNote: pitchNotes[0]!,
+    currentMelody: pitchNotes.slice(0, 3),
     currentReadingNote: TREBLE_STARTER_NOTES[0]!,
     currentStreak: 2,
     dataStatus: null,
@@ -16,7 +18,10 @@ function renderWorkspace(overrides: Partial<WorkspaceProps> = {}) {
     feedbackText: "Ready",
     isRunning: false,
     keyboardResetKey: "round-1",
+    melodyAnswerNoteIds: [],
     mode: "reading",
+    pitchExercise: "single",
+    pitchRangeNoteIds: new Set(pitchNotes.map((note) => note.id)),
     promptDetail: "Adaptive | Treble clef C4-G4",
     rangeControls: <div data-testid="range-controls" />,
     roundAccuracy: "0%",
@@ -24,10 +29,14 @@ function renderWorkspace(overrides: Partial<WorkspaceProps> = {}) {
     roundCorrect: 0,
     shouldRevealPitch: false,
     timeRemaining: 60,
-    onAnswer: vi.fn(),
+    onClearMelodyAnswer: vi.fn(),
     onFinishRound: vi.fn(),
+    onMelodyNoteInput: vi.fn(),
+    onPitchKeyAnswer: vi.fn(),
     onReadingKeyAnswer: vi.fn(),
     onStartRound: vi.fn(),
+    onSubmitMelodyAnswer: vi.fn(),
+    onUndoMelodyAnswer: vi.fn(),
     ...overrides,
   };
 
@@ -47,31 +56,51 @@ describe("PracticeWorkspace", () => {
     expect(screen.getByText("0/0")).toBeInTheDocument();
   });
 
-  it("renders the pitch workspace with answer buttons and no range controls", () => {
-    const onAnswer = vi.fn();
-    renderWorkspace({ mode: "pitch", isRunning: true, onAnswer });
+  it("renders the single-pitch workspace with an exact piano answer", () => {
+    const onPitchKeyAnswer = vi.fn();
+    renderWorkspace({ mode: "pitch", isRunning: true, onPitchKeyAnswer });
 
-    expect(screen.getByText("Name the pitch you hear.")).toBeInTheDocument();
-    expect(screen.queryByTestId("range-controls")).not.toBeInTheDocument();
+    expect(screen.getByText("Find the pitch you hear.")).toBeInTheDocument();
+    expect(screen.getByTestId("range-controls")).toBeInTheDocument();
 
-    const answerButtons = screen.getAllByRole("button", { name: /^Answer / });
-    expect(answerButtons).toHaveLength(7);
-
-    fireEvent.click(screen.getByRole("button", { name: "Answer C" }));
-    expect(onAnswer).toHaveBeenCalledWith("C");
+    fireEvent.click(screen.getByRole("button", { name: "White piano key C4, inside selected range" }));
+    expect(onPitchKeyAnswer).toHaveBeenCalledWith("C4");
   });
 
   it("disables pitch answers while idle or after feedback", () => {
     renderWorkspace({ mode: "pitch", isRunning: false });
-    expect(screen.getByRole("button", { name: "Answer C" })).toBeDisabled();
+    expect(screen.getByRole("button", { name: "White piano key C4, inside selected range" })).toHaveAttribute(
+      "aria-disabled",
+      "true",
+    );
 
     renderWorkspace({
       mode: "pitch",
       isRunning: true,
-      feedback: { answer: "C", isCorrect: true },
+      feedback: { answer: "C", answerId: "C4", isCorrect: true },
     });
-    const [, secondAnswerSet] = screen.getAllByRole("button", { name: "Answer C" });
-    expect(secondAnswerSet).toBeDisabled();
+    const secondAnswerSet = screen.getByRole("button", {
+      name: "White piano key C4, selected correct, target note, inside selected range",
+    });
+    expect(secondAnswerSet).toHaveAttribute("aria-disabled", "true");
+  });
+
+  it("collects a pitch sequence on the staff and submits it", () => {
+    const onMelodyNoteInput = vi.fn();
+    const onSubmitMelodyAnswer = vi.fn();
+    renderWorkspace({
+      mode: "pitch",
+      pitchExercise: "melody",
+      isRunning: true,
+      melodyAnswerNoteIds: ["C4", "C#4", "D4"],
+      onMelodyNoteInput,
+      onSubmitMelodyAnswer,
+    });
+
+    expect(screen.getByText("Transcribe the pitch sequence.")).toBeInTheDocument();
+    expect(screen.getByRole("img", { name: /Pitch sequence answer, 3 of 3 notes entered/ })).toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: "Submit sequence" }));
+    expect(onSubmitMelodyAnswer).toHaveBeenCalledTimes(1);
   });
 
   it("shows the data status message when present", () => {

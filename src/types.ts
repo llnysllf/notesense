@@ -1,9 +1,13 @@
 import type { NoteName, PracticeMode, PracticeSessionRecord, ReadingNoteName } from "@notesense/shared";
 
+export { MAX_PITCH_SEQUENCE_LENGTH, MIN_PITCH_SEQUENCE_LENGTH } from "@notesense/shared";
+
 // Re-export the framework-agnostic data contract so existing `./types` imports keep working.
 export type {
   AttemptProgress,
+  CustomPitchRange,
   CustomReadingRange,
+  MelodyLength,
   ModeProgress,
   NoteName,
   PracticeDataExport,
@@ -12,6 +16,9 @@ export type {
   PracticeProgress,
   PracticeSessionRecord,
   PracticeSettings,
+  PitchExercise,
+  PitchRange,
+  PitchSequenceLength,
   ReadingNoteName,
   ReadingRange,
   RoundLength,

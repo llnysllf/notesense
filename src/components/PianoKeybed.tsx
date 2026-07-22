@@ -48,7 +48,7 @@ function getKeyStateClass(
   const stateClasses: string[] = [];
 
   if (key.id === selectedNoteId) {
-    stateClasses.push(isCorrect ? "selected-correct" : "selected-wrong");
+    stateClasses.push(isCorrect === undefined ? "selected" : isCorrect ? "selected-correct" : "selected-wrong");
   }
 
   if (revealedNoteId !== undefined && key.id === revealedNoteId) {
@@ -82,7 +82,7 @@ function getKeyAriaLabel(
   const parts = [`${key.isBlack ? "Black" : "White"} piano key ${key.id}`];
 
   if (key.id === selectedNoteId) {
-    parts.push(isCorrect ? "selected correct" : "selected incorrect");
+    parts.push(isCorrect === undefined ? "selected" : isCorrect ? "selected correct" : "selected incorrect");
   }
 
   if (revealedNoteId !== undefined && key.id === revealedNoteId) {

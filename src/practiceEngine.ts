@@ -1,5 +1,13 @@
-import { DEFAULT_READING_RANGE, PITCH_NOTES, getReadingNotes, getReadingRange } from "./noteData";
+import {
+  DEFAULT_PITCH_RANGE,
+  DEFAULT_READING_RANGE,
+  getPitchNotes,
+  getPitchRange,
+  getReadingNotes,
+  getReadingRange,
+} from "./noteData";
 import type {
+  CustomPitchRange,
   CustomReadingRange,
   DailyGoalSummary,
   MasteryItem,
@@ -7,6 +15,7 @@ import type {
   MasterySummary,
   ModeProgress,
   PitchNote,
+  PitchRange,
   PracticeInsightSummary,
   PracticeMode,
   PracticePlan,
@@ -35,7 +44,9 @@ type CreateSessionRecordInput = Omit<PracticeSessionRecord, "id" | "completedAt"
   Partial<Pick<PracticeSessionRecord, "id" | "completedAt">>;
 
 type SelectNoteOptions = {
+  customPitchRange?: CustomPitchRange;
   customReadingRange?: CustomReadingRange;
+  pitchRange?: PitchRange;
   previousNoteId?: string;
   progress?: ModeProgress;
   readingRange?: ReadingRange;
@@ -45,9 +56,11 @@ type SelectNoteOptions = {
 
 type GetPracticePlanInput = {
   adaptivePractice: boolean;
+  customPitchRange?: CustomPitchRange;
   customReadingRange?: CustomReadingRange;
   mode: PracticeMode;
   progress: PracticeProgress;
+  pitchRange?: PitchRange;
   readingRange?: ReadingRange;
   roundLength: RoundLength;
 };
@@ -108,8 +121,12 @@ function getPracticeSourceNotes(
   mode: PracticeMode,
   readingRange: ReadingRange = DEFAULT_READING_RANGE,
   customReadingRange?: CustomReadingRange,
+  pitchRange: PitchRange = DEFAULT_PITCH_RANGE,
+  customPitchRange?: CustomPitchRange,
 ) {
-  return mode === "reading" ? getReadingNotes(readingRange, customReadingRange) : PITCH_NOTES;
+  return mode === "reading"
+    ? getReadingNotes(readingRange, customReadingRange)
+    : getPitchNotes(pitchRange, customPitchRange);
 }
 
 export function getFocusItems(
@@ -117,8 +134,10 @@ export function getFocusItems(
   modeProgress: ModeProgress,
   readingRange: ReadingRange = DEFAULT_READING_RANGE,
   customReadingRange?: CustomReadingRange,
+  pitchRange: PitchRange = DEFAULT_PITCH_RANGE,
+  customPitchRange?: CustomPitchRange,
 ) {
-  const sourceNotes = getPracticeSourceNotes(mode, readingRange, customReadingRange);
+  const sourceNotes = getPracticeSourceNotes(mode, readingRange, customReadingRange, pitchRange, customPitchRange);
 
   return sourceNotes
     .map((note) => ({
@@ -152,8 +171,16 @@ export function getMasterySummary(
   modeProgress: ModeProgress,
   readingRange: ReadingRange = DEFAULT_READING_RANGE,
   customReadingRange?: CustomReadingRange,
+  pitchRange: PitchRange = DEFAULT_PITCH_RANGE,
+  customPitchRange?: CustomPitchRange,
 ): MasterySummary {
-  const items: MasteryItem[] = getPracticeSourceNotes(mode, readingRange, customReadingRange).map((note) => {
+  const items: MasteryItem[] = getPracticeSourceNotes(
+    mode,
+    readingRange,
+    customReadingRange,
+    pitchRange,
+    customPitchRange,
+  ).map((note) => {
     const attempts = modeProgress.noteStats[note.id]?.attempts ?? 0;
     const accuracy = getNoteAccuracy(modeProgress, note.id);
 
@@ -332,19 +359,24 @@ export function getPracticeInsightSummary(
 
 export function getPracticePlan({
   adaptivePractice,
+  customPitchRange,
   customReadingRange,
   mode,
   progress,
+  pitchRange = DEFAULT_PITCH_RANGE,
   readingRange = DEFAULT_READING_RANGE,
   roundLength,
 }: GetPracticePlanInput): PracticePlan {
   const modeLabel = getModeLabel(mode).toLowerCase();
   const modeProgress = progress[mode];
-  const focusItems = getFocusItems(mode, modeProgress, readingRange, customReadingRange);
+  const focusItems = getFocusItems(mode, modeProgress, readingRange, customReadingRange, pitchRange, customPitchRange);
   const weakestItem = focusItems.find((entry) => entry.accuracy < FOCUS_ACCURACY_TARGET);
   const historySummary = getSessionHistorySummary(progress.history, mode);
   const insightSummary = getPracticeInsightSummary(progress.history, mode);
-  const scope = mode === "reading" ? getReadingRange(readingRange, customReadingRange).detail : "Natural notes C4-B4";
+  const scope =
+    mode === "reading"
+      ? getReadingRange(readingRange, customReadingRange).detail
+      : getPitchRange(pitchRange, customPitchRange).detail;
 
   if (modeProgress.totalAttempts < BASELINE_ATTEMPT_TARGET) {
     const remainingAttempts = BASELINE_ATTEMPT_TARGET - modeProgress.totalAttempts;
@@ -455,7 +487,19 @@ export function selectReadingNote(options: SelectNoteOptions = {}): TrainingNote
 }
 
 export function selectPitchNote(options: SelectNoteOptions = {}): PitchNote {
-  return selectPracticeNote(PITCH_NOTES, options);
+  return selectPracticeNote(getPitchNotes(options.pitchRange, options.customPitchRange), options);
+}
+
+export function selectPitchMelody(options: SelectNoteOptions & { length: number }): PitchNote[] {
+  const length = Math.max(1, Math.round(options.length));
+  const notes: PitchNote[] = [];
+
+  for (let index = 0; index < length; index += 1) {
+    const previousNoteId = notes.at(-1)?.id ?? options.previousNoteId;
+    notes.push(selectPitchNote(previousNoteId === undefined ? options : { ...options, previousNoteId }));
+  }
+
+  return notes;
 }
 
 export function createSessionSummary(
@@ -466,10 +510,17 @@ export function createSessionSummary(
   bestStreak: number,
   readingRange: ReadingRange = DEFAULT_READING_RANGE,
   customReadingRange?: CustomReadingRange,
+  pitchRange: PitchRange = DEFAULT_PITCH_RANGE,
+  customPitchRange?: CustomPitchRange,
 ): SessionSummary {
-  const focusItem = getFocusItems(mode, progress[mode], readingRange, customReadingRange).find(
-    (entry) => entry.accuracy < 85,
-  )?.note.id;
+  const focusItem = getFocusItems(
+    mode,
+    progress[mode],
+    readingRange,
+    customReadingRange,
+    pitchRange,
+    customPitchRange,
+  ).find((entry) => entry.accuracy < 85)?.note.id;
   const accuracy = attempts > 0 ? Math.round((score / attempts) * 100) : 0;
   const suggestion =
     attempts === 0

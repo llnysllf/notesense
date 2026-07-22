@@ -18,7 +18,7 @@ const REST_HOLD_MS = 500;
 
 export type { SongSessionStatus } from "../songEngine";
 
-type UseSongSessionResult = {
+export type UseSongSessionResult = {
   activeSong: Song | null;
   playthrough: SongPlaythrough | null;
   status: SongSessionStatus;

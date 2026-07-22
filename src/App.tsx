@@ -1,34 +1,23 @@
-import { useCallback, useMemo, useState } from "react";
+import { lazy, Suspense, useCallback, useState } from "react";
 import AppSectionNav from "./components/AppSectionNav";
 import type { AppSection } from "./components/AppSectionNav";
 import AppTopbar from "./components/AppTopbar";
-import PracticeStatsPanel from "./components/PracticeStatsPanel";
 import type { PracticePanelView } from "./components/PracticeStatsPanel";
 import PracticeWorkspace from "./components/PracticeWorkspace";
-import SongLibrary from "./components/SongLibrary";
-import SongPlayer from "./components/SongPlayer";
+import PitchTrainingControls from "./components/PitchTrainingControls";
 import ReadingRangeSelector from "./components/ReadingRangeSelector";
 import { useDataPortability } from "./hooks/useDataPortability";
+import { usePracticeDashboard } from "./hooks/usePracticeDashboard";
 import { useSongSession } from "./hooks/useSongSession";
 import { usePracticeProgress } from "./hooks/usePracticeProgress";
 import { usePracticeSession } from "./hooks/usePracticeSession";
 import { useSettings } from "./hooks/useSettings";
-import { getReadingRange, normalizeCustomReadingRange } from "./noteData";
-import { BUILT_IN_SONGS } from "./songLibraryData";
-import {
-  formatAccuracy,
-  getDailyGoalSummary,
-  getFocusItems,
-  getMasterySummary,
-  getModeLabel,
-  getPracticeInsightSummary,
-  getPracticePlan,
-  getSessionHistorySummary,
-} from "./practiceEngine";
 import { resetProgress } from "./storage";
 import type { CustomReadingRange, DataStatus, PracticeProgress, PracticeSettings, ReadingRange } from "./types";
 
 const STORAGE_WARNING = "Progress is not being saved on this device right now.";
+const PracticeStatsPanel = lazy(() => import("./components/PracticeStatsPanel"));
+const SongsWorkspace = lazy(() => import("./components/SongsWorkspace"));
 const STATS_SECTION_BY_APP_SECTION: Record<Exclude<AppSection, "practice" | "songs">, PracticePanelView> = {
   progress: "overview",
   map: "map",
@@ -85,6 +74,8 @@ function App() {
     setPracticeMode,
     currentReadingNote,
     currentPitchNote,
+    currentMelody,
+    melodyAnswerNoteIds,
     feedback,
     timeRemaining,
     roundAttempts,
@@ -94,8 +85,12 @@ function App() {
     lastSummary,
     startRound,
     finishRound,
-    handleAnswer,
     handleReadingKeyAnswer,
+    handlePitchKeyAnswer,
+    handleMelodyNoteInput,
+    undoMelodyAnswer,
+    clearMelodyAnswer,
+    submitMelodyAnswer,
     playCurrentNote,
   } = session;
 
@@ -106,11 +101,25 @@ function App() {
       patch.customReadingRange !== undefined &&
       (patch.customReadingRange.startNoteId !== settings.customReadingRange.startNoteId ||
         patch.customReadingRange.endNoteId !== settings.customReadingRange.endNoteId);
+    const pitchRangeChanged = patch.pitchRange !== undefined && patch.pitchRange !== settings.pitchRange;
+    const customPitchRangeChanged =
+      patch.customPitchRange !== undefined &&
+      (patch.customPitchRange.startNoteId !== settings.customPitchRange.startNoteId ||
+        patch.customPitchRange.endNoteId !== settings.customPitchRange.endNoteId);
+    const pitchExerciseChanged =
+      (patch.pitchExercise !== undefined && patch.pitchExercise !== settings.pitchExercise) ||
+      (patch.melodyLength !== undefined && patch.melodyLength !== settings.melodyLength);
 
     if (!persistSettings(next)) setDataStatus({ message: STORAGE_WARNING, tone: "warning" });
     setSettings(next);
     if (!isRunning && patch.roundLength !== undefined) session.setTimeRemaining(patch.roundLength);
-    if (readingRangeChanged || customRangeChanged) {
+    if (
+      readingRangeChanged ||
+      customRangeChanged ||
+      pitchRangeChanged ||
+      customPitchRangeChanged ||
+      pitchExerciseChanged
+    ) {
       session.resetSession(next, progress);
     }
   }
@@ -131,46 +140,25 @@ function App() {
     session.resetSession(settings, next);
   }
 
-  const activeProgress = progress[mode];
   const activeNote = mode === "reading" ? currentReadingNote : currentPitchNote;
-  const roundAccuracy = formatAccuracy(roundCorrect, roundAttempts);
-  const lifetimeAccuracy = formatAccuracy(activeProgress.totalCorrect, activeProgress.totalAttempts);
-  const modeLabel = getModeLabel(mode);
-  const normalizedCustomRange = useMemo(
-    () => normalizeCustomReadingRange(settings.customReadingRange),
-    [settings.customReadingRange],
-  );
-  const readingRange = useMemo(
-    () => getReadingRange(settings.readingRange, normalizedCustomRange),
-    [normalizedCustomRange, settings.readingRange],
-  );
-  const focusItems = useMemo(
-    () => getFocusItems(mode, progress[mode], settings.readingRange, normalizedCustomRange),
-    [mode, normalizedCustomRange, progress, settings.readingRange],
-  );
-  const masterySummary = useMemo(
-    () => getMasterySummary(mode, progress[mode], settings.readingRange, normalizedCustomRange),
-    [mode, normalizedCustomRange, progress, settings.readingRange],
-  );
-  const dailyGoalSummary = useMemo(() => getDailyGoalSummary(progress.history), [progress.history]);
-  const historySummary = useMemo(() => getSessionHistorySummary(progress.history, mode), [mode, progress.history]);
-  const insightSummary = useMemo(() => getPracticeInsightSummary(progress.history, mode), [mode, progress.history]);
-  const practicePlan = useMemo(
-    () =>
-      getPracticePlan({
-        adaptivePractice: settings.adaptivePractice,
-        customReadingRange: normalizedCustomRange,
-        mode,
-        progress,
-        readingRange: settings.readingRange,
-        roundLength: settings.roundLength,
-      }),
-    [mode, normalizedCustomRange, progress, settings.adaptivePractice, settings.readingRange, settings.roundLength],
-  );
-  const promptDetail =
-    mode === "reading"
-      ? `${settings.adaptivePractice ? "Adaptive" : "Random"} | ${readingRange.detail}`
-      : `${settings.adaptivePractice ? "Adaptive" : "Random"} | Natural notes C4-B4`;
+  const {
+    activeProgress,
+    dailyGoalSummary,
+    focusItems,
+    historySummary,
+    insightSummary,
+    lifetimeAccuracy,
+    masterySummary,
+    modeLabel,
+    normalizedCustomPitchRange,
+    normalizedCustomRange,
+    pitchRange,
+    pitchRangeNoteIds,
+    practicePlan,
+    promptDetail,
+    readingRange,
+    roundAccuracy,
+  } = usePracticeDashboard({ mode, progress, roundAttempts, roundCorrect, settings });
 
   const handleSelectSection = useCallback((section: AppSection) => {
     setActiveSection(section);
@@ -190,21 +178,27 @@ function App() {
   const shouldRevealPitch = Boolean(feedback) && settings.revealPitchAfterAnswer;
   const sessionStateLabel = isRunning ? "Live round" : lastSummary?.mode === mode ? "Round saved" : "Ready";
   const sessionStateTone = isRunning ? "live" : lastSummary?.mode === mode ? "saved" : "";
-  const replayButtonLabel = mode === "reading" ? "Play note" : "Replay pitch";
+  const replayButtonLabel =
+    mode === "reading" ? "Play note" : settings.pitchExercise === "melody" ? "Replay sequence" : "Replay pitch";
   const activeStatsView = getStatsView(activeSection);
-  const readingRangeControls =
+  const rangeControls =
     mode === "reading" ? (
       <ReadingRangeSelector
         settings={settings}
         onCustomRangeChange={handleCustomReadingRangeChange}
         onRangeChange={handleReadingRangeChange}
       />
-    ) : null;
+    ) : (
+      <PitchTrainingControls settings={settings} onSettingsChange={updateSettings} />
+    );
 
   function getFeedbackText() {
     if (!feedback) return isRunning ? "Listening" : "Ready";
     if (feedback.isCorrect) return "Correct";
     if (mode === "pitch" && !settings.revealPitchAfterAnswer) return "Try the next one";
+    if (mode === "pitch" && settings.pitchExercise === "melody") {
+      return `It was ${currentMelody.map((note) => note.id).join(" - ")}`;
+    }
     return `It was ${activeNote.id}`;
   }
 
@@ -223,7 +217,7 @@ function App() {
 
       <div className="app-main">
         <AppTopbar
-          subtitle={mode === "reading" ? readingRange.detail : "Natural notes C4-B4"}
+          subtitle={mode === "reading" ? readingRange.detail : pitchRange.detail}
           sessionStateLabel={sessionStateLabel}
           sessionStateTone={sessionStateTone}
           replayButtonLabel={replayButtonLabel}
@@ -232,75 +226,72 @@ function App() {
           onReplay={playCurrentNote}
         />
 
-        {activeSection === "songs" ? (
-          songSession.activeSong && songSession.playthrough ? (
-            <SongPlayer
-              song={songSession.activeSong}
-              playthrough={songSession.playthrough}
-              status={songSession.status}
-              summary={songSession.summary}
-              songProgress={songSession.songProgress}
-              storageWarning={songSession.storageWarning}
-              onAnswer={songSession.answerCurrentEvent}
-              onRestart={songSession.restartSong}
-              onExit={songSession.closeSong}
+        <Suspense
+          fallback={
+            <section className="practice-panel" aria-label="Loading section">
+              <p role="status">Loading section...</p>
+            </section>
+          }
+        >
+          {activeSection === "songs" ? (
+            <SongsWorkspace songSession={songSession} />
+          ) : activeSection === "practice" ? (
+            <PracticeWorkspace
+              currentPitchNote={currentPitchNote}
+              currentMelody={currentMelody}
+              currentReadingNote={currentReadingNote}
+              currentStreak={currentStreak}
+              dataStatus={dataStatus}
+              feedback={feedback}
+              feedbackClass={feedbackClass}
+              feedbackText={getFeedbackText()}
+              isRunning={isRunning}
+              keyboardResetKey={`${mode}-${settings.readingRange}-${normalizedCustomRange.startNoteId}-${normalizedCustomRange.endNoteId}-${settings.pitchRange}-${normalizedCustomPitchRange.startNoteId}-${normalizedCustomPitchRange.endNoteId}`}
+              melodyAnswerNoteIds={melodyAnswerNoteIds}
+              mode={mode}
+              pitchExercise={settings.pitchExercise}
+              pitchRangeNoteIds={pitchRangeNoteIds}
+              promptDetail={promptDetail}
+              rangeControls={rangeControls}
+              roundAccuracy={roundAccuracy}
+              roundAttempts={roundAttempts}
+              roundCorrect={roundCorrect}
+              shouldRevealPitch={shouldRevealPitch}
+              timeRemaining={timeRemaining}
+              onClearMelodyAnswer={clearMelodyAnswer}
+              onFinishRound={finishRound}
+              onMelodyNoteInput={handleMelodyNoteInput}
+              onPitchKeyAnswer={handlePitchKeyAnswer}
+              onReadingKeyAnswer={handleReadingKeyAnswer}
+              onStartRound={startRound}
+              onSubmitMelodyAnswer={submitMelodyAnswer}
+              onUndoMelodyAnswer={undoMelodyAnswer}
             />
           ) : (
-            <section className="practice-panel" aria-label="Song library">
-              <SongLibrary
-                songs={BUILT_IN_SONGS}
-                songProgress={songSession.songProgress}
-                onOpenSong={songSession.openSong}
-              />
-            </section>
-          )
-        ) : activeSection === "practice" ? (
-          <PracticeWorkspace
-            currentPitchNote={currentPitchNote}
-            currentReadingNote={currentReadingNote}
-            currentStreak={currentStreak}
-            dataStatus={dataStatus}
-            feedback={feedback}
-            feedbackClass={feedbackClass}
-            feedbackText={getFeedbackText()}
-            isRunning={isRunning}
-            keyboardResetKey={`${settings.readingRange}-${normalizedCustomRange.startNoteId}-${normalizedCustomRange.endNoteId}`}
-            mode={mode}
-            promptDetail={promptDetail}
-            rangeControls={readingRangeControls}
-            roundAccuracy={roundAccuracy}
-            roundAttempts={roundAttempts}
-            roundCorrect={roundCorrect}
-            shouldRevealPitch={shouldRevealPitch}
-            timeRemaining={timeRemaining}
-            onAnswer={handleAnswer}
-            onFinishRound={finishRound}
-            onReadingKeyAnswer={handleReadingKeyAnswer}
-            onStartRound={startRound}
-          />
-        ) : (
-          <PracticeStatsPanel
-            activeProgress={activeProgress}
-            activeView={activeStatsView}
-            dailyGoalSummary={dailyGoalSummary}
-            dataStatus={dataStatus}
-            focusItems={focusItems}
-            historySummary={historySummary}
-            insightSummary={insightSummary}
-            lastSummary={lastSummary}
-            lifetimeAccuracy={lifetimeAccuracy}
-            masterySummary={masterySummary}
-            mode={mode}
-            modeLabel={modeLabel}
-            practicePlan={practicePlan}
-            readingRangeControls={readingRangeControls}
-            settings={settings}
-            onExportData={handleExportData}
-            onImportData={handleImportData}
-            onResetProgress={handleResetProgress}
-            onSettingsChange={updateSettings}
-          />
-        )}
+            <PracticeStatsPanel
+              activeProgress={activeProgress}
+              activeView={activeStatsView}
+              dailyGoalSummary={dailyGoalSummary}
+              dataStatus={dataStatus}
+              focusItems={focusItems}
+              historySummary={historySummary}
+              insightSummary={insightSummary}
+              lastSummary={lastSummary}
+              lifetimeAccuracy={lifetimeAccuracy}
+              masterySummary={masterySummary}
+              mode={mode}
+              modeLabel={modeLabel}
+              practicePlan={practicePlan}
+              rangeControls={rangeControls}
+              rangeDetail={mode === "reading" ? readingRange.detail : pitchRange.detail}
+              settings={settings}
+              onExportData={handleExportData}
+              onImportData={handleImportData}
+              onResetProgress={handleResetProgress}
+              onSettingsChange={updateSettings}
+            />
+          )}
+        </Suspense>
       </div>
     </main>
   );
