@@ -9,8 +9,6 @@ const EXPECTED_REQUIRED_CHECKS = [
   "Analyze JavaScript and TypeScript",
   "Dependency review",
 ];
-const GITHUB_ACTIONS_INTEGRATION_ID = 15368;
-const MAIN_RULESET_NAME = "Main branch protection";
 const EXPECTED_ACTIVE_WORKFLOWS = [
   "CI",
   "CodeQL",
@@ -68,8 +66,8 @@ function checkEqual(actual, expected, label, failures, passed) {
   failures.push(`${label} must be ${String(expected)}; found ${String(actual)}`);
 }
 
-function checkRequiredChecks(parameters, failures, passed) {
-  const requiredChecks = (parameters.required_status_checks ?? []).map((check) => check.context);
+function checkRequiredChecks(protection, failures, passed) {
+  const requiredChecks = protection.required_status_checks?.contexts ?? [];
   const { extra, missing } = compareSet(requiredChecks, EXPECTED_REQUIRED_CHECKS);
 
   if (missing.length > 0 || extra.length > 0) {
@@ -80,82 +78,33 @@ function checkRequiredChecks(parameters, failures, passed) {
   passed.push("required status checks match policy");
 }
 
-function getRule(ruleset, type, failures) {
-  const rule = ruleset.rules?.find((candidate) => candidate.type === type);
-
-  if (!rule) {
-    failures.push(`${MAIN_RULESET_NAME} is missing the ${type} rule`);
-  }
-
-  return rule;
-}
-
-function checkMainRuleset(ruleset, failures, passed) {
-  checkEqual(ruleset.enforcement, "active", "main ruleset enforcement", failures, passed);
-
-  const includedRefs = ruleset.conditions?.ref_name?.include ?? [];
-  const excludedRefs = ruleset.conditions?.ref_name?.exclude ?? [];
+function checkBranchProtection(protection, failures, passed) {
   checkEqual(
-    JSON.stringify(includedRefs),
-    JSON.stringify(["~DEFAULT_BRANCH"]),
-    "main ruleset included refs",
-    failures,
-    passed,
-  );
-  checkEqual(JSON.stringify(excludedRefs), JSON.stringify([]), "main ruleset excluded refs", failures, passed);
-
-  const bypassActors = ruleset.bypass_actors ?? [];
-  const expectedBypassActors = [
-    { actor_id: GITHUB_ACTIONS_INTEGRATION_ID, actor_type: "Integration", bypass_mode: "pull_request" },
-  ];
-  checkEqual(
-    JSON.stringify(bypassActors),
-    JSON.stringify(expectedBypassActors),
-    "main ruleset bypass actors",
-    failures,
-    passed,
-  );
-
-  const statusChecks = getRule(ruleset, "required_status_checks", failures);
-  checkEqual(
-    statusChecks?.parameters?.strict_required_status_checks_policy,
+    protection.required_status_checks?.strict,
     true,
     "required checks use strict branch updates",
     failures,
     passed,
   );
+  checkRequiredChecks(protection, failures, passed);
   checkEqual(
-    statusChecks?.parameters?.do_not_enforce_on_create,
+    Boolean(protection.required_pull_request_reviews),
     false,
-    "required checks enforce on branch creation",
+    "required pull request reviews",
     failures,
     passed,
   );
-  checkRequiredChecks(statusChecks?.parameters ?? {}, failures, passed);
-
-  const reviews = getRule(ruleset, "pull_request", failures)?.parameters;
-  checkEqual(reviews?.required_approving_review_count, 1, "required approving review count", failures, passed);
-  checkEqual(reviews?.require_code_owner_review, true, "CODEOWNERS review requirement", failures, passed);
-  checkEqual(reviews?.dismiss_stale_reviews_on_push, true, "stale review dismissal", failures, passed);
-  checkEqual(reviews?.require_last_push_approval, false, "last-push approval requirement", failures, passed);
-  checkEqual(reviews?.required_review_thread_resolution, true, "conversation resolution requirement", failures, passed);
   checkEqual(
-    JSON.stringify([...(reviews?.allowed_merge_methods ?? [])].sort()),
-    JSON.stringify(["merge", "rebase", "squash"]),
-    "allowed merge methods",
-    failures,
-    passed,
-  );
-
-  checkEqual(
-    Boolean(getRule(ruleset, "required_linear_history", failures)),
+    protection.required_conversation_resolution?.enabled,
     true,
-    "linear history requirement",
+    "conversation resolution requirement",
     failures,
     passed,
   );
-  checkEqual(Boolean(getRule(ruleset, "non_fast_forward", failures)), true, "force-push protection", failures, passed);
-  checkEqual(Boolean(getRule(ruleset, "deletion", failures)), true, "branch deletion protection", failures, passed);
+  checkEqual(protection.required_linear_history?.enabled, true, "linear history requirement", failures, passed);
+  checkEqual(protection.allow_force_pushes?.enabled, false, "force-push protection", failures, passed);
+  checkEqual(protection.allow_deletions?.enabled, false, "branch deletion protection", failures, passed);
+  checkEqual(protection.enforce_admins?.enabled, false, "admin enforcement setting", failures, passed);
 }
 
 function checkRepositorySettings(repository, failures, passed) {
@@ -226,19 +175,12 @@ const passed = [];
 runGh(["--version"]);
 
 const repository = readGhJson(["api", `repos/${REPOSITORY}`]);
-const rulesets = readGhJson(["api", `repos/${REPOSITORY}/rulesets`]);
+const protection = readGhJson(["api", `repos/${REPOSITORY}/branches/${DEFAULT_BRANCH}/protection`]);
 const workflows = readGhJson(["api", `repos/${REPOSITORY}/actions/workflows?per_page=100`]);
-
-const mainRulesetSummary = rulesets.find((ruleset) => ruleset.name === MAIN_RULESET_NAME);
-if (!mainRulesetSummary?.id) {
-  failures.push(`missing ${MAIN_RULESET_NAME} ruleset`);
-} else {
-  const mainRuleset = readGhJson(["api", `repos/${REPOSITORY}/rulesets/${mainRulesetSummary.id}`]);
-  checkMainRuleset(mainRuleset, failures, passed);
-}
 
 checkRepositorySettings(repository, failures, passed);
 checkVulnerabilityAlerts(failures, passed);
+checkBranchProtection(protection, failures, passed);
 checkWorkflows(workflows, failures, passed);
 
 for (const item of passed) {

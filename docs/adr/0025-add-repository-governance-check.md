@@ -21,7 +21,7 @@ The check uses the GitHub CLI to verify:
 - Dependabot security updates and vulnerability alerts
 - branch protection on `main`
 - strict required status checks
-- required review count, CODEOWNERS review, stale-review dismissal, conversation resolution, linear history, force-push protection, and deletion protection
+- absence of mandatory pull-request reviews for the solo-maintainer repository, plus conversation resolution, linear history, force-push protection, and deletion protection
 - active GitHub Actions workflows
 
 Keep `npm run ops:repository` separate from `npm run verify` because it requires GitHub authentication, network access, and live repository state.

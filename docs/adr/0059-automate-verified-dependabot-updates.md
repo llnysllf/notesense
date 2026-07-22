@@ -6,13 +6,13 @@ Accepted
 
 ## Context
 
-NoteSense requires an owner and CODEOWNERS approval, strict required checks, resolved conversations, linear history, and branch protections before a pull request can merge. Routine Dependabot minor and patch updates are constrained by `dependabot.yml`, but requiring the same manual approval for every verified update adds recurring maintenance work without improving the review of human-authored changes.
+NoteSense has one maintainer. Requiring an approving reviewer and a CODEOWNERS approval creates recurring friction without providing an independent review. Routine Dependabot minor and patch updates are constrained by `dependabot.yml`, but should also merge without manual intervention once the project checks have passed.
 
-The exception must not weaken protection for normal pull requests or let a privileged workflow execute untrusted pull-request code.
+The change must retain strict required checks, conversation resolution, linear history, force-push protection, and deletion protection, and it must not let a privileged workflow execute untrusted pull-request code.
 
 ## Decision
 
-Migrate the `main` protection policy to a repository ruleset with the same status-check, review, CODEOWNERS, conversation-resolution, linear-history, deletion, and force-push controls. Allow only the GitHub Actions integration to bypass that ruleset, only through a pull request.
+Keep the `main` branch-protection policy, but remove its mandatory approving-review and CODEOWNERS-review requirements. The protected quality and security checks remain mandatory for every pull request.
 
 Add a `pull_request_target` workflow that never checks out pull-request code. It accepts only non-draft Dependabot PRs from this repository whose changed files are limited to `package.json`, `package-lock.json`, and workflow YAML. It waits for every required check, then performs a SHA-locked squash merge and deletes the Dependabot branch.
 
@@ -20,8 +20,8 @@ Keep GitHub's generic auto-merge setting disabled. The repository-owned workflow
 
 ## Consequences
 
-- Human-authored and non-Dependabot PRs retain owner and CODEOWNERS review requirements.
+- Human-authored and Dependabot pull requests both retain the same protected quality and security checks, without a mandatory second reviewer.
 - Dependabot minor and patch updates merge only after the same required quality and security checks that protect other PRs.
 - Major updates remain intentional engineering tasks because Dependabot does not open them automatically.
-- `npm run ops:repository` now verifies the ruleset and its GitHub Actions-only pull-request bypass instead of a legacy branch-protection rule.
-- Changes to the bypass actor, required checks, workflow permissions, event model, or file allowlist require security, dependency-maintenance, review-process, and repository-governance review.
+- `npm run ops:repository` verifies that the legacy branch-protection rule has no required pull-request reviews while retaining the remaining release protections.
+- Changes to required checks, workflow permissions, event model, or file allowlist require security, dependency-maintenance, review-process, and repository-governance review.
