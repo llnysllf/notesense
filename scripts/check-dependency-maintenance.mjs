@@ -49,15 +49,25 @@ requireSnippets("package.json", [
   '"verify": "npm run security:supply-chain && npm run check',
 ]);
 
+const npmSchedule = `- package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: daily
+      time: "09:00"
+      timezone: Pacific/Auckland`;
+
+const githubActionsSchedule = `- package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+      time: "09:30"
+      timezone: Pacific/Auckland`;
+
 requireSnippets(".github/dependabot.yml", [
   "version: 2",
-  "package-ecosystem: npm",
-  "package-ecosystem: github-actions",
-  "interval: weekly",
-  "day: monday",
-  'time: "09:00"',
-  'time: "09:30"',
-  "timezone: Pacific/Auckland",
+  npmSchedule,
+  githubActionsSchedule,
   "open-pull-requests-limit: 5",
   "app-runtime:",
   "tooling:",

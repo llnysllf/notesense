@@ -16,7 +16,7 @@ Release safety and provenance expectations live in [RELEASE_SAFETY.md](RELEASE_S
 
 ## Dependabot Policy
 
-- npm minor and patch updates run weekly on Monday at 09:00 Pacific/Auckland time.
+- npm minor and patch updates run daily at 09:00 Pacific/Auckland time.
 - GitHub Actions updates run weekly on Monday at 09:30 Pacific/Auckland time.
 - Dependabot keeps at most five open npm update pull requests and five open GitHub Actions update pull requests.
 - Routine npm updates are grouped into app runtime dependencies and tooling dependencies.
