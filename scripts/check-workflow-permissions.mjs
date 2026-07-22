@@ -15,6 +15,10 @@ const EXPECTED_PERMISSIONS = {
     jobs: {},
     topLevel: { contents: "read" },
   },
+  ".github/workflows/dependabot-auto-merge.yml": {
+    jobs: {},
+    topLevel: { contents: "write", "pull-requests": "write" },
+  },
   ".github/workflows/deploy-pages.yml": {
     jobs: {
       build: { contents: "read" },

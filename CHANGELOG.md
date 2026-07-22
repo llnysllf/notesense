@@ -13,6 +13,7 @@ All notable changes to NoteSense are documented here. The format follows [Keep a
 ### Changed
 
 - Dependabot now checks routine npm minor and patch updates daily, while GitHub Actions updates remain weekly
+- Verified Dependabot minor and patch updates now wait for every protected quality and security check, then squash-merge automatically without weakening review requirements for human pull requests
 - Re-themed the interface in indigo and amber, replacing the green conservatory palette in both light and dark modes
 - Pinned the app header to one height across all sections instead of stretching on short pages
 

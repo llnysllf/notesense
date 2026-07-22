@@ -1,0 +1,60 @@
+name: Dependabot auto-merge
+
+on:
+  pull_request_target:
+    types: [opened, reopened, synchronize, ready_for_review]
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: dependabot-auto-merge-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  merge:
+    name: Merge verified Dependabot update
+    if: >-
+      github.event.pull_request.user.login == 'dependabot[bot]' &&
+      github.event.pull_request.head.repo.full_name == github.repository &&
+      github.event.pull_request.draft == false
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      # pull_request_target is safe here: this job never checks out or executes PR code.
+      - name: Verify dependency-only change
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: |
+          readarray -t files < <(gh api --paginate "repos/$GITHUB_REPOSITORY/pulls/$PR_NUMBER/files?per_page=100" --jq '.[].filename')
+
+          if [ "${#files[@]}" -eq 0 ]; then
+            echo "Dependabot pull request has no changed files."
+            exit 1
+          fi
+
+          for file in "${files[@]}"; do
+            case "$file" in
+              package.json|package-lock.json|.github/workflows/*.yml|.github/workflows/*.yaml) ;;
+              *)
+                echo "Refusing to merge unexpected Dependabot change: $file"
+                exit 1
+                ;;
+            esac
+          done
+
+      - name: Wait for required checks
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR_URL: ${{ github.event.pull_request.html_url }}
+        run: gh pr checks "$PR_URL" --required --watch --fail-fast --interval 10
+
+      - name: Squash merge verified update
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR_SHA: ${{ github.event.pull_request.head.sha }}
+          PR_URL: ${{ github.event.pull_request.html_url }}
+        run: gh pr merge "$PR_URL" --squash --delete-branch --match-head-commit "$PR_SHA"
