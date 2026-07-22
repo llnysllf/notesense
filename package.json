@@ -72,8 +72,8 @@
     "deploy": "npm run build && npx --yes wrangler@4.107.0 deploy"
   },
   "dependencies": {
-    "react": "^19.1.1",
-    "react-dom": "^19.1.1"
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8"
   },
   "devDependencies": {
     "@axe-core/playwright": "^4.12.1",
