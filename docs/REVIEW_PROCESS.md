@@ -7,8 +7,9 @@ Product-learning expectations live in [PRODUCT_LEARNING.md](PRODUCT_LEARNING.md)
 ## Ownership
 
 - `.github/CODEOWNERS` owns default review routing.
-- Pull requests should remain reviewable by the repository owner before merge.
-- Ownership changes should update repository governance docs and `npm run ops:repository` expectations when branch protection or required review behavior changes.
+- NoteSense has a single maintainer, so pull requests do not require an approving reviewer or CODEOWNERS approval before merge.
+- Every pull request still needs the protected quality and security checks to pass; contributors should keep changes reviewable even when a second reviewer is not required.
+- Ownership changes should update repository governance docs and `npm run ops:repository` expectations when branch protection or review behavior changes.
 
 ## Intake Paths
 

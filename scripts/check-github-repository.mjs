@@ -12,6 +12,7 @@ const EXPECTED_REQUIRED_CHECKS = [
 const EXPECTED_ACTIVE_WORKFLOWS = [
   "CI",
   "CodeQL",
+  "Dependabot auto-merge",
   "Dependency Review",
   "Deploy Pages",
   "Lighthouse",
@@ -86,12 +87,13 @@ function checkBranchProtection(protection, failures, passed) {
     passed,
   );
   checkRequiredChecks(protection, failures, passed);
-
-  const reviews = protection.required_pull_request_reviews;
-  checkEqual(reviews?.required_approving_review_count, 1, "required approving review count", failures, passed);
-  checkEqual(reviews?.require_code_owner_reviews, true, "CODEOWNERS review requirement", failures, passed);
-  checkEqual(reviews?.dismiss_stale_reviews, true, "stale review dismissal", failures, passed);
-  checkEqual(reviews?.require_last_push_approval, false, "last-push approval requirement", failures, passed);
+  checkEqual(
+    Boolean(protection.required_pull_request_reviews),
+    false,
+    "required pull request reviews",
+    failures,
+    passed,
+  );
   checkEqual(
     protection.required_conversation_resolution?.enabled,
     true,

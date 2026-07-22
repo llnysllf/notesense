@@ -22,6 +22,7 @@ Release safety and provenance expectations live in [RELEASE_SAFETY.md](RELEASE_S
 - Routine npm updates are grouped into app runtime dependencies and tooling dependencies.
 - CodeQL GitHub Actions updates are grouped so `github/codeql-action/init` and `github/codeql-action/analyze` move together.
 - npm major upgrades are ignored by Dependabot and should be opened as intentional engineering tasks.
+- Dependabot minor and patch PRs may merge without human review only after the repository-owned auto-merge workflow verifies the Dependabot author, source repository, and changed-file allowlist, then confirms every required check passes.
 
 ## Update Classes
 
@@ -30,6 +31,7 @@ Release safety and provenance expectations live in [RELEASE_SAFETY.md](RELEASE_S
 - Node or npm runtime upgrades should update `.nvmrc`, package engines, `packageManager`, lockfile metadata, GitHub Actions behavior, documentation, and ADRs together.
 - GitHub Actions updates should preserve full-SHA pinning, source-version comments, least-privilege token permissions, concurrency, timeouts, and artifact-retention controls.
 - CodeQL workflow updates should keep `github/codeql-action/init` and `github/codeql-action/analyze` pinned to the same commit SHA.
+- The Dependabot auto-merge workflow may accept only `package.json`, `package-lock.json`, and `.github/workflows/*.yml` or `.yaml` changes; it must never check out or execute pull-request code in its privileged context.
 - New production dependencies should explain learner value, security posture, license acceptability, bundle impact, and why the behavior should not stay in project code.
 - Dependency license compliance does not grant project source-code rights; the root project license stays governed by [LEGAL.md](LEGAL.md) and [../LICENSE](../LICENSE).
 
@@ -47,6 +49,7 @@ Dependency PRs should show:
 - bundle-budget and Lighthouse impact when runtime dependencies affect built output
 - SBOM or provenance changes should be generated from the committed lockfile, validated with `npm run security:sbom`, and reviewed with dependency-maintenance evidence.
 - an explanation for new licenses, new packages, major upgrades, runtime upgrades, or workflow action changes
+- automated minor and patch updates wait for the same required Quality gate, Visual regression, Lighthouse audit, CodeQL, and Dependency review checks before their SHA-locked squash merge.
 
 ## Change Rules
 

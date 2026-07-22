@@ -11,7 +11,7 @@ NoteSense can stay lightweight while it is a static local-first app, but release
 
 ## Current Release Boundary
 
-- NoteSense currently deploys the `main` branch directly to GitHub Pages after reviewed pull requests merge.
+- NoteSense currently deploys the `main` branch directly to GitHub Pages after pull requests pass every required check, including narrowly verified Dependabot minor and patch updates.
 - The current release path has no separate staging environment, canary rollout, progressive delivery system, automated rollback, published SBOM artifact, signed release artifact, or SLSA provenance attestation.
 - The current release evidence is `npm run verify`, `npm run security:sbom`, GitHub Actions checks, pinned workflow actions, dependency lockfile policy, CodeQL, Dependency Review, Lighthouse, visual regression, Pages artifact deployment, and `npm run deploy:verify-live`.
 - This direct-to-production path is acceptable only while NoteSense remains a static portfolio app with no hosted accounts, paid usage, formal support, classroom commitment, or service-backed sync.
