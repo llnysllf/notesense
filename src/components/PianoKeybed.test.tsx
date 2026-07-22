@@ -59,6 +59,13 @@ describe("PianoKeybed", () => {
     expect(onKeySelect).not.toHaveBeenCalled();
   });
 
+  it("lets an unavailable black key pass pointer clicks through to a selectable white key", () => {
+    renderKeybed({ selectableKeyIds: new Set(["B4"]) });
+
+    expect(screen.getByRole("button", { name: "Black piano key A#4" })).toHaveClass("piano-key-pass-through");
+    expect(screen.getByRole("button", { name: "White piano key B4" })).not.toHaveClass("piano-key-pass-through");
+  });
+
   it("describes selection feedback in class and aria label", () => {
     renderKeybed({ selectedNoteId: "C4", isCorrect: true });
 
