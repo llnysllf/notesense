@@ -25,6 +25,7 @@ Treat these as the current release-health evidence:
 - `Lighthouse`: deployment-shaped performance, accessibility, best-practice, SEO, and PWA signal.
 - `CodeQL`: JavaScript and TypeScript security analysis.
 - `Dependency Review`: pull-request dependency vulnerability and license drift.
+- `Dependabot auto-merge`: author and changed-file allowlist verification followed by a SHA-locked merge only after every required check passes.
 - `Deploy Pages`: GitHub Pages artifact publication.
 - `npm run deploy:verify-live`: public app shell, metadata assets, service worker, Workbox runtime, and Content Security Policy.
 - `npm run ops:repository`: branch protection, required checks, Pages, repository security settings, Dependabot security updates, vulnerability alerts, and active workflows.
