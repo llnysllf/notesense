@@ -1,13 +1,14 @@
 import type { ReactNode } from "react";
-import { PITCH_ANSWER_OPTIONS } from "../noteData";
-import type { DataStatus, FeedbackState, NoteName, PitchNote, PracticeMode, TrainingNote } from "../types";
+import type { DataStatus, FeedbackState, PitchExercise, PitchNote, PracticeMode, TrainingNote } from "../types";
 import MusicStaff from "./MusicStaff";
 import PianoKeyboard from "./PianoKeyboard";
 import PitchPrompt from "./PitchPrompt";
+import PitchSequenceAnswer from "./PitchSequenceAnswer";
 import StatTile from "./StatTile";
 
 type PracticeWorkspaceProps = {
   currentPitchNote: PitchNote;
+  currentMelody: PitchNote[];
   currentReadingNote: TrainingNote;
   currentStreak: number;
   dataStatus: DataStatus;
@@ -16,7 +17,10 @@ type PracticeWorkspaceProps = {
   feedbackText: string;
   isRunning: boolean;
   keyboardResetKey: string;
+  melodyAnswerNoteIds: string[];
   mode: PracticeMode;
+  pitchExercise: PitchExercise;
+  pitchRangeNoteIds: Set<string>;
   promptDetail: string;
   rangeControls: ReactNode;
   roundAccuracy: string;
@@ -24,14 +28,19 @@ type PracticeWorkspaceProps = {
   roundCorrect: number;
   shouldRevealPitch: boolean;
   timeRemaining: number;
-  onAnswer: (answer: NoteName) => void;
+  onClearMelodyAnswer: () => void;
   onFinishRound: () => void;
+  onMelodyNoteInput: (noteId: string) => void;
+  onPitchKeyAnswer: (noteId: string) => void;
   onReadingKeyAnswer: (noteId: string) => void;
   onStartRound: () => void;
+  onSubmitMelodyAnswer: () => void;
+  onUndoMelodyAnswer: () => void;
 };
 
 function PracticeWorkspace({
   currentPitchNote,
+  currentMelody,
   currentReadingNote,
   currentStreak,
   dataStatus,
@@ -40,7 +49,10 @@ function PracticeWorkspace({
   feedbackText,
   isRunning,
   keyboardResetKey,
+  melodyAnswerNoteIds,
   mode,
+  pitchExercise,
+  pitchRangeNoteIds,
   promptDetail,
   rangeControls,
   roundAccuracy,
@@ -48,10 +60,14 @@ function PracticeWorkspace({
   roundCorrect,
   shouldRevealPitch,
   timeRemaining,
-  onAnswer,
+  onClearMelodyAnswer,
   onFinishRound,
+  onMelodyNoteInput,
+  onPitchKeyAnswer,
   onReadingKeyAnswer,
   onStartRound,
+  onSubmitMelodyAnswer,
+  onUndoMelodyAnswer,
 }: PracticeWorkspaceProps) {
   const activeNote = mode === "reading" ? currentReadingNote : currentPitchNote;
 
@@ -63,7 +79,7 @@ function PracticeWorkspace({
         </p>
       )}
 
-      {mode === "reading" && rangeControls}
+      {rangeControls}
 
       <div className="round-strip" aria-label="Current round status">
         <StatTile label="Time" value={`${timeRemaining}s`} />
@@ -75,6 +91,16 @@ function PracticeWorkspace({
       <div className={`staff-card ${mode === "pitch" ? "pitch-card" : ""}`}>
         {mode === "reading" ? (
           <MusicStaff note={currentReadingNote} />
+        ) : pitchExercise === "melody" ? (
+          <PitchSequenceAnswer
+            answerNoteIds={melodyAnswerNoteIds}
+            feedback={feedback}
+            notes={currentMelody}
+            reveal={shouldRevealPitch}
+            onClear={onClearMelodyAnswer}
+            onSubmit={onSubmitMelodyAnswer}
+            onUndo={onUndoMelodyAnswer}
+          />
         ) : (
           <PitchPrompt note={currentPitchNote} reveal={shouldRevealPitch} />
         )}
@@ -82,7 +108,11 @@ function PracticeWorkspace({
         <div className="prompt-row">
           <div>
             <span className="prompt-label">
-              {mode === "reading" ? "Find this note on the piano." : "Name the pitch you hear."}
+              {mode === "reading"
+                ? "Find this note on the piano."
+                : pitchExercise === "melody"
+                  ? "Transcribe the pitch sequence."
+                  : "Find the pitch you hear."}
             </span>
             <p>{promptDetail}</p>
           </div>
@@ -100,22 +130,26 @@ function PracticeWorkspace({
             selectedNoteId={feedback?.answerId}
             onKeySelect={onReadingKeyAnswer}
           />
+        ) : pitchExercise === "melody" ? (
+          <PianoKeyboard
+            key={keyboardResetKey}
+            disabled={!isRunning || Boolean(feedback) || melodyAnswerNoteIds.length >= currentMelody.length}
+            rangeNoteIds={pitchRangeNoteIds}
+            selectableKeyIds={pitchRangeNoteIds}
+            selectedNoteId={melodyAnswerNoteIds.at(-1)}
+            onKeySelect={onMelodyNoteInput}
+          />
         ) : (
-          <div className="answer-grid pitch-answer-grid">
-            {PITCH_ANSWER_OPTIONS.map((answer, index) => (
-              <button
-                className="answer-button"
-                key={answer}
-                type="button"
-                aria-label={`Answer ${answer}`}
-                disabled={!isRunning || Boolean(feedback)}
-                onClick={() => onAnswer(answer)}
-              >
-                <strong>{answer}</strong>
-                <span>{index + 1}</span>
-              </button>
-            ))}
-          </div>
+          <PianoKeyboard
+            key={keyboardResetKey}
+            disabled={!isRunning || Boolean(feedback)}
+            isCorrect={feedback?.isCorrect}
+            rangeNoteIds={pitchRangeNoteIds}
+            revealedNoteId={feedback ? currentPitchNote.id : undefined}
+            selectableKeyIds={pitchRangeNoteIds}
+            selectedNoteId={feedback?.answerId}
+            onKeySelect={onPitchKeyAnswer}
+          />
         )}
 
         <div className="action-row">

@@ -198,6 +198,25 @@ export function recordPitchAttempt(progress: PracticeProgress, note: PitchNote, 
   return recordModeAttempt(progress, "pitch", note, answer);
 }
 
+export function recordPitchLocationAttempt(
+  progress: PracticeProgress,
+  note: PitchNote,
+  answerNoteId: string,
+): PracticeProgress {
+  return recordModeAttempt(progress, "pitch", note, note.name, answerNoteId === note.id);
+}
+
+export function recordPitchSequenceAttempt(
+  progress: PracticeProgress,
+  notes: PitchNote[],
+  answerNoteIds: string[],
+): PracticeProgress {
+  return notes.reduce(
+    (nextProgress, note, index) => recordPitchLocationAttempt(nextProgress, note, answerNoteIds[index] ?? ""),
+    progress,
+  );
+}
+
 export function completeRound(progress: PracticeProgress, session: PracticeSessionRecord): PracticeProgress {
   const modeProgress = progress[session.mode];
 

@@ -70,3 +70,6 @@ Architecture Decision Records document durable product and engineering decisions
 - [ADR 0053: Add I18n Readiness Contract](0053-add-i18n-readiness-contract.md) - Accepted
 - [ADR 0054: Add SBOM Generation Gate](0054-add-sbom-generation-gate.md) - Accepted
 - [ADR 0055: Add Song Sheet Reading](0055-add-song-sheet-reading.md) - Accepted
+- [ADR 0056: Expand Pitch Training And Add Melody Dictation](0056-expand-pitch-training-and-add-melody-dictation.md) - Accepted
+- [ADR 0057: Split Secondary Screens And Review Bundle Budget](0057-split-secondary-screens-and-review-bundle-budget.md) - Accepted
+- [ADR 0058: Use Staff-Based Pitch Sequence Transcription](0058-staff-based-pitch-sequence-transcription.md) - Accepted

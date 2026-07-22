@@ -85,7 +85,7 @@ requireSnippets("playwright.visual.config.ts", [
 requireSnippets("e2e/app.spec.ts", [
   'test("loads with no automated accessibility violations"',
   'test("runs the note-reading practice loop"',
-  'test("answers with keyboard shortcuts in both practice modes"',
+  'test("answers reading shortcuts and exact pitch keys"',
   'test("exports local practice data"',
   'test("imports local practice data"',
   'test("surfaces storage failures without crashing"',

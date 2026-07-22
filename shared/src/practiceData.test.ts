@@ -74,6 +74,48 @@ describe("catalog-less normalization (server path)", () => {
       roundLength: 60,
       readingRange: "treble-starter",
       customReadingRange: { startNoteId: "C3", endNoteId: "F4" },
+      pitchRange: "chromatic",
+      customPitchRange: { startNoteId: "C3", endNoteId: "B4" },
+      pitchExercise: "single",
+      melodyLength: 3,
+    });
+  });
+
+  it("normalizes expanded pitch settings and preserves older saved settings", () => {
+    expect(
+      normalizeSettings({
+        pitchRange: "full",
+        customPitchRange: { startNoteId: "C#3", endNoteId: "F5" },
+        pitchExercise: "melody",
+        melodyLength: 12,
+      }),
+    ).toMatchObject({
+      pitchRange: "full",
+      customPitchRange: { startNoteId: "C#3", endNoteId: "F5" },
+      pitchExercise: "melody",
+      melodyLength: 12,
+    });
+
+    expect(normalizeSettings({ readingRange: "bass-starter" })).toMatchObject({
+      readingRange: "bass-starter",
+      pitchRange: "chromatic",
+      customPitchRange: { startNoteId: "C3", endNoteId: "B4" },
+      pitchExercise: "single",
+      melodyLength: 3,
+    });
+
+    expect(
+      normalizeSettings({
+        pitchRange: "unsafe",
+        customPitchRange: { startNoteId: "bad", endNoteId: "G4" },
+        pitchExercise: "unsafe",
+        melodyLength: 17,
+      }),
+    ).toMatchObject({
+      pitchRange: "chromatic",
+      customPitchRange: { startNoteId: "C3", endNoteId: "G4" },
+      pitchExercise: "single",
+      melodyLength: 3,
     });
   });
 

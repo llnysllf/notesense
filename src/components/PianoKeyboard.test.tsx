@@ -213,6 +213,15 @@ describe("PianoKeyboard", () => {
     expect(container.querySelector('[data-piano-overview-key="C4"]')).toHaveClass("overview-target");
   });
 
+  it("marks a current melody input as a neutral selection", () => {
+    mockMobilePianoLayout();
+
+    const { container } = render(<PianoKeyboard disabled={false} selectedNoteId="C4" onKeySelect={vi.fn()} />);
+
+    expect(screen.getByRole("button", { name: "White piano key C4, selected" })).toHaveClass("selected");
+    expect(container.querySelector('[data-piano-overview-key="C4"]')).toHaveClass("overview-selected");
+  });
+
   it("marks the selected key and revealed target key after an incorrect answer", () => {
     render(<PianoKeyboard disabled isCorrect={false} revealedNoteId="C4" selectedNoteId="C3" onKeySelect={vi.fn()} />);
 

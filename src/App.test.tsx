@@ -1,12 +1,13 @@
 import { fireEvent, render, screen, waitFor, within } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import App from "./App";
-import { playTone } from "./audio";
+import { playMelody, playTone } from "./audio";
 import { PITCH_NOTES, emptyProgress } from "./noteData";
 import { defaultSettings, serializePracticeDataExport } from "./storage";
 import type { PracticeProgress } from "./types";
 
 vi.mock("./audio", () => ({
+  playMelody: vi.fn(),
   playTone: vi.fn(),
 }));
 
@@ -73,7 +74,7 @@ describe("App", () => {
     expect(screen.getByRole("button", { name: "White piano key A0" })).toHaveAttribute("aria-disabled", "true");
   });
 
-  it("opens and closes the navigation drawer from the topbar menu button", () => {
+  it("opens and closes the navigation drawer from the topbar menu button", async () => {
     render(<App />);
 
     const toggle = screen.getByRole("button", { name: "Open menu" });
@@ -89,7 +90,7 @@ describe("App", () => {
     fireEvent.click(toggle);
     fireEvent.click(screen.getByRole("button", { name: "Songs" }));
     expect(toggle).toHaveAttribute("aria-expanded", "false");
-    expect(screen.getByRole("heading", { name: "Song library" })).toBeInTheDocument();
+    expect(await screen.findByRole("heading", { name: "Song library" })).toBeInTheDocument();
   });
 
   it("starts a reading round, records an answer, and persists progress", () => {
@@ -108,7 +109,7 @@ describe("App", () => {
     });
   });
 
-  it("finishes a reading round and shows the saved-round summary", () => {
+  it("finishes a reading round and shows the saved-round summary", async () => {
     render(<App />);
 
     fireEvent.click(screen.getByRole("button", { name: "Start drill" }));
@@ -117,7 +118,7 @@ describe("App", () => {
 
     expect(screen.getByText("Round saved")).toBeInTheDocument();
     fireEvent.click(screen.getByRole("button", { name: "Overview" }));
-    expect(screen.getByRole("heading", { level: 3, name: "Last round" })).toBeInTheDocument();
+    expect(await screen.findByRole("heading", { level: 3, name: "Last round" })).toBeInTheDocument();
     expect(readStoredJson<PracticeProgress>(PROGRESS_STORAGE_KEY).history).toHaveLength(1);
   });
 
@@ -131,11 +132,11 @@ describe("App", () => {
     expect(screen.getByTestId("practice-feedback")).toHaveTextContent(`It was ${expectedNoteId}`);
   });
 
-  it("persists settings changes and updates the visible reading range", () => {
+  it("persists settings changes and updates the visible reading range", async () => {
     render(<App />);
 
     fireEvent.click(screen.getByRole("button", { name: "Preferences" }));
-    fireEvent.click(screen.getByRole("button", { name: "30s" }));
+    fireEvent.click(await screen.findByRole("button", { name: "30s" }));
     fireEvent.click(screen.getByRole("button", { name: "Grand" }));
 
     expect(readStoredJson<typeof defaultSettings>(SETTINGS_STORAGE_KEY)).toMatchObject({
@@ -166,14 +167,14 @@ describe("App", () => {
     expect(screen.getAllByText("Custom G3-C4")).not.toHaveLength(0);
   });
 
-  it("surfaces a storage warning when settings cannot be saved", () => {
+  it("surfaces a storage warning when settings cannot be saved", async () => {
     vi.spyOn(Storage.prototype, "setItem").mockImplementation(() => {
       throw new DOMException("Storage unavailable", "SecurityError");
     });
 
     render(<App />);
     fireEvent.click(screen.getByRole("button", { name: "Preferences" }));
-    fireEvent.click(screen.getByRole("button", { name: "30s" }));
+    fireEvent.click(await screen.findByRole("button", { name: "30s" }));
 
     expect(screen.getByRole("status")).toHaveTextContent("Progress is not being saved on this device right now.");
   });
@@ -190,25 +191,45 @@ describe("App", () => {
     expect(playToneMock).toHaveBeenCalledTimes(1);
   });
 
-  it("hides the pitch answer after an incorrect answer when reveal is disabled", () => {
+  it("hides the pitch answer after an incorrect answer when reveal is disabled", async () => {
     const playToneMock = vi.mocked(playTone);
     render(<App />);
 
     fireEvent.click(screen.getByRole("button", { name: "Preferences" }));
-    fireEvent.click(screen.getByLabelText("Reveal pitch answer"));
+    fireEvent.click(await screen.findByLabelText("Reveal pitch answer"));
     fireEvent.click(screen.getByRole("button", { name: "Pitch training" }));
     fireEvent.click(screen.getByRole("button", { name: "Start drill" }));
     const playedFrequency = playToneMock.mock.calls.at(-1)?.[0];
     const expectedNote = PITCH_NOTES.find((note) => note.frequency === playedFrequency);
-    const wrongAnswer = ["C", "D", "E", "F", "G", "A", "B"].find((answer) => answer !== expectedNote?.name);
+    const wrongAnswer = ["C4", "C#4", "D4"].find((answer) => answer !== expectedNote?.id);
 
     if (wrongAnswer === undefined) {
       throw new Error("Could not choose a wrong pitch answer.");
     }
 
-    fireEvent.click(screen.getByRole("button", { name: `Answer ${wrongAnswer}` }));
+    fireEvent.click(
+      screen.getByRole("button", { name: new RegExp(`piano key ${wrongAnswer}, inside selected range`) }),
+    );
 
     expect(screen.getByTestId("practice-feedback")).toHaveTextContent("Try the next one");
+  });
+
+  it("runs pitch-sequence transcription and persists notes entered during playback", () => {
+    const playMelodyMock = vi.mocked(playMelody);
+    render(<App />);
+
+    fireEvent.click(screen.getByRole("button", { name: "Pitch training" }));
+    fireEvent.click(screen.getByRole("button", { name: "Pitch sequence" }));
+    fireEvent.click(screen.getByRole("button", { name: "Start drill" }));
+    for (const [index, noteId] of ["C4", "C#4", "D4"].entries()) {
+      fireEvent.click(screen.getByRole("button", { name: new RegExp(`piano key ${noteId}, inside selected range`) }));
+      expect(screen.getByRole("img", { name: new RegExp(`${index + 1} of 3 notes entered`) })).toBeInTheDocument();
+    }
+    fireEvent.click(screen.getByRole("button", { name: "Submit sequence" }));
+
+    expect(playMelodyMock).toHaveBeenCalledTimes(1);
+    expect(readStoredJson<PracticeProgress>(PROGRESS_STORAGE_KEY).pitch.totalAttempts).toBe(3);
+    expect(screen.getByTestId("practice-feedback")).not.toHaveTextContent("Listening");
   });
 
   it("replays notes and can switch back to note reading from pitch training", () => {
@@ -236,7 +257,7 @@ describe("App", () => {
 
     render(<App />);
     fireEvent.click(screen.getByRole("button", { name: "Data" }));
-    fireEvent.change(screen.getByLabelText("Import data file"), { target: { files: [file] } });
+    fireEvent.change(await screen.findByLabelText("Import data file"), { target: { files: [file] } });
 
     await waitFor(() => expect(screen.getByRole("status")).toHaveTextContent("Progress imported."));
     fireEvent.click(screen.getByRole("button", { name: "Preferences" }));
@@ -245,7 +266,7 @@ describe("App", () => {
     expect(readStoredJson<PracticeProgress>(PROGRESS_STORAGE_KEY).reading.totalAttempts).toBe(7);
   });
 
-  it("resets saved progress only after confirmation", () => {
+  it("resets saved progress only after confirmation", async () => {
     const progress = freshProgress();
     progress.reading.totalAttempts = 4;
     window.localStorage.setItem(PROGRESS_STORAGE_KEY, JSON.stringify(progress));
@@ -254,7 +275,7 @@ describe("App", () => {
     confirm.mockReturnValueOnce(false);
     render(<App />);
     fireEvent.click(screen.getByRole("button", { name: "Data" }));
-    fireEvent.click(screen.getByRole("button", { name: "Reset progress" }));
+    fireEvent.click(await screen.findByRole("button", { name: "Reset progress" }));
     expect(readStoredJson<PracticeProgress>(PROGRESS_STORAGE_KEY).reading.totalAttempts).toBe(4);
 
     confirm.mockReturnValueOnce(true);

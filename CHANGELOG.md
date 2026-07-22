@@ -6,6 +6,7 @@ All notable changes to NoteSense are documented here. The format follows [Keep a
 
 ### Added
 
+- Pitch-sequence transcription: configurable three-to-sixteen-note drills, immediate note entry while playback is running, and a grand-staff answer surface with octave notation for the full piano range
 - Song sheet reading: a new Songs section with twenty built-in public-domain songs across beginner, intermediate, and advanced difficulty (Ode to Joy, Twinkle Twinkle, Mary Had a Little Lamb, Amazing Grace, When the Saints, Jingle Bells, Yankee Doodle, Row Row Row Your Boat, Silent Night, Greensleeves, Frere Jacques, Hot Cross Buns, This Old Man, Pop Goes the Weasel, Oh! Susanna, Camptown Races, Auld Lang Syne, Happy Birthday, Old MacDonald, Fur Elise opening), self-paced note-by-note play-through on a static printed-style score with rhythm notation, sheet accidentals, wrong-note feedback, derived difficulty levels, per-song note ranges, and per-song best accuracy and completion tracking stored locally
 - Time signatures (4/4, 3/4, and compound 6/8) with barlines dividing the sheet into measures, shown at the start of every staff system alongside the clef
 

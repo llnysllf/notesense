@@ -367,7 +367,7 @@ h3 {
   font-size: 1rem;
 }
 
-:is(.reading-range-switch, .length-options, .range-edge-switch) {
+:is(.reading-range-switch, .pitch-range-switch, .pitch-exercise-switch, .length-options, .range-edge-switch) {
   display: grid;
   gap: 6px;
   padding: 6px;
@@ -376,7 +376,7 @@ h3 {
   background: var(--color-control-soft);
 }
 
-:is(.reading-range-switch, .length-options, .range-edge-switch) button {
+:is(.reading-range-switch, .pitch-range-switch, .pitch-exercise-switch, .length-options, .range-edge-switch) button {
   border-radius: var(--radius-control);
   background: transparent;
   color: var(--color-muted-strong);
@@ -388,12 +388,14 @@ h3 {
     box-shadow 0.15s ease;
 }
 
-:is(.reading-range-switch, .length-options, .range-edge-switch) button:not(.active):hover {
+:is(.reading-range-switch, .pitch-range-switch, .pitch-exercise-switch, .length-options, .range-edge-switch)
+  button:not(.active):hover {
   background: var(--color-surface);
   color: var(--color-text);
 }
 
-:is(.reading-range-switch, .length-options, .range-edge-switch) button.active {
+:is(.reading-range-switch, .pitch-range-switch, .pitch-exercise-switch, .length-options, .range-edge-switch)
+  button.active {
   background: var(--color-surface);
   color: var(--color-brand-strong);
   box-shadow: inset 0 0 0 1px var(--color-brand);
@@ -488,12 +490,91 @@ h3 {
   grid-template-columns: repeat(6, minmax(0, 1fr));
 }
 
-:is(.reading-range-switch, .range-edge-switch) button {
+:is(.reading-range-switch, .pitch-range-switch, .pitch-exercise-switch, .range-edge-switch) button {
   min-width: 0;
   min-height: 38px;
   padding: 0 8px;
   font-size: 0.82rem;
   overflow-wrap: anywhere;
+}
+
+.pitch-training-controls {
+  display: grid;
+  gap: 10px;
+}
+
+.pitch-exercise-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.5fr);
+  gap: 10px;
+}
+
+.pitch-exercise-switch {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.sequence-length-stepper {
+  display: grid;
+  grid-template-columns: 42px minmax(76px, 1fr) 42px;
+  min-height: 52px;
+  gap: 6px;
+  padding: 6px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-card);
+  background: var(--color-control-soft);
+}
+
+.sequence-length-stepper button {
+  min-width: 0;
+  border: 1px solid transparent;
+  border-radius: var(--radius-control);
+  background: var(--color-surface);
+  color: var(--color-text);
+  cursor: pointer;
+  font-size: 1.35rem;
+  font-weight: 850;
+}
+
+.sequence-length-stepper button:not(:disabled):hover {
+  border-color: var(--color-brand);
+}
+
+.sequence-length-stepper button:disabled {
+  cursor: not-allowed;
+  opacity: 0.42;
+}
+
+.sequence-length-stepper output {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  color: var(--color-muted-strong);
+  font-size: 0.8rem;
+  font-weight: 800;
+}
+
+.sequence-length-stepper output strong {
+  color: var(--color-text);
+  font-size: 1.15rem;
+}
+
+.pitch-range-switch {
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+}
+
+.custom-range-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  color: var(--color-muted);
+  font-size: 0.85rem;
+}
+
+.custom-range-heading strong {
+  color: var(--color-text);
 }
 
 .custom-range-card {
@@ -625,6 +706,75 @@ h3 {
   font-size: 2rem;
   line-height: 1.1;
   text-align: center;
+}
+
+.sequence-answer {
+  display: grid;
+  gap: 12px;
+}
+
+.sequence-answer-staff {
+  width: 100%;
+  background: var(--color-surface);
+}
+
+.sequence-clef {
+  font-size: 66px;
+}
+
+.sequence-accidental,
+.sequence-octave-marker,
+.sequence-position-label {
+  fill: var(--color-muted-strong);
+  font-weight: 850;
+  text-anchor: middle;
+}
+
+.sequence-accidental {
+  font-size: 19px;
+}
+
+.sequence-empty-position {
+  fill: var(--color-border-strong);
+}
+
+.sequence-entry-cursor {
+  fill: var(--color-brand);
+}
+
+.sequence-written-note.correct .sequence-note-head {
+  fill: var(--color-success);
+}
+
+.sequence-written-note.correct .sequence-note-stem,
+.sequence-written-note.correct .staff-line {
+  stroke: var(--color-success);
+}
+
+.sequence-written-note.wrong .sequence-note-head {
+  fill: var(--color-danger);
+}
+
+.sequence-written-note.wrong .sequence-note-stem,
+.sequence-written-note.wrong .staff-line {
+  stroke: var(--color-danger);
+}
+
+.sequence-written-note.target .sequence-note-head {
+  fill: var(--color-surface);
+  stroke: var(--color-success);
+  stroke-width: 2.5;
+}
+
+.sequence-written-note.target .sequence-note-stem,
+.sequence-written-note.target .staff-line {
+  stroke: var(--color-success);
+}
+
+.sequence-edit-actions {
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 8px;
 }
 
 .piano-keyboard-panel {
@@ -784,6 +934,18 @@ h3 {
   box-shadow: inset 0 0 0 2px var(--color-success-border);
 }
 
+.piano-key.selected {
+  border-color: var(--color-brand-strong);
+  box-shadow: inset 0 0 0 2px var(--color-brand);
+}
+
+.black-key.selected {
+  background: var(--color-brand-strong);
+  box-shadow:
+    inset 0 0 0 2px var(--color-brand),
+    var(--shadow-piano-black);
+}
+
 .piano-key.range-key,
 .piano-overview-key.overview-range-key {
   border-color: var(--color-accent);
@@ -850,6 +1012,10 @@ h3 {
   background: var(--color-success);
 }
 
+.piano-overview-key.overview-selected {
+  background: var(--color-brand-strong);
+}
+
 .staff-line {
   stroke: var(--color-text);
   stroke-linecap: round;
@@ -874,199 +1040,6 @@ h3 {
   stroke: var(--color-ink);
   stroke-linecap: round;
   stroke-width: 4;
-}
-
-.sheet-staff {
-  display: block;
-  width: 100%;
-  max-width: 820px;
-  height: auto;
-  margin-inline: auto;
-}
-
-.sheet-clef {
-  font-size: 72px;
-}
-
-/* Every mark on the printed score (lines, noteheads, stems, barlines,
-   accidentals, time signature) shares one ink color with .staff-line,
-   the way a single pen draws real sheet music. Mixing in --color-ink
-   here reads as a faint, inconsistent tint against a dark background. */
-.sheet-note-head {
-  fill: var(--color-text);
-}
-
-.sheet-note-head.hollow {
-  fill: var(--color-surface);
-  stroke: var(--color-text);
-  stroke-width: 2.5;
-}
-
-.sheet-stem,
-.sheet-flag {
-  stroke: var(--color-text);
-  fill: none;
-  stroke-linecap: round;
-  stroke-width: 3;
-}
-
-.sheet-accidental {
-  fill: var(--color-text);
-  font-size: 20px;
-  font-weight: 700;
-}
-
-.sheet-time-signature {
-  fill: var(--color-text);
-  font-size: 22px;
-  font-weight: 800;
-  text-anchor: middle;
-}
-
-.sheet-barline {
-  stroke: var(--color-text);
-  stroke-width: 2;
-  opacity: 0.5;
-}
-
-.sheet-rest {
-  fill: var(--color-text);
-}
-
-.sheet-event.done {
-  opacity: 0.38;
-}
-
-.sheet-event.current {
-  --sheet-cursor-ink: var(--color-brand);
-}
-
-.sheet-event.current.wrong {
-  --sheet-cursor-ink: var(--color-danger);
-}
-
-.sheet-event.current .sheet-note-head,
-.sheet-event.current .sheet-accidental,
-.sheet-event.current .sheet-cursor,
-.sheet-event.current .sheet-rest {
-  fill: var(--sheet-cursor-ink);
-}
-
-.sheet-event.current .sheet-note-head.hollow {
-  fill: var(--color-surface);
-  stroke: var(--sheet-cursor-ink);
-}
-
-.sheet-event.current .sheet-stem,
-.sheet-event.current .sheet-flag {
-  stroke: var(--sheet-cursor-ink);
-}
-
-.song-library {
-  display: grid;
-  gap: 12px;
-}
-
-.song-library-hint {
-  margin: 0;
-  color: var(--color-muted);
-}
-
-.song-list {
-  display: grid;
-  gap: 10px;
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.song-card {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 14px;
-  padding: 14px 16px;
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-control);
-  background: var(--color-surface-warm);
-}
-
-.song-card-info {
-  display: grid;
-  gap: 4px;
-  min-width: 0;
-}
-
-.song-meta {
-  color: var(--color-muted);
-  font-size: 0.92rem;
-}
-
-.song-card-title {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  flex-wrap: wrap;
-}
-
-.difficulty-chip {
-  padding: 2px 10px;
-  border-radius: var(--radius-pill);
-  font-size: 0.78rem;
-  font-weight: 800;
-  letter-spacing: 0.04em;
-}
-
-.difficulty-beginner {
-  background: var(--color-success-bg);
-  color: var(--color-success);
-}
-
-.difficulty-intermediate {
-  background: var(--color-accent-bg);
-  color: var(--color-accent);
-}
-
-.difficulty-advanced {
-  background: var(--color-danger-bg);
-  color: var(--color-danger);
-}
-
-.song-player-header {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 16px;
-  flex-wrap: wrap;
-}
-
-.song-player-header h3 {
-  margin: 0 0 4px;
-}
-
-.song-player-actions {
-  display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
-}
-
-.song-sheet-card {
-  gap: 18px;
-}
-
-.song-summary {
-  display: grid;
-  gap: 10px;
-  justify-items: start;
-  padding: 16px;
-  border: 1px solid var(--color-success-border);
-  border-radius: var(--radius-control);
-  background: var(--color-success-bg);
-}
-
-.song-summary p {
-  margin: 0;
-  color: var(--color-feedback);
 }
 
 .prompt-label {
@@ -1105,17 +1078,6 @@ h3 {
   color: var(--color-danger);
 }
 
-.answer-grid {
-  display: grid;
-  grid-template-columns: repeat(5, minmax(64px, 1fr));
-  gap: 12px;
-}
-
-.pitch-answer-grid {
-  grid-template-columns: repeat(7, minmax(56px, 1fr));
-}
-
-.answer-button,
 .primary-button,
 .secondary-button,
 .ghost-button {
@@ -1128,42 +1090,12 @@ h3 {
     transform 0.15s ease;
 }
 
-.answer-button {
-  display: flex;
-  min-width: 0;
-  min-height: 86px;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  border: 1px solid var(--color-border);
-  border-bottom: 2px solid var(--color-border-strong);
-  background: linear-gradient(180deg, var(--color-surface) 0%, var(--color-surface-warm) 100%);
-  color: var(--color-text);
-}
-
-.answer-button:not(:disabled):hover {
-  border-color: var(--color-brand);
-  border-bottom-color: var(--color-brand);
-}
-
-.answer-button strong {
-  font-size: 2rem;
-}
-
-.answer-button span {
-  color: var(--color-muted);
-  font-size: 0.8rem;
-  font-weight: 800;
-}
-
-.answer-button:not(:disabled):hover,
 .primary-button:hover,
 .secondary-button:hover,
 .ghost-button:hover {
   transform: translateY(-1px);
 }
 
-.answer-button:not(:disabled):hover,
 .secondary-button:hover,
 .ghost-button:hover {
   border-color: var(--color-border-strong);
@@ -1172,14 +1104,15 @@ h3 {
 
 .primary-button:active,
 .secondary-button:active,
-.ghost-button:active,
-.answer-button:not(:disabled):active {
+.ghost-button:active {
   transform: translateY(0);
 }
 
-.answer-button:disabled {
+.secondary-button:disabled,
+.ghost-button:disabled {
   cursor: not-allowed;
   opacity: 0.52;
+  transform: none;
 }
 
 .primary-button,
@@ -1862,7 +1795,7 @@ h3 {
   }
 
   .prompt-row,
-  .action-row {
+  .action-row:not(.sequence-edit-actions) {
     align-items: stretch;
     flex-direction: column;
   }
@@ -1900,8 +1833,8 @@ h3 {
   }
 
   .round-strip,
-  .answer-grid,
   .reading-range-switch,
+  .pitch-range-switch,
   .lifetime-grid,
   .insight-metrics,
   .summary-grid {
@@ -1925,12 +1858,30 @@ h3 {
     text-align: left;
   }
 
-  .pitch-answer-grid {
+  .pitch-exercise-row {
+    grid-template-columns: 1fr;
+  }
+
+  .pitch-range-switch {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
-  .answer-grid .answer-button:last-child {
+  .pitch-range-switch button:last-child {
     grid-column: 1 / -1;
+  }
+
+  .custom-range-heading {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .sequence-answer-heading {
+    align-items: center;
+    flex-direction: row;
+  }
+
+  .sequence-edit-actions .secondary-button {
+    width: 100%;
   }
 
   .staff-card {

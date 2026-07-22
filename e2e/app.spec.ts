@@ -205,7 +205,7 @@ test("moves the phone piano window without changing the hidden answer", async ({
   expect(await mobileLayout.getAttribute("data-window-center-note-id")).not.toBe("C4");
 });
 
-test("answers with keyboard shortcuts in both practice modes", async ({ page }) => {
+test("answers reading shortcuts and exact pitch keys", async ({ page }) => {
   await page.goto("/", { waitUntil: "domcontentloaded" });
 
   const roundTile = page.locator(".round-strip .stat-tile").filter({ hasText: "Round" });
@@ -217,7 +217,7 @@ test("answers with keyboard shortcuts in both practice modes", async ({ page }) 
 
   await openAppSection(page, "Pitch training");
   await page.getByRole("button", { name: "Start drill" }).click();
-  await page.keyboard.press("7");
+  await clickPianoKey(page.getByRole("button", { name: "White piano key C4, inside selected range" }));
   await expect(page.getByTestId("practice-feedback")).not.toHaveText("Listening");
   await expect(roundTile).toContainText("/1");
 });
@@ -458,9 +458,28 @@ test("runs the pitch-training practice loop", async ({ page }) => {
   await expect(page.getByLabel("Hidden pitch note")).toBeVisible();
 
   await page.getByRole("button", { name: "Start drill" }).click();
-  await expect(page.getByRole("button", { name: "Answer B" })).toBeEnabled();
+  const c4 = page.getByRole("button", { name: "White piano key C4, inside selected range" });
+  await expect(c4).toHaveAttribute("aria-disabled", "false");
 
-  await page.getByRole("button", { name: "Answer C" }).click();
+  await clickPianoKey(c4);
+  await expect(page.getByTestId("practice-feedback")).not.toHaveText("Listening");
+});
+
+test("writes a pitch sequence on the staff while it plays and submits it", async ({ page }) => {
+  await page.goto("/", { waitUntil: "domcontentloaded" });
+
+  await openAppSection(page, "Pitch training");
+  await page.getByRole("button", { name: "Pitch sequence" }).click();
+  await expect(page.getByRole("img", { name: /Pitch sequence answer, 0 of 3 notes entered/ })).toBeVisible();
+  await page.getByRole("button", { name: "Start drill" }).click();
+
+  for (const [index, noteId] of ["C4", "C#4", "D4"].entries()) {
+    await clickPianoKey(page.getByRole("button", { name: new RegExp(`piano key ${noteId}, inside selected range`) }));
+    await expect(page.getByRole("img", { name: new RegExp(`${index + 1} of 3 notes entered`) })).toBeVisible();
+  }
+
+  await expect(page.getByText("3/3")).toBeVisible();
+  await page.getByRole("button", { name: "Submit sequence" }).click();
   await expect(page.getByTestId("practice-feedback")).not.toHaveText("Listening");
 });
 

@@ -75,7 +75,13 @@ function getOverviewKeyStateClass(
   }
 
   if (key.id === selectedNoteId) {
-    stateClasses.push(isCorrect ? "overview-selected-correct" : "overview-selected-wrong");
+    stateClasses.push(
+      isCorrect === undefined
+        ? "overview-selected"
+        : isCorrect
+          ? "overview-selected-correct"
+          : "overview-selected-wrong",
+    );
   }
 
   if (revealedNoteId !== undefined && key.id === revealedNoteId) {
