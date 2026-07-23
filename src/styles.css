@@ -36,6 +36,7 @@
   --color-piano-white-bottom: #f0f0f5;
   --color-piano-white-text: #2a2a33;
   --color-piano-range: #dfe3ff;
+  --color-piano-range-edge: transparent;
   --color-piano-black-top: #26262c;
   --color-piano-black-bottom: #0f0f14;
   --color-piano-black-border: rgba(0, 0, 0, 0.68);
@@ -108,6 +109,7 @@
     --color-piano-white-bottom: #d6d6de;
     --color-piano-white-text: #22222a;
     --color-piano-range: #d0d6ff;
+    --color-piano-range-edge: var(--color-brand);
     --color-piano-black-top: #2b2b31;
     --color-piano-black-bottom: #07090a;
     --color-piano-black-border: rgba(0, 0, 0, 0.82);
@@ -955,10 +957,11 @@ h3 {
     var(--shadow-piano-black);
 }
 
-/* Range endpoints (custom-range start/end) get a full brand ring so they
-   stand out from the interior of the range. */
+/* Range endpoints (custom-range start/end) get a brand ring in dark mode;
+   in light mode the ring is transparent, so the tinted keys carry the
+   range on their own without a heavy outline. */
 .piano-key.range-boundary {
-  outline: 2px solid var(--color-brand);
+  outline: 2px solid var(--color-piano-range-edge);
   outline-offset: -2px;
 }
 
