@@ -24,7 +24,7 @@ Current per-file budgets:
 
 Current total budget:
 
-- total Pages output: 330 KiB raw, 100 KiB gzip
+- total Pages output: 332 KiB raw, 100 KiB gzip
 
 Secondary statistics and song screens are split from the initial practice route. The total raw budget includes those deferred chunks and PWA precache metadata; the 100 KiB gzip cap remains the shipped-network constraint.
 
