@@ -35,6 +35,8 @@
   --color-piano-white-top: #ffffff;
   --color-piano-white-bottom: #f0f0f5;
   --color-piano-white-text: #2a2a33;
+  --color-piano-range: #dfe3ff;
+  --color-piano-range-edge: transparent;
   --color-piano-black-top: #26262c;
   --color-piano-black-bottom: #0f0f14;
   --color-piano-black-border: rgba(0, 0, 0, 0.68);
@@ -106,6 +108,8 @@
     --color-piano-white-top: #f2f2f6;
     --color-piano-white-bottom: #d6d6de;
     --color-piano-white-text: #22222a;
+    --color-piano-range: #d0d6ff;
+    --color-piano-range-edge: var(--color-brand);
     --color-piano-black-top: #2b2b31;
     --color-piano-black-bottom: #07090a;
     --color-piano-black-border: rgba(0, 0, 0, 0.82);
@@ -938,31 +942,39 @@ h3 {
   box-shadow: inset 0 0 0 2px var(--color-success-border);
 }
 
+/* In-range / held keys read as "live": a light blue wash (kept light in
+   both themes so white keys never muddy) with a solid brand cap across the
+   top edge. Black keys fill with the saturated action blue. */
 .white-key.range-key {
-  box-shadow: inset 0 -4px 0 var(--color-accent);
+  background: var(--color-piano-range);
+  box-shadow: inset 0 3px 0 var(--color-brand);
 }
 
 .black-key.range-key {
+  background: var(--color-action);
   box-shadow:
-    inset 0 -3px 0 var(--color-accent),
+    inset 0 3px 0 var(--color-brand),
     var(--shadow-piano-black);
 }
 
+/* Range endpoints (custom-range start/end) get a brand ring in dark mode;
+   in light mode the ring is transparent, so the tinted keys carry the
+   range on their own without a heavy outline. */
 .piano-key.range-boundary {
-  outline: 2px solid var(--color-accent);
+  outline: 2px solid var(--color-piano-range-edge);
   outline-offset: -2px;
 }
 
 .piano-overview-key.overview-range-key {
-  background: var(--color-accent-bg);
+  background: var(--color-brand);
 }
 
 .overview-black-key.overview-range-key {
-  background: var(--color-accent);
+  background: var(--color-brand-strong);
 }
 
 .piano-overview-key.overview-range-boundary {
-  background: var(--color-accent);
+  background: var(--color-brand-strong);
 }
 
 .piano-overview-rail {
