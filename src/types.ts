@@ -1,4 +1,14 @@
-import type { NoteName, PracticeMode, PracticeSessionRecord, ReadingNoteName } from "@notesense/shared";
+import type {
+  CustomPitchRange,
+  CustomReadingRange,
+  NoteName,
+  PitchExercise,
+  PitchRange,
+  PracticeMode,
+  PracticeSessionRecord,
+  ReadingNoteName,
+  ReadingRange,
+} from "@notesense/shared";
 
 export { MAX_PITCH_SEQUENCE_LENGTH, MIN_PITCH_SEQUENCE_LENGTH } from "@notesense/shared";
 
@@ -136,3 +146,30 @@ export type FeedbackState = {
   answerId?: string;
   isCorrect: boolean;
 } | null;
+
+// The Daily Mix is a short generated workout shown on the Today screen: one
+// weak-spot drill, one review drill, and one enjoyable song. It is derived
+// fresh each day from existing progress signals and kept local-only (not part
+// of the synced practice-data contract).
+export type MixSegmentRole = "weakness" | "review" | "reward";
+
+export type MixTarget =
+  | { activity: "reading"; readingRange: ReadingRange; customReadingRange?: CustomReadingRange }
+  | { activity: "pitch"; pitchRange: PitchRange; pitchExercise: PitchExercise; customPitchRange?: CustomPitchRange }
+  | { activity: "song"; songId: string };
+
+export type MixSegment = {
+  id: string;
+  role: MixSegmentRole;
+  title: string;
+  detail: string;
+  estimatedSeconds: number;
+  target: MixTarget;
+};
+
+export type DailyMix = {
+  dayKey: string;
+  generatedAt: string;
+  segments: MixSegment[];
+  completedSegmentIds: string[];
+};

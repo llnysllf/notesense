@@ -65,38 +65,59 @@ test.beforeEach(async ({ page }) => {
 test("loads with no automated accessibility violations", async ({ page }) => {
   await page.goto("/", { waitUntil: "domcontentloaded" });
 
+  // The app opens on Today with the daily mix and goal.
   await expect(page.getByRole("heading", { name: "NoteSense" })).toBeVisible();
-  await expect(page.getByRole("button", { name: "Start drill" })).toBeVisible();
-  await expect(page.getByRole("heading", { name: "Daily goal" })).not.toBeVisible();
+  await expect(page.getByRole("region", { name: "Today" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Daily goal" })).toBeVisible();
+  await expect(page.getByText("Weak spot")).toBeVisible();
 
-  // Note reading is the active sidebar destination on first load, with the
-  // other activities and views listed alongside it.
   const menuToggle = page.getByRole("button", { name: "Open menu" });
   if (await menuToggle.isVisible()) {
     await menuToggle.click();
   }
   const nav = appNav(page);
-  await expect(nav.getByRole("button", { name: "Note reading" })).toHaveAttribute("aria-pressed", "true");
-  for (const label of ["Pitch training", "Songs", "Overview", "Map", "History", "Preferences", "Data"]) {
+  await expect(nav.getByRole("button", { name: "Today", exact: true })).toHaveAttribute("aria-pressed", "true");
+  for (const label of [
+    "Note reading",
+    "Pitch training",
+    "Songs",
+    "Overview",
+    "Map",
+    "History",
+    "Preferences",
+    "Data",
+  ]) {
     await expect(nav.getByRole("button", { name: label, exact: true })).toBeVisible();
   }
-  await nav.getByRole("button", { name: "Overview", exact: true }).click();
-  await expect(page.getByRole("heading", { name: "Daily goal" })).toBeVisible();
-  await expect(page.getByText(/0\/1\s+round/)).toBeVisible();
-  await expect(page.getByRole("heading", { name: "Build baseline" })).toBeVisible();
-  await expect(page.getByText("5 more answers")).toBeVisible();
-  await openAppSection(page, "Map");
-  await expect(page.getByRole("heading", { name: "Mastery map" })).toBeVisible();
-  await expect(page.getByRole("listitem", { name: "C4 New, no attempts yet" })).toBeVisible();
-  await openAppSection(page, "Note reading");
-  await expect(page.getByRole("group", { name: "88-key piano keyboard" })).toBeVisible();
 
-  const accessibilityScanResults = await new AxeBuilder({ page }).analyze();
-  expect(accessibilityScanResults.violations).toEqual([]);
+  const todayScan = await new AxeBuilder({ page }).analyze();
+  expect(todayScan.violations).toEqual([]);
+
+  // The nav is already open (mobile drawer) / visible (desktop), so navigate directly.
+  await nav.getByRole("button", { name: "Note reading", exact: true }).click();
+  await expect(page.getByRole("group", { name: "88-key piano keyboard" })).toBeVisible();
+});
+
+test("completes a Daily Mix drill segment from Today", async ({ page }) => {
+  await page.goto("/", { waitUntil: "domcontentloaded" });
+
+  const weakSpot = page.locator(".daily-mix-card", { hasText: "Weak spot" });
+  await expect(weakSpot).toBeVisible();
+  await weakSpot.getByRole("button", { name: /^Start / }).click();
+
+  // The segment lands on a configured practice drill.
+  await page.getByRole("button", { name: "Start drill" }).click();
+  await clickCurrentReadingPianoKey(page);
+  await page.getByRole("button", { name: "Finish round" }).click();
+
+  // Back on Today, the weak-spot segment is marked done.
+  await openAppSection(page, "Today");
+  await expect(page.locator(".daily-mix-card.complete", { hasText: "Weak spot" })).toBeVisible();
 });
 
 test("runs the note-reading practice loop", async ({ page }) => {
   await page.goto("/", { waitUntil: "domcontentloaded" });
+  await openAppSection(page, "Note reading");
 
   await expect(
     page.getByRole("button", { name: `White piano key ${await getCurrentReadingNoteId(page)}` }),
@@ -128,6 +149,7 @@ test("runs the note-reading practice loop", async ({ page }) => {
 
 test("renders the right piano layout for the current viewport", async ({ page }) => {
   await page.goto("/", { waitUntil: "domcontentloaded" });
+  await openAppSection(page, "Note reading");
 
   await expect(page.getByRole("group", { name: "88-key piano keyboard" })).toBeVisible();
 
@@ -186,6 +208,7 @@ test("renders the right piano layout for the current viewport", async ({ page })
 
 test("moves the phone piano window without changing the hidden answer", async ({ page }) => {
   await page.goto("/", { waitUntil: "domcontentloaded" });
+  await openAppSection(page, "Note reading");
 
   const mobileLayout = page.locator(".piano-mobile-layout");
   if ((await page.locator(".piano-keyboard-panel").getAttribute("data-layout")) !== "mobile-window") {
@@ -208,6 +231,7 @@ test("moves the phone piano window without changing the hidden answer", async ({
 test("answers reading shortcuts and exact pitch keys", async ({ page }) => {
   await page.goto("/", { waitUntil: "domcontentloaded" });
 
+  await openAppSection(page, "Note reading");
   const roundTile = page.locator(".round-strip .stat-tile").filter({ hasText: "Round" });
 
   await page.getByRole("button", { name: "Start drill" }).click();
@@ -225,6 +249,7 @@ test("answers reading shortcuts and exact pitch keys", async ({ page }) => {
 test("switches to bass clef reading practice", async ({ page }) => {
   await page.goto("/", { waitUntil: "domcontentloaded" });
 
+  await openAppSection(page, "Note reading");
   await page.getByRole("button", { exact: true, name: "Bass" }).click();
   await expect(page.getByText("Adaptive | Bass clef C3-G3")).toBeVisible();
   await expect(page.getByLabel(/Bass staff note [C-G]3/)).toBeVisible();
@@ -235,6 +260,7 @@ test("switches to bass clef reading practice", async ({ page }) => {
   ).toHaveAttribute("aria-disabled", "false");
 
   await page.reload({ waitUntil: "domcontentloaded" });
+  await openAppSection(page, "Note reading");
   await expect(page.getByRole("button", { exact: true, name: "Bass" })).toHaveAttribute("aria-pressed", "true");
   await expect(page.getByLabel(/Bass staff note [C-G]3/)).toBeVisible();
 });
@@ -242,6 +268,7 @@ test("switches to bass clef reading practice", async ({ page }) => {
 test("switches to a wider mixed reading drill range", async ({ page }) => {
   await page.goto("/", { waitUntil: "domcontentloaded" });
 
+  await openAppSection(page, "Note reading");
   await page.getByRole("button", { name: "Grand" }).click();
 
   await expect(page.getByRole("button", { name: "Grand" })).toHaveAttribute("aria-pressed", "true");
@@ -252,6 +279,7 @@ test("switches to a wider mixed reading drill range", async ({ page }) => {
 test("sets a custom reading drill range from piano keys", async ({ page }) => {
   await page.goto("/", { waitUntil: "domcontentloaded" });
 
+  await openAppSection(page, "Note reading");
   await page.getByRole("button", { name: "Custom" }).click();
   const customRangeCard = page.locator(".custom-range-card");
 
@@ -268,12 +296,14 @@ test("sets a custom reading drill range from piano keys", async ({ page }) => {
   await expect(page.getByLabel(/(?:Treble|Bass) staff note [GABC][34]/)).toBeVisible();
 
   await page.reload({ waitUntil: "domcontentloaded" });
+  await openAppSection(page, "Note reading");
   await expect(page.getByRole("button", { name: "Custom" })).toHaveAttribute("aria-pressed", "true");
   await expect(page.getByText("Adaptive | Custom G3-C4")).toBeVisible();
 });
 
 test("keeps the selected reading range after switching during feedback", async ({ page }) => {
   await page.goto("/", { waitUntil: "domcontentloaded" });
+  await openAppSection(page, "Note reading");
 
   await page.getByRole("button", { name: "Start drill" }).click();
   await clickCurrentReadingPianoKey(page);
@@ -434,6 +464,7 @@ test("surfaces storage failures without crashing", async ({ page }) => {
   });
 
   await page.goto("/", { waitUntil: "domcontentloaded" });
+  await openAppSection(page, "Note reading");
   await page.getByRole("button", { name: "Start drill" }).click();
   await clickCurrentReadingPianoKey(page);
 

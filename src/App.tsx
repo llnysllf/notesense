@@ -6,19 +6,22 @@ import type { PracticePanelView } from "./components/PracticeStatsPanel";
 import PracticeWorkspace from "./components/PracticeWorkspace";
 import PitchTrainingControls from "./components/PitchTrainingControls";
 import ReadingRangeSelector from "./components/ReadingRangeSelector";
+import { useDailyMix } from "./hooks/useDailyMix";
 import { useDataPortability } from "./hooks/useDataPortability";
 import { usePracticeDashboard } from "./hooks/usePracticeDashboard";
 import { useSongSession } from "./hooks/useSongSession";
 import { usePracticeProgress } from "./hooks/usePracticeProgress";
 import { usePracticeSession } from "./hooks/usePracticeSession";
 import { useSettings } from "./hooks/useSettings";
+import { getPracticeFeedbackText } from "./practiceFeedback";
 import { resetProgress } from "./storage";
-import type { CustomReadingRange, DataStatus, PracticeProgress, PracticeSettings, ReadingRange } from "./types";
+import type { DataStatus, PracticeProgress, PracticeSettings } from "./types";
 
 const STORAGE_WARNING = "Progress is not being saved on this device right now.";
 const PracticeStatsPanel = lazy(() => import("./components/PracticeStatsPanel"));
 const SongsWorkspace = lazy(() => import("./components/SongsWorkspace"));
-const STATS_SECTION_BY_APP_SECTION: Record<Exclude<AppSection, "practice" | "songs">, PracticePanelView> = {
+const TodayWorkspace = lazy(() => import("./components/TodayWorkspace"));
+const STATS_SECTION_BY_APP_SECTION: Record<Exclude<AppSection, "today" | "practice" | "songs">, PracticePanelView> = {
   progress: "overview",
   map: "map",
   history: "history",
@@ -27,7 +30,7 @@ const STATS_SECTION_BY_APP_SECTION: Record<Exclude<AppSection, "practice" | "son
 };
 
 function getStatsView(section: AppSection): PracticePanelView {
-  if (section === "practice" || section === "songs") return "overview";
+  if (section === "today" || section === "practice" || section === "songs") return "overview";
 
   return STATS_SECTION_BY_APP_SECTION[section];
 }
@@ -41,7 +44,7 @@ function App() {
   }
 
   const [dataStatus, setDataStatus] = useState<DataStatus>(null);
-  const [activeSection, setActiveSection] = useState<AppSection>("practice");
+  const [activeSection, setActiveSection] = useState<AppSection>("today");
   const [isNavOpen, setIsNavOpen] = useState(false);
 
   const { settings, setSettings, persistSettings } = useSettings();
@@ -124,14 +127,6 @@ function App() {
     }
   }
 
-  function handleReadingRangeChange(readingRange: ReadingRange) {
-    updateSettings({ readingRange });
-  }
-
-  function handleCustomReadingRangeChange(customReadingRange: CustomReadingRange) {
-    updateSettings({ customReadingRange, readingRange: "custom" });
-  }
-
   function handleResetProgress() {
     if (!window.confirm("Reset all saved NoteSense progress?")) return;
     const next = resetProgress();
@@ -160,6 +155,20 @@ function App() {
     roundAccuracy,
   } = usePracticeDashboard({ mode, progress, roundAttempts, roundCorrect, settings });
 
+  const dailyMix = useDailyMix({
+    progress,
+    songProgress: songSession.songProgress,
+    settings,
+    lastSummary,
+    songStatus: songSession.status,
+    onConfigureDrill: (nextMode, patch) => {
+      setPracticeMode(nextMode);
+      updateSettings(patch);
+    },
+    onOpenSong: songSession.openSong,
+    onNavigate: setActiveSection,
+  });
+
   const handleSelectSection = useCallback((section: AppSection) => {
     setActiveSection(section);
     setIsNavOpen(false);
@@ -185,22 +194,12 @@ function App() {
     mode === "reading" ? (
       <ReadingRangeSelector
         settings={settings}
-        onCustomRangeChange={handleCustomReadingRangeChange}
-        onRangeChange={handleReadingRangeChange}
+        onCustomRangeChange={(customReadingRange) => updateSettings({ customReadingRange, readingRange: "custom" })}
+        onRangeChange={(readingRange) => updateSettings({ readingRange })}
       />
     ) : (
       <PitchTrainingControls settings={settings} onSettingsChange={updateSettings} />
     );
-
-  function getFeedbackText() {
-    if (!feedback) return isRunning ? "Listening" : "Ready";
-    if (feedback.isCorrect) return "Correct";
-    if (mode === "pitch" && !settings.revealPitchAfterAnswer) return "Try the next one";
-    if (mode === "pitch" && settings.pitchExercise === "melody") {
-      return `It was ${currentMelody.map((note) => note.id).join(" - ")}`;
-    }
-    return `It was ${activeNote.id}`;
-  }
 
   return (
     <main
@@ -233,7 +232,14 @@ function App() {
             </section>
           }
         >
-          {activeSection === "songs" ? (
+          {activeSection === "today" ? (
+            <TodayWorkspace
+              mix={dailyMix.mix}
+              dailyGoalSummary={dailyGoalSummary}
+              onStartSegment={dailyMix.startSegment}
+              onRegenerate={dailyMix.regenerate}
+            />
+          ) : activeSection === "songs" ? (
             <SongsWorkspace songSession={songSession} />
           ) : activeSection === "practice" ? (
             <PracticeWorkspace
@@ -244,7 +250,14 @@ function App() {
               dataStatus={dataStatus}
               feedback={feedback}
               feedbackClass={feedbackClass}
-              feedbackText={getFeedbackText()}
+              feedbackText={getPracticeFeedbackText({
+                feedback,
+                isRunning,
+                mode,
+                settings,
+                currentMelody,
+                activeNoteId: activeNote.id,
+              })}
               isRunning={isRunning}
               keyboardResetKey={`${mode}-${settings.readingRange}-${normalizedCustomRange.startNoteId}-${normalizedCustomRange.endNoteId}-${settings.pitchRange}-${normalizedCustomPitchRange.startNoteId}-${normalizedCustomPitchRange.endNoteId}`}
               melodyAnswerNoteIds={melodyAnswerNoteIds}

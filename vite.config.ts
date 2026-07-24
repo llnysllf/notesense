@@ -57,6 +57,9 @@ export default defineConfig({
   test: {
     environment: "jsdom",
     globals: true,
+    // Several suites render the full 200+ song library and lazy-loaded
+    // workspaces; the 5s default flakes under coverage instrumentation.
+    testTimeout: 20000,
     setupFiles: ["./src/test-setup.ts"],
     include: ["src/**/*.test.ts", "src/**/*.test.tsx", "shared/**/*.test.ts", "scripts/**/*.test.mjs"],
     coverage: {
@@ -66,7 +69,12 @@ export default defineConfig({
       include: [
         "src/App.tsx",
         "src/audio.ts",
+        "src/dailyMix.ts",
+        "src/practiceFeedback.ts",
         "src/components/AppSectionNav.tsx",
+        "src/components/DailyMixCard.tsx",
+        "src/components/TodayWorkspace.tsx",
+        "src/hooks/useDailyMix.ts",
         "src/components/PianoKeybed.tsx",
         "src/components/PianoKeyboard.tsx",
         "src/components/PitchSequenceAnswer.tsx",

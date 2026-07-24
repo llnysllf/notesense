@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import type { PracticeMode } from "../types";
 
-export type AppSection = "practice" | "songs" | "progress" | "map" | "history" | "settings" | "data";
+export type AppSection = "today" | "practice" | "songs" | "progress" | "map" | "history" | "settings" | "data";
 
 // Sidebar navigation: one flat, scannable list of destinations under three
 // group headings, replacing the old stacked switcher rows (section pills,
@@ -14,6 +14,7 @@ const PRACTICE_MODES: Array<{ id: PracticeMode; label: string }> = [
 ];
 
 const SECTION_GROUPS: Array<{ label: string; sections: Array<{ id: AppSection; label: string }> }> = [
+  { label: "Home", sections: [{ id: "today", label: "Today" }] },
   { label: "Practice", sections: [{ id: "songs", label: "Songs" }] },
   {
     label: "Progress",

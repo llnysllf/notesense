@@ -1,0 +1,119 @@
+.today-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.today-subtitle {
+  margin: 4px 0 0;
+  color: var(--color-muted);
+  font-weight: 760;
+}
+
+.daily-mix-list {
+  display: grid;
+  gap: 12px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.daily-mix-loading {
+  padding: 16px 18px;
+  border: 1px dashed var(--color-border);
+  border-radius: var(--radius-card);
+  color: var(--color-muted);
+  font-weight: 720;
+}
+
+.daily-mix-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 16px 18px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-card);
+  background: var(--color-surface);
+}
+
+.daily-mix-card.complete {
+  border-color: var(--color-success-border);
+  background: var(--color-success-bg);
+}
+
+.daily-mix-body {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.daily-mix-body h3 {
+  margin: 2px 0 0;
+  font-size: 1.05rem;
+}
+
+.daily-mix-role {
+  align-self: flex-start;
+  padding: 2px 10px;
+  border-radius: var(--radius-pill);
+  font-size: 0.7rem;
+  font-weight: 850;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.daily-mix-role.role-weakness {
+  background: var(--color-danger-bg);
+  color: var(--color-danger);
+}
+
+.daily-mix-role.role-review {
+  background: var(--color-brand-wash);
+  color: var(--color-brand-strong);
+}
+
+.daily-mix-role.role-reward {
+  background: var(--color-success-bg);
+  color: var(--color-success);
+}
+
+.daily-mix-detail {
+  margin: 0;
+  color: var(--color-muted);
+  font-weight: 720;
+}
+
+.daily-mix-meta {
+  color: var(--color-muted);
+  font-size: 0.82rem;
+  font-weight: 760;
+}
+
+.daily-mix-done {
+  flex: 0 0 auto;
+  color: var(--color-success);
+  font-weight: 850;
+}
+
+.today-complete {
+  margin: 0;
+  padding: 14px 16px;
+  border-radius: var(--radius-card);
+  background: var(--color-success-bg);
+  color: var(--color-success);
+  font-weight: 800;
+}
+
+@media (max-width: 640px) {
+  .daily-mix-card {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .daily-mix-card .primary-button {
+    width: 100%;
+  }
+}

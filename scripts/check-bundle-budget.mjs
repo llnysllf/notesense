@@ -46,8 +46,8 @@ const budgets = [
 ];
 
 const totalBudget = {
-  rawBytes: 332 * KIB,
-  gzipBytes: 100 * KIB,
+  rawBytes: 342 * KIB,
+  gzipBytes: 105 * KIB,
 };
 
 function collectFiles(directory) {

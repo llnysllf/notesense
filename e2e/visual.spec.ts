@@ -26,9 +26,22 @@ async function openNavDrawerIfNeeded(page: Page) {
   }
 }
 
+test("matches the today shell", async ({ page }) => {
+  await page.goto("/");
+  await expect(page.getByRole("region", { name: "Today" })).toBeVisible();
+  // Wait for the daily mix to finish loading (past the "Preparing…" state).
+  await expect(page.getByText("Weak spot")).toBeVisible();
+
+  await expect(page).toHaveScreenshot("today-shell.png", {
+    fullPage: true,
+  });
+});
+
 test("matches the note-reading shell", async ({ page }) => {
   await page.goto("/");
-  await expect(page.getByRole("heading", { name: "NoteSense" })).toBeVisible();
+  await openNavDrawerIfNeeded(page);
+  await page.getByRole("button", { name: "Note reading", exact: true }).click();
+  await expect(page.getByRole("group", { name: "88-key piano keyboard" })).toBeVisible();
 
   await expect(page).toHaveScreenshot("note-reading-shell.png", {
     fullPage: true,
@@ -38,7 +51,7 @@ test("matches the note-reading shell", async ({ page }) => {
 test("matches the pitch-training shell", async ({ page }) => {
   await page.goto("/");
   await openNavDrawerIfNeeded(page);
-  await page.getByRole("button", { name: "Pitch training" }).click();
+  await page.getByRole("button", { name: "Pitch training", exact: true }).click();
   await expect(page.getByLabel("Hidden pitch note")).toBeVisible();
 
   await expect(page).toHaveScreenshot("pitch-training-shell.png", {
@@ -62,7 +75,9 @@ test("matches the songs shell", async ({ page }) => {
 // are dominated by brand fills: any re-theme flips most of their pixels.
 test("matches the brand accent controls", async ({ page }) => {
   await page.goto("/");
-  await expect(page.getByRole("heading", { name: "NoteSense" })).toBeVisible();
+  await openNavDrawerIfNeeded(page);
+  await page.getByRole("button", { name: "Note reading", exact: true }).click();
+  await expect(page.getByRole("button", { name: "Start drill" })).toBeVisible();
 
   await expect(page.locator(".primary-button")).toHaveScreenshot("brand-primary-button.png", {
     maxDiffPixelRatio: 0.02,

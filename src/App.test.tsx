@@ -34,6 +34,12 @@ function getCurrentReadingPianoKeyButton() {
   return screen.getByRole("button", { name: `White piano key ${getCurrentReadingNoteId()}` });
 }
 
+// The app now opens on Today, so reading-drill tests first select the
+// Note reading destination in the sidebar.
+function goToPractice() {
+  fireEvent.click(screen.getByRole("button", { name: "Note reading" }));
+}
+
 function readStoredJson<T>(key: string): T {
   const value = window.localStorage.getItem(key);
 
@@ -63,8 +69,27 @@ afterEach(() => {
 });
 
 describe("App", () => {
-  it("renders the default practice shell with answer controls disabled before a round starts", () => {
+  it("opens on the Today screen with the daily mix", async () => {
     render(<App />);
+
+    expect(screen.getByRole("heading", { level: 1, name: "NoteSense" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Today" })).toHaveAttribute("aria-pressed", "true");
+    expect(await screen.findByRole("region", { name: "Today" })).toBeInTheDocument();
+  });
+
+  it("launches the weak-spot drill from the daily mix", async () => {
+    window.localStorage.clear();
+    render(<App />);
+
+    fireEvent.click(await screen.findByRole("button", { name: /^Start Note reading/ }));
+
+    expect(await screen.findByRole("group", { name: "88-key piano keyboard" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Start drill" })).toBeInTheDocument();
+  });
+
+  it("renders the practice shell with answer controls disabled before a round starts", () => {
+    render(<App />);
+    goToPractice();
 
     expect(screen.getByRole("heading", { level: 1, name: "NoteSense" })).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Note reading" })).toHaveAttribute("aria-pressed", "true");
@@ -95,6 +120,7 @@ describe("App", () => {
 
   it("starts a reading round, records an answer, and persists progress", () => {
     render(<App />);
+    goToPractice();
 
     fireEvent.click(screen.getByRole("button", { name: "Start drill" }));
     expect(screen.getByText("Live round")).toBeInTheDocument();
@@ -111,6 +137,7 @@ describe("App", () => {
 
   it("finishes a reading round and shows the saved-round summary", async () => {
     render(<App />);
+    goToPractice();
 
     fireEvent.click(screen.getByRole("button", { name: "Start drill" }));
     fireEvent.click(getCurrentReadingPianoKeyButton());
@@ -124,6 +151,7 @@ describe("App", () => {
 
   it("shows the expected note after an incorrect reading answer", () => {
     render(<App />);
+    goToPractice();
 
     fireEvent.click(screen.getByRole("button", { name: "Start drill" }));
     const expectedNoteId = getCurrentReadingNoteId();
@@ -150,6 +178,7 @@ describe("App", () => {
 
   it("sets a custom reading range from piano keys", () => {
     render(<App />);
+    goToPractice();
 
     fireEvent.click(screen.getByRole("button", { name: "Custom" }));
     const customRangeCard = screen.getByLabelText("Custom range endpoint").closest(".custom-range-card");

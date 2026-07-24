@@ -121,10 +121,12 @@ requireSnippets("src/styles.css", [
 requireTokenizedThemeColors("src/styles.css");
 
 requireSnippets("e2e/visual.spec.ts", [
+  'test("matches the today shell"',
   'test("matches the note-reading shell"',
   'test("matches the pitch-training shell"',
   'test("matches the brand accent controls"',
   'test("matches the songs shell"',
+  'toHaveScreenshot("today-shell.png"',
   'toHaveScreenshot("note-reading-shell.png"',
   'toHaveScreenshot("pitch-training-shell.png"',
   'toHaveScreenshot("brand-nav-active.png"',
@@ -141,6 +143,10 @@ requireSnippets("playwright.visual.config.ts", [
 ]);
 
 requireSnapshotNames("e2e/visual.spec.ts-snapshots", [
+  "today-shell-visual-desktop-light",
+  "today-shell-visual-desktop-dark",
+  "today-shell-visual-mobile-light",
+  "today-shell-visual-mobile-dark",
   "songs-shell-visual-desktop-light",
   "songs-shell-visual-desktop-dark",
   "songs-shell-visual-mobile-light",

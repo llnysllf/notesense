@@ -24,9 +24,9 @@ Current per-file budgets:
 
 Current total budget:
 
-- total Pages output: 332 KiB raw, 100 KiB gzip
+- total Pages output: 342 KiB raw, 105 KiB gzip
 
-Secondary statistics and song screens are split from the initial practice route. The total raw budget includes those deferred chunks and PWA precache metadata; the 100 KiB gzip cap remains the shipped-network constraint.
+Secondary statistics, song screens, and the Today daily-mix screen are split from the initial route, and the 200+ song catalog is dynamically loaded so it stays out of the initial bundle. The total raw budget includes those deferred chunks and PWA precache metadata; the 105 KiB gzip cap remains the shipped-network constraint.
 
 ## Lighthouse Signal
 

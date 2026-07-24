@@ -10,6 +10,8 @@ import {
 } from "@notesense/shared";
 import { emptyProgress, getPianoKeyById } from "./noteData";
 import type {
+  DailyMix,
+  MixSegment,
   NoteName,
   SongProgress,
   PitchNote,
@@ -26,6 +28,7 @@ const STORAGE_KEY = "notesense.progress.v2";
 const LEGACY_STORAGE_KEY = "notesense.progress.v1";
 const SETTINGS_STORAGE_KEY = "notesense.settings.v3";
 const SONG_PROGRESS_STORAGE_KEY = "notesense.songProgress.v1";
+const DAILY_MIX_STORAGE_KEY = "notesense.dailyMix.v1";
 
 export {
   compareSongsByDifficulty,
@@ -105,6 +108,75 @@ export function recordSongCompletion(
       lastPlayedAt: now.toISOString(),
     },
   };
+}
+
+const MIX_SEGMENT_ROLES = new Set(["weakness", "review", "reward"]);
+const MIX_ACTIVITIES = new Set(["reading", "pitch", "song"]);
+
+// The Daily Mix is local-only (not part of the synced practice-data contract),
+// so it lives under its own key and is dropped entirely if malformed — the
+// caller just regenerates a fresh mix for the day.
+function normalizeMixSegment(value: unknown): MixSegment | null {
+  if (typeof value !== "object" || value === null) return null;
+  const candidate = value as Partial<MixSegment>;
+  const target = candidate.target as { activity?: unknown } | undefined;
+
+  if (
+    typeof candidate.id !== "string" ||
+    typeof candidate.title !== "string" ||
+    typeof candidate.detail !== "string" ||
+    typeof candidate.estimatedSeconds !== "number" ||
+    !MIX_SEGMENT_ROLES.has(candidate.role as string) ||
+    typeof target !== "object" ||
+    target === null ||
+    !MIX_ACTIVITIES.has(target.activity as string)
+  ) {
+    return null;
+  }
+
+  return candidate as MixSegment;
+}
+
+export function normalizeDailyMix(value: unknown): DailyMix | null {
+  if (typeof value !== "object" || value === null) return null;
+
+  const candidate = value as Partial<DailyMix>;
+  if (typeof candidate.dayKey !== "string" || typeof candidate.generatedAt !== "string") return null;
+  if (!Array.isArray(candidate.segments) || candidate.segments.length === 0) return null;
+
+  const segments = candidate.segments.map(normalizeMixSegment);
+  if (segments.some((segment) => segment === null)) return null;
+
+  const completedSegmentIds = Array.isArray(candidate.completedSegmentIds)
+    ? candidate.completedSegmentIds.filter((id): id is string => typeof id === "string")
+    : [];
+
+  return {
+    dayKey: candidate.dayKey,
+    generatedAt: candidate.generatedAt,
+    segments: segments as MixSegment[],
+    completedSegmentIds,
+  };
+}
+
+export function loadDailyMix(): DailyMix | null {
+  try {
+    const stored = window.localStorage.getItem(DAILY_MIX_STORAGE_KEY);
+    if (!stored) return null;
+
+    return normalizeDailyMix(JSON.parse(stored) as unknown);
+  } catch {
+    return null;
+  }
+}
+
+export function saveDailyMix(mix: DailyMix): boolean {
+  try {
+    window.localStorage.setItem(DAILY_MIX_STORAGE_KEY, JSON.stringify(mix));
+    return true;
+  } catch {
+    return false;
+  }
 }
 
 export function loadSettings(): PracticeSettings {
