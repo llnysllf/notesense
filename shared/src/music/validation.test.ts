@@ -138,7 +138,11 @@ describe("normalizeScore", () => {
       kind: "note",
       offset: { num: 0, den: 1 },
       duration: { num: 1, den: 1 },
-      pitches: Array.from({ length: MAX_PITCHES_PER_NOTE + 3 }, (_, i) => ({ step: "C", alter: 0, octave: 3 + (i % 4) })),
+      pitches: Array.from({ length: MAX_PITCHES_PER_NOTE + 3 }, (_, i) => ({
+        step: "C",
+        alter: 0,
+        octave: 3 + (i % 4),
+      })),
     };
     const event = normalizeScore(scoreWith({ events: [bigChord] }))?.parts[0]?.measures[0]?.voices[0]?.events[0];
     expect(event?.kind === "note" && event.pitches).toHaveLength(MAX_PITCHES_PER_NOTE);
@@ -180,7 +184,12 @@ describe("edge branches", () => {
     const score = normalizeScore(
       scoreWith({
         events: [
-          { kind: "note", offset: { num: -1, den: 1 }, duration: { num: 1, den: 1 }, pitches: [{ step: "C", alter: 0, octave: 4 }] },
+          {
+            kind: "note",
+            offset: { num: -1, den: 1 },
+            duration: { num: 1, den: 1 },
+            pitches: [{ step: "C", alter: 0, octave: 4 }],
+          },
           note("D", 4, 1),
         ],
       }),
