@@ -1,0 +1,11 @@
+{
+  "exceptions": [
+    {
+      "package": "brace-expansion",
+      "advisory": "GHSA-mh99-v99m-4gvg",
+      "devOnly": true,
+      "expiresOn": "2026-08-15",
+      "reason": "The v1 and v2 dependency lines are build-only transitive dependencies and have no patched release. Their callers receive only repository-controlled glob patterns. Remove this exception as soon as ESLint and Workbox move to a patched dependency line."
+    }
+  ]
+}
