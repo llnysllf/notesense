@@ -55,6 +55,16 @@ test("serves the GitHub Pages build under the /notesense/ base path", async ({ p
     /connect-src 'none'/,
   );
   await expect(page.getByRole("heading", { name: "NoteSense" })).toBeVisible();
+
+  // The app opens on Today; navigate to the Note reading drill for the smoke check.
+  const menuToggle = page.getByRole("button", { name: "Open menu" });
+  if (await menuToggle.isVisible()) {
+    await menuToggle.click();
+  }
+  await page
+    .getByRole("navigation", { name: "NoteSense sections" })
+    .getByRole("button", { name: "Note reading", exact: true })
+    .click();
   await expect(page.getByRole("button", { name: "Start drill" })).toBeVisible();
 
   const manifestResponse = await page.request.get("/notesense/site.webmanifest");
