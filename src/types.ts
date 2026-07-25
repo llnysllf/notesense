@@ -61,6 +61,30 @@ export {
   scoreToSong,
 } from "@notesense/shared";
 
+// Curriculum + exercise content platform (Slice 2).
+export type {
+  CompetencyId,
+  Competency,
+  Dimensions,
+  DifficultyBand,
+  ExerciseDefinition,
+  ExerciseStimulus,
+  ExerciseInputMode,
+  ExpectedAnswer,
+  UserAnswer,
+  ScoringPolicy,
+  ExerciseGenerator,
+} from "@notesense/shared";
+export {
+  COMPETENCIES,
+  competencyOrder,
+  normalizeExerciseDefinition,
+  validateExerciseDefinition,
+  matchAnswer,
+  exerciseRegistry,
+  BUILT_IN_GENERATORS,
+} from "@notesense/shared";
+
 export type StaffClef = "treble" | "bass";
 
 export type TrainingNote = {

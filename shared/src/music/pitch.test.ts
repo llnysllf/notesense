@@ -1,5 +1,21 @@
 import { describe, expect, it } from "vitest";
-import { isSpelledPitch, isStep, midiToSpelled, noteIdToSpelled, spelledToMidi, spelledToNoteId } from "./pitch";
+import {
+  isSpelledPitch,
+  isStep,
+  midiToNoteId,
+  midiToSpelled,
+  noteIdToSpelled,
+  spelledToMidi,
+  spelledToNoteId,
+} from "./pitch";
+
+describe("midiToNoteId", () => {
+  it("renders sharps, naturals, and empty for out-of-range", () => {
+    expect(midiToNoteId(60)).toBe("C4");
+    expect(midiToNoteId(61)).toBe("C#4");
+    expect(midiToNoteId(0)).toBe("");
+  });
+});
 
 describe("spelledToMidi", () => {
   it("sounds spelled pitches, including accidentals and enharmonics", () => {
