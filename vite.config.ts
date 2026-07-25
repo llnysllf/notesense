@@ -118,6 +118,12 @@ export default defineConfig({
         "shared/src/exercises/validation.ts",
         "shared/src/exercises/generators/readingNote.ts",
         "shared/src/exercises/generators/pitchNote.ts",
+        "shared/src/runtime/input.ts",
+        "shared/src/runtime/transport.ts",
+        "shared/src/runtime/promptMachine.ts",
+        "shared/src/runtime/sessionMachine.ts",
+        "shared/src/runtime/answerCollector.ts",
+        "shared/src/runtime/scorer.ts",
       ],
       thresholds: {
         perFile: true,

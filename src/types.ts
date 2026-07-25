@@ -86,6 +86,34 @@ export {
   BUILT_IN_GENERATORS,
 } from "@notesense/shared";
 
+// Unified exercise runtime (Slice 3).
+export type {
+  InputEvent,
+  InputSource,
+  RuntimeTransport,
+  PromptState,
+  PromptPhase,
+  PromptCommand,
+  SessionState,
+  SessionCommand,
+  CollectorMode,
+  Scorer,
+  AttemptOutcome,
+} from "@notesense/shared";
+export {
+  createManualTransport,
+  createPrompt,
+  promptReducer,
+  isPromptComplete,
+  createSession,
+  sessionReducer,
+  isSessionComplete,
+  sessionProgress,
+  collectAnswer,
+  collectorModeFor,
+  exactScorer,
+} from "@notesense/shared";
+
 export type StaffClef = "treble" | "bass";
 
 export type TrainingNote = {
