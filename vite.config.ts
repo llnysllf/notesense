@@ -100,6 +100,12 @@ export default defineConfig({
         "shared/src/songData.ts",
         "shared/src/songAnalysis.ts",
         "shared/src/merge.ts",
+        "shared/src/music/time.ts",
+        "shared/src/music/pitch.ts",
+        "shared/src/music/score.ts",
+        "shared/src/music/validation.ts",
+        "shared/src/music/compileTimeline.ts",
+        "shared/src/music/legacySongAdapter.ts",
       ],
       thresholds: {
         perFile: true,

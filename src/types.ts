@@ -30,6 +30,37 @@ export type {
   TimeSignature,
 } from "@notesense/shared";
 
+// Canonical musical domain (Slice 1). Re-exported so app code keeps importing
+// from `./types` rather than reaching into `@notesense/shared` directly.
+export type {
+  Rational,
+  Transport,
+  SpelledPitch,
+  Step,
+  Alter,
+  Meter,
+  KeySignature,
+  ClefChange,
+  Score,
+  ScorePart,
+  Measure,
+  Voice,
+  ScoreEvent,
+  ScoreNote,
+  ScoreRest,
+  TimelineEvent,
+  CompiledTimeline,
+} from "@notesense/shared";
+export {
+  SCORE_MODEL_VERSION,
+  TRANSPORT_V1,
+  normalizeScore,
+  compileScore,
+  ticksToSeconds,
+  songToScore,
+  scoreToSong,
+} from "@notesense/shared";
+
 export type StaffClef = "treble" | "bass";
 
 export type TrainingNote = {

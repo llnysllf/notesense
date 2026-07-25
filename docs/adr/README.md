@@ -74,3 +74,4 @@ Architecture Decision Records document durable product and engineering decisions
 - [ADR 0057: Split Secondary Screens And Review Bundle Budget](0057-split-secondary-screens-and-review-bundle-budget.md) - Accepted
 - [ADR 0058: Use Staff-Based Pitch Sequence Transcription](0058-staff-based-pitch-sequence-transcription.md) - Accepted
 - [ADR 0059: Automate Verified Dependabot Updates](0059-automate-verified-dependabot-updates.md) - Accepted
+- [ADR 0060: Add Shared Musical Domain Model](0060-shared-musical-domain-model.md) - Accepted
