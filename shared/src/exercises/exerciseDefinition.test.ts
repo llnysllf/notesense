@@ -35,6 +35,8 @@ describe("normalizeExerciseDefinition", () => {
     const def = normalizeExerciseDefinition(raw);
     expect(def?.version).toBe(1);
     expect(def?.generatorVersion).toBe(1);
+    expect(def?.curriculumVersion).toBe(1);
+    expect(def?.skillMappingVersion).toBe(1);
     expect(def?.estimatedSeconds).toBe(10);
     expect(def?.contentSource).toBe("generated");
     expect(def?.license).toBeUndefined();

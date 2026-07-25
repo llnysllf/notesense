@@ -31,6 +31,15 @@ export function validateExerciseDefinition(def: ExerciseDefinition): ContentIssu
     if (!answer.midi.every(inRange)) fail("expected pitch group out of range");
   }
   if (answer.kind === "choice" && answer.optionId.length === 0) fail("empty choice option");
+  if (answer.kind === "rhythm") {
+    if (answer.onsetTicks.length === 0 || !answer.onsetTicks.every((tick) => Number.isInteger(tick) && tick >= 0)) {
+      fail("invalid expected rhythm onsets");
+    }
+    if (answer.transport.version < 1 || answer.transport.ppq < 1) fail("invalid rhythm transport");
+  }
+  if (answer.kind === "voice" && (!answer.targetMidi.length || !answer.targetMidi.every(inRange))) {
+    fail("invalid voice targets");
+  }
 
   const stimulus = def.stimulus;
   if (stimulus.kind === "prompt-note" && !(answer.kind === "pitch" && answer.midi === stimulus.midi)) {

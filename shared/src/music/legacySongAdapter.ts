@@ -14,7 +14,7 @@ import {
   type SongSource,
   type TimeSignature,
 } from "../songData";
-import { DURATION, equalsRational, rational, type Rational } from "./time";
+import { addRational, DURATION, equalsRational, rational, type Rational } from "./time";
 import { noteIdToSpelled, spelledToNoteId, type SpelledPitch } from "./pitch";
 import { SCORE_MODEL_VERSION, type Measure, type Meter, type Score, type ScoreEvent } from "./score";
 
@@ -113,6 +113,10 @@ function songEventFromScoreEvent(event: ScoreEvent): SongEvent | undefined {
 // anything outside the legacy model. `source` is supplied by the caller because
 // it is metadata the musical model deliberately does not carry.
 export function scoreToSong(score: Score, source: SongSource = "builtin"): Song | undefined {
+  // The old Song model is one sequential voice with one fixed meter and clef.
+  // Refuse scores it cannot faithfully carry instead of silently dropping
+  // parts, voices, offsets, ties, or later notation changes.
+  if (score.parts.length !== 1) return undefined;
   const part = score.parts[0];
   if (!part) return undefined;
 
@@ -123,15 +127,35 @@ export function scoreToSong(score: Score, source: SongSource = "builtin"): Song 
     if (!beatUnit) return undefined;
     timeSignature = { beatsPerMeasure: meterMeasure.meter.beats, beatUnit };
   }
+  if (
+    part.clefs.length > 1 ||
+    (part.clefs[0] && (part.clefs[0].measure !== 1 || (part.clefs[0].sign !== "G" && part.clefs[0].sign !== "F")))
+  ) {
+    return undefined;
+  }
+  if (part.measures.some((measure, index) => index > 0 && measure.meter)) return undefined;
 
   const events: SongEvent[] = [];
   for (const measure of part.measures) {
+    if (measure.voices.length !== 1 || measure.pickupDuration) return undefined;
+    if (
+      measure.meter &&
+      (measure.meter.beats !== timeSignature.beatsPerMeasure ||
+        NUMBER_BEAT_UNIT[measure.meter.beatUnit] !== timeSignature.beatUnit)
+    ) {
+      return undefined;
+    }
     const voice = measure.voices[0];
-    if (!voice) continue;
+    if (!voice) return undefined;
+    let expectedOffset = rational(0) as Rational;
     for (const scoreEvent of voice.events) {
+      if ((scoreEvent.kind === "note" && scoreEvent.tie) || !equalsRational(scoreEvent.offset, expectedOffset)) {
+        return undefined;
+      }
       const songEvent = songEventFromScoreEvent(scoreEvent);
       if (!songEvent) return undefined;
       events.push(songEvent);
+      expectedOffset = addRational(expectedOffset, scoreEvent.duration);
     }
   }
   if (events.length === 0) return undefined;

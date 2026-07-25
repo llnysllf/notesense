@@ -21,7 +21,8 @@ Add a framework-free content platform under `shared/src/curriculum/` and `shared
 - `exercises/seededRng.ts`, `generator.ts`, and `generators/` — a deterministic, versioned generator interface and registry, with reading and pitch generators for the families that exist today.
 - `exercises/validation.ts` — semantic content validation (answerability, stimulus/answer consistency, licensing, duplicate ids), verified by a high-volume seeded invariant test.
 
-Scope is intentionally lean: schema, catalogs, validation, and two generators. The dev content-preview surface and the `content:check` CI gate are deferred to a follow-up, and an authoring UI is out of scope.
+Scope is intentionally lean: schema, catalogs, validation, two generators, a development-only content-preview
+surface, and a `content:check` gate. An authoring UI is out of scope.
 
 ## Consequences
 

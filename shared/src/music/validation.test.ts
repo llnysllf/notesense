@@ -5,6 +5,7 @@ import {
   MAX_SCORE_PARTS,
   normalizeMeter,
   normalizeScore,
+  normalizeScoreWithWarnings,
 } from "./validation";
 
 const note = (step: string, octave: number, offset = 0, duration = 1) => ({
@@ -146,6 +147,22 @@ describe("normalizeScore", () => {
     };
     const event = normalizeScore(scoreWith({ events: [bigChord] }))?.parts[0]?.measures[0]?.voices[0]?.events[0];
     expect(event?.kind === "note" && event.pitches).toHaveLength(MAX_PITCHES_PER_NOTE);
+  });
+
+  it("reports partial normalization so imports can warn instead of losing music silently", () => {
+    const result = normalizeScoreWithWarnings(
+      scoreWith({
+        events: [note("C", 4), { kind: "note", offset: { num: 1, den: 1 }, duration: { num: 1, den: 1 }, pitches: [] }],
+      }),
+    );
+    expect(result.score).toBeDefined();
+    expect(result.warnings).toContain("Some events were dropped or capped during validation.");
+  });
+
+  it("reports when no playable score survives validation", () => {
+    expect(normalizeScoreWithWarnings({ title: "Broken", parts: [] })).toEqual({
+      warnings: ["The score has no playable content after validation."],
+    });
   });
 
   it("uses defaults for missing ids, numbers, names, and drops bad clefs/meter/key", () => {

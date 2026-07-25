@@ -44,9 +44,36 @@ function midiArray(value: unknown): number[] | undefined {
   return [...value];
 }
 
+function finiteSeconds(value: unknown): value is number {
+  return typeof value === "number" && Number.isFinite(value) && value >= 0;
+}
+
+function normalizeTransport(value: unknown): Transport | undefined {
+  if (typeof value !== "object" || value === null) return undefined;
+  const candidate = value as { version?: unknown; ppq?: unknown };
+  if (
+    typeof candidate.version !== "number" ||
+    !Number.isInteger(candidate.version) ||
+    candidate.version < 1 ||
+    typeof candidate.ppq !== "number" ||
+    !Number.isInteger(candidate.ppq) ||
+    candidate.ppq < 1
+  ) {
+    return undefined;
+  }
+  return { version: candidate.version, ppq: candidate.ppq };
+}
+
 export function normalizeUserAnswer(value: unknown): UserAnswer | undefined {
   if (typeof value !== "object" || value === null) return undefined;
-  const candidate = value as { kind?: unknown; midi?: unknown; onsetsSeconds?: unknown; optionId?: unknown };
+  const candidate = value as {
+    kind?: unknown;
+    midi?: unknown;
+    onsetsSeconds?: unknown;
+    notes?: unknown;
+    optionId?: unknown;
+    summary?: unknown;
+  };
   switch (candidate.kind) {
     case "pitch":
       return isMidi(candidate.midi) ? { kind: "pitch", midi: candidate.midi } : undefined;
@@ -62,9 +89,99 @@ export function normalizeUserAnswer(value: unknown): UserAnswer | undefined {
       return typeof candidate.optionId === "string" && candidate.optionId.length > 0
         ? { kind: "choice", optionId: candidate.optionId }
         : undefined;
+    case "rhythm":
+      return Array.isArray(candidate.onsetsSeconds) && candidate.onsetsSeconds.every(finiteSeconds)
+        ? { kind: "rhythm", onsetsSeconds: [...candidate.onsetsSeconds] }
+        : undefined;
+    case "performance": {
+      if (!Array.isArray(candidate.notes)) return undefined;
+      const notes: PerformedNote[] = [];
+      for (const value of candidate.notes) {
+        if (typeof value !== "object" || value === null) return undefined;
+        const note = value as { midi?: unknown; onsetSeconds?: unknown; durationSeconds?: unknown; velocity?: unknown };
+        if (
+          !isMidi(note.midi) ||
+          !finiteSeconds(note.onsetSeconds) ||
+          (note.durationSeconds !== undefined &&
+            (typeof note.durationSeconds !== "number" ||
+              !Number.isFinite(note.durationSeconds) ||
+              note.durationSeconds <= 0)) ||
+          (note.velocity !== undefined &&
+            (typeof note.velocity !== "number" ||
+              !Number.isInteger(note.velocity) ||
+              note.velocity < 0 ||
+              note.velocity > 127))
+        ) {
+          return undefined;
+        }
+        notes.push({
+          midi: note.midi,
+          onsetSeconds: note.onsetSeconds,
+          ...(note.durationSeconds === undefined ? {} : { durationSeconds: note.durationSeconds }),
+          ...(note.velocity === undefined ? {} : { velocity: note.velocity }),
+        });
+      }
+      return { kind: "performance", notes };
+    }
+    case "voice": {
+      if (typeof candidate.summary !== "object" || candidate.summary === null) return undefined;
+      const summary = candidate.summary as Record<string, unknown>;
+      if (
+        !["centsError", "stability", "onsetErrorMs", "durationError"].every(
+          (key) => typeof summary[key] === "number" && Number.isFinite(summary[key]),
+        ) ||
+        typeof summary.inTune !== "boolean"
+      ) {
+        return undefined;
+      }
+      return {
+        kind: "voice",
+        summary: {
+          centsError: summary.centsError as number,
+          stability: summary.stability as number,
+          onsetErrorMs: summary.onsetErrorMs as number,
+          durationError: summary.durationError as number,
+          inTune: summary.inTune,
+        },
+      };
+    }
     default:
       return undefined;
   }
+}
+
+export function normalizeExpectedAnswer(value: unknown): ExpectedAnswer | undefined {
+  if (typeof value !== "object" || value === null) return undefined;
+  const candidate = value as {
+    kind?: unknown;
+    midi?: unknown;
+    optionId?: unknown;
+    onsetTicks?: unknown;
+    transport?: unknown;
+    targetMidi?: unknown;
+  };
+  if (candidate.kind === "pitch" && isMidi(candidate.midi)) return { kind: "pitch", midi: candidate.midi };
+  if (candidate.kind === "pitch-set" || candidate.kind === "pitch-sequence") {
+    const midi = midiArray(candidate.midi);
+    return midi ? { kind: candidate.kind, midi } : undefined;
+  }
+  if (candidate.kind === "choice" && typeof candidate.optionId === "string" && candidate.optionId.length > 0) {
+    return { kind: "choice", optionId: candidate.optionId };
+  }
+  if (
+    candidate.kind === "rhythm" &&
+    Array.isArray(candidate.onsetTicks) &&
+    candidate.onsetTicks.length > 0 &&
+    candidate.onsetTicks.every((tick) => typeof tick === "number" && Number.isInteger(tick) && tick >= 0)
+  ) {
+    const transport = normalizeTransport(candidate.transport);
+    return transport ? { kind: "rhythm", onsetTicks: [...candidate.onsetTicks], transport } : undefined;
+  }
+  if (candidate.kind === "voice") {
+    const targetMidi = midiArray(candidate.targetMidi);
+    return targetMidi ? { kind: "voice", targetMidi } : undefined;
+  }
+  return undefined;
 }
 
 export type AnswerMatch =

@@ -3,6 +3,14 @@
 NoteSense is local-first today. This contract names the browser storage keys, export shape, normalization rules, and future sync constraints that must stay explicit as the product grows.
 
 Product-learning and feedback expectations live in [PRODUCT_LEARNING.md](PRODUCT_LEARNING.md).
+Exercise schema and generator expectations live in [CONTENT_CONTRACT.md](CONTENT_CONTRACT.md).
+
+## Score Validation
+
+The shared score model is untrusted-input data. It caps a score at 4 parts, 400 measures per part, 4 voices per
+measure, 128 events per voice, and 8 pitches per note; titles are capped at 120 characters. Import callers use
+`normalizeScoreWithWarnings` so any dropped or capped musical material is surfaced to the learner rather than
+silently corrupted. The legacy `Song` compatibility adapter rejects scores it cannot reproduce exactly.
 
 ## Current Storage Keys
 

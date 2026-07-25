@@ -5,7 +5,7 @@
 import { isCompetencyId, type CompetencyId } from "../curriculum/competencies";
 import { normalizeDimensions, type Dimensions } from "../curriculum/dimensions";
 import { clampDifficulty } from "../curriculum/difficulty";
-import { type ExpectedAnswer } from "./answer";
+import { normalizeExpectedAnswer, type ExpectedAnswer } from "./answer";
 import { normalizeScoringPolicy, type ScoringPolicy } from "./scoringPolicy";
 
 export const EXERCISE_SCHEMA_VERSION = 1;
@@ -24,6 +24,8 @@ export type ExerciseDefinition = {
   id: string;
   version: number;
   generatorVersion: number;
+  curriculumVersion: number;
+  skillMappingVersion: number;
   kind: string;
   title: string;
   competencyIds: CompetencyId[];
@@ -39,8 +41,8 @@ export type ExerciseDefinition = {
   license?: string;
 };
 
-const INPUT_MODES = new Set<string>(["touch", "computer-keyboard", "midi", "microphone"]);
-const SOURCES = new Set<string>(["builtin", "generated", "imported"]);
+const INPUT_MODES = /* @__PURE__ */ new Set<string>(["touch", "computer-keyboard", "midi", "microphone"]);
+const SOURCES = /* @__PURE__ */ new Set<string>(["builtin", "generated", "imported"]);
 
 function isMidi(value: unknown): value is number {
   return typeof value === "number" && Number.isInteger(value) && value >= 21 && value <= 108;
@@ -63,24 +65,6 @@ function normalizeStimulus(value: unknown): ExerciseStimulus | undefined {
     (candidate.playback === "single" || candidate.playback === "block" || candidate.playback === "arpeggio")
   ) {
     return { kind: "audio-pitch", midi: [...candidate.midi], playback: candidate.playback };
-  }
-  return undefined;
-}
-
-function normalizeExpectedAnswer(value: unknown): ExpectedAnswer | undefined {
-  if (typeof value !== "object" || value === null) return undefined;
-  const candidate = value as { kind?: unknown; midi?: unknown; optionId?: unknown };
-  if (candidate.kind === "pitch" && isMidi(candidate.midi)) return { kind: "pitch", midi: candidate.midi };
-  if (
-    (candidate.kind === "pitch-set" || candidate.kind === "pitch-sequence") &&
-    Array.isArray(candidate.midi) &&
-    candidate.midi.length > 0 &&
-    candidate.midi.every(isMidi)
-  ) {
-    return { kind: candidate.kind, midi: [...candidate.midi] };
-  }
-  if (candidate.kind === "choice" && typeof candidate.optionId === "string" && candidate.optionId.length > 0) {
-    return { kind: "choice", optionId: candidate.optionId };
   }
   return undefined;
 }
@@ -119,6 +103,8 @@ export function normalizeExerciseDefinition(value: unknown): ExerciseDefinition 
     id: candidate.id,
     version: positiveInt(candidate.version, 1),
     generatorVersion: positiveInt(candidate.generatorVersion, 1),
+    curriculumVersion: positiveInt(candidate.curriculumVersion, 1),
+    skillMappingVersion: positiveInt(candidate.skillMappingVersion, 1),
     kind: candidate.kind,
     title: candidate.title.trim().slice(0, 120),
     competencyIds,

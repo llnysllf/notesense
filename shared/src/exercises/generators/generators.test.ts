@@ -13,8 +13,8 @@ describe("built-in generators", () => {
 
   // High-volume invariant check: every generated item, across a wide seed space,
   // must be valid, normalizable, and internally consistent.
-  it("produce valid, answerable exercises across 500 seeds", () => {
-    for (let i = 0; i < 500; i += 1) {
+  it("produce valid, answerable exercises across 10,000 seeds", () => {
+    for (let i = 0; i < 10_000; i += 1) {
       const seed = `seed-${i}`;
       for (const generator of [readingNoteGenerator, pitchNoteGenerator]) {
         const def = generator.generate({ seed });

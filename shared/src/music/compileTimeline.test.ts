@@ -80,7 +80,7 @@ describe("compileScore", () => {
     expect(timeline.events[0]?.midi).toEqual([60]);
   });
 
-  it("represents a pickup as a late offset in a full measure", () => {
+  it("starts an explicit pickup at tick zero without leading silence", () => {
     const pickup: Score = {
       id: "pickup",
       version: 1,
@@ -95,6 +95,7 @@ describe("compileScore", () => {
               id: "m1",
               number: 1,
               meter: { beats: 4, beatUnit: 4 },
+              pickupDuration: { num: 1, den: 1 },
               voices: [
                 {
                   id: "v1",
@@ -102,7 +103,7 @@ describe("compileScore", () => {
                     {
                       kind: "note",
                       id: "a",
-                      offset: { num: 3, den: 1 },
+                      offset: { num: 0, den: 1 },
                       duration: { num: 1, den: 1 },
                       pitches: [{ step: "C", alter: 0, octave: 4 }],
                     },
@@ -133,8 +134,7 @@ describe("compileScore", () => {
       ],
     };
     const timeline = compileScore(pickup);
-    // Pickup note at beat 4 of measure 1 (3 quarters in), downbeat at 4 quarters.
-    expect(timeline.events.map((event) => event.startTicks)).toEqual([2880, 3840]);
+    expect(timeline.events.map((event) => event.startTicks)).toEqual([0, 960]);
   });
 
   it("skips events and measure lengths not representable at the chosen transport", () => {

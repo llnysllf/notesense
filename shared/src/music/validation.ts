@@ -24,6 +24,8 @@ export const MAX_EVENTS_PER_VOICE = 128;
 export const MAX_PITCHES_PER_NOTE = 8;
 export const MAX_SCORE_TITLE_LENGTH = 120;
 
+export type ScoreNormalizationResult = { score?: Score; warnings: string[] };
+
 const BEAT_UNITS = [1, 2, 4, 8, 16];
 const LOWEST_MIDI = 21;
 const HIGHEST_MIDI = 108;
@@ -139,6 +141,7 @@ function normalizeMeasure(value: unknown, index: number): Measure | undefined {
     id?: unknown;
     number?: unknown;
     meter?: unknown;
+    pickupDuration?: unknown;
     keySignature?: unknown;
     voices?: unknown;
   };
@@ -153,9 +156,11 @@ function normalizeMeasure(value: unknown, index: number): Measure | undefined {
   if (voices.length === 0) return undefined;
 
   const meter = normalizeMeter(candidate.meter);
+  const pickupDuration = normalizeRational(candidate.pickupDuration, true);
   const keySignature = normalizeKeySignature(candidate.keySignature);
   const measure: Measure = { id, number, voices };
   if (meter) measure.meter = meter;
+  if (pickupDuration) measure.pickupDuration = pickupDuration;
   if (keySignature) measure.keySignature = keySignature;
   return measure;
 }
@@ -193,4 +198,77 @@ export function normalizeScore(value: unknown): Score | undefined {
 
   const id = cappedString(candidate.id, 120) ?? `score-${title.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`;
   return { id, version: SCORE_MODEL_VERSION, title, parts };
+}
+
+function countRawScoreItems(value: unknown): {
+  parts: number;
+  measures: number;
+  voices: number;
+  events: number;
+  pitches: number;
+} {
+  if (typeof value !== "object" || value === null) return { parts: 0, measures: 0, voices: 0, events: 0, pitches: 0 };
+  const candidate = value as { parts?: unknown };
+  if (!Array.isArray(candidate.parts)) return { parts: 0, measures: 0, voices: 0, events: 0, pitches: 0 };
+  const counts = { parts: candidate.parts.length, measures: 0, voices: 0, events: 0, pitches: 0 };
+  for (const part of candidate.parts) {
+    if (typeof part !== "object" || part === null || !Array.isArray((part as { measures?: unknown }).measures))
+      continue;
+    const measures = (part as { measures: unknown[] }).measures;
+    counts.measures += measures.length;
+    for (const measure of measures) {
+      if (typeof measure !== "object" || measure === null || !Array.isArray((measure as { voices?: unknown }).voices))
+        continue;
+      const voices = (measure as { voices: unknown[] }).voices;
+      counts.voices += voices.length;
+      for (const voice of voices) {
+        if (typeof voice !== "object" || voice === null || !Array.isArray((voice as { events?: unknown }).events))
+          continue;
+        const events = (voice as { events: unknown[] }).events;
+        counts.events += events.length;
+        for (const event of events) {
+          if (typeof event === "object" && event !== null && Array.isArray((event as { pitches?: unknown }).pitches)) {
+            counts.pitches += (event as { pitches: unknown[] }).pitches.length;
+          }
+        }
+      }
+    }
+  }
+  return counts;
+}
+
+function countNormalizedScoreItems(score: Score): {
+  parts: number;
+  measures: number;
+  voices: number;
+  events: number;
+  pitches: number;
+} {
+  const counts = { parts: score.parts.length, measures: 0, voices: 0, events: 0, pitches: 0 };
+  for (const part of score.parts) {
+    counts.measures += part.measures.length;
+    for (const measure of part.measures) {
+      counts.voices += measure.voices.length;
+      for (const voice of measure.voices) {
+        counts.events += voice.events.length;
+        for (const event of voice.events) if (event.kind === "note") counts.pitches += event.pitches.length;
+      }
+    }
+  }
+  return counts;
+}
+
+// Additive result API for importers: partial normalization remains safe, but
+// callers can show an explicit warning instead of silently accepting loss.
+export function normalizeScoreWithWarnings(value: unknown): ScoreNormalizationResult {
+  const score = normalizeScore(value);
+  if (!score) return { warnings: ["The score has no playable content after validation."] };
+
+  const raw = countRawScoreItems(value);
+  const normalized = countNormalizedScoreItems(score);
+  const warnings: string[] = [];
+  for (const key of ["parts", "measures", "voices", "events", "pitches"] as const) {
+    if (normalized[key] < raw[key]) warnings.push(`Some ${key} were dropped or capped during validation.`);
+  }
+  return { score, warnings };
 }

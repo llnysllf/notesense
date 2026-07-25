@@ -55,6 +55,7 @@ export {
   SCORE_MODEL_VERSION,
   TRANSPORT_V1,
   normalizeScore,
+  normalizeScoreWithWarnings,
   compileScore,
   ticksToSeconds,
   songToScore,

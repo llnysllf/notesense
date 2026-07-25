@@ -32,7 +32,7 @@ export const DIMENSION_KEYS: readonly DimensionKey[] = [
   "inputMode",
 ];
 
-const KEY_SET = new Set<string>(DIMENSION_KEYS);
+const KEY_SET = /* @__PURE__ */ new Set<string>(DIMENSION_KEYS);
 
 export function isDimensionKey(value: unknown): value is DimensionKey {
   return typeof value === "string" && KEY_SET.has(value);

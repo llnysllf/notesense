@@ -1,5 +1,12 @@
 import { describe, expect, it } from "vitest";
-import { matchAnswer, normalizeUserAnswer, type AnswerMatch, type ExpectedAnswer, type UserAnswer } from "./answer";
+import {
+  matchAnswer,
+  normalizeExpectedAnswer,
+  normalizeUserAnswer,
+  type AnswerMatch,
+  type ExpectedAnswer,
+  type UserAnswer,
+} from "./answer";
 import { TRANSPORT_V1 } from "../music/time";
 
 const correctness = (match: AnswerMatch): boolean => {
@@ -22,6 +29,23 @@ describe("normalizeUserAnswer", () => {
       kind: "choice",
       optionId: "major-third",
     });
+    expect(normalizeUserAnswer({ kind: "rhythm", onsetsSeconds: [0, 0.5] })).toEqual({
+      kind: "rhythm",
+      onsetsSeconds: [0, 0.5],
+    });
+    expect(normalizeUserAnswer({ kind: "performance", notes: [{ midi: 60, onsetSeconds: 0, velocity: 90 }] })).toEqual({
+      kind: "performance",
+      notes: [{ midi: 60, onsetSeconds: 0, velocity: 90 }],
+    });
+    expect(
+      normalizeUserAnswer({
+        kind: "voice",
+        summary: { centsError: 3, stability: 0.8, onsetErrorMs: 12, durationError: 0.1, inTune: true },
+      }),
+    ).toEqual({
+      kind: "voice",
+      summary: { centsError: 3, stability: 0.8, onsetErrorMs: 12, durationError: 0.1, inTune: true },
+    });
   });
 
   it("rejects malformed input", () => {
@@ -30,7 +54,52 @@ describe("normalizeUserAnswer", () => {
     expect(normalizeUserAnswer({ kind: "pitch-set", midi: [] })).toBeUndefined();
     expect(normalizeUserAnswer({ kind: "pitch-sequence", midi: [60, 5] })).toBeUndefined();
     expect(normalizeUserAnswer({ kind: "choice", optionId: "" })).toBeUndefined();
-    expect(normalizeUserAnswer({ kind: "rhythm", onsetsSeconds: [0] })).toBeUndefined(); // runtime-only
+    expect(normalizeUserAnswer({ kind: "rhythm", onsetsSeconds: [-1] })).toBeUndefined();
+    expect(normalizeUserAnswer({ kind: "performance", notes: [{ midi: 5, onsetSeconds: 0 }] })).toBeUndefined();
+    expect(
+      normalizeUserAnswer({ kind: "performance", notes: [{ midi: 60, onsetSeconds: 0, durationSeconds: 0 }] }),
+    ).toBeUndefined();
+    expect(
+      normalizeUserAnswer({ kind: "performance", notes: [{ midi: 60, onsetSeconds: 0, velocity: 128 }] }),
+    ).toBeUndefined();
+    expect(normalizeUserAnswer({ kind: "voice", summary: { inTune: true } })).toBeUndefined();
+  });
+});
+
+describe("normalizeExpectedAnswer", () => {
+  it("normalizes every persisted expected-answer family", () => {
+    expect(normalizeExpectedAnswer({ kind: "pitch", midi: 60 })).toEqual({ kind: "pitch", midi: 60 });
+    expect(normalizeExpectedAnswer({ kind: "pitch-set", midi: [60, 64] })).toEqual({
+      kind: "pitch-set",
+      midi: [60, 64],
+    });
+    expect(normalizeExpectedAnswer({ kind: "pitch-sequence", midi: [60, 62] })).toEqual({
+      kind: "pitch-sequence",
+      midi: [60, 62],
+    });
+    expect(normalizeExpectedAnswer({ kind: "choice", optionId: "minor-third" })).toEqual({
+      kind: "choice",
+      optionId: "minor-third",
+    });
+    expect(normalizeExpectedAnswer({ kind: "rhythm", onsetTicks: [0, 960], transport: TRANSPORT_V1 })).toEqual({
+      kind: "rhythm",
+      onsetTicks: [0, 960],
+      transport: TRANSPORT_V1,
+    });
+    expect(normalizeExpectedAnswer({ kind: "voice", targetMidi: [60, 62] })).toEqual({
+      kind: "voice",
+      targetMidi: [60, 62],
+    });
+  });
+
+  it("rejects malformed expected answers and transports", () => {
+    expect(normalizeExpectedAnswer(null)).toBeUndefined();
+    expect(normalizeExpectedAnswer({ kind: "pitch-sequence", midi: [] })).toBeUndefined();
+    expect(normalizeExpectedAnswer({ kind: "rhythm", onsetTicks: [], transport: TRANSPORT_V1 })).toBeUndefined();
+    expect(
+      normalizeExpectedAnswer({ kind: "rhythm", onsetTicks: [0], transport: { version: 0, ppq: 960 } }),
+    ).toBeUndefined();
+    expect(normalizeExpectedAnswer({ kind: "voice", targetMidi: [5] })).toBeUndefined();
   });
 });
 

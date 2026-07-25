@@ -10,7 +10,7 @@ export type ScoringPolicy = {
   revealAnswer?: boolean;
 };
 
-const COMPONENTS = new Set<string>(["pitch", "rhythm", "continuity", "fluency"]);
+const COMPONENTS = /* @__PURE__ */ new Set<string>(["pitch", "rhythm", "continuity", "fluency"]);
 
 export const DEFAULT_SCORING_POLICY: ScoringPolicy = { components: ["pitch"], passThreshold: 0.8 };
 

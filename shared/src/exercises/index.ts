@@ -18,4 +18,4 @@ import { pitchNoteGenerator } from "./generators/pitchNote";
 // The generators available today (reading + pitch, per the lean Slice 2 scope).
 export const BUILT_IN_GENERATORS = [readingNoteGenerator, pitchNoteGenerator] as const;
 
-export const exerciseRegistry = createRegistry(BUILT_IN_GENERATORS);
+export const exerciseRegistry = /* @__PURE__ */ createRegistry(BUILT_IN_GENERATORS);

@@ -84,6 +84,29 @@ describe("round-trip fidelity", () => {
 });
 
 describe("scoreToSong limits", () => {
+  it("rejects scores that would lose parts, voices, timing, or pickup semantics", () => {
+    const score = songToScore(trebleScale);
+    const part = score.parts[0]!;
+    expect(scoreToSong({ ...score, parts: [part, part] })).toBeUndefined();
+
+    const multiVoice = songToScore(trebleScale);
+    const measure = multiVoice.parts[0]!.measures[0]!;
+    multiVoice.parts[0]!.measures[0] = { ...measure, voices: [measure.voices[0]!, measure.voices[0]!] };
+    expect(scoreToSong(multiVoice)).toBeUndefined();
+
+    const pickup = songToScore(trebleScale);
+    pickup.parts[0]!.measures[0]!.pickupDuration = { num: 1, den: 1 };
+    expect(scoreToSong(pickup)).toBeUndefined();
+
+    const offset = songToScore(trebleScale);
+    offset.parts[0]!.measures[0]!.voices[0]!.events[0]!.offset = { num: 1, den: 1 };
+    expect(scoreToSong(offset)).toBeUndefined();
+
+    const meterChange = songToScore(trebleScale);
+    meterChange.parts[0]!.measures[1]!.meter = { beats: 3, beatUnit: 4 };
+    expect(scoreToSong(meterChange)).toBeUndefined();
+  });
+
   it("returns undefined for a score using a non-legacy duration", () => {
     const sixteenthScore: Score = {
       id: "x",

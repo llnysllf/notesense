@@ -36,6 +36,8 @@ export const readingNoteGenerator: ExerciseGenerator = {
       id: `reading.staff-to-key-${seed}`,
       version: 1,
       generatorVersion: GENERATOR_VERSION,
+      curriculumVersion: 1,
+      skillMappingVersion: 1,
       kind: "reading.staff-to-key",
       title: `Read and play ${noteId}`,
       competencyIds: ["reading.pitch.staff-to-key"],

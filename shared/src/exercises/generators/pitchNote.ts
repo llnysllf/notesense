@@ -27,6 +27,8 @@ export const pitchNoteGenerator: ExerciseGenerator = {
       id: `ear.pitch-${seed}`,
       version: 1,
       generatorVersion: GENERATOR_VERSION,
+      curriculumVersion: 1,
+      skillMappingVersion: 1,
       kind: "ear.pitch",
       title: `Hear and play the pitch (${noteId})`,
       competencyIds: ["ear.pitch.absolute-anchor"],

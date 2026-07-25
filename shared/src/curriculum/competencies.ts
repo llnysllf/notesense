@@ -77,9 +77,11 @@ export const COMPETENCIES: readonly Competency[] = [
   { id: "voice.sight-sing", domain: "voice", label: "Sight-sing", summary: "Sing a short notated passage." },
 ];
 
-export const COMPETENCY_IDS: readonly CompetencyId[] = COMPETENCIES.map((competency) => competency.id);
+export const COMPETENCY_IDS: readonly CompetencyId[] = /* @__PURE__ */ COMPETENCIES.map((competency) => competency.id);
 
-const BY_ID = new Map<CompetencyId, Competency>(COMPETENCIES.map((competency) => [competency.id, competency]));
+const BY_ID = /* @__PURE__ */ new Map<CompetencyId, Competency>(
+  /* @__PURE__ */ COMPETENCIES.map((competency) => [competency.id, competency]),
+);
 
 export function isCompetencyId(value: unknown): value is CompetencyId {
   return typeof value === "string" && BY_ID.has(value as CompetencyId);
