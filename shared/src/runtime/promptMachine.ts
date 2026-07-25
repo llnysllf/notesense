@@ -4,23 +4,34 @@
 // runtime and its tests never reach an impossible phase.
 
 export type PromptPhase =
-  "preparing" | "count-in" | "presenting" | "accepting-input" | "paused" | "feedback" | "complete";
+  "idle" | "preparing" | "count-in" | "presenting" | "accepting-input" | "paused" | "feedback" | "complete";
 
-export type PromptCommand = "startCountIn" | "present" | "openInput" | "pause" | "resume" | "submit" | "finish";
+export type PromptCommand =
+  | "prepare"
+  | "startCountIn"
+  | "present"
+  | "openInput"
+  | "pause"
+  | "resume"
+  | "submit"
+  | "finish"
+  | "cancel"
+  | "restart";
 
 export type PromptState = { phase: PromptPhase; acceptingInput: boolean };
 
 const TRANSITIONS: Record<PromptPhase, Partial<Record<PromptCommand, PromptPhase>>> = {
-  preparing: { startCountIn: "count-in", present: "presenting" },
-  "count-in": { present: "presenting" },
-  presenting: { openInput: "accepting-input" },
-  "accepting-input": { pause: "paused", submit: "feedback" },
-  paused: { resume: "accepting-input" },
-  feedback: { finish: "complete" },
-  complete: {},
+  idle: { prepare: "preparing" },
+  preparing: { startCountIn: "count-in", present: "presenting", cancel: "idle", restart: "preparing" },
+  "count-in": { present: "presenting", cancel: "idle", restart: "preparing" },
+  presenting: { openInput: "accepting-input", cancel: "idle", restart: "preparing" },
+  "accepting-input": { pause: "paused", submit: "feedback", cancel: "idle", restart: "preparing" },
+  paused: { resume: "accepting-input", cancel: "idle", restart: "preparing" },
+  feedback: { finish: "complete", restart: "preparing" },
+  complete: { restart: "preparing" },
 };
 
-export const INITIAL_PROMPT: PromptState = { phase: "preparing", acceptingInput: false };
+export const INITIAL_PROMPT: PromptState = { phase: "idle", acceptingInput: false };
 
 export function createPrompt(): PromptState {
   return { ...INITIAL_PROMPT };

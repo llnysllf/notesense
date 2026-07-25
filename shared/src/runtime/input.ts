@@ -10,7 +10,10 @@ export type InputEvent =
   | { kind: "note-off"; midi: number; atSeconds: number; source: InputSource }
   | { kind: "sustain"; down: boolean; atSeconds: number; source: InputSource }
   | { kind: "tap"; atSeconds: number; source: InputSource }
-  | { kind: "choice"; optionId: string; atSeconds: number; source: InputSource };
+  | { kind: "choice"; optionId: string; atSeconds: number; source: InputSource }
+  // Microphone frames are transient input only. Runtime/evidence code stores
+  // derived voice summaries, never raw frames or audio.
+  | { kind: "pitch-frame"; hz: number; confidence: number; atSeconds: number; source: "microphone" };
 
 export function isNoteOn(event: InputEvent): event is Extract<InputEvent, { kind: "note-on" }> {
   return event.kind === "note-on";

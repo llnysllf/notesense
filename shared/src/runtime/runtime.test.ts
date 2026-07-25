@@ -15,6 +15,11 @@ describe("input", () => {
     expect(isNoteOn(noteOn(60, 0))).toBe(true);
     expect(isNoteOn(tap(0))).toBe(false);
   });
+
+  it("keeps microphone pitch frames transient and audio-clock stamped", () => {
+    const frame: InputEvent = { kind: "pitch-frame", hz: 440, confidence: 0.9, atSeconds: 1.25, source: "microphone" };
+    expect(frame).toMatchObject({ kind: "pitch-frame", atSeconds: 1.25, source: "microphone" });
+  });
 });
 
 describe("manual transport", () => {
@@ -44,10 +49,11 @@ describe("manual transport", () => {
 describe("promptMachine", () => {
   it("runs the full lifecycle and ignores illegal commands", () => {
     let state = createPrompt();
-    expect(state.phase).toBe("preparing");
+    expect(state.phase).toBe("idle");
     expect(isPromptComplete(state)).toBe(false);
 
-    expect(promptReducer(state, "openInput")).toEqual(state); // illegal from preparing
+    expect(promptReducer(state, "openInput")).toEqual(state); // illegal from idle
+    state = promptReducer(state, "prepare");
     state = promptReducer(state, "startCountIn");
     state = promptReducer(state, "present");
     state = promptReducer(state, "openInput");
@@ -62,7 +68,16 @@ describe("promptMachine", () => {
   });
 
   it("supports skipping the count-in", () => {
-    expect(promptReducer(createPrompt(), "present").phase).toBe("presenting");
+    const preparing = promptReducer(createPrompt(), "prepare");
+    expect(promptReducer(preparing, "present").phase).toBe("presenting");
+  });
+
+  it("cancels and restarts without leaving the input window open", () => {
+    let state = promptReducer(createPrompt(), "prepare");
+    state = promptReducer(state, "present");
+    state = promptReducer(state, "openInput");
+    expect(promptReducer(state, "cancel")).toEqual({ phase: "idle", acceptingInput: false });
+    expect(promptReducer(state, "restart")).toEqual({ phase: "preparing", acceptingInput: false });
   });
 });
 
@@ -97,24 +112,27 @@ describe("answerCollector", () => {
   it("maps expected-answer kinds to a collector mode", () => {
     expect(collectorModeFor("pitch")).toBe("pitch");
     expect(collectorModeFor("choice")).toBe("choice");
-    expect(collectorModeFor("performance")).toBeUndefined();
     expect(collectorModeFor("voice")).toBeUndefined();
+    expect(collectorModeFor("bogus" as never)).toBeUndefined();
   });
 
   it("collects each answer family from raw input", () => {
-    expect(collectAnswer("pitch", [noteOn(60, 0), noteOn(64, 1)])).toEqual({ kind: "pitch", midi: 60 });
+    expect(collectAnswer("pitch", [noteOn(64, 1), noteOn(60, 0)])).toEqual({ kind: "pitch", midi: 60 });
     expect(collectAnswer("pitch", [])).toBeUndefined();
     expect(collectAnswer("pitch-set", [noteOn(60, 0), noteOn(64, 0), noteOn(60, 0)])).toEqual({
       kind: "pitch-set",
       midi: [60, 64],
     });
     expect(collectAnswer("pitch-set", [tap(0)])).toBeUndefined();
-    expect(collectAnswer("pitch-sequence", [noteOn(62, 0), noteOn(60, 1)])).toEqual({
+    expect(collectAnswer("pitch-sequence", [noteOn(60, 1), noteOn(62, 0), noteOn(62, 0)])).toEqual({
       kind: "pitch-sequence",
       midi: [62, 60],
     });
     expect(collectAnswer("pitch-sequence", [])).toBeUndefined();
-    expect(collectAnswer("rhythm", [tap(0.5), noteOn(60, 1)])).toEqual({ kind: "rhythm", onsetsSeconds: [0.5, 1] });
+    expect(collectAnswer("rhythm", [noteOn(60, 1), tap(0.5), tap(0.5)])).toEqual({
+      kind: "rhythm",
+      onsetsSeconds: [0.5, 1],
+    });
     expect(collectAnswer("rhythm", [])).toBeUndefined();
     expect(collectAnswer("choice", [{ kind: "choice", optionId: "maj", atSeconds: 0, source: "touch" }])).toEqual({
       kind: "choice",

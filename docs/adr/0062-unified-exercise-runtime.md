@@ -14,9 +14,9 @@ The Slice 1 musical domain and the Slice 2 content platform already give one rep
 
 Add a framework-free runtime core under `shared/src/runtime/`:
 
-- `input.ts` — the `InputEvent` union (note-on/off, sustain, tap, choice) tagged with its `InputSource`. Timestamps are audio-clock seconds, so grading stays in one timebase; source-specific browser adapters convert native events into these before the runtime sees them.
+- `input.ts` — the `InputEvent` union (note-on/off, sustain, tap, choice, and transient microphone pitch frames) tagged with its `InputSource`. Timestamps are audio-clock seconds, so grading stays in one timebase; source-specific browser adapters convert native events into these before the runtime sees them.
 - `transport.ts` — a `RuntimeTransport` clock + scheduler interface (named to stay distinct from the musical `Transport`/PPQ), plus a deterministic manual transport for tests and headless drives.
-- `promptMachine.ts` — the per-prompt lifecycle as a pure reducer: preparing → (count-in) → presenting → accepting-input ↔ paused → feedback → complete, with illegal commands ignored.
+- `promptMachine.ts` — the per-prompt lifecycle as a pure reducer: idle → preparing → (count-in) → presenting → accepting-input ↔ paused → feedback → complete, with explicit cancel/restart behavior and illegal commands ignored.
 - `sessionMachine.ts` — the session over a fixed sequence of prompts as a pure reducer: idle → running → complete, with progress.
 - `answerCollector.ts` — turns the `InputEvent`s captured during accepting-input into a Slice 2 `UserAnswer`, so every input source flows into the same grading path.
 - `scorer.ts` — the `Scorer` interface plus a default exact-match scorer delegating to the Slice 2 answer grading. Timing, performance, and voice answers are reported as not-yet-gradable; the rhythm/MIDI/singing slices register richer scorers against the same interface.
