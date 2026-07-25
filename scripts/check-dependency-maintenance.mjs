@@ -44,10 +44,33 @@ requireSnippets("package.json", [
   '"security:lockfile": "node scripts/check-lockfile-supply-chain.mjs"',
   '"compliance:licenses": "node scripts/check-licenses.mjs"',
   '"security:sbom": "node scripts/check-sbom.mjs"',
-  '"security:audit": "npm audit --audit-level=high"',
+  '"security:audit": "node scripts/check-npm-audit.mjs"',
   '"security:workflows": "npm run security:workflow-actions && npm run security:workflow-permissions && npm run security:workflow-operations"',
   '"verify": "npm run security:supply-chain && npm run check',
 ]);
+
+requireSnippets("docs/DEPENDENCY_MAINTENANCE.md", ["## Audit Exceptions", "GHSA-mh99-v99m-4gvg", "2026-08-15"]);
+
+const auditPolicyText = readProjectFile("config/npm-audit-exceptions.json");
+if (auditPolicyText) {
+  try {
+    const auditPolicy = JSON.parse(auditPolicyText);
+    const exception = auditPolicy.exceptions?.find(
+      (item) =>
+        item.package === "brace-expansion" &&
+        item.advisory === "GHSA-mh99-v99m-4gvg" &&
+        item.devOnly === true &&
+        item.expiresOn === "2026-08-15" &&
+        typeof item.reason === "string" &&
+        item.reason.length > 0,
+    );
+    if (!exception) {
+      failures.push("config/npm-audit-exceptions.json is missing the reviewed brace-expansion exception");
+    }
+  } catch {
+    failures.push("config/npm-audit-exceptions.json must contain valid JSON");
+  }
+}
 
 const npmSchedule = `- package-ecosystem: npm
     directory: /

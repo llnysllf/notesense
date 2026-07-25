@@ -48,7 +48,7 @@
     "release:safety": "node scripts/check-release-safety-contract.mjs",
     "release:notes": "node scripts/check-release-notes.mjs",
     "compliance:licenses": "node scripts/check-licenses.mjs",
-    "security:audit": "npm audit --audit-level=high",
+    "security:audit": "node scripts/check-npm-audit.mjs",
     "security:lockfile": "node scripts/check-lockfile-supply-chain.mjs",
     "security:sbom": "node scripts/check-sbom.mjs",
     "security:workflow-actions": "node scripts/check-workflow-actions.mjs",

@@ -35,6 +35,18 @@ Release safety and provenance expectations live in [RELEASE_SAFETY.md](RELEASE_S
 - New production dependencies should explain learner value, security posture, license acceptability, bundle impact, and why the behavior should not stay in project code.
 - Dependency license compliance does not grant project source-code rights; the root project license stays governed by [LEGAL.md](LEGAL.md) and [../LICENSE](../LICENSE).
 
+## Audit Exceptions
+
+`npm run security:audit` continues to block every high or critical advisory unless a reviewed exception names the
+exact package and advisory, proves every affected lockfile node is development-only, records a reason, and has not
+expired. Runtime exposure can never inherit a development-only exception, and parent findings are allowed only when
+they are caused solely by the accepted advisory.
+
+The temporary exception for `brace-expansion` advisory `GHSA-mh99-v99m-4gvg` expires on 2026-08-15. The affected v1
+and v2 lines are transitive build dependencies of ESLint and Workbox, have no patched release, and receive only
+repository-controlled glob patterns in NoteSense. The compatible v5 paths are locked to 5.0.8. Remove the exception
+as soon as upstream packages leave the affected dependency lines; do not extend it without a new security review.
+
 ## Review Evidence
 
 Dependency PRs should show:
@@ -64,4 +76,5 @@ Dependency PRs should show:
 - this contract keeps source, Dependabot, update-class, review-evidence, change-rule, and verification sections
 - Dependabot keeps the reviewed npm and GitHub Actions cadence, grouping, open-PR limits, and npm major-upgrade policy
 - package scripts keep dependency maintenance, supply-chain, lockfile, license, audit, SBOM, workflow, and release gates available
+- audit exceptions remain advisory-specific, development-only, documented, and time-bound
 - README, contributing, security, quality, release, architecture, testing, ADR, changelog, and PR review guidance stay connected to dependency maintenance

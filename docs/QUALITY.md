@@ -421,7 +421,8 @@ After pushing:
 
 ## Security Scanning
 
-- `npm run security:audit` blocks high and critical advisories from the release gate.
+- `npm run security:audit` blocks high and critical advisories from the release gate, except for narrowly reviewed,
+  machine-verified, development-only exceptions that name one advisory and expire automatically.
 - `npm run security:lockfile` blocks unreviewed lockfile source, integrity, package-manager, and root-metadata drift.
 - `npm run security:supply-chain` combines audit, lockfile, license, SBOM generation, and workflow policy checks.
 - `npm run security:workflows` blocks floating GitHub Actions refs, unreviewed token-permission drift, missing concurrency controls, unbounded job runtimes, and excessive artifact retention in workflow files.
