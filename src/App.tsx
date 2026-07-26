@@ -1,9 +1,8 @@
 import { lazy, Suspense, useCallback, useEffect, useState } from "react";
 import AppSectionNav from "./components/AppSectionNav";
-import type { AppSection } from "./components/AppSectionNav";
 import AppTopbar from "./components/AppTopbar";
+import ErrorBoundary from "./components/ErrorBoundary";
 import type { PracticePanelView } from "./components/PracticeStatsPanel";
-import PracticeWorkspace from "./components/PracticeWorkspace";
 import PitchTrainingControls from "./components/PitchTrainingControls";
 import ReadingRangeSelector from "./components/ReadingRangeSelector";
 import { useAppRoute } from "./hooks/useAppRoute";
@@ -13,12 +12,15 @@ import { useSongSession } from "./hooks/useSongSession";
 import { usePracticeProgress } from "./hooks/usePracticeProgress";
 import { usePracticeSession } from "./hooks/usePracticeSession";
 import { useSettings } from "./hooks/useSettings";
+import type { AppSection } from "./routes";
 import { resetProgress } from "./storage";
 import type { CustomReadingRange, DataStatus, PracticeProgress, PracticeSettings, ReadingRange } from "./types";
 
 const STORAGE_WARNING = "Progress is not being saved on this device right now.";
 const PracticeStatsPanel = lazy(() => import("./components/PracticeStatsPanel"));
 const SongsWorkspace = lazy(() => import("./components/SongsWorkspace"));
+const PracticeWorkspace = lazy(() => import("./components/PracticeWorkspace"));
+const RouteNotFound = lazy(() => import("./components/RouteNotFound"));
 const STATS_SECTION_BY_APP_SECTION: Record<Exclude<AppSection, "practice" | "songs">, PracticePanelView> = {
   progress: "overview",
   map: "map",
@@ -45,7 +47,7 @@ function App() {
   const [isNavOpen, setIsNavOpen] = useState(false);
   // The URL owns which destination is showing, so reloads, bookmarks, and
   // browser back/forward all land on the same screen.
-  const { route } = useAppRoute();
+  const { route, isUnknownPath } = useAppRoute();
   const activeSection = route.section;
 
   const { settings, setSettings, persistSettings } = useSettings();
@@ -222,72 +224,76 @@ function App() {
           onReplay={playCurrentNote}
         />
 
-        <Suspense
-          fallback={
-            <section className="practice-panel" aria-label="Loading section">
-              <p role="status">Loading section...</p>
-            </section>
-          }
-        >
-          {activeSection === "songs" ? (
-            <SongsWorkspace songSession={songSession} />
-          ) : activeSection === "practice" ? (
-            <PracticeWorkspace
-              currentPitchNote={currentPitchNote}
-              currentMelody={currentMelody}
-              currentReadingNote={currentReadingNote}
-              currentStreak={currentStreak}
-              dataStatus={dataStatus}
-              feedback={feedback}
-              feedbackClass={feedbackClass}
-              feedbackText={getFeedbackText()}
-              isRunning={isRunning}
-              keyboardResetKey={`${mode}-${settings.readingRange}-${normalizedCustomRange.startNoteId}-${normalizedCustomRange.endNoteId}-${settings.pitchRange}-${normalizedCustomPitchRange.startNoteId}-${normalizedCustomPitchRange.endNoteId}`}
-              melodyAnswerNoteIds={melodyAnswerNoteIds}
-              mode={mode}
-              pitchExercise={settings.pitchExercise}
-              pitchRangeNoteIds={pitchRangeNoteIds}
-              promptDetail={promptDetail}
-              rangeControls={rangeControls}
-              roundAccuracy={roundAccuracy}
-              roundAttempts={roundAttempts}
-              roundCorrect={roundCorrect}
-              shouldRevealPitch={shouldRevealPitch}
-              timeRemaining={timeRemaining}
-              onClearMelodyAnswer={clearMelodyAnswer}
-              onFinishRound={finishRound}
-              onMelodyNoteInput={handleMelodyNoteInput}
-              onPitchKeyAnswer={handlePitchKeyAnswer}
-              onReadingKeyAnswer={handleReadingKeyAnswer}
-              onStartRound={startRound}
-              onSubmitMelodyAnswer={submitMelodyAnswer}
-              onUndoMelodyAnswer={undoMelodyAnswer}
-            />
-          ) : (
-            <PracticeStatsPanel
-              activeProgress={activeProgress}
-              activeView={activeStatsView}
-              dailyGoalSummary={dailyGoalSummary}
-              dataStatus={dataStatus}
-              focusItems={focusItems}
-              historySummary={historySummary}
-              insightSummary={insightSummary}
-              lastSummary={lastSummary}
-              lifetimeAccuracy={lifetimeAccuracy}
-              masterySummary={masterySummary}
-              mode={mode}
-              modeLabel={modeLabel}
-              practicePlan={practicePlan}
-              rangeControls={rangeControls}
-              rangeDetail={mode === "reading" ? readingRange.detail : pitchRange.detail}
-              settings={settings}
-              onExportData={handleExportData}
-              onImportData={handleImportData}
-              onResetProgress={handleResetProgress}
-              onSettingsChange={updateSettings}
-            />
-          )}
-        </Suspense>
+        <ErrorBoundary resetKey={isUnknownPath ? window.location.pathname : route.id}>
+          <Suspense
+            fallback={
+              <section className="practice-panel" aria-label="Loading section">
+                <p role="status">Loading section...</p>
+              </section>
+            }
+          >
+            {isUnknownPath ? (
+              <RouteNotFound path={window.location.pathname} />
+            ) : activeSection === "songs" ? (
+              <SongsWorkspace songSession={songSession} />
+            ) : activeSection === "practice" ? (
+              <PracticeWorkspace
+                currentPitchNote={currentPitchNote}
+                currentMelody={currentMelody}
+                currentReadingNote={currentReadingNote}
+                currentStreak={currentStreak}
+                dataStatus={dataStatus}
+                feedback={feedback}
+                feedbackClass={feedbackClass}
+                feedbackText={getFeedbackText()}
+                isRunning={isRunning}
+                keyboardResetKey={`${mode}-${settings.readingRange}-${normalizedCustomRange.startNoteId}-${normalizedCustomRange.endNoteId}-${settings.pitchRange}-${normalizedCustomPitchRange.startNoteId}-${normalizedCustomPitchRange.endNoteId}`}
+                melodyAnswerNoteIds={melodyAnswerNoteIds}
+                mode={mode}
+                pitchExercise={settings.pitchExercise}
+                pitchRangeNoteIds={pitchRangeNoteIds}
+                promptDetail={promptDetail}
+                rangeControls={rangeControls}
+                roundAccuracy={roundAccuracy}
+                roundAttempts={roundAttempts}
+                roundCorrect={roundCorrect}
+                shouldRevealPitch={shouldRevealPitch}
+                timeRemaining={timeRemaining}
+                onClearMelodyAnswer={clearMelodyAnswer}
+                onFinishRound={finishRound}
+                onMelodyNoteInput={handleMelodyNoteInput}
+                onPitchKeyAnswer={handlePitchKeyAnswer}
+                onReadingKeyAnswer={handleReadingKeyAnswer}
+                onStartRound={startRound}
+                onSubmitMelodyAnswer={submitMelodyAnswer}
+                onUndoMelodyAnswer={undoMelodyAnswer}
+              />
+            ) : (
+              <PracticeStatsPanel
+                activeProgress={activeProgress}
+                activeView={activeStatsView}
+                dailyGoalSummary={dailyGoalSummary}
+                dataStatus={dataStatus}
+                focusItems={focusItems}
+                historySummary={historySummary}
+                insightSummary={insightSummary}
+                lastSummary={lastSummary}
+                lifetimeAccuracy={lifetimeAccuracy}
+                masterySummary={masterySummary}
+                mode={mode}
+                modeLabel={modeLabel}
+                practicePlan={practicePlan}
+                rangeControls={rangeControls}
+                rangeDetail={mode === "reading" ? readingRange.detail : pitchRange.detail}
+                settings={settings}
+                onExportData={handleExportData}
+                onImportData={handleImportData}
+                onResetProgress={handleResetProgress}
+                onSettingsChange={updateSettings}
+              />
+            )}
+          </Suspense>
+        </ErrorBoundary>
       </div>
     </main>
   );

@@ -65,15 +65,24 @@ afterEach(() => {
 });
 
 describe("App", () => {
-  it("renders the default practice shell with answer controls disabled before a round starts", () => {
+  it("renders the default practice shell with answer controls disabled before a round starts", async () => {
     render(<App />);
 
     expect(screen.getByRole("heading", { level: 1, name: "NoteSense" })).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "Note reading" })).toHaveAttribute("aria-current", "page");
     expect(screen.getByRole("link", { name: "Pitch training" })).not.toHaveAttribute("aria-current");
-    expect(screen.getByTestId("practice-feedback")).toHaveTextContent("Ready");
+    expect(await screen.findByTestId("practice-feedback")).toHaveTextContent("Ready");
     expect(screen.getByRole("group", { name: "88-key piano keyboard" })).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "White piano key A0" })).toHaveAttribute("aria-disabled", "true");
+  });
+
+  it("shows a recoverable not-found screen instead of silently starting a drill", async () => {
+    window.history.replaceState(null, "", "/progress/not-a-route");
+    render(<App />);
+
+    expect(await screen.findByRole("heading", { name: "That destination does not exist" })).toBeInTheDocument();
+    expect(screen.getByText("/progress/not-a-route")).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Go to practice" })).toHaveAttribute("href", "/practice/reading");
   });
 
   it("opens and closes the navigation drawer from the topbar menu button", async () => {

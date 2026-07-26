@@ -3,6 +3,7 @@ import { reportRenderFailure } from "../observability";
 
 type ErrorBoundaryProps = {
   children: ReactNode;
+  resetKey?: string;
 };
 
 type ErrorBoundaryState = {
@@ -20,6 +21,12 @@ export default class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBo
 
   override componentDidCatch(error: Error, errorInfo: ErrorInfo) {
     reportRenderFailure(error, errorInfo);
+  }
+
+  override componentDidUpdate(previousProps: ErrorBoundaryProps) {
+    if (this.state.hasError && previousProps.resetKey !== this.props.resetKey) {
+      this.setState({ hasError: false });
+    }
   }
 
   private handleReload = () => {

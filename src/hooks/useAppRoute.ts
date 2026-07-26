@@ -7,7 +7,14 @@
 
 import { useCallback } from "react";
 import { navigate, usePath } from "raviger";
-import { DEFAULT_ROUTE, matchRoute, routeForSection, type AppSection, type RouteDefinition } from "../routes";
+import {
+  DEFAULT_ROUTE,
+  matchRoute,
+  normalizeRoutePath,
+  routeForSection,
+  type AppSection,
+  type RouteDefinition,
+} from "../routes";
 import type { PracticeMode } from "../types";
 
 export type AppRoute = {
@@ -22,6 +29,7 @@ export type AppRoute = {
 export function useAppRoute(): AppRoute {
   const path = usePath() ?? "/";
   const matched = matchRoute(path);
+  const isUnknownPath = matched === undefined && normalizeRoutePath(path) !== "/";
 
   const goToRoute = useCallback((next: RouteDefinition) => {
     navigate(next.path);
@@ -33,7 +41,7 @@ export function useAppRoute(): AppRoute {
 
   return {
     route: matched ?? DEFAULT_ROUTE,
-    isUnknownPath: matched === undefined,
+    isUnknownPath,
     goToRoute,
     goToSection,
   };

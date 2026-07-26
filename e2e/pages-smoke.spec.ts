@@ -74,3 +74,27 @@ test("serves the GitHub Pages build under the /notesense/ base path", async ({ p
   expect(failedAssetResponses).toEqual([]);
   expect(failedMetadataResponses).toEqual([]);
 });
+
+test("loads nested routes through the Pages 404 shell and preserves them on reload", async ({ page }) => {
+  const firstLoad = await page.goto("/notesense/progress/map", { waitUntil: "domcontentloaded" });
+
+  // GitHub Pages correctly returns 404 for a deep path, but its 404.html is
+  // our built shell and the router still renders the requested destination.
+  expect(firstLoad?.status()).toBe(404);
+  await expect(page.getByRole("heading", { name: "Mastery map" })).toBeVisible();
+
+  const reloaded = await page.reload({ waitUntil: "domcontentloaded" });
+  expect(reloaded?.status()).toBe(404);
+  await expect(page.getByRole("heading", { name: "Mastery map" })).toBeVisible();
+});
+
+test("renders an in-app not-found screen for an unknown Pages destination", async ({ page }) => {
+  const response = await page.goto("/notesense/progress/not-a-route", { waitUntil: "domcontentloaded" });
+
+  expect(response?.status()).toBe(404);
+  await expect(page.getByRole("heading", { name: "That destination does not exist" })).toBeVisible();
+  await expect(page.getByRole("link", { name: "Go to practice" })).toHaveAttribute(
+    "href",
+    "/notesense/practice/reading",
+  );
+});

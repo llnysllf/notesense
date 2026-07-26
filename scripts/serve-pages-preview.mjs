@@ -42,9 +42,9 @@ function sendText(response, statusCode, text) {
   response.end(text);
 }
 
-function sendFile(response, path) {
+function sendFile(response, path, statusCode = 200) {
   const contentType = contentTypes.get(extname(path)) ?? "application/octet-stream";
-  response.writeHead(200, {
+  response.writeHead(statusCode, {
     "cache-control": "no-store",
     "content-type": contentType,
   });
@@ -95,6 +95,14 @@ const server = createServer((request, response) => {
   const path = resolveDistPath(pathname);
 
   if (!path || !existsSync(path) || !statSync(path).isFile()) {
+    // Match GitHub Pages: an unknown clean path receives the built 404 shell
+    // with an HTTP 404, allowing the client router to render a recoverable
+    // in-app not-found view. Missing assets remain ordinary text 404s.
+    const fallbackPath = join(DIST_ROOT, "404.html");
+    if (path && extname(pathname) === "" && existsSync(fallbackPath)) {
+      sendFile(response, fallbackPath, 404);
+      return;
+    }
     sendText(response, 404, "Not found");
     return;
   }
