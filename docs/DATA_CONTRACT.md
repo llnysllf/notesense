@@ -25,12 +25,13 @@ No other browser storage key is part of the supported app contract.
 
 ## Export Schema
 
-Exported JSON is created only through a learner action. The current export schema version is `1` and includes:
+Exported JSON is created only through a learner action. The current export schema version is `2` and includes:
 
 - `schemaVersion`
 - `exportedAt`
 - `progress`
 - `settings`
+- `attemptEvents` (schema v2): immutable structured learning evidence; it excludes raw audio and microphone frames.
 
 The export filename follows `notesense-progress-YYYY-MM-DD.json`.
 
