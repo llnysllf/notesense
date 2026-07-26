@@ -114,6 +114,32 @@ export {
   exactScorer,
 } from "@notesense/shared";
 
+// Evidence ledger (Slice 4).
+export type {
+  AttemptEvent,
+  AttemptResult,
+  AttemptVersions,
+  CompetencyEvidence,
+  EvidenceSource,
+  CompetencyMastery,
+  MasterySnapshot,
+  SelectionCandidate,
+  RecentAttempt,
+  SessionRollup,
+} from "@notesense/shared";
+export {
+  normalizeAttemptEvent,
+  unionAttemptEvents,
+  buildMasterySnapshot,
+  selectCompetencies,
+  nextReviewDueIso,
+  isDue,
+  isMastered,
+  migrateLegacyProgress,
+  recentAttempts,
+  sessionRollups,
+} from "@notesense/shared";
+
 export type StaffClef = "treble" | "bass";
 
 export type TrainingNote = {

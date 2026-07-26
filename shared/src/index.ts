@@ -7,3 +7,4 @@ export * from "./music";
 export * from "./curriculum";
 export * from "./exercises";
 export * from "./runtime";
+export * from "./evidence";

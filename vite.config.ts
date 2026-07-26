@@ -124,6 +124,11 @@ export default defineConfig({
         "shared/src/runtime/sessionMachine.ts",
         "shared/src/runtime/answerCollector.ts",
         "shared/src/runtime/scorer.ts",
+        "shared/src/evidence/attemptEvent.ts",
+        "shared/src/evidence/mastery.ts",
+        "shared/src/evidence/scheduler.ts",
+        "shared/src/evidence/migration.ts",
+        "shared/src/evidence/projections.ts",
       ],
       thresholds: {
         perFile: true,
