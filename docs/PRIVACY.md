@@ -20,8 +20,8 @@ Song practice results (best accuracy, completions, last played time) are saved i
 ## Export And Import
 
 - Exported JSON files are created only when the learner chooses **Export data**.
-- Export schema version is currently `1`.
-- Exported files contain schema version, export timestamp, progress, history, and settings.
+- Export schema version is currently `2`.
+- Exported files contain schema version, export timestamp, progress, history, settings, and the learner's structured attempt evidence; raw audio and microphone frames are never exported.
 - Imported files are parsed in the browser and normalized before they replace local progress.
 - Import parsing treats file contents as untrusted input and rejects unsupported schema versions.
 

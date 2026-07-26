@@ -1,8 +1,9 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { playMelody, playTone } from "../audio";
 import { getPianoKeyById, getPitchNotes } from "../noteData";
-import { ADVANCE_DELAY_MS, MELODY_ADVANCE_DELAY_MS } from "./practiceSessionConstants";
-import { completeSessionRound, evaluateMelodyAnswer, evaluateSingleAnswer } from "./practiceSessionLogic";
+import { ADVANCE_DELAY_MS } from "./practiceSessionConstants";
+import { captureSingleEvidenceAttempt } from "./evidenceCapture";
+import { playPracticePrompt, startPracticeRound, submitMelodyPracticeAnswer } from "./practiceSessionActions";
+import { completeSessionRound, evaluateSingleAnswer } from "./practiceSessionLogic";
 import { usePracticeItems } from "./usePracticeItems";
 import { useReadingShortcuts } from "./useReadingShortcuts";
 import type { UsePracticeSessionOptions, UsePracticeSessionResult } from "./practiceSessionTypes";
@@ -14,7 +15,6 @@ import type {
   PracticeSettings,
   SessionSummary,
 } from "../types";
-
 export function usePracticeSession({
   settings,
   progress,
@@ -45,16 +45,15 @@ export function usePracticeSession({
   const [roundStartedAt, setRoundStartedAt] = useState<number | null>(null);
   const [lastSummary, setLastSummary] = useState<SessionSummary | null>(null);
   const advanceTimerRef = useRef<number | null>(null);
-
+  const promptStartedAtRef = useRef<{ wallIso: string; clock: number } | null>(null);
+  const sessionIdRef = useRef<string>("");
   const clearAdvanceTimer = useCallback(() => {
     if (advanceTimerRef.current !== null) {
       window.clearTimeout(advanceTimerRef.current);
       advanceTimerRef.current = null;
     }
   }, []);
-
   useEffect(() => () => clearAdvanceTimer(), [clearAdvanceTimer]);
-
   const finishRound = useCallback(() => {
     if (!isRunning) return;
     clearAdvanceTimer();
@@ -87,7 +86,6 @@ export function usePracticeSession({
     settings,
     timeRemaining,
   ]);
-
   useEffect(() => {
     if (!isRunning) return;
     if (timeRemaining <= 0) {
@@ -97,7 +95,6 @@ export function usePracticeSession({
     const t = window.setTimeout(() => setTimeRemaining((s) => s - 1), 1000);
     return () => window.clearTimeout(t);
   }, [finishRound, isRunning, timeRemaining]);
-
   function setPracticeMode(nextMode: PracticeMode) {
     clearAdvanceTimer();
     setMode(nextMode);
@@ -112,46 +109,42 @@ export function usePracticeSession({
     setRoundStartedAt(null);
     setTimeRemaining(settings.roundLength);
   }
-
   function startRound() {
     clearAdvanceTimer();
-    setRoundStartedAt(Date.now());
-    setIsRunning(true);
-    setFeedback(null);
-    setLastSummary(null);
-    setRoundAttempts(0);
-    setRoundCorrect(0);
-    setCurrentStreak(0);
-    setBestRoundStreak(0);
-    setTimeRemaining(settings.roundLength);
-
-    if (mode === "reading") {
-      setCurrentReadingNote((note) => getNextReadingNote(note.id));
-      return;
-    }
-
-    if (settings.pitchExercise === "melody") {
-      const nextMelody = getNextPitchMelody(currentMelody.at(-1)?.id);
-      setCurrentMelody(nextMelody);
-      setMelodyAnswerNoteIds([]);
-      if (settings.autoPlayPitch) playMelody(nextMelody.map((note) => note.frequency));
-      return;
-    }
-
-    const nextPitch = getNextPitchNote(currentPitchNote.id);
-    setCurrentPitchNote(nextPitch);
-    if (settings.autoPlayPitch) playTone(nextPitch.frequency);
+    sessionIdRef.current = globalThis.crypto?.randomUUID?.() ?? `session-${Date.now()}`;
+    promptStartedAtRef.current = { wallIso: new Date().toISOString(), clock: performance.now() };
+    startPracticeRound({
+      mode,
+      settings,
+      currentMelody,
+      currentPitchNote,
+      setRoundStartedAt,
+      setIsRunning,
+      setFeedback,
+      setLastSummary,
+      setRoundAttempts,
+      setRoundCorrect,
+      setCurrentStreak,
+      setBestRoundStreak,
+      setTimeRemaining,
+      getNextReadingNote,
+      getNextPitchMelody,
+      getNextPitchNote,
+      setCurrentReadingNote,
+      setCurrentMelody,
+      setCurrentPitchNote,
+      setMelodyAnswerNoteIds,
+    });
   }
-
   function playCurrentNote() {
-    if (mode === "pitch" && settings.pitchExercise === "melody") {
-      playMelody(currentMelody.map((note) => note.frequency));
-      return;
-    }
-
-    playTone(mode === "reading" ? currentReadingNote.frequency : currentPitchNote.frequency);
+    playPracticePrompt({
+      mode,
+      settings,
+      melody: currentMelody,
+      readingFrequency: currentReadingNote.frequency,
+      pitchFrequency: currentPitchNote.frequency,
+    });
   }
-
   function recordAnswer(answer: NoteName, answerId?: string) {
     if (feedback !== null || !isRunning) return;
     const answeredMode = mode;
@@ -173,49 +166,60 @@ export function usePracticeSession({
       bestRoundStreak,
       progress,
     });
-
     setFeedback(nextFeedback);
     setRoundAttempts((n) => n + 1);
     setRoundCorrect((n) => n + (isCorrect ? 1 : 0));
     setCurrentStreak(nextStreak);
     setBestRoundStreak(nextBestStreak);
     onProgressChange(nextProgress);
+    const answerMidi = getPianoKeyById(answerId ?? "")?.midi;
+    captureSingleEvidenceAttempt({
+      timing: promptStartedAtRef.current,
+      sessionId: sessionIdRef.current,
+      mode: answeredMode,
+      promptId: answeredMode === "reading" ? answeredReadingNote.id : answeredPitchNote.id,
+      correct: isCorrect,
+      ...(answerMidi === undefined ? {} : { answerMidi }),
+    });
 
     clearAdvanceTimer();
     advanceTimerRef.current = window.setTimeout(() => {
       advanceTimerRef.current = null;
       setFeedback(null);
       if (answeredMode === "reading") {
+        promptStartedAtRef.current = { wallIso: new Date().toISOString(), clock: performance.now() };
         setCurrentReadingNote((note) => getNextReadingNote(note.id, nextProgress));
         return;
       }
       const nextPitch = getNextPitchNote(answeredPitchNote.id, nextProgress);
+      promptStartedAtRef.current = { wallIso: new Date().toISOString(), clock: performance.now() };
       setCurrentPitchNote(nextPitch);
       if (settings.autoPlayPitch) {
-        playTone(nextPitch.frequency);
+        playPracticePrompt({
+          mode: "pitch",
+          settings,
+          melody: [],
+          readingFrequency: nextPitch.frequency,
+          pitchFrequency: nextPitch.frequency,
+        });
       }
     }, ADVANCE_DELAY_MS);
   }
-
   function handleReadingKeyAnswer(noteId: string) {
     const key = getPianoKeyById(noteId);
     if (!key) return;
-
     recordAnswer(key.naturalName, key.id);
   }
 
   function handlePitchKeyAnswer(noteId: string) {
     const key = getPianoKeyById(noteId);
     if (!key) return;
-
     recordAnswer(key.naturalName, key.id);
   }
-
   function handleMelodyNoteInput(noteId: string) {
     if (mode !== "pitch" || settings.pitchExercise !== "melody" || !isRunning || feedback !== null) return;
     if (melodyAnswerNoteIds.length >= currentMelody.length) return;
     if (!getPitchNotes(settings.pitchRange, settings.customPitchRange).some((note) => note.id === noteId)) return;
-
     setMelodyAnswerNoteIds((answer) => [...answer, noteId]);
   }
 
@@ -240,34 +244,33 @@ export function usePracticeSession({
       return;
     }
 
-    const {
-      correctCount,
-      feedback: nextFeedback,
-      nextProgress,
-      streakResult,
-    } = evaluateMelodyAnswer({
+    submitMelodyPracticeAnswer({
       progress,
       melody: currentMelody,
       answerNoteIds: melodyAnswerNoteIds,
       currentStreak,
       bestRoundStreak,
+      timing: promptStartedAtRef.current,
+      sessionId: sessionIdRef.current,
+      answerMidis: melodyAnswerNoteIds.map((id) => getPianoKeyById(id)?.midi),
+      setFeedback,
+      setRoundAttempts,
+      setRoundCorrect,
+      setCurrentStreak,
+      setBestRoundStreak,
+      onProgressChange,
+      clearAdvanceTimer,
+      setAdvanceTimer: (value) => {
+        advanceTimerRef.current = value;
+      },
+      getNextPitchMelody,
+      setCurrentMelody,
+      setMelodyAnswerNoteIds,
+      autoPlayPitch: settings.autoPlayPitch,
+      setPromptTiming: () => {
+        promptStartedAtRef.current = { wallIso: new Date().toISOString(), clock: performance.now() };
+      },
     });
-    setFeedback(nextFeedback);
-    setRoundAttempts((attempts) => attempts + currentMelody.length);
-    setRoundCorrect((correct) => correct + correctCount);
-    setCurrentStreak(streakResult.streak);
-    setBestRoundStreak(streakResult.best);
-    onProgressChange(nextProgress);
-
-    clearAdvanceTimer();
-    advanceTimerRef.current = window.setTimeout(() => {
-      advanceTimerRef.current = null;
-      const nextMelody = getNextPitchMelody(currentMelody.at(-1)?.id, nextProgress);
-      setCurrentMelody(nextMelody);
-      setMelodyAnswerNoteIds([]);
-      setFeedback(null);
-      if (settings.autoPlayPitch) playMelody(nextMelody.map((note) => note.frequency));
-    }, MELODY_ADVANCE_DELAY_MS);
   }
 
   function resetSession(nextSettings: PracticeSettings, nextProgress: PracticeProgress) {

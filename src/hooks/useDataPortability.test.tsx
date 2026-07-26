@@ -44,7 +44,7 @@ afterEach(() => {
 });
 
 describe("useDataPortability", () => {
-  it("exports current practice data through a temporary download link", () => {
+  it("exports current practice data through a temporary download link", async () => {
     const createObjectURL = vi.fn(() => "blob:notesense-export");
     const revokeObjectURL = vi.fn();
     const originalCreateObjectUrl = URL.createObjectURL;
@@ -57,7 +57,7 @@ describe("useDataPortability", () => {
     const { result } = renderPortabilityHook({ progress });
 
     try {
-      act(() => result.current.handleExportData());
+      await act(async () => result.current.handleExportData());
 
       expect(createObjectURL).toHaveBeenCalledWith(expect.any(Blob));
       expect(click).toHaveBeenCalledTimes(1);

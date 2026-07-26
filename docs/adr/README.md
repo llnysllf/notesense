@@ -77,3 +77,4 @@ Architecture Decision Records document durable product and engineering decisions
 - [ADR 0060: Add Shared Musical Domain Model](0060-shared-musical-domain-model.md) - Accepted
 - [ADR 0061: Add Exercise Content Platform](0061-exercise-content-platform.md) - Accepted
 - [ADR 0062: Add Unified Exercise Runtime Core](0062-unified-exercise-runtime.md) - Accepted
+- [ADR 0063: Add Evidence Ledger And Derived Mastery](0063-evidence-ledger-and-mastery.md) - Accepted
