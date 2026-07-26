@@ -5,26 +5,42 @@ import {
   type AttemptEvent,
   type CompetencyId,
   type PracticeProgress,
-} from "@notesense/shared";
+} from "./types";
 import { appendAttemptEvent, loadAttemptEvents, replaceAttemptEvents } from "./storage/eventStore";
 import { rebuildEvidenceProjections, saveEvidenceProjections } from "./storage/projectionsStore";
 
 const DEVICE_ID_KEY = "notesense.evidence.device-id.v1";
 const DEVICE_SEQUENCE_KEY = "notesense.evidence.device-sequence.v1";
 const LEGACY_MIGRATED_KEY = "notesense.evidence.legacy-migrated.v1";
+let ephemeralDeviceId: string | null = null;
+let ephemeralSequence = 0;
+
+function newId(prefix: string): string {
+  return globalThis.crypto?.randomUUID?.() ?? `${prefix}-${Date.now()}-${Math.random().toString(36).slice(2)}`;
+}
 
 function stableDeviceId(): string {
-  const existing = localStorage.getItem(DEVICE_ID_KEY);
-  if (existing) return existing;
-  const id = globalThis.crypto?.randomUUID?.() ?? `device-${Date.now()}-${Math.random().toString(36).slice(2)}`;
-  localStorage.setItem(DEVICE_ID_KEY, id);
-  return id;
+  try {
+    const existing = localStorage.getItem(DEVICE_ID_KEY);
+    if (existing) return existing;
+    const id = newId("device");
+    localStorage.setItem(DEVICE_ID_KEY, id);
+    return id;
+  } catch {
+    ephemeralDeviceId ??= newId("device");
+    return ephemeralDeviceId;
+  }
 }
 
 function nextSequence(): number {
-  const sequence = Number(localStorage.getItem(DEVICE_SEQUENCE_KEY) ?? "0") + 1;
-  localStorage.setItem(DEVICE_SEQUENCE_KEY, String(sequence));
-  return sequence;
+  try {
+    const sequence = Number(localStorage.getItem(DEVICE_SEQUENCE_KEY) ?? "0") + 1;
+    localStorage.setItem(DEVICE_SEQUENCE_KEY, String(sequence));
+    return sequence;
+  } catch {
+    ephemeralSequence += 1;
+    return ephemeralSequence;
+  }
 }
 
 export async function initializeEvidenceLedger(progress: PracticeProgress): Promise<void> {
@@ -78,7 +94,7 @@ export function createLiveAttemptEvent(options: {
 }): AttemptEvent {
   return {
     schemaVersion: 1,
-    eventId: globalThis.crypto?.randomUUID?.() ?? `event-${Date.now()}-${Math.random().toString(36).slice(2)}`,
+    eventId: newId("event"),
     deviceId: stableDeviceId(),
     deviceSequence: nextSequence(),
     sessionId: options.sessionId,

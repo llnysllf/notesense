@@ -1,4 +1,4 @@
-import { normalizeAttemptEvent, unionAttemptEvents, type AttemptEvent } from "@notesense/shared";
+import { normalizeAttemptEvent, unionAttemptEvents, type AttemptEvent } from "../types";
 
 const DATABASE_NAME = "notesense-evidence";
 const DATABASE_VERSION = 1;

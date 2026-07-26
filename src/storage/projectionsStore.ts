@@ -1,4 +1,4 @@
-import { buildMasterySnapshot, recentAttempts, sessionRollups, type AttemptEvent } from "@notesense/shared";
+import { buildMasterySnapshot, recentAttempts, sessionRollups, type AttemptEvent } from "../types";
 
 const KEY = "notesense.evidence.projections.v1";
 
