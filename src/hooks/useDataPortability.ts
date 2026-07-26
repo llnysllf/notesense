@@ -5,7 +5,6 @@ import {
   saveSettings,
   serializePracticeDataExport,
 } from "../storage";
-import { exportEvidenceEvents, importEvidenceEvents } from "../evidenceLedger";
 import type { PracticeProgress, PracticeSettings } from "../types";
 
 const IMPORT_SUCCESS = "Progress imported.";
@@ -25,6 +24,7 @@ export function useDataPortability({ progress, settings, onImport, onStatusChang
 } {
   async function handleExportData() {
     const exportedAt = new Date();
+    const { exportEvidenceEvents } = await import("../evidenceLedger");
     const data = serializePracticeDataExport(
       progress,
       settings,
@@ -52,6 +52,7 @@ export function useDataPortability({ progress, settings, onImport, onStatusChang
       const { progress: nextProgress, settings: nextSettings } = importResult.data;
       const progressSaved = saveProgress(nextProgress);
       const settingsSaved = saveSettings(nextSettings);
+      const { importEvidenceEvents } = await import("../evidenceLedger");
       const evidenceSaved =
         !importResult.data.attemptEvents || (await importEvidenceEvents(importResult.data.attemptEvents));
       onImport(nextProgress, nextSettings);

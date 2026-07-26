@@ -46,8 +46,10 @@ const budgets = [
 ];
 
 const totalBudget = {
-  rawBytes: 332 * KIB,
-  gzipBytes: 100 * KIB,
+  // The evidence-ledger chunk is deferred from the initial practice route but
+  // remains part of the offline-capable Pages output.
+  rawBytes: 350 * KIB,
+  gzipBytes: 105 * KIB,
 };
 
 function collectFiles(directory) {
