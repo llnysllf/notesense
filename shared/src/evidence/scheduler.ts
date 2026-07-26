@@ -29,6 +29,7 @@ export type SelectionCandidate = {
 
 // When a competency is next due, based on how well it is currently known.
 export function nextReviewDueIso(mastery: CompetencyMastery): string {
+  if (!mastery.lastPracticedAtIso) return new Date(0).toISOString();
   const step = mastery.accuracy >= MASTERED_ACCURACY ? Math.min(mastery.attempts, REVIEW_INTERVALS_DAYS.length - 1) : 1;
   const days = REVIEW_INTERVALS_DAYS[step] ?? 1;
   return new Date(Date.parse(mastery.lastPracticedAtIso) + days * 86_400_000).toISOString();

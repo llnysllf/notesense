@@ -133,16 +133,18 @@ export function createPracticeDataExport(
   progress: PracticeProgress,
   settings: PracticeSettings,
   exportedAt?: string,
+  attemptEvents?: unknown[],
 ): PracticeDataExport {
-  return createSharedExport(progress, settings, emptyProgress, exportedAt);
+  return createSharedExport(progress, settings, emptyProgress, exportedAt, attemptEvents);
 }
 
 export function serializePracticeDataExport(
   progress: PracticeProgress,
   settings: PracticeSettings,
   exportedAt?: string,
+  attemptEvents?: unknown[],
 ): string {
-  return serializeSharedExport(progress, settings, emptyProgress, exportedAt);
+  return serializeSharedExport(progress, settings, emptyProgress, exportedAt, attemptEvents);
 }
 
 export function parsePracticeDataImport(fileContents: string) {

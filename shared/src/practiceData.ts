@@ -27,7 +27,7 @@ export {
   normalizeSettings,
 } from "./practiceSettings";
 
-export const DATA_EXPORT_SCHEMA_VERSION = 1;
+export const DATA_EXPORT_SCHEMA_VERSION = 2;
 export const SESSION_HISTORY_LIMIT = 20;
 export const INVALID_IMPORT_ERROR = "Choose a valid NoteSense export file.";
 export const UNSUPPORTED_IMPORT_ERROR = "This NoteSense export version is not supported.";
@@ -171,12 +171,14 @@ export function createPracticeDataExport(
   settings: PracticeSettings,
   emptyProgress: PracticeProgress,
   exportedAt = new Date().toISOString(),
+  attemptEvents?: unknown[],
 ): PracticeDataExport {
   return {
     schemaVersion: DATA_EXPORT_SCHEMA_VERSION,
     exportedAt,
     progress: normalizeProgress(progress, emptyProgress),
     settings: normalizeSettings(settings),
+    ...(attemptEvents ? { attemptEvents } : {}),
   };
 }
 
@@ -185,8 +187,9 @@ export function serializePracticeDataExport(
   settings: PracticeSettings,
   emptyProgress: PracticeProgress,
   exportedAt?: string,
+  attemptEvents?: unknown[],
 ): string {
-  return `${JSON.stringify(createPracticeDataExport(progress, settings, emptyProgress, exportedAt), null, 2)}\n`;
+  return `${JSON.stringify(createPracticeDataExport(progress, settings, emptyProgress, exportedAt, attemptEvents), null, 2)}\n`;
 }
 
 export function createExportFileName(exportedAt = new Date()): string {
@@ -205,7 +208,7 @@ export function parsePracticeDataImport(
       return { ok: false, error: INVALID_IMPORT_ERROR };
     }
 
-    if (parsedImport.schemaVersion !== DATA_EXPORT_SCHEMA_VERSION) {
+    if (parsedImport.schemaVersion !== 1 && parsedImport.schemaVersion !== DATA_EXPORT_SCHEMA_VERSION) {
       return { ok: false, error: UNSUPPORTED_IMPORT_ERROR };
     }
 
@@ -221,6 +224,9 @@ export function parsePracticeDataImport(
         normalizeSettings(parsedImport.settings),
         emptyProgress,
         exportedAt,
+        parsedImport.schemaVersion === 2 && Array.isArray(parsedImport.attemptEvents)
+          ? parsedImport.attemptEvents
+          : undefined,
       ),
     };
   } catch {

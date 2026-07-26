@@ -22,13 +22,18 @@ Add a framework-free evidence ledger under `shared/src/evidence/`, where immutab
 
 The contract is **stable and versioned, not frozen**: the versioning fields exist precisely so rhythm, MIDI, and singing can extend evidence without a schema break.
 
-Scope is the framework-free ledger. The IndexedDB event store, projection persistence, export schema v2, and routing live practice through this ledger are a deferred follow-up.
+`src/storage/eventStore.ts` persists the immutable log in IndexedDB with
+idempotent append and safe recovery when browser storage is unavailable.
+`src/storage/projectionsStore.ts` retains only rebuildable, bounded UI caches.
+The app backfills legacy counters exactly once, records reading and ear-training
+attempts (including melody answers) through the ledger, and exports schema v2
+with the event stream while still accepting schema-v1 exports.
 
 ## Consequences
 
 - Concurrent practice on two devices loses no accepted attempts, because union is by event id rather than by counter arithmetic.
 - Mastery, scheduling, and dashboards can be rebuilt from the ledger after an algorithm change instead of being migrated in place.
-- Legacy evidence is honestly labelled: it provides a gentle starting hint and is excluded from fluency and discounted in confidence, rather than masquerading as measured attempts.
+- Legacy evidence is honestly labelled: it provides a gentle starting hint but is excluded from calibrated accuracy, recency, fluency, and scheduling rather than masquerading as measured attempts.
 - Selection is explainable and deterministic, so a learner can be told why an exercise was chosen and a test can assert it.
 - Raw audio and pitch frames never enter the ledger; only derived summaries do, consistent with the microphone privacy posture.
-- Additive: no storage key, export schema, or existing behavior changes yet. Changes to the event contract, mastery algorithm, or selection policy require data-contract, privacy, architecture, and testing review.
+- Additive: aggregate progress remains available for existing UI while the ledger becomes the durable source for future mastery and scheduling. Changes to the event contract, mastery algorithm, or selection policy require data-contract, privacy, architecture, and testing review.

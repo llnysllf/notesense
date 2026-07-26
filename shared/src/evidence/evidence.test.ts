@@ -82,7 +82,7 @@ describe("normalizeAttemptEvent", () => {
     expect(normalized?.answer).toBeUndefined();
   });
 
-  it("carries optional identity, seed, and server receipt when present", () => {
+  it("carries client-owned optional identity and seed, but never trusts a server receipt", () => {
     const normalized = normalizeAttemptEvent({
       ...event(),
       userId: "  user-7 ",
@@ -94,7 +94,7 @@ describe("normalizeAttemptEvent", () => {
     expect(normalized?.userId).toBe("user-7");
     expect(normalized?.exercise).toEqual({ id: "ex", version: 3, generatorVersion: 2, seed: "sd" });
     expect(normalized?.deviceSequence).toBe(5);
-    expect(normalized?.receivedAtIso).toBe("2026-07-20T12:00:10.000Z");
+    expect(normalized?.receivedAtIso).toBeUndefined();
     expect(normalized?.inputSource).toBe("midi");
   });
 
@@ -171,6 +171,12 @@ describe("unionAttemptEvents", () => {
     // Re-merging in the other order changes nothing.
     expect(unionAttemptEvents(deviceB, deviceA)).toEqual(merged);
   });
+
+  it("has a commutative result even if a broken peer reuses an event id", () => {
+    const first = event({ result: { correct: true, totalScore: 1, components: {}, mistakeCodes: [] } });
+    const conflicting = event({ result: { correct: false, totalScore: 0, components: {}, mistakeCodes: ["wrong"] } });
+    expect(unionAttemptEvents([first], [conflicting])).toEqual(unionAttemptEvents([conflicting], [first]));
+  });
 });
 
 describe("buildMasterySnapshot", () => {
@@ -216,6 +222,14 @@ describe("buildMasterySnapshot", () => {
 
     const live = buildMasterySnapshot([event()], NOW).competencies["reading.pitch.staff-to-key"];
     expect(live?.confidence).toBeGreaterThan(mastery?.confidence ?? 1);
+    expect(mastery?.accuracy).toBe(0);
+    expect(mastery?.lastPracticedAtIso).toBeUndefined();
+  });
+
+  it("uses the latest event rather than caller order for snapshot metadata", () => {
+    const old = event({ eventId: "old", answeredAtIso: "2026-07-20T10:00:00.000Z" });
+    const fresh = event({ eventId: "fresh", answeredAtIso: "2026-07-20T11:00:00.000Z" });
+    expect(buildMasterySnapshot([fresh, old], NOW).throughEventId).toBe("fresh");
   });
 
   it("returns an empty snapshot for an empty stream", () => {
@@ -232,7 +246,7 @@ describe("scheduler", () => {
     const weak = { ...base!, accuracy: 0.2, attempts: 1 };
     const strong = { ...base!, accuracy: 0.95, attempts: 5 };
     expect(Date.parse(nextReviewDueIso(weak))).toBeLessThan(Date.parse(nextReviewDueIso(strong)));
-    expect(isDue(weak, new Date(Date.parse(weak.lastPracticedAtIso) + 2 * 86_400_000))).toBe(true);
+    expect(isDue(weak, new Date(Date.parse(weak.lastPracticedAtIso!) + 2 * 86_400_000))).toBe(true);
     expect(isMastered({ ...strong, confidence: 0.9 })).toBe(true);
     expect(isMastered({ ...weak, confidence: 0.9 })).toBe(false);
   });
@@ -284,7 +298,7 @@ describe("scheduler", () => {
       generatedAtIso: NOW.toISOString(),
       competencies: { "reading.pitch.staff-to-key": mastery! },
     });
-    const recent = new Date(Date.parse(base!.lastPracticedAtIso) + 1000);
+    const recent = new Date(Date.parse(base!.lastPracticedAtIso!) + 1000);
 
     // Shaky accuracy, but not yet due for review.
     const shaky = selectCompetencies({

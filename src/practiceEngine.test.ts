@@ -752,7 +752,7 @@ describe("storage progress reducers", () => {
     const serializedExport = serializePracticeDataExport(progress, defaultSettings, "2026-06-05T10:00:00.000Z");
 
     expect(exportData).toMatchObject({
-      schemaVersion: 1,
+      schemaVersion: 2,
       exportedAt: "2026-06-05T10:00:00.000Z",
       settings: defaultSettings,
     });
@@ -779,7 +779,7 @@ describe("storage progress reducers", () => {
     }
 
     expect(importResult.data).toMatchObject({
-      schemaVersion: 1,
+      schemaVersion: 2,
       exportedAt: "2026-06-05T10:00:00.000Z",
       settings: defaultSettings,
     });
@@ -843,7 +843,7 @@ describe("storage progress reducers", () => {
   it("rejects unsupported practice data export versions", () => {
     const importResult = parsePracticeDataImport(
       JSON.stringify({
-        schemaVersion: 2,
+        schemaVersion: 3,
         exportedAt: "2026-06-05T10:00:00.000Z",
         progress: freshProgress(),
         settings: defaultSettings,

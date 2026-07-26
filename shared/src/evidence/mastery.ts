@@ -24,7 +24,7 @@ export type CompetencyMastery = {
   accuracy: number; // 0..1, recency weighted
   fluency: number; // 0..1, faster answers score higher
   confidence: number; // 0..1, how much this estimate should be trusted
-  lastPracticedAtIso: string;
+  lastPracticedAtIso?: string;
   // Attempts that came from inferred legacy summaries. Surfaced so callers can
   // label a starting hint rather than present it as measured evidence.
   inferredAttempts: number;
@@ -60,7 +60,7 @@ export function buildMasterySnapshot(events: readonly AttemptEvent[], now: Date)
     inferred: number;
     fluencyWeighted: number;
     fluencyWeight: number;
-    last: string;
+    last?: string;
     dimensionKeys: Set<string>;
   };
   const accumulators = new Map<CompetencyId, Acc>();
@@ -75,15 +75,22 @@ export function buildMasterySnapshot(events: readonly AttemptEvent[], now: Date)
         inferred: 0,
         fluencyWeighted: 0,
         fluencyWeight: 0,
-        last: event.answeredAtIso,
         dimensionKeys: new Set<string>(),
       };
+
+      acc.attempts += 1;
+      if (event.source === "legacy-summary") {
+        // Legacy aggregates are a label-only starting hint.  They contain no
+        // real timestamps or individual outcomes, so they never affect a
+        // calibrated score, recency, fluency, or scheduling.
+        acc.inferred += 1;
+        accumulators.set(evidence.competencyId, acc);
+        continue;
+      }
 
       const weight = recency * evidence.weight;
       acc.weight += weight;
       if (evidence.correct) acc.weightedCorrect += weight;
-      acc.attempts += 1;
-      if (event.source === "legacy-summary") acc.inferred += 1;
 
       // Inferred evidence has no real timing, so it never feeds fluency.
       if (event.source === "live" && event.responseMs > 0) {
@@ -91,7 +98,7 @@ export function buildMasterySnapshot(events: readonly AttemptEvent[], now: Date)
         acc.fluencyWeight += weight;
       }
       acc.dimensionKeys.add(JSON.stringify(evidence.dimensions));
-      if (Date.parse(event.answeredAtIso) > Date.parse(acc.last)) acc.last = event.answeredAtIso;
+      if (!acc.last || Date.parse(event.answeredAtIso) > Date.parse(acc.last)) acc.last = event.answeredAtIso;
 
       accumulators.set(evidence.competencyId, acc);
     }
@@ -110,7 +117,7 @@ export function buildMasterySnapshot(events: readonly AttemptEvent[], now: Date)
       accuracy: acc.weight === 0 ? 0 : acc.weightedCorrect / acc.weight,
       fluency: acc.fluencyWeight === 0 ? 0 : acc.fluencyWeighted / acc.fluencyWeight,
       confidence: volume * (0.6 + 0.4 * variety) * (0.5 + 0.5 * measuredShare),
-      lastPracticedAtIso: acc.last,
+      ...(acc.last ? { lastPracticedAtIso: acc.last } : {}),
       inferredAttempts: acc.inferred,
     };
   }
@@ -120,7 +127,16 @@ export function buildMasterySnapshot(events: readonly AttemptEvent[], now: Date)
     generatedAtIso: now.toISOString(),
     competencies,
   };
-  const newest = events[events.length - 1];
+  const newest = events.reduce<AttemptEvent | undefined>(
+    (current, candidate) =>
+      !current || Date.parse(candidate.answeredAtIso) > Date.parse(current.answeredAtIso)
+        ? candidate
+        : Date.parse(candidate.answeredAtIso) === Date.parse(current.answeredAtIso) &&
+            candidate.eventId > current.eventId
+          ? candidate
+          : current,
+    undefined,
+  );
   if (newest) snapshot.throughEventId = newest.eventId;
   return snapshot;
 }

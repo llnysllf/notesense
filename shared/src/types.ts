@@ -68,10 +68,13 @@ export type PracticeSettings = {
 };
 
 export type PracticeDataExport = {
-  schemaVersion: 1;
+  schemaVersion: 1 | 2;
   exportedAt: string;
   progress: PracticeProgress;
   settings: PracticeSettings;
+  // Version 2 is additive: v1 readers can still consume the familiar progress
+  // and settings fields, while v2 readers retain the durable evidence ledger.
+  attemptEvents?: unknown[];
 };
 
 export type PracticeDataImportResult =

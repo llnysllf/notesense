@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { playMelody, playTone } from "../audio";
+import { createLiveAttemptEvent, recordEvidenceAttempt } from "../evidenceLedger";
 import { getPianoKeyById, getPitchNotes } from "../noteData";
 import { ADVANCE_DELAY_MS, MELODY_ADVANCE_DELAY_MS } from "./practiceSessionConstants";
 import { completeSessionRound, evaluateMelodyAnswer, evaluateSingleAnswer } from "./practiceSessionLogic";
@@ -45,6 +46,8 @@ export function usePracticeSession({
   const [roundStartedAt, setRoundStartedAt] = useState<number | null>(null);
   const [lastSummary, setLastSummary] = useState<SessionSummary | null>(null);
   const advanceTimerRef = useRef<number | null>(null);
+  const promptStartedAtRef = useRef<{ wallIso: string; clock: number } | null>(null);
+  const sessionIdRef = useRef<string>("");
 
   const clearAdvanceTimer = useCallback(() => {
     if (advanceTimerRef.current !== null) {
@@ -124,6 +127,8 @@ export function usePracticeSession({
     setCurrentStreak(0);
     setBestRoundStreak(0);
     setTimeRemaining(settings.roundLength);
+    sessionIdRef.current = globalThis.crypto?.randomUUID?.() ?? `session-${Date.now()}`;
+    promptStartedAtRef.current = { wallIso: new Date().toISOString(), clock: performance.now() };
 
     if (mode === "reading") {
       setCurrentReadingNote((note) => getNextReadingNote(note.id));
@@ -180,16 +185,35 @@ export function usePracticeSession({
     setCurrentStreak(nextStreak);
     setBestRoundStreak(nextBestStreak);
     onProgressChange(nextProgress);
+    const timing = promptStartedAtRef.current;
+    const answeredAt = new Date();
+    const competencyId = answeredMode === "reading" ? "reading.pitch.staff-to-key" : "ear.pitch.absolute-anchor";
+    const answerMidi = getPianoKeyById(answerId ?? "")?.midi;
+    void recordEvidenceAttempt(
+      createLiveAttemptEvent({
+        sessionId: sessionIdRef.current || `session-${answeredAt.getTime()}`,
+        exerciseId: answeredMode === "reading" ? "reading.staff-to-key" : "ear.pitch.absolute-anchor",
+        promptId: answeredMode === "reading" ? answeredReadingNote.id : answeredPitchNote.id,
+        startedAtIso: timing?.wallIso ?? answeredAt.toISOString(),
+        answeredAtIso: answeredAt.toISOString(),
+        responseMs: timing ? performance.now() - timing.clock : 0,
+        competencyId,
+        correct: isCorrect,
+        ...(answerMidi === undefined ? {} : { answerMidi }),
+      }),
+    );
 
     clearAdvanceTimer();
     advanceTimerRef.current = window.setTimeout(() => {
       advanceTimerRef.current = null;
       setFeedback(null);
       if (answeredMode === "reading") {
+        promptStartedAtRef.current = { wallIso: new Date().toISOString(), clock: performance.now() };
         setCurrentReadingNote((note) => getNextReadingNote(note.id, nextProgress));
         return;
       }
       const nextPitch = getNextPitchNote(answeredPitchNote.id, nextProgress);
+      promptStartedAtRef.current = { wallIso: new Date().toISOString(), clock: performance.now() };
       setCurrentPitchNote(nextPitch);
       if (settings.autoPlayPitch) {
         playTone(nextPitch.frequency);
@@ -258,11 +282,31 @@ export function usePracticeSession({
     setCurrentStreak(streakResult.streak);
     setBestRoundStreak(streakResult.best);
     onProgressChange(nextProgress);
+    const timing = promptStartedAtRef.current;
+    const answeredAt = new Date();
+    const responseMs = timing ? (performance.now() - timing.clock) / currentMelody.length : 0;
+    currentMelody.forEach((note, index) => {
+      const answerMidi = getPianoKeyById(melodyAnswerNoteIds[index] ?? "")?.midi;
+      void recordEvidenceAttempt(
+        createLiveAttemptEvent({
+          sessionId: sessionIdRef.current || `session-${answeredAt.getTime()}`,
+          exerciseId: "ear.pitch.melody",
+          promptId: `${note.id}-${index}`,
+          startedAtIso: timing?.wallIso ?? answeredAt.toISOString(),
+          answeredAtIso: answeredAt.toISOString(),
+          responseMs,
+          competencyId: "ear.pitch.absolute-anchor",
+          correct: melodyAnswerNoteIds[index] === note.id,
+          ...(answerMidi === undefined ? {} : { answerMidi }),
+        }),
+      );
+    });
 
     clearAdvanceTimer();
     advanceTimerRef.current = window.setTimeout(() => {
       advanceTimerRef.current = null;
       const nextMelody = getNextPitchMelody(currentMelody.at(-1)?.id, nextProgress);
+      promptStartedAtRef.current = { wallIso: new Date().toISOString(), clock: performance.now() };
       setCurrentMelody(nextMelody);
       setMelodyAnswerNoteIds([]);
       setFeedback(null);

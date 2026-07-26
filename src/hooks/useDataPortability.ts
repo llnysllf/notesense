@@ -5,6 +5,7 @@ import {
   saveSettings,
   serializePracticeDataExport,
 } from "../storage";
+import { exportEvidenceEvents, importEvidenceEvents } from "../evidenceLedger";
 import type { PracticeProgress, PracticeSettings } from "../types";
 
 const IMPORT_SUCCESS = "Progress imported.";
@@ -22,9 +23,14 @@ export function useDataPortability({ progress, settings, onImport, onStatusChang
   handleExportData: () => void;
   handleImportData: (file: File) => Promise<void>;
 } {
-  function handleExportData() {
+  async function handleExportData() {
     const exportedAt = new Date();
-    const data = serializePracticeDataExport(progress, settings, exportedAt.toISOString());
+    const data = serializePracticeDataExport(
+      progress,
+      settings,
+      exportedAt.toISOString(),
+      await exportEvidenceEvents(),
+    );
     const blob = new Blob([data], { type: "application/json" });
     const objectUrl = URL.createObjectURL(blob);
     const link = document.createElement("a");
@@ -46,10 +52,12 @@ export function useDataPortability({ progress, settings, onImport, onStatusChang
       const { progress: nextProgress, settings: nextSettings } = importResult.data;
       const progressSaved = saveProgress(nextProgress);
       const settingsSaved = saveSettings(nextSettings);
+      const evidenceSaved =
+        !importResult.data.attemptEvents || (await importEvidenceEvents(importResult.data.attemptEvents));
       onImport(nextProgress, nextSettings);
       onStatusChange(
-        progressSaved && settingsSaved ? IMPORT_SUCCESS : IMPORT_STORAGE_WARNING,
-        progressSaved && settingsSaved ? "success" : "warning",
+        progressSaved && settingsSaved && evidenceSaved ? IMPORT_SUCCESS : IMPORT_STORAGE_WARNING,
+        progressSaved && settingsSaved && evidenceSaved ? "success" : "warning",
       );
     } catch {
       onStatusChange(IMPORT_READ_ERROR, "warning");

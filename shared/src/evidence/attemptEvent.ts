@@ -186,8 +186,6 @@ export function normalizeAttemptEvent(value: unknown): AttemptEvent | null {
   if (typeof exerciseRaw?.seed === "string" && exerciseRaw.seed.length > 0) event.exercise.seed = exerciseRaw.seed;
   if (typeof candidate.userId === "string" && candidate.userId.trim().length > 0)
     event.userId = candidate.userId.trim();
-  if (isIsoDate(candidate.receivedAtIso)) event.receivedAtIso = candidate.receivedAtIso;
-
   // Legacy summaries carry no answer; live events keep only a structured one.
   if (source === "live") {
     const answer = normalizeUserAnswer(candidate.answer);
@@ -204,7 +202,17 @@ export function unionAttemptEvents(...batches: readonly (readonly AttemptEvent[]
   const byId = new Map<string, AttemptEvent>();
   for (const batch of batches) {
     for (const event of batch) {
-      if (!byId.has(event.eventId)) byId.set(event.eventId, event);
+      const existing = byId.get(event.eventId);
+      if (!existing) {
+        byId.set(event.eventId, event);
+        continue;
+      }
+      // A duplicate id must denote the same immutable event.  Picking whichever
+      // replica arrived first made a two-device union order-dependent, so use a
+      // stable representation as the deterministic conflict tie-breaker.
+      const existingEncoded = JSON.stringify(existing);
+      const incomingEncoded = JSON.stringify(event);
+      if (incomingEncoded < existingEncoded) byId.set(event.eventId, event);
     }
   }
   return [...byId.values()].sort(
