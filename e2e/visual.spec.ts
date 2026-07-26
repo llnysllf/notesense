@@ -29,6 +29,7 @@ async function openNavDrawerIfNeeded(page: Page) {
 test("matches the note-reading shell", async ({ page }) => {
   await page.goto("/");
   await expect(page.getByRole("heading", { name: "NoteSense" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Start drill" })).toBeVisible();
 
   await expect(page).toHaveScreenshot("note-reading-shell.png", {
     fullPage: true,
