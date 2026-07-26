@@ -4,3 +4,6 @@ export * from "./merge";
 export * from "./songData";
 export * from "./songAnalysis";
 export * from "./music";
+export * from "./curriculum";
+export * from "./exercises";
+export * from "./runtime";

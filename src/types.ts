@@ -55,10 +55,63 @@ export {
   SCORE_MODEL_VERSION,
   TRANSPORT_V1,
   normalizeScore,
+  normalizeScoreWithWarnings,
   compileScore,
   ticksToSeconds,
   songToScore,
   scoreToSong,
+} from "@notesense/shared";
+
+// Curriculum + exercise content platform (Slice 2).
+export type {
+  CompetencyId,
+  Competency,
+  Dimensions,
+  DifficultyBand,
+  ExerciseDefinition,
+  ExerciseStimulus,
+  ExerciseInputMode,
+  ExpectedAnswer,
+  UserAnswer,
+  ScoringPolicy,
+  ExerciseGenerator,
+} from "@notesense/shared";
+export {
+  COMPETENCIES,
+  competencyOrder,
+  normalizeExerciseDefinition,
+  validateExerciseDefinition,
+  matchAnswer,
+  exerciseRegistry,
+  BUILT_IN_GENERATORS,
+} from "@notesense/shared";
+
+// Unified exercise runtime (Slice 3).
+export type {
+  InputEvent,
+  InputSource,
+  RuntimeTransport,
+  PromptState,
+  PromptPhase,
+  PromptCommand,
+  SessionState,
+  SessionCommand,
+  CollectorMode,
+  Scorer,
+  AttemptOutcome,
+} from "@notesense/shared";
+export {
+  createManualTransport,
+  createPrompt,
+  promptReducer,
+  isPromptComplete,
+  createSession,
+  sessionReducer,
+  isSessionComplete,
+  sessionProgress,
+  collectAnswer,
+  collectorModeFor,
+  exactScorer,
 } from "@notesense/shared";
 
 export type StaffClef = "treble" | "bass";

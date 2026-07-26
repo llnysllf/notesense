@@ -7,6 +7,10 @@ import "./styles.css";
 
 installRuntimeFailureReporting();
 
+if (import.meta.env.DEV && new URLSearchParams(window.location.search).has("content-preview")) {
+  void import("./dev/mountContentPreview").then(({ mountContentPreview }) => mountContentPreview());
+}
+
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <ErrorBoundary>

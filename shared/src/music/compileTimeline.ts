@@ -28,9 +28,8 @@ export type CompiledTimeline = {
 
 const DEFAULT_METER: Meter = { beats: 4, beatUnit: 4 };
 
-// A pickup (anacrusis) is represented by events sitting late in an otherwise
-// full first measure, so measure starts always advance by the full meter
-// length — no special-casing here.
+// A pickup has an explicit authored duration, so it begins at tick zero and
+// the following full measure starts immediately after it.
 export function compileScore(score: Score, transport: Transport = TRANSPORT_V1): CompiledTimeline {
   const events: TimelineEvent[] = [];
   let totalTicks = 0;
@@ -41,7 +40,8 @@ export function compileScore(score: Score, transport: Transport = TRANSPORT_V1):
 
     for (const measure of part.measures) {
       if (measure.meter) currentMeter = measure.meter;
-      const measureLengthTicks = rationalToTicks(measureLengthInQuarters(currentMeter), transport) ?? 0;
+      const measureLengthTicks =
+        rationalToTicks(measure.pickupDuration ?? measureLengthInQuarters(currentMeter), transport) ?? 0;
 
       for (const voice of measure.voices) {
         for (const event of voice.events) {

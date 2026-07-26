@@ -45,6 +45,9 @@ export type Measure = {
   id: string;
   number: number;
   meter?: Meter; // present when the meter changes (always on measure 1)
+  // A shortened opening measure. The following measure starts after this
+  // duration rather than after a full bar.
+  pickupDuration?: Rational;
   keySignature?: KeySignature;
   voices: Voice[];
 };

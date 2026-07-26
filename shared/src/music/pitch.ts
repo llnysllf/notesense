@@ -81,3 +81,12 @@ export function spelledToNoteId(pitch: SpelledPitch): string | undefined {
   if (!canonical) return undefined;
   return `${canonical.step}${canonical.alter === 1 ? "#" : ""}${canonical.octave}`;
 }
+
+// The app note id for a piano MIDI number, or "" when out of the 88-key range.
+// Total (no chained optionals), so callers with a known-valid midi need no
+// defensive fallback.
+export function midiToNoteId(midi: number): string {
+  const spelled = midiToSpelled(midi);
+  if (!spelled) return "";
+  return `${spelled.step}${spelled.alter === 1 ? "#" : ""}${spelled.octave}`;
+}
