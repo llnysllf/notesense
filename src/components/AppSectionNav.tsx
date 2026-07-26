@@ -1,54 +1,27 @@
 import { useEffect } from "react";
-import type { PracticeMode } from "../types";
+import { Link } from "raviger";
+import { groupedRoutes, type RouteDefinition } from "../routes";
 
-export type AppSection = "practice" | "songs" | "progress" | "map" | "history" | "settings" | "data";
+export type { AppSection } from "../routes";
 
 // Sidebar navigation: one flat, scannable list of destinations under three
 // group headings, replacing the old stacked switcher rows (section pills,
 // sub-tabs, and the in-panel practice-mode toggle). Note reading and Pitch
 // training are nav items here because choosing an activity and choosing a
 // "mode" were the same decision presented twice.
-const PRACTICE_MODES: Array<{ id: PracticeMode; label: string }> = [
-  { id: "reading", label: "Note reading" },
-  { id: "pitch", label: "Pitch training" },
-];
-
-const SECTION_GROUPS: Array<{ label: string; sections: Array<{ id: AppSection; label: string }> }> = [
-  { label: "Practice", sections: [{ id: "songs", label: "Songs" }] },
-  {
-    label: "Progress",
-    sections: [
-      { id: "progress", label: "Overview" },
-      { id: "map", label: "Map" },
-      { id: "history", label: "History" },
-    ],
-  },
-  {
-    label: "Settings",
-    sections: [
-      { id: "settings", label: "Preferences" },
-      { id: "data", label: "Data" },
-    ],
-  },
-];
+//
+// Destinations come from the shared route model and render as real links, so
+// they can be bookmarked, opened in a new tab, and are exposed to assistive
+// technology as navigation rather than as buttons.
 
 type AppSectionNavProps = {
-  activeSection: AppSection;
-  mode: PracticeMode;
+  activeRouteId: RouteDefinition["id"];
   isOpen: boolean;
   onClose: () => void;
-  onSelectSection: (section: AppSection) => void;
-  onSelectPracticeMode: (mode: PracticeMode) => void;
+  onNavigate: () => void;
 };
 
-function AppSectionNav({
-  activeSection,
-  mode,
-  isOpen,
-  onClose,
-  onSelectSection,
-  onSelectPracticeMode,
-}: AppSectionNavProps) {
+function AppSectionNav({ activeRouteId, isOpen, onClose, onNavigate }: AppSectionNavProps) {
   useEffect(() => {
     if (!isOpen) return undefined;
 
@@ -64,32 +37,23 @@ function AppSectionNav({
     <>
       {isOpen && <button type="button" className="nav-backdrop" aria-label="Close menu" onClick={onClose} />}
       <nav id="app-sidebar" className={`sidebar ${isOpen ? "open" : ""}`} aria-label="NoteSense sections">
-        {SECTION_GROUPS.map((group) => (
-          <div className="sidebar-group" key={group.label}>
-            <p className="sidebar-heading">{group.label}</p>
-            {group.label === "Practice" &&
-              PRACTICE_MODES.map((practiceMode) => (
-                <button
-                  key={practiceMode.id}
-                  type="button"
-                  aria-pressed={activeSection === "practice" && mode === practiceMode.id}
-                  className={activeSection === "practice" && mode === practiceMode.id ? "active" : ""}
-                  onClick={() => onSelectPracticeMode(practiceMode.id)}
+        {groupedRoutes().map(({ group, routes }) => (
+          <div className="sidebar-group" key={group}>
+            <p className="sidebar-heading">{group}</p>
+            {routes.map((route) => {
+              const isActive = route.id === activeRouteId;
+              return (
+                <Link
+                  key={route.id}
+                  href={route.path}
+                  className={isActive ? "active" : ""}
+                  aria-current={isActive ? "page" : undefined}
+                  onClick={onNavigate}
                 >
-                  {practiceMode.label}
-                </button>
-              ))}
-            {group.sections.map((section) => (
-              <button
-                key={section.id}
-                type="button"
-                aria-pressed={activeSection === section.id}
-                className={activeSection === section.id ? "active" : ""}
-                onClick={() => onSelectSection(section.id)}
-              >
-                {section.label}
-              </button>
-            ))}
+                  {route.label}
+                </Link>
+              );
+            })}
           </div>
         ))}
       </nav>

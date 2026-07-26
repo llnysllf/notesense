@@ -73,6 +73,7 @@
     "deploy": "npm run build && npx --yes wrangler@4.107.0 deploy"
   },
   "dependencies": {
+    "raviger": "^5.3.0",
     "react": "^19.2.8",
     "react-dom": "^19.2.8"
   },

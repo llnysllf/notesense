@@ -21,7 +21,8 @@ const budgets = [
   },
   {
     name: "HTML shell",
-    matches: (file) => file === "index.html",
+    // 404.html is a copy of the shell that lets GitHub Pages serve deep links.
+    matches: (file) => file === "index.html" || file === "404.html",
     rawBytes: 4 * KIB,
     gzipBytes: 1 * KIB,
   },
@@ -47,9 +48,10 @@ const budgets = [
 
 const totalBudget = {
   // The evidence-ledger chunk is deferred from the initial practice route but
-  // remains part of the offline-capable Pages output.
-  rawBytes: 350 * KIB,
-  gzipBytes: 105 * KIB,
+  // remains part of the offline-capable Pages output, alongside the router and
+  // the 404.html deep-link fallback added with URL-addressable destinations.
+  rawBytes: 360 * KIB,
+  gzipBytes: 110 * KIB,
 };
 
 function collectFiles(directory) {

@@ -6,12 +6,10 @@ type NavProps = Parameters<typeof AppSectionNav>[0];
 
 function renderNav(overrides: Partial<NavProps> = {}) {
   const props: NavProps = {
-    activeSection: "practice",
-    mode: "reading",
+    activeRouteId: "practice-reading",
     isOpen: false,
     onClose: vi.fn(),
-    onSelectSection: vi.fn(),
-    onSelectPracticeMode: vi.fn(),
+    onNavigate: vi.fn(),
     ...overrides,
   };
 
@@ -36,34 +34,39 @@ describe("AppSectionNav", () => {
       "Preferences",
       "Data",
     ]) {
-      expect(screen.getByRole("button", { name: label })).toBeInTheDocument();
+      expect(screen.getByRole("link", { name: label })).toBeInTheDocument();
     }
   });
 
-  it("marks the active practice mode as pressed", () => {
-    renderNav({ activeSection: "practice", mode: "pitch" });
+  it("renders destinations as addressable links", () => {
+    renderNav();
 
-    expect(screen.getByRole("button", { name: "Pitch training" })).toHaveAttribute("aria-pressed", "true");
-    expect(screen.getByRole("button", { name: "Note reading" })).toHaveAttribute("aria-pressed", "false");
-    expect(screen.getByRole("button", { name: "Songs" })).toHaveAttribute("aria-pressed", "false");
+    expect(screen.getByRole("link", { name: "Note reading" })).toHaveAttribute("href", "/practice/reading");
+    expect(screen.getByRole("link", { name: "Songs" })).toHaveAttribute("href", "/practice/songs");
+    expect(screen.getByRole("link", { name: "Data" })).toHaveAttribute("href", "/settings/data");
   });
 
-  it("does not mark a practice mode when another section is active", () => {
-    renderNav({ activeSection: "map", mode: "reading" });
+  it("marks the active destination as the current page", () => {
+    renderNav({ activeRouteId: "practice-pitch" });
 
-    expect(screen.getByRole("button", { name: "Note reading" })).toHaveAttribute("aria-pressed", "false");
-    expect(screen.getByRole("button", { name: "Map" })).toHaveAttribute("aria-pressed", "true");
-    expect(screen.getByRole("button", { name: "Map" })).toHaveClass("active");
+    expect(screen.getByRole("link", { name: "Pitch training" })).toHaveAttribute("aria-current", "page");
+    expect(screen.getByRole("link", { name: "Pitch training" })).toHaveClass("active");
+    expect(screen.getByRole("link", { name: "Note reading" })).not.toHaveAttribute("aria-current");
   });
 
-  it("reports section and practice-mode selections", () => {
+  it("marks a non-practice destination without marking a practice mode", () => {
+    renderNav({ activeRouteId: "progress-map" });
+
+    expect(screen.getByRole("link", { name: "Map" })).toHaveAttribute("aria-current", "page");
+    expect(screen.getByRole("link", { name: "Note reading" })).not.toHaveAttribute("aria-current");
+  });
+
+  it("reports navigation so the drawer can close", () => {
     const { props } = renderNav();
 
-    fireEvent.click(screen.getByRole("button", { name: "Data" }));
-    fireEvent.click(screen.getByRole("button", { name: "Pitch training" }));
+    fireEvent.click(screen.getByRole("link", { name: "Data" }));
 
-    expect(props.onSelectSection).toHaveBeenCalledWith("data");
-    expect(props.onSelectPracticeMode).toHaveBeenCalledWith("pitch");
+    expect(props.onNavigate).toHaveBeenCalled();
   });
 
   it("shows the drawer backdrop only while open and closes on backdrop click", () => {
@@ -71,14 +74,7 @@ describe("AppSectionNav", () => {
     expect(screen.queryByRole("button", { name: "Close menu" })).not.toBeInTheDocument();
 
     rerender(
-      <AppSectionNav
-        activeSection="practice"
-        mode="reading"
-        isOpen
-        onClose={props.onClose}
-        onSelectSection={props.onSelectSection}
-        onSelectPracticeMode={props.onSelectPracticeMode}
-      />,
+      <AppSectionNav activeRouteId="practice-reading" isOpen onClose={props.onClose} onNavigate={props.onNavigate} />,
     );
     expect(screen.getByRole("navigation", { name: "NoteSense sections" })).toHaveClass("open");
 
@@ -93,14 +89,7 @@ describe("AppSectionNav", () => {
     expect(props.onClose).not.toHaveBeenCalled();
 
     rerender(
-      <AppSectionNav
-        activeSection="practice"
-        mode="reading"
-        isOpen
-        onClose={props.onClose}
-        onSelectSection={props.onSelectSection}
-        onSelectPracticeMode={props.onSelectPracticeMode}
-      />,
+      <AppSectionNav activeRouteId="practice-reading" isOpen onClose={props.onClose} onNavigate={props.onNavigate} />,
     );
     fireEvent.keyDown(window, { key: "a" });
     expect(props.onClose).not.toHaveBeenCalled();

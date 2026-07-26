@@ -109,7 +109,7 @@ requireSnippets("src/styles.css", [
   ".session-pill",
   ".session-pill.live",
   ".session-pill.saved",
-  ".sidebar button.active",
+  ".sidebar a.active",
   ".staff-card::before",
   ".feedback.correct",
   ".feedback.wrong",

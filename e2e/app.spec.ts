@@ -47,7 +47,7 @@ async function openAppSection(page: Page, name: string) {
   if (await toggle.isVisible()) {
     await toggle.click();
   }
-  await appNav(page).getByRole("button", { name, exact: true }).click();
+  await appNav(page).getByRole("link", { name, exact: true }).click();
 }
 
 test.beforeEach(async ({ page }) => {
@@ -76,11 +76,11 @@ test("loads with no automated accessibility violations", async ({ page }) => {
     await menuToggle.click();
   }
   const nav = appNav(page);
-  await expect(nav.getByRole("button", { name: "Note reading" })).toHaveAttribute("aria-pressed", "true");
+  await expect(nav.getByRole("link", { name: "Note reading" })).toHaveAttribute("aria-current", "page");
   for (const label of ["Pitch training", "Songs", "Overview", "Map", "History", "Preferences", "Data"]) {
-    await expect(nav.getByRole("button", { name: label, exact: true })).toBeVisible();
+    await expect(nav.getByRole("link", { name: label, exact: true })).toBeVisible();
   }
-  await nav.getByRole("button", { name: "Overview", exact: true }).click();
+  await nav.getByRole("link", { name: "Overview", exact: true }).click();
   await expect(page.getByRole("heading", { name: "Daily goal" })).toBeVisible();
   await expect(page.getByText(/0\/1\s+round/)).toBeVisible();
   await expect(page.getByRole("heading", { name: "Build baseline" })).toBeVisible();

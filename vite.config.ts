@@ -1,3 +1,5 @@
+import { copyFileSync, existsSync } from "node:fs";
+import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 import react from "@vitejs/plugin-react";
 import type { Plugin } from "vite";
@@ -34,6 +36,26 @@ function notesenseSecurityPolicyPlugin(): Plugin {
   };
 }
 
+// GitHub Pages serves static files only and cannot rewrite unknown paths to the
+// app shell, so a direct load or reload of a deep link such as /progress/map
+// would 404. Emitting the built shell as 404.html makes Pages serve the app for
+// those paths, and the router then resolves the real path from the URL.
+function notesensePagesFallbackPlugin(): Plugin {
+  return {
+    name: "notesense-pages-fallback",
+    apply: "build",
+    // Runs after the HTML plugin has written the shell, so the finished file
+    // (including the injected security policy) is what gets copied.
+    closeBundle() {
+      const outDir = fileURLToPath(new URL("./dist", import.meta.url));
+      const shellPath = join(outDir, "index.html");
+      if (!existsSync(shellPath)) return;
+
+      copyFileSync(shellPath, join(outDir, "404.html"));
+    },
+  };
+}
+
 export default defineConfig({
   resolve: {
     alias: {
@@ -53,6 +75,7 @@ export default defineConfig({
       devOptions: { enabled: false },
     }),
     notesenseSecurityPolicyPlugin(),
+    notesensePagesFallbackPlugin(),
   ],
   test: {
     environment: "jsdom",
@@ -80,6 +103,8 @@ export default defineConfig({
         "src/components/SongsWorkspace.tsx",
         "src/components/PracticeWorkspace.tsx",
         "src/components/ReadingRangeSelector.tsx",
+        "src/routes.ts",
+        "src/hooks/useAppRoute.ts",
         "src/noteData.ts",
         "src/observability.ts",
         "src/practiceEngine.ts",
