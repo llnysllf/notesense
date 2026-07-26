@@ -1,6 +1,7 @@
 import {
   createPracticeDataExport as createSharedExport,
   normalizeSongProgress,
+  normalizeDailyPlan,
   defaultSettings,
   normalizeProgress,
   normalizeSettings,
@@ -10,6 +11,7 @@ import {
 } from "@notesense/shared";
 import { emptyProgress, getPianoKeyById } from "./noteData";
 import type {
+  DailyPlan,
   NoteName,
   SongProgress,
   PitchNote,
@@ -26,6 +28,7 @@ const STORAGE_KEY = "notesense.progress.v2";
 const LEGACY_STORAGE_KEY = "notesense.progress.v1";
 const SETTINGS_STORAGE_KEY = "notesense.settings.v3";
 const SONG_PROGRESS_STORAGE_KEY = "notesense.songProgress.v1";
+const DAILY_PLAN_STORAGE_KEY = "notesense.dailyPlan.v1";
 
 export {
   compareSongsByDifficulty,
@@ -83,6 +86,30 @@ export function loadSongProgress(): SongProgress {
 export function saveSongProgress(songProgress: SongProgress): boolean {
   try {
     window.localStorage.setItem(SONG_PROGRESS_STORAGE_KEY, JSON.stringify(songProgress));
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+// Today's plan is a cache, not a record of learning: if it is missing or
+// malformed it is simply regenerated, so a failure here never costs progress.
+export function loadDailyPlan(): DailyPlan | undefined {
+  try {
+    const stored = window.localStorage.getItem(DAILY_PLAN_STORAGE_KEY);
+    if (!stored) {
+      return undefined;
+    }
+
+    return normalizeDailyPlan(JSON.parse(stored) as unknown);
+  } catch {
+    return undefined;
+  }
+}
+
+export function saveDailyPlan(plan: DailyPlan): boolean {
+  try {
+    window.localStorage.setItem(DAILY_PLAN_STORAGE_KEY, JSON.stringify(plan));
     return true;
   } catch {
     return false;

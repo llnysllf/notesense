@@ -16,7 +16,7 @@ NoteSense should feel instant enough for short practice sessions on desktop and 
 Current per-file budgets:
 
 - JavaScript asset: 264 KiB raw, 85 KiB gzip
-- CSS asset: 30 KiB raw, 6 KiB gzip
+- CSS asset: 34 KiB raw, 7 KiB gzip
 - HTML shell: 4 KiB raw, 1 KiB gzip
 - web metadata asset: 6 KiB raw, 3 KiB gzip
 - service worker: 8 KiB raw, 4 KiB gzip
@@ -24,9 +24,9 @@ Current per-file budgets:
 
 Current total budget:
 
-- total Pages output: 360 KiB raw, 110 KiB gzip
+- total Pages output: 375 KiB raw, 116 KiB gzip
 
-Secondary statistics, song screens, and the evidence ledger are split from the initial practice route. The total raw budget includes those deferred chunks and PWA precache metadata; the 110 KiB gzip cap remains the shipped-network constraint. It was raised from 105 KiB when URL-addressable destinations added a router (about 2 KiB gzip) and a 404.html shell copy so GitHub Pages can serve deep links.
+Secondary statistics, song screens, and the evidence ledger are split from the initial practice route. The total raw budget includes those deferred chunks and PWA precache metadata; the 116 KiB gzip cap remains the shipped-network constraint. It was raised again when the Today screen added the daily-plan UI and its styles. It was raised from 105 KiB when URL-addressable destinations added a router (about 2 KiB gzip) and a 404.html shell copy so GitHub Pages can serve deep links.
 
 ## Lighthouse Signal
 

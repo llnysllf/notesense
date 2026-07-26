@@ -1,5 +1,5 @@
 import { fireEvent, render, screen, waitFor, within } from "@testing-library/react";
-import { afterEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import App from "./App";
 import { playMelody, playTone } from "./audio";
 import { PITCH_NOTES, emptyProgress } from "./noteData";
@@ -55,10 +55,15 @@ function getWrongReadingNoteId() {
   return `${letter}${octave === "4" ? "3" : "4"}`;
 }
 
+// Routing reads the URL, so every test starts from a known destination rather
+// than inheriting whatever the previous one navigated to.
+beforeEach(() => {
+  window.history.replaceState(null, "", "/practice/reading");
+});
+
 afterEach(() => {
   window.localStorage.clear();
   window.sessionStorage.clear();
-  // Routing reads the URL, so each test starts from the default destination.
   window.history.replaceState(null, "", "/practice/reading");
   vi.clearAllMocks();
   vi.restoreAllMocks();
@@ -156,7 +161,29 @@ describe("App", () => {
     });
     expect(screen.getByRole("button", { name: "30s" })).toHaveAttribute("aria-pressed", "true");
     expect(screen.getByRole("button", { name: "Grand" })).toHaveAttribute("aria-pressed", "true");
-    expect(screen.getAllByText("Mixed clef C3-B4")).not.toHaveLength(0);
+
+    // The chosen range is shown where it applies: on the drill itself.
+    fireEvent.click(screen.getByRole("link", { name: "Note reading" }));
+    expect(await screen.findByText("Mixed clef C3-B4")).toBeInTheDocument();
+  });
+
+  it("credits a Today block only after its drill actually finishes", async () => {
+    window.history.replaceState(null, "", "/today");
+    render(<App />);
+
+    // Opening a block is an intent, not an achievement.
+    const start = (await screen.findAllByRole("link", { name: "Start" }))[0] as HTMLElement;
+    fireEvent.click(start);
+    expect(readStoredJson<{ completedBlockIds: string[] }>("notesense.dailyPlan.v1").completedBlockIds).toEqual([]);
+
+    fireEvent.click(await screen.findByRole("button", { name: "Start drill" }));
+    fireEvent.click(screen.getByRole("button", { name: "Finish round" }));
+
+    await waitFor(() =>
+      expect(readStoredJson<{ completedBlockIds: string[] }>("notesense.dailyPlan.v1").completedBlockIds).toHaveLength(
+        1,
+      ),
+    );
   });
 
   it("sets a custom reading range from piano keys", () => {
@@ -273,8 +300,10 @@ describe("App", () => {
     await waitFor(() => expect(screen.getByRole("status")).toHaveTextContent("Progress imported."));
     fireEvent.click(screen.getByRole("link", { name: "Preferences" }));
     expect(screen.getByRole("button", { name: "90s" })).toHaveAttribute("aria-pressed", "true");
-    expect(screen.getAllByText("Bass clef C3-G3")).not.toHaveLength(0);
     expect(readStoredJson<PracticeProgress>(PROGRESS_STORAGE_KEY).reading.totalAttempts).toBe(7);
+
+    fireEvent.click(screen.getByRole("link", { name: "Note reading" }));
+    expect(await screen.findByText("Bass clef C3-G3")).toBeInTheDocument();
   });
 
   it("resets saved progress only after confirmation", async () => {

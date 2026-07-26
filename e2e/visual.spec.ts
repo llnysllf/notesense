@@ -26,8 +26,17 @@ async function openNavDrawerIfNeeded(page: Page) {
   }
 }
 
+test("matches the today shell", async ({ page }) => {
+  await page.goto("/today");
+  await expect(page.getByRole("heading", { name: "Your plan for today" })).toBeVisible();
+
+  await expect(page).toHaveScreenshot("today-shell.png", {
+    fullPage: true,
+  });
+});
+
 test("matches the note-reading shell", async ({ page }) => {
-  await page.goto("/");
+  await page.goto("/practice/reading");
   await expect(page.getByRole("heading", { name: "NoteSense" })).toBeVisible();
   await expect(page.getByRole("button", { name: "Start drill" })).toBeVisible();
 
@@ -37,9 +46,7 @@ test("matches the note-reading shell", async ({ page }) => {
 });
 
 test("matches the pitch-training shell", async ({ page }) => {
-  await page.goto("/");
-  await openNavDrawerIfNeeded(page);
-  await page.getByRole("link", { name: "Pitch training" }).click();
+  await page.goto("/practice/pitch");
   await expect(page.getByLabel("Hidden pitch note")).toBeVisible();
 
   await expect(page).toHaveScreenshot("pitch-training-shell.png", {
@@ -48,9 +55,7 @@ test("matches the pitch-training shell", async ({ page }) => {
 });
 
 test("matches the songs shell", async ({ page }) => {
-  await page.goto("/");
-  await openNavDrawerIfNeeded(page);
-  await page.getByRole("link", { name: "Songs" }).click();
+  await page.goto("/practice/songs");
   await expect(page.getByRole("heading", { name: "Song library" })).toBeVisible();
 
   await expect(page).toHaveScreenshot("songs-shell.png", {
@@ -62,7 +67,7 @@ test("matches the songs shell", async ({ page }) => {
 // change can slip under the page-level diff ratio. These element snapshots
 // are dominated by brand fills: any re-theme flips most of their pixels.
 test("matches the brand accent controls", async ({ page }) => {
-  await page.goto("/");
+  await page.goto("/practice/reading");
   await expect(page.getByRole("heading", { name: "NoteSense" })).toBeVisible();
 
   await expect(page.locator(".primary-button")).toHaveScreenshot("brand-primary-button.png", {

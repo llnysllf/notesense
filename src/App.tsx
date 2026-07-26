@@ -6,7 +6,9 @@ import type { PracticePanelView } from "./components/PracticeStatsPanel";
 import PitchTrainingControls from "./components/PitchTrainingControls";
 import ReadingRangeSelector from "./components/ReadingRangeSelector";
 import { useAppRoute } from "./hooks/useAppRoute";
+import { useDailyPlan } from "./hooks/useDailyPlan";
 import { useDataPortability } from "./hooks/useDataPortability";
+import { usePlanCompletion } from "./hooks/usePlanCompletion";
 import { usePracticeDashboard } from "./hooks/usePracticeDashboard";
 import { useSongSession } from "./hooks/useSongSession";
 import { usePracticeProgress } from "./hooks/usePracticeProgress";
@@ -19,9 +21,10 @@ import type { CustomReadingRange, DataStatus, PracticeProgress, PracticeSettings
 const STORAGE_WARNING = "Progress is not being saved on this device right now.";
 const PracticeStatsPanel = lazy(() => import("./components/PracticeStatsPanel"));
 const SongsWorkspace = lazy(() => import("./components/SongsWorkspace"));
+const TodayWorkspace = lazy(() => import("./components/TodayWorkspace"));
 const PracticeWorkspace = lazy(() => import("./components/PracticeWorkspace"));
 const RouteNotFound = lazy(() => import("./components/RouteNotFound"));
-const STATS_SECTION_BY_APP_SECTION: Record<Exclude<AppSection, "practice" | "songs">, PracticePanelView> = {
+const STATS_SECTION_BY_APP_SECTION: Record<Exclude<AppSection, "today" | "practice" | "songs">, PracticePanelView> = {
   progress: "overview",
   map: "map",
   history: "history",
@@ -30,7 +33,7 @@ const STATS_SECTION_BY_APP_SECTION: Record<Exclude<AppSection, "practice" | "son
 };
 
 function getStatsView(section: AppSection): PracticePanelView {
-  if (section === "practice" || section === "songs") return "overview";
+  if (section === "today" || section === "practice" || section === "songs") return "overview";
 
   return STATS_SECTION_BY_APP_SECTION[section];
 }
@@ -52,6 +55,7 @@ function App() {
 
   const { settings, setSettings, persistSettings } = useSettings();
   const songSession = useSongSession();
+  const dailyPlan = useDailyPlan();
   const { progress, setProgress, persistProgress } = usePracticeProgress();
 
   const handleProgressChange = useCallback(
@@ -174,6 +178,13 @@ function App() {
 
   const handleNavigated = useCallback(() => setIsNavOpen(false), []);
 
+  // Today never shows progress that was not earned.
+  usePlanCompletion({
+    lastSummary,
+    songStatus: songSession.status,
+    completeActivity: dailyPlan.completeActivity,
+  });
+
   const feedbackClass = feedback ? (feedback.isCorrect ? "correct" : "wrong") : "";
   const shouldRevealPitch = Boolean(feedback) && settings.revealPitchAfterAnswer;
   const sessionStateLabel = isRunning ? "Live round" : lastSummary?.mode === mode ? "Round saved" : "Ready";
@@ -215,7 +226,9 @@ function App() {
 
       <div className="app-main">
         <AppTopbar
-          subtitle={mode === "reading" ? readingRange.detail : pitchRange.detail}
+          subtitle={
+            activeSection === "practice" ? (mode === "reading" ? readingRange.detail : pitchRange.detail) : route.label
+          }
           sessionStateLabel={sessionStateLabel}
           sessionStateTone={sessionStateTone}
           replayButtonLabel={replayButtonLabel}
@@ -234,6 +247,8 @@ function App() {
           >
             {isUnknownPath ? (
               <RouteNotFound path={window.location.pathname} />
+            ) : activeSection === "today" ? (
+              <TodayWorkspace plan={dailyPlan.plan} progress={dailyPlan.progress} onOpenBlock={dailyPlan.openBlock} />
             ) : activeSection === "songs" ? (
               <SongsWorkspace songSession={songSession} />
             ) : activeSection === "practice" ? (

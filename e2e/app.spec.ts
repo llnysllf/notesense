@@ -62,8 +62,25 @@ test.beforeEach(async ({ page }) => {
   });
 });
 
-test("loads with no automated accessibility violations", async ({ page }) => {
+test("opens on Today with a plan the learner can finish", async ({ page }) => {
   await page.goto("/", { waitUntil: "domcontentloaded" });
+
+  // The app home is the plan, not a raw drill.
+  await expect(page).toHaveURL(/\/today$|\/$/);
+  await expect(page.getByRole("heading", { name: "Your plan for today" })).toBeVisible();
+
+  const startLinks = page.getByRole("link", { name: "Start" });
+  await expect(startLinks.first()).toBeVisible();
+  await expect(page.getByText(/0 of \d+ done/)).toBeVisible();
+
+  // Opening a block is not progress: it must still read as unfinished.
+  await startLinks.first().click();
+  await openAppSection(page, "Today");
+  await expect(page.getByText(/0 of \d+ done/)).toBeVisible();
+});
+
+test("loads with no automated accessibility violations", async ({ page }) => {
+  await page.goto("/practice/reading", { waitUntil: "domcontentloaded" });
 
   await expect(page.getByRole("heading", { name: "NoteSense" })).toBeVisible();
   await expect(page.getByRole("button", { name: "Start drill" })).toBeVisible();
@@ -96,7 +113,7 @@ test("loads with no automated accessibility violations", async ({ page }) => {
 });
 
 test("runs the note-reading practice loop", async ({ page }) => {
-  await page.goto("/", { waitUntil: "domcontentloaded" });
+  await page.goto("/practice/reading", { waitUntil: "domcontentloaded" });
 
   await expect(
     page.getByRole("button", { name: `White piano key ${await getCurrentReadingNoteId(page)}` }),
@@ -127,7 +144,7 @@ test("runs the note-reading practice loop", async ({ page }) => {
 });
 
 test("renders the right piano layout for the current viewport", async ({ page }) => {
-  await page.goto("/", { waitUntil: "domcontentloaded" });
+  await page.goto("/practice/reading", { waitUntil: "domcontentloaded" });
 
   await expect(page.getByRole("group", { name: "88-key piano keyboard" })).toBeVisible();
 
@@ -185,7 +202,7 @@ test("renders the right piano layout for the current viewport", async ({ page })
 });
 
 test("moves the phone piano window without changing the hidden answer", async ({ page }) => {
-  await page.goto("/", { waitUntil: "domcontentloaded" });
+  await page.goto("/practice/reading", { waitUntil: "domcontentloaded" });
 
   const mobileLayout = page.locator(".piano-mobile-layout");
   if ((await page.locator(".piano-keyboard-panel").getAttribute("data-layout")) !== "mobile-window") {
@@ -206,7 +223,7 @@ test("moves the phone piano window without changing the hidden answer", async ({
 });
 
 test("answers reading shortcuts and exact pitch keys", async ({ page }) => {
-  await page.goto("/", { waitUntil: "domcontentloaded" });
+  await page.goto("/practice/reading", { waitUntil: "domcontentloaded" });
 
   const roundTile = page.locator(".round-strip .stat-tile").filter({ hasText: "Round" });
 
@@ -223,7 +240,7 @@ test("answers reading shortcuts and exact pitch keys", async ({ page }) => {
 });
 
 test("switches to bass clef reading practice", async ({ page }) => {
-  await page.goto("/", { waitUntil: "domcontentloaded" });
+  await page.goto("/practice/reading", { waitUntil: "domcontentloaded" });
 
   await page.getByRole("button", { exact: true, name: "Bass" }).click();
   await expect(page.getByText("Adaptive | Bass clef C3-G3")).toBeVisible();
@@ -240,7 +257,7 @@ test("switches to bass clef reading practice", async ({ page }) => {
 });
 
 test("switches to a wider mixed reading drill range", async ({ page }) => {
-  await page.goto("/", { waitUntil: "domcontentloaded" });
+  await page.goto("/practice/reading", { waitUntil: "domcontentloaded" });
 
   await page.getByRole("button", { name: "Grand" }).click();
 
@@ -250,7 +267,7 @@ test("switches to a wider mixed reading drill range", async ({ page }) => {
 });
 
 test("sets a custom reading drill range from piano keys", async ({ page }) => {
-  await page.goto("/", { waitUntil: "domcontentloaded" });
+  await page.goto("/practice/reading", { waitUntil: "domcontentloaded" });
 
   await page.getByRole("button", { name: "Custom" }).click();
   const customRangeCard = page.locator(".custom-range-card");
@@ -273,7 +290,7 @@ test("sets a custom reading drill range from piano keys", async ({ page }) => {
 });
 
 test("keeps the selected reading range after switching during feedback", async ({ page }) => {
-  await page.goto("/", { waitUntil: "domcontentloaded" });
+  await page.goto("/practice/reading", { waitUntil: "domcontentloaded" });
 
   await page.getByRole("button", { name: "Start drill" }).click();
   await clickCurrentReadingPianoKey(page);
@@ -287,7 +304,7 @@ test("keeps the selected reading range after switching during feedback", async (
 });
 
 test("exports local practice data", async ({ page }) => {
-  await page.goto("/", { waitUntil: "domcontentloaded" });
+  await page.goto("/practice/reading", { waitUntil: "domcontentloaded" });
 
   await openAppSection(page, "Data");
   const downloadPromise = page.waitForEvent("download");
@@ -298,7 +315,7 @@ test("exports local practice data", async ({ page }) => {
 });
 
 test("imports local practice data", async ({ page }) => {
-  await page.goto("/", { waitUntil: "domcontentloaded" });
+  await page.goto("/practice/reading", { waitUntil: "domcontentloaded" });
 
   await openAppSection(page, "Data");
   await page.locator('input[type="file"]').setInputFiles({
@@ -407,7 +424,7 @@ test("imports local practice data", async ({ page }) => {
 });
 
 test("rejects invalid imported practice data", async ({ page }) => {
-  await page.goto("/", { waitUntil: "domcontentloaded" });
+  await page.goto("/practice/reading", { waitUntil: "domcontentloaded" });
 
   await openAppSection(page, "Data");
   await page.locator('input[type="file"]').setInputFiles({
@@ -433,7 +450,7 @@ test("surfaces storage failures without crashing", async ({ page }) => {
     };
   });
 
-  await page.goto("/", { waitUntil: "domcontentloaded" });
+  await page.goto("/practice/reading", { waitUntil: "domcontentloaded" });
   await page.getByRole("button", { name: "Start drill" }).click();
   await clickCurrentReadingPianoKey(page);
 
@@ -452,7 +469,7 @@ test("surfaces storage failures without crashing", async ({ page }) => {
 });
 
 test("runs the pitch-training practice loop", async ({ page }) => {
-  await page.goto("/", { waitUntil: "domcontentloaded" });
+  await page.goto("/practice/reading", { waitUntil: "domcontentloaded" });
 
   await openAppSection(page, "Pitch training");
   await expect(page.getByLabel("Hidden pitch note")).toBeVisible();
@@ -466,7 +483,7 @@ test("runs the pitch-training practice loop", async ({ page }) => {
 });
 
 test("writes a pitch sequence on the staff while it plays and submits it", async ({ page }) => {
-  await page.goto("/", { waitUntil: "domcontentloaded" });
+  await page.goto("/practice/reading", { waitUntil: "domcontentloaded" });
 
   await openAppSection(page, "Pitch training");
   await page.getByRole("button", { name: "Pitch sequence" }).click();
@@ -484,7 +501,7 @@ test("writes a pitch sequence on the staff while it plays and submits it", async
 });
 
 test("keeps the responsive layout inside the viewport", async ({ page }) => {
-  await page.goto("/", { waitUntil: "domcontentloaded" });
+  await page.goto("/practice/reading", { waitUntil: "domcontentloaded" });
 
   await expect
     .poll(() => page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth))
@@ -492,7 +509,7 @@ test("keeps the responsive layout inside the viewport", async ({ page }) => {
 });
 
 test("plays a song from the library start to finish", async ({ page }) => {
-  await page.goto("/", { waitUntil: "domcontentloaded" });
+  await page.goto("/practice/reading", { waitUntil: "domcontentloaded" });
 
   await openAppSection(page, "Songs");
   await expect(page.getByRole("heading", { name: "Song library" })).toBeVisible();
