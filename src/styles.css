@@ -438,7 +438,10 @@ h3 {
   text-transform: uppercase;
 }
 
-.sidebar button {
+/* Destinations are links so they can be bookmarked and opened in a new tab. */
+.sidebar a {
+  display: flex;
+  align-items: center;
   min-height: 40px;
   padding: 0 12px;
   border-radius: var(--radius-control);
@@ -448,18 +451,19 @@ h3 {
   font-size: 0.9rem;
   font-weight: 800;
   text-align: left;
+  text-decoration: none;
   transition:
     background 0.15s ease,
     color 0.15s ease,
     box-shadow 0.15s ease;
 }
 
-.sidebar button:not(.active):hover {
+.sidebar a:not(.active):hover {
   background: var(--color-surface);
   color: var(--color-text);
 }
 
-.sidebar button.active {
+.sidebar a.active {
   background: var(--color-action);
   color: var(--color-action-text);
   box-shadow: var(--shadow-control);

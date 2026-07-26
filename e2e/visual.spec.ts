@@ -38,7 +38,7 @@ test("matches the note-reading shell", async ({ page }) => {
 test("matches the pitch-training shell", async ({ page }) => {
   await page.goto("/");
   await openNavDrawerIfNeeded(page);
-  await page.getByRole("button", { name: "Pitch training" }).click();
+  await page.getByRole("link", { name: "Pitch training" }).click();
   await expect(page.getByLabel("Hidden pitch note")).toBeVisible();
 
   await expect(page).toHaveScreenshot("pitch-training-shell.png", {
@@ -49,7 +49,7 @@ test("matches the pitch-training shell", async ({ page }) => {
 test("matches the songs shell", async ({ page }) => {
   await page.goto("/");
   await openNavDrawerIfNeeded(page);
-  await page.getByRole("button", { name: "Songs" }).click();
+  await page.getByRole("link", { name: "Songs" }).click();
   await expect(page.getByRole("heading", { name: "Song library" })).toBeVisible();
 
   await expect(page).toHaveScreenshot("songs-shell.png", {
@@ -68,7 +68,7 @@ test("matches the brand accent controls", async ({ page }) => {
     maxDiffPixelRatio: 0.02,
   });
   await openNavDrawerIfNeeded(page);
-  await expect(page.locator(".sidebar button.active")).toHaveScreenshot("brand-nav-active.png", {
+  await expect(page.locator(".sidebar a.active")).toHaveScreenshot("brand-nav-active.png", {
     maxDiffPixelRatio: 0.02,
   });
 });

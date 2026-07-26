@@ -109,8 +109,7 @@ requireSnippets("src/components/AppTopbar.tsx", [
 
 requireSnippets("src/components/AppSectionNav.tsx", [
   'aria-label="NoteSense sections"',
-  "aria-pressed={activeSection === section.id}",
-  'aria-pressed={activeSection === "practice" && mode === practiceMode.id}',
+  'aria-current={isActive ? "page" : undefined}',
   'aria-label="Close menu"',
 ]);
 

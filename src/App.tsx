@@ -1,4 +1,4 @@
-import { lazy, Suspense, useCallback, useState } from "react";
+import { lazy, Suspense, useCallback, useEffect, useState } from "react";
 import AppSectionNav from "./components/AppSectionNav";
 import type { AppSection } from "./components/AppSectionNav";
 import AppTopbar from "./components/AppTopbar";
@@ -6,6 +6,7 @@ import type { PracticePanelView } from "./components/PracticeStatsPanel";
 import PracticeWorkspace from "./components/PracticeWorkspace";
 import PitchTrainingControls from "./components/PitchTrainingControls";
 import ReadingRangeSelector from "./components/ReadingRangeSelector";
+import { useAppRoute } from "./hooks/useAppRoute";
 import { useDataPortability } from "./hooks/useDataPortability";
 import { usePracticeDashboard } from "./hooks/usePracticeDashboard";
 import { useSongSession } from "./hooks/useSongSession";
@@ -41,8 +42,11 @@ function App() {
   }
 
   const [dataStatus, setDataStatus] = useState<DataStatus>(null);
-  const [activeSection, setActiveSection] = useState<AppSection>("practice");
   const [isNavOpen, setIsNavOpen] = useState(false);
+  // The URL owns which destination is showing, so reloads, bookmarks, and
+  // browser back/forward all land on the same screen.
+  const { route } = useAppRoute();
+  const activeSection = route.section;
 
   const { settings, setSettings, persistSettings } = useSettings();
   const songSession = useSongSession();
@@ -160,19 +164,13 @@ function App() {
     roundAccuracy,
   } = usePracticeDashboard({ mode, progress, roundAttempts, roundCorrect, settings });
 
-  const handleSelectSection = useCallback((section: AppSection) => {
-    setActiveSection(section);
-    setIsNavOpen(false);
-  }, []);
+  // The reading/pitch drills are separate destinations, so the practice mode
+  // follows the URL rather than being toggled independently of it.
+  useEffect(() => {
+    if (route.mode && route.mode !== mode) setPracticeMode(route.mode);
+  }, [mode, route.mode, setPracticeMode]);
 
-  const handleSelectPracticeMode = useCallback(
-    (nextMode: Parameters<typeof setPracticeMode>[0]) => {
-      setActiveSection("practice");
-      setPracticeMode(nextMode);
-      setIsNavOpen(false);
-    },
-    [setPracticeMode],
-  );
+  const handleNavigated = useCallback(() => setIsNavOpen(false), []);
 
   const feedbackClass = feedback ? (feedback.isCorrect ? "correct" : "wrong") : "";
   const shouldRevealPitch = Boolean(feedback) && settings.revealPitchAfterAnswer;
@@ -207,12 +205,10 @@ function App() {
       className={`app-shell app-section-${activeSection} ${mode === "reading" ? "reading-layout" : "pitch-layout"}`}
     >
       <AppSectionNav
-        activeSection={activeSection}
-        mode={mode}
+        activeRouteId={route.id}
         isOpen={isNavOpen}
         onClose={() => setIsNavOpen(false)}
-        onSelectSection={handleSelectSection}
-        onSelectPracticeMode={handleSelectPracticeMode}
+        onNavigate={handleNavigated}
       />
 
       <div className="app-main">

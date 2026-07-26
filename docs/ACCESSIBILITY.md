@@ -23,6 +23,7 @@ Browser support expectations live in [BROWSER_SUPPORT.md](BROWSER_SUPPORT.md).
 - All interactive controls use native `button`, `input`, or label patterns unless a stronger semantic reason exists.
 - Keyboard shortcuts for answers must complement, not replace, reachable answer buttons.
 - Mode, range, and round-length choices expose the selected state with `aria-pressed`.
+- Sidebar destinations are links and mark the open screen with `aria-current="page"`, so assistive technology reports navigation rather than a set of toggles.
 - Focus rings must remain visible, high contrast, and unclipped at desktop and mobile widths.
 - Hidden file inputs must remain reachable through a visible button and carry a useful file-input label.
 
