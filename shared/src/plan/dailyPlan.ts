@@ -12,7 +12,9 @@ import type { MasterySnapshot } from "../evidence/mastery";
 
 // Bumped when the plan shape or the planning rules change, so stored plans from
 // an older planner are regenerated rather than misread.
-export const DAILY_PLAN_VERSION = 1;
+// Version 2 waits for the evidence ledger before caching a new plan. Bumping
+// invalidates v1 plans that may have been generated before that ledger loaded.
+export const DAILY_PLAN_VERSION = 2;
 
 // Every block trains one thing, and the learner is told which and why.
 export type DailyBlockRole = "focus" | "review" | "confidence";
@@ -138,18 +140,21 @@ export function planDay({ snapshot, now, availableMinutes = 10 }: PlanOptions): 
     if (block.competencyId) usedCompetencies.add(block.competencyId);
   };
 
-  // A due review comes first when one exists, then the weakest material, so the
-  // plan leads with what is about to be forgotten rather than what is newest.
+  // A due review comes first when one exists. The next best distinct activity is
+  // still a Focus block even when it too is due: a daily plan needs a finite
+  // review/focus/confidence shape, not a checklist of identically labelled work.
   const dueFirst = [...ranked].sort((a, b) => Number(b.reason === "due-review") - Number(a.reason === "due-review"));
 
-  for (const candidate of dueFirst) {
-    if (usedCompetencies.has(candidate.competencyId)) continue;
-    const role: DailyBlockRole = candidate.reason === "due-review" ? "review" : "focus";
-    if (blocks.some((block) => block.role === role)) continue;
+  const reviewCandidate = dueFirst.find((candidate) => candidate.reason === "due-review");
+  if (reviewCandidate) {
+    const review = blockFromCandidate(reviewCandidate, "review", blocks.length);
+    if (review && canAdd(review)) push(review);
+  }
 
-    const block = blockFromCandidate(candidate, role, blocks.length);
-    if (block && canAdd(block)) push(block);
-    if (blocks.length >= 2) break;
+  const focusCandidate = dueFirst.find((candidate) => !usedCompetencies.has(candidate.competencyId));
+  if (focusCandidate) {
+    const focus = blockFromCandidate(focusCandidate, "focus", blocks.length);
+    if (focus && canAdd(focus)) push(focus);
   }
 
   // Something enjoyable to end on. Songs need no evidence, so this also covers

@@ -55,8 +55,8 @@ function App() {
 
   const { settings, setSettings, persistSettings } = useSettings();
   const songSession = useSongSession();
-  const dailyPlan = useDailyPlan();
-  const { progress, setProgress, persistProgress } = usePracticeProgress();
+  const { progress, evidenceEvents, setProgress, persistProgress } = usePracticeProgress();
+  const dailyPlan = useDailyPlan(evidenceEvents);
 
   const handleProgressChange = useCallback(
     (next: PracticeProgress) => {

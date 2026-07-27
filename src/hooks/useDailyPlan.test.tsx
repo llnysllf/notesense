@@ -1,12 +1,12 @@
-import { act, render, screen } from "@testing-library/react";
+import { act, render, screen, waitFor } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { useDailyPlan } from "./useDailyPlan";
-import { localDateKey } from "../types";
+import { localDateKey, type AttemptEvent } from "../types";
 
 const PLAN_KEY = "notesense.dailyPlan.v1";
 
-function PlanProbe() {
-  const { plan, progress, openBlock, completeActivity, regenerate } = useDailyPlan();
+function PlanProbe({ events }: { events?: readonly AttemptEvent[] | null }) {
+  const { plan, progress, openBlock, completeActivity, regenerate } = useDailyPlan(events);
   const first = plan.blocks[0];
   return (
     <div>
@@ -32,6 +32,26 @@ function PlanProbe() {
 
 const readStored = () => JSON.parse(window.localStorage.getItem(PLAN_KEY) ?? "null");
 
+const dueReadingAttempt: AttemptEvent = {
+  schemaVersion: 1,
+  eventId: "due-reading",
+  deviceId: "device",
+  deviceSequence: 1,
+  sessionId: "session",
+  exercise: { id: "reading.staff-to-key", version: 1, generatorVersion: 1 },
+  promptId: "prompt",
+  startedAtIso: "2020-01-01T00:00:00.000Z",
+  answeredAtIso: "2020-01-01T00:00:01.000Z",
+  responseMs: 1000,
+  inputSource: "touch",
+  result: { correct: true, totalScore: 1, components: {}, mistakeCodes: [] },
+  competencyEvidence: [
+    { competencyId: "reading.pitch.staff-to-key", dimensions: {}, correct: true, weight: 1 },
+  ],
+  versions: { scoringVersion: 1, curriculumVersion: 1, skillMappingVersion: 1, transportVersion: 1 },
+  source: "live",
+};
+
 beforeEach(() => {
   window.localStorage.clear();
   vi.useRealTimers();
@@ -46,6 +66,15 @@ describe("useDailyPlan", () => {
     expect(screen.getByTestId("date")).toHaveTextContent(localDateKey(new Date()));
     expect(Number(screen.getByTestId("total").textContent)).toBeGreaterThan(0);
     expect(readStored().localDate).toBe(localDateKey(new Date()));
+  });
+
+  it("waits for the evidence ledger before caching a new plan", async () => {
+    const view = render(<PlanProbe events={null} />);
+    expect(window.localStorage.getItem(PLAN_KEY)).toBeNull();
+
+    view.rerender(<PlanProbe events={[dueReadingAttempt]} />);
+
+    await waitFor(() => expect(readStored().blocks[0].role).toBe("review"));
   });
 
   it("reuses a stored plan from the same day instead of regenerating", () => {

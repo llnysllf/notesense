@@ -34,16 +34,41 @@ function buildPlan(events: readonly AttemptEvent[], now: Date): DailyPlan {
   return planDay({ snapshot: buildMasterySnapshot(events, now), now });
 }
 
-export function useDailyPlan(events: readonly AttemptEvent[] = []): UseDailyPlan {
+const EMPTY_EVENTS: readonly AttemptEvent[] = [];
+
+export function useDailyPlan(events: readonly AttemptEvent[] | null = EMPTY_EVENTS): UseDailyPlan {
+  const [isWaitingForEvidence, setIsWaitingForEvidence] = useState(() => {
+    const stored = loadDailyPlan();
+    return events === null && !(stored && !isPlanStale(stored, { now: new Date() }));
+  });
   const [plan, setPlan] = useState<DailyPlan>(() => {
     const stored = loadDailyPlan();
     const now = new Date();
     if (stored && !isPlanStale(stored, { now })) return stored;
 
-    const fresh = buildPlan(events, now);
-    saveDailyPlan(fresh);
+    // Do not cache a new-learner plan while the evidence ledger is still
+    // loading. Otherwise a returning learner can be stuck with an empty-ledger
+    // plan for the rest of the day.
+    const fresh = buildPlan(events ?? EMPTY_EVENTS, now);
+    if (events !== null) saveDailyPlan(fresh);
     return fresh;
   });
+
+  useEffect(() => {
+    if (events === null || !isWaitingForEvidence) return;
+
+    // Evidence arrives from IndexedDB after the first render. Schedule this as
+    // the completion of that external load instead of synchronously cascading
+    // a state update from the effect itself.
+    const refresh = window.setTimeout(() => {
+      const fresh = buildPlan(events, new Date());
+      saveDailyPlan(fresh);
+      setPlan(fresh);
+      setIsWaitingForEvidence(false);
+    }, 0);
+
+    return () => window.clearTimeout(refresh);
+  }, [events, isWaitingForEvidence]);
 
   // A plan left open overnight belongs to yesterday. Regenerate when the app
   // regains focus so a returning learner sees today's plan, not a stale one.
@@ -52,6 +77,7 @@ export function useDailyPlan(events: readonly AttemptEvent[] = []): UseDailyPlan
       setPlan((current) => {
         if (!isPlanStale(current, { now: new Date() })) return current;
 
+        if (events === null) return current;
         const fresh = buildPlan(events, new Date());
         saveDailyPlan(fresh);
         return fresh;
@@ -79,7 +105,7 @@ export function useDailyPlan(events: readonly AttemptEvent[] = []): UseDailyPlan
   }, []);
 
   const regenerate = useCallback(() => {
-    const fresh = buildPlan(events, new Date());
+    const fresh = buildPlan(events ?? EMPTY_EVENTS, new Date());
     saveDailyPlan(fresh);
     setPlan(fresh);
   }, [events]);

@@ -43,7 +43,7 @@ function nextSequence(): number {
   }
 }
 
-export async function initializeEvidenceLedger(progress: PracticeProgress): Promise<void> {
+export async function initializeEvidenceLedger(progress: PracticeProgress): Promise<AttemptEvent[]> {
   try {
     const existing = await loadAttemptEvents();
     let events = existing;
@@ -56,10 +56,12 @@ export async function initializeEvidenceLedger(progress: PracticeProgress): Prom
       events = unionAttemptEvents(existing, migrated);
     }
     saveEvidenceProjections(rebuildEvidenceProjections(events));
+    return events;
   } catch {
     // Storage may be disabled by private browsing or quota policy.  Evidence is
     // supplementary to the current attempt and must not create an unhandled
     // rejection or disrupt practice.
+    return [];
   }
 }
 

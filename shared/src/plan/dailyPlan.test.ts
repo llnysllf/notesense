@@ -100,6 +100,21 @@ describe("planDay", () => {
 
     expect(plan.blocks[0]?.role).toBe("review");
   });
+
+  it("keeps a focus block when more than one competency is due", () => {
+    const events = [
+      ...Array.from({ length: 3 }, (_, index) =>
+        attempt("reading.pitch.staff-to-key", true, "2026-05-01T09:00:00.000Z", index),
+      ),
+      ...Array.from({ length: 3 }, (_, index) =>
+        attempt("ear.pitch.absolute-anchor", true, "2026-05-01T09:00:00.000Z", index + 3),
+      ),
+    ];
+
+    const plan = planDay({ snapshot: buildMasterySnapshot(events, NOW), now: NOW });
+
+    expect(plan.blocks.map((block) => block.role)).toEqual(["review", "focus", "confidence"]);
+  });
 });
 
 describe("isPlanStale", () => {
