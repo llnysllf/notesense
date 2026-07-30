@@ -12,9 +12,10 @@ import type { PracticeMode } from "./types";
 // Which workspace a destination shows. Owned here rather than by the nav
 // component so hooks and the router can use it without depending on
 // presentation.
-export type AppSection = "practice" | "songs" | "progress" | "map" | "history" | "settings" | "data";
+export type AppSection = "today" | "practice" | "songs" | "progress" | "map" | "history" | "settings" | "data";
 
 export type RouteId =
+  | "today"
   | "practice-reading"
   | "practice-pitch"
   | "songs"
@@ -24,7 +25,7 @@ export type RouteId =
   | "settings"
   | "settings-data";
 
-export type RouteGroup = "Practice" | "Progress" | "Settings";
+export type RouteGroup = "Today" | "Practice" | "Progress" | "Settings";
 
 export type RouteDefinition = {
   id: RouteId;
@@ -38,6 +39,7 @@ export type RouteDefinition = {
 };
 
 export const ROUTES: readonly RouteDefinition[] = [
+  { id: "today", path: "/today", label: "Today", group: "Today", section: "today" },
   {
     id: "practice-reading",
     path: "/practice/reading",
@@ -62,7 +64,7 @@ export const ROUTES: readonly RouteDefinition[] = [
   { id: "settings-data", path: "/settings/data", label: "Data", group: "Settings", section: "data" },
 ];
 
-export const ROUTE_GROUPS: readonly RouteGroup[] = ["Practice", "Progress", "Settings"];
+export const ROUTE_GROUPS: readonly RouteGroup[] = ["Today", "Practice", "Progress", "Settings"];
 
 // Where the app lands when no destination is given.
 export const DEFAULT_ROUTE = ROUTES[0] as RouteDefinition;

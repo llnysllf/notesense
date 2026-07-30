@@ -140,6 +140,20 @@ export {
   sessionRollups,
 } from "@notesense/shared";
 
+// Daily plan (Slice 6).
+export type { DailyPlan, DailyPlanBlock, DailyBlockRole, PlanActivity, PlanProgress } from "@notesense/shared";
+export {
+  DAILY_PLAN_VERSION,
+  planDay,
+  planProgress,
+  markBlockComplete,
+  startBlock,
+  completeActiveBlock,
+  isPlanStale,
+  localDateKey,
+  normalizeDailyPlan,
+} from "@notesense/shared";
+
 export type StaffClef = "treble" | "bass";
 
 export type TrainingNote = {

@@ -55,12 +55,21 @@ test("serves the GitHub Pages build under the /notesense/ base path", async ({ p
     /connect-src 'none'/,
   );
   await expect(page.getByRole("heading", { name: "NoteSense" })).toBeVisible();
-  await expect(page.getByRole("button", { name: "Start drill" })).toBeVisible();
+  // The deployed home is Today, so the plan is what proves the app booted.
+  await expect(page.getByRole("heading", { name: "Your plan for today" })).toBeVisible();
 
   const manifestResponse = await page.request.get("/notesense/site.webmanifest");
   expect(manifestResponse.ok()).toBe(true);
   expect(manifestResponse.headers()["content-type"]).toMatch(/json|manifest/);
 
+  // Navigate in-app rather than deep-linking: the deployed host answers unknown
+  // paths with 404.html, and its 404 status would trip the console-error guard
+  // above even though the app renders correctly.
+  const menuToggle = page.getByRole("button", { name: "Open menu" });
+  if (await menuToggle.isVisible()) {
+    await menuToggle.click();
+  }
+  await page.getByRole("link", { name: "Note reading", exact: true }).click();
   await page.getByRole("button", { name: "Start drill" }).click();
   await expect(
     page.getByRole("button", { name: `White piano key ${await getCurrentReadingNoteId(page)}` }),

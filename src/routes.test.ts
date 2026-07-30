@@ -21,17 +21,20 @@ describe("route model", () => {
     }
   });
 
-  it("defaults to the reading drill", () => {
-    expect(DEFAULT_ROUTE.id).toBe("practice-reading");
-    expect(DEFAULT_ROUTE.section).toBe("practice");
-    expect(DEFAULT_ROUTE.mode).toBe("reading");
+  it("opens on Today, so the app lands on the plan rather than a raw drill", () => {
+    expect(DEFAULT_ROUTE.id).toBe("today");
+    expect(DEFAULT_ROUTE.section).toBe("today");
+  });
+
+  it("addresses Today", () => {
+    expect(matchRoute("/today")?.id).toBe("today");
+    expect(routeForSection("today").id).toBe("today");
   });
 
   it("only lists destinations that have a screen behind them", () => {
     // Navigation that leads nowhere is worse than no navigation, so Today,
     // Learn, and Account must not appear before the slices that build them.
     const labels = ROUTES.map((route) => route.label);
-    expect(labels).not.toContain("Today");
     expect(labels).not.toContain("Learn");
     expect(labels).not.toContain("Account");
     expect(labels).not.toContain("Sign in");

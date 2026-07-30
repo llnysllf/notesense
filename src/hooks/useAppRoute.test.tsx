@@ -41,16 +41,16 @@ describe("useAppRoute", () => {
     setPath("/does-not-exist");
     render(<RouteProbe />);
 
-    expect(screen.getByTestId("route-id")).toHaveTextContent("practice-reading");
+    expect(screen.getByTestId("route-id")).toHaveTextContent("today");
     // The caller can tell a typo apart from a deliberate visit to the default.
     expect(screen.getByTestId("unknown")).toHaveTextContent("true");
   });
 
-  it("treats the site root as the default destination", () => {
+  it("treats the site root as Today, the app home", () => {
     setPath("/");
     render(<RouteProbe />);
 
-    expect(screen.getByTestId("route-id")).toHaveTextContent("practice-reading");
+    expect(screen.getByTestId("route-id")).toHaveTextContent("today");
   });
 
   it("navigates to an explicit destination", () => {
