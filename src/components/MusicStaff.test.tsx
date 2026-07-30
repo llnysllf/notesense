@@ -30,13 +30,13 @@ describe("MusicStaff", () => {
   });
 
   it("renders a ledger line for notes that have one", () => {
-    const note = STARTER_NOTES.find((n) => n.ledgerLineY !== undefined)!;
+    const note = STARTER_NOTES.find((n) => n.ledgerLineYs?.length)!;
     const { container } = render(<MusicStaff note={note} />);
     expect(container.querySelectorAll("line").length).toBe(STAFF_LINES + STEM_LINE + 1);
   });
 
   it("renders no ledger line for notes that do not have one", () => {
-    const note = STARTER_NOTES.find((n) => n.ledgerLineY === undefined)!;
+    const note = STARTER_NOTES.find((n) => !n.ledgerLineYs?.length)!;
     const { container } = render(<MusicStaff note={note} />);
     expect(container.querySelectorAll("line").length).toBe(STAFF_LINES + STEM_LINE);
   });

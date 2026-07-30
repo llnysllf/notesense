@@ -451,8 +451,8 @@ export function getPracticeWeight(noteId: string, progress?: ModeProgress): numb
   return 1 + (1 - accuracy) * 5 + Math.min(misses, 5) * 0.4;
 }
 
-function getSecureRandom(): number {
-  return crypto.getRandomValues(new Uint32Array(1))[0]! / 2 ** 32;
+function getSecureRandomInt(maxExclusive: number): number {
+  return parseInt(crypto.randomUUID(), 16) % maxExclusive;
 }
 
 function selectPracticeNote<TNote extends { id: string }>(notes: TNote[], options: SelectNoteOptions): TNote {
@@ -463,18 +463,20 @@ function selectPracticeNote<TNote extends { id: string }>(notes: TNote[], option
 
   const availableNotes = notes.length > 1 ? notes.filter((note) => note.id !== options.previousNoteId) : notes;
   const candidateNotes = availableNotes.length > 0 ? availableNotes : [fallbackNote];
-  const rng = options.rng ?? getSecureRandom;
-
   if (!options.useAdaptive) {
-    return candidateNotes[Math.floor(rng() * candidateNotes.length)] ?? fallbackNote;
+    const index =
+      options.rng === undefined
+        ? getSecureRandomInt(candidateNotes.length)
+        : Math.floor(options.rng() * candidateNotes.length);
+    return candidateNotes[index] ?? fallbackNote;
   }
 
   const weightedNotes = candidateNotes.map((note) => ({
     note,
-    weight: getPracticeWeight(note.id, options.progress),
+    weight: Math.round(getPracticeWeight(note.id, options.progress) * 100),
   }));
   const totalWeight = weightedNotes.reduce((sum, entry) => sum + entry.weight, 0);
-  let cursor = rng() * totalWeight;
+  let cursor = options.rng === undefined ? getSecureRandomInt(totalWeight) : options.rng() * totalWeight;
 
   for (const entry of weightedNotes) {
     cursor -= entry.weight;

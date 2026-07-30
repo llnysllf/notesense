@@ -189,7 +189,6 @@ export type TrainingNote = {
   frequency: number;
   staffY: number;
   clef: StaffClef;
-  ledgerLineY?: number;
   ledgerLineYs?: number[];
   keyboardShortcut: string;
 };

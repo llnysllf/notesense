@@ -7,7 +7,7 @@ type MusicStaffProps = {
 };
 
 function NoteGlyph({ note, x, variant = "current" }: { note: TrainingNote; x: number; variant?: "current" | "next" }) {
-  const ledgerLineYs = note.ledgerLineYs ?? (note.ledgerLineY === undefined ? [] : [note.ledgerLineY]);
+  const ledgerLineYs = note.ledgerLineYs ?? [];
 
   return (
     <g className={`staff-note ${variant}`}>
@@ -43,12 +43,7 @@ function MusicStaff({ hideNote = false, note, nextNote = null }: MusicStaffProps
   const ariaDetail = nextNote ? ` next ${nextNote.id}` : "";
 
   return (
-    <svg
-      className="staff"
-      viewBox="0 0 420 184"
-      role="img"
-      aria-label={`${clefLabel} ${note.id}` + ariaDetail}
-    >
+    <svg className="staff" viewBox="0 0 420 184" role="img" aria-label={`${clefLabel} ${note.id}` + ariaDetail}>
       <text className={`clef ${note.clef}-clef`} x="54" y={clefY} aria-hidden="true">
         {clefSymbol}
       </text>
