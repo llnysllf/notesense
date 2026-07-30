@@ -1,5 +1,14 @@
 import type { ReactNode } from "react";
-import type { DataStatus, FeedbackState, PitchExercise, PitchNote, PracticeMode, TrainingNote } from "../types";
+import type {
+  DataStatus,
+  FeedbackState,
+  PitchExercise,
+  PitchNote,
+  PracticeMode,
+  ReadingMiss,
+  TrainingNote,
+} from "../types";
+import MistakeReplay from "./MistakeReplay";
 import MusicStaff from "./MusicStaff";
 import PianoKeyboard from "./PianoKeyboard";
 import PitchPrompt from "./PitchPrompt";
@@ -16,13 +25,18 @@ type PracticeWorkspaceProps = {
   feedbackClass: string;
   feedbackText: string;
   isRunning: boolean;
+  isReadingPromptHidden: boolean;
   keyboardResetKey: string;
+  lookAheadReadingNote: TrainingNote | null;
   melodyAnswerNoteIds: string[];
   mode: PracticeMode;
   pitchExercise: PitchExercise;
   pitchRangeNoteIds: Set<string>;
   promptDetail: string;
   rangeControls: ReactNode;
+  // What was missed this round, for post-round coaching. Nothing renders after
+  // a clean round.
+  readingMisses: readonly ReadingMiss[];
   roundAccuracy: string;
   roundAttempts: number;
   roundCorrect: number;
@@ -33,6 +47,7 @@ type PracticeWorkspaceProps = {
   onMelodyNoteInput: (noteId: string) => void;
   onPitchKeyAnswer: (noteId: string) => void;
   onReadingKeyAnswer: (noteId: string) => void;
+  onStartReplay: (misses: readonly ReadingMiss[]) => void;
   onStartRound: () => void;
   onSubmitMelodyAnswer: () => void;
   onUndoMelodyAnswer: () => void;
@@ -48,13 +63,16 @@ function PracticeWorkspace({
   feedbackClass,
   feedbackText,
   isRunning,
+  isReadingPromptHidden,
   keyboardResetKey,
+  lookAheadReadingNote,
   melodyAnswerNoteIds,
   mode,
   pitchExercise,
   pitchRangeNoteIds,
   promptDetail,
   rangeControls,
+  readingMisses,
   roundAccuracy,
   roundAttempts,
   roundCorrect,
@@ -65,6 +83,7 @@ function PracticeWorkspace({
   onMelodyNoteInput,
   onPitchKeyAnswer,
   onReadingKeyAnswer,
+  onStartReplay,
   onStartRound,
   onSubmitMelodyAnswer,
   onUndoMelodyAnswer,
@@ -80,6 +99,7 @@ function PracticeWorkspace({
       )}
 
       {rangeControls}
+      {mode === "reading" && !isRunning ? <MistakeReplay misses={readingMisses} onReplay={onStartReplay} /> : null}
 
       <div className="round-strip" aria-label="Current round status">
         <StatTile label="Time" value={`${timeRemaining}s`} />
@@ -90,7 +110,7 @@ function PracticeWorkspace({
 
       <div className={`staff-card ${mode === "pitch" ? "pitch-card" : ""}`}>
         {mode === "reading" ? (
-          <MusicStaff note={currentReadingNote} />
+          <MusicStaff hideNote={isReadingPromptHidden} note={currentReadingNote} nextNote={lookAheadReadingNote} />
         ) : pitchExercise === "melody" ? (
           <PitchSequenceAnswer
             answerNoteIds={melodyAnswerNoteIds}

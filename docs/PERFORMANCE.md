@@ -24,9 +24,9 @@ Current per-file budgets:
 
 Current total budget:
 
-- total Pages output: 375 KiB raw, 116 KiB gzip
+- total Pages output: 385 KiB raw, 120 KiB gzip
 
-Secondary statistics, song screens, and the evidence ledger are split from the initial practice route. The total raw budget includes those deferred chunks and PWA precache metadata; the 116 KiB gzip cap remains the shipped-network constraint. It was raised again when the Today screen added the daily-plan UI and its styles. It was raised from 105 KiB when URL-addressable destinations added a router (about 2 KiB gzip) and a 404.html shell copy so GitHub Pages can serve deep links.
+Secondary statistics, song screens, and the evidence ledger are split from the initial practice route. The total raw budget includes those deferred chunks and PWA precache metadata; the 120 KiB gzip cap remains the shipped-network constraint. It was raised again when the Today screen added the daily-plan UI and its styles. It was raised from 105 KiB when URL-addressable destinations added a router (about 2 KiB gzip) and a 404.html shell copy so GitHub Pages can serve deep links.
 
 ## Lighthouse Signal
 

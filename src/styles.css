@@ -371,7 +371,14 @@ h3 {
   font-size: 1rem;
 }
 
-:is(.reading-range-switch, .pitch-range-switch, .pitch-exercise-switch, .length-options, .range-edge-switch) {
+:is(
+  .mode-switch,
+  .reading-range-switch,
+  .pitch-range-switch,
+  .pitch-exercise-switch,
+  .length-options,
+  .range-edge-switch
+) {
   display: grid;
   gap: 6px;
   padding: 6px;
@@ -380,7 +387,15 @@ h3 {
   background: var(--color-control-soft);
 }
 
-:is(.reading-range-switch, .pitch-range-switch, .pitch-exercise-switch, .length-options, .range-edge-switch) button {
+:is(
+    .mode-switch,
+    .reading-range-switch,
+    .pitch-range-switch,
+    .pitch-exercise-switch,
+    .length-options,
+    .range-edge-switch
+  )
+  button {
   border-radius: var(--radius-control);
   background: transparent;
   color: var(--color-muted-strong);
@@ -392,13 +407,27 @@ h3 {
     box-shadow 0.15s ease;
 }
 
-:is(.reading-range-switch, .pitch-range-switch, .pitch-exercise-switch, .length-options, .range-edge-switch)
+:is(
+    .mode-switch,
+    .reading-range-switch,
+    .pitch-range-switch,
+    .pitch-exercise-switch,
+    .length-options,
+    .range-edge-switch
+  )
   button:not(.active):hover {
   background: var(--color-surface);
   color: var(--color-text);
 }
 
-:is(.reading-range-switch, .pitch-range-switch, .pitch-exercise-switch, .length-options, .range-edge-switch)
+:is(
+    .mode-switch,
+    .reading-range-switch,
+    .pitch-range-switch,
+    .pitch-exercise-switch,
+    .length-options,
+    .range-edge-switch
+  )
   button.active {
   background: var(--color-surface);
   color: var(--color-brand-strong);
@@ -498,7 +527,11 @@ h3 {
   grid-template-columns: repeat(6, minmax(0, 1fr));
 }
 
-:is(.reading-range-switch, .pitch-range-switch, .pitch-exercise-switch, .range-edge-switch) button {
+.mode-switch {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+:is(.mode-switch, .reading-range-switch, .pitch-range-switch, .pitch-exercise-switch, .range-edge-switch) button {
   min-width: 0;
   min-height: 38px;
   padding: 0 8px;
@@ -1060,6 +1093,21 @@ h3 {
   stroke: var(--color-ink);
   stroke-linecap: round;
   stroke-width: 4;
+}
+
+.staff-note.next {
+  opacity: 0.42;
+}
+
+.staff-note.next .note-stem {
+  stroke-width: 3;
+}
+
+.audiation-cue {
+  fill: var(--color-muted);
+  font-size: 1rem;
+  font-weight: 800;
+  letter-spacing: 0;
 }
 
 .prompt-label {
@@ -1853,6 +1901,7 @@ h3 {
   }
 
   .round-strip,
+  .mode-switch,
   .reading-range-switch,
   .pitch-range-switch,
   .lifetime-grid,
@@ -2011,4 +2060,70 @@ h3 {
   margin: 0;
   color: var(--color-success);
   font-weight: 800;
+}
+
+/* Sight-Reading Academy: choosing how to work, and reviewing what went wrong. */
+.reading-controls {
+  display: grid;
+  gap: var(--space-control);
+}
+
+.reading-mode-selector {
+  display: grid;
+  gap: 8px;
+}
+
+.reading-mode-summary {
+  margin: 0;
+  color: var(--color-muted-strong);
+  font-size: 0.88rem;
+}
+
+.reading-fixed-range {
+  margin: 0;
+  border-radius: var(--radius-control);
+  background: var(--color-control-soft);
+  padding: 10px 14px;
+  color: var(--color-muted-strong);
+  font-size: 0.88rem;
+  font-weight: 700;
+}
+
+.mistake-replay {
+  display: grid;
+  gap: 10px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-card);
+  background: var(--color-surface);
+  padding: var(--space-card);
+}
+
+.mistake-replay h3 {
+  margin: 0;
+  font-size: 1rem;
+}
+
+.mistake-list {
+  display: grid;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.mistake-list li {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+}
+
+.mistake-note {
+  min-width: 44px;
+  color: var(--color-danger);
+  font-weight: 800;
+}
+
+.mistake-detail {
+  color: var(--color-muted-strong);
+  font-size: 0.88rem;
 }

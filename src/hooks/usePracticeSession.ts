@@ -1,20 +1,21 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { getPianoKeyById, getPitchNotes } from "../noteData";
-import { ADVANCE_DELAY_MS } from "./practiceSessionConstants";
-import { captureSingleEvidenceAttempt } from "./evidenceCapture";
-import { playPracticePrompt, startPracticeRound, submitMelodyPracticeAnswer } from "./practiceSessionActions";
-import { completeSessionRound, evaluateSingleAnswer } from "./practiceSessionLogic";
+import { startPracticeRound } from "./practiceSessionActions";
+import { completeSessionRound } from "./practiceSessionLogic";
 import { usePracticeItems } from "./usePracticeItems";
+import { useMelodyAnswerControls } from "./useMelodyAnswerControls";
+import { useReadingAcademyFlow } from "./useReadingAcademyFlow";
 import { useReadingShortcuts } from "./useReadingShortcuts";
+import { useSingleAnswerControls } from "./useSingleAnswerControls";
 import type { UsePracticeSessionOptions, UsePracticeSessionResult } from "./practiceSessionTypes";
 import type {
   FeedbackState,
-  NoteName,
   PracticeMode,
   PracticeProgress,
   PracticeSettings,
+  ReadingMiss,
   SessionSummary,
 } from "../types";
+
 export function usePracticeSession({
   settings,
   progress,
@@ -53,9 +54,82 @@ export function usePracticeSession({
       advanceTimerRef.current = null;
     }
   }, []);
+  const readingAcademy = useReadingAcademyFlow({
+    settings,
+    currentReadingNote,
+    getNextReadingNote,
+    setCurrentReadingNote,
+    setRoundStartedAt,
+    setIsRunning,
+    setFeedback,
+    setLastSummary,
+    setRoundAttempts,
+    setRoundCorrect,
+    setCurrentStreak,
+    setBestRoundStreak,
+    setTimeRemaining,
+    clearAdvanceTimer,
+    promptStartedAtRef,
+  });
+  const melodyControls = useMelodyAnswerControls({
+    mode,
+    settings,
+    progress,
+    currentMelody,
+    melodyAnswerNoteIds,
+    currentStreak,
+    bestRoundStreak,
+    isRunning,
+    feedback,
+    promptStartedAtRef,
+    sessionIdRef,
+    advanceTimerRef,
+    setFeedback,
+    setRoundAttempts,
+    setRoundCorrect,
+    setCurrentStreak,
+    setBestRoundStreak,
+    setCurrentMelody,
+    setMelodyAnswerNoteIds,
+    onProgressChange,
+    clearAdvanceTimer,
+    getNextPitchMelody,
+  });
+  const singleAnswerControls = useSingleAnswerControls({
+    mode,
+    settings,
+    progress,
+    currentMelody,
+    currentReadingNote,
+    currentPitchNote,
+    feedback,
+    isRunning,
+    currentStreak,
+    bestRoundStreak,
+    roundAttempts,
+    roundCorrect,
+    roundStartedAt,
+    timeRemaining,
+    readingAcademy,
+    getNextReadingNote,
+    getNextPitchNote,
+    setFeedback,
+    setRoundAttempts,
+    setRoundCorrect,
+    setCurrentStreak,
+    setBestRoundStreak,
+    setCurrentReadingNote,
+    setCurrentPitchNote,
+    onProgressChange,
+    clearAdvanceTimer,
+    advanceTimerRef,
+    promptStartedAtRef,
+    sessionIdRef,
+  });
   useEffect(() => () => clearAdvanceTimer(), [clearAdvanceTimer]);
   const finishRound = useCallback(() => {
     if (!isRunning) return;
+    if (mode === "reading" && readingAcademy.finishTestRound()) return;
     clearAdvanceTimer();
     const { nextProgress, summary } = completeSessionRound({
       mode,
@@ -73,6 +147,7 @@ export function usePracticeSession({
     setRoundStartedAt(null);
     setFeedback(null);
     setTimeRemaining(settings.roundLength);
+    readingAcademy.reset();
   }, [
     bestRoundStreak,
     clearAdvanceTimer,
@@ -80,6 +155,7 @@ export function usePracticeSession({
     mode,
     onProgressChange,
     progress,
+    readingAcademy,
     roundAttempts,
     roundCorrect,
     roundStartedAt,
@@ -97,6 +173,7 @@ export function usePracticeSession({
   }, [finishRound, isRunning, timeRemaining]);
   function setPracticeMode(nextMode: PracticeMode) {
     clearAdvanceTimer();
+    readingAcademy.reset();
     setMode(nextMode);
     setFeedback(null);
     setMelodyAnswerNoteIds([]);
@@ -113,6 +190,8 @@ export function usePracticeSession({
     clearAdvanceTimer();
     sessionIdRef.current = globalThis.crypto?.randomUUID?.() ?? `session-${Date.now()}`;
     promptStartedAtRef.current = { wallIso: new Date().toISOString(), clock: performance.now() };
+    if (mode === "reading" && readingAcademy.startModeRound()) return;
+    readingAcademy.reset();
     startPracticeRound({
       mode,
       settings,
@@ -136,145 +215,17 @@ export function usePracticeSession({
       setMelodyAnswerNoteIds,
     });
   }
-  function playCurrentNote() {
-    playPracticePrompt({
-      mode,
-      settings,
-      melody: currentMelody,
-      readingFrequency: currentReadingNote.frequency,
-      pitchFrequency: currentPitchNote.frequency,
-    });
-  }
-  function recordAnswer(answer: NoteName, answerId?: string) {
-    if (feedback !== null || !isRunning) return;
-    const answeredMode = mode;
-    const answeredReadingNote = currentReadingNote;
-    const answeredPitchNote = currentPitchNote;
-    const {
-      feedback: nextFeedback,
-      isCorrect,
-      nextBestStreak,
-      nextProgress,
-      nextStreak,
-    } = evaluateSingleAnswer({
-      answer,
-      answerId,
-      mode: answeredMode,
-      readingNote: answeredReadingNote,
-      pitchNote: answeredPitchNote,
-      currentStreak,
-      bestRoundStreak,
-      progress,
-    });
-    setFeedback(nextFeedback);
-    setRoundAttempts((n) => n + 1);
-    setRoundCorrect((n) => n + (isCorrect ? 1 : 0));
-    setCurrentStreak(nextStreak);
-    setBestRoundStreak(nextBestStreak);
-    onProgressChange(nextProgress);
-    const answerMidi = getPianoKeyById(answerId ?? "")?.midi;
-    captureSingleEvidenceAttempt({
-      timing: promptStartedAtRef.current,
-      sessionId: sessionIdRef.current,
-      mode: answeredMode,
-      promptId: answeredMode === "reading" ? answeredReadingNote.id : answeredPitchNote.id,
-      correct: isCorrect,
-      ...(answerMidi === undefined ? {} : { answerMidi }),
-    });
 
+  function startReplay(misses: readonly ReadingMiss[]) {
     clearAdvanceTimer();
-    advanceTimerRef.current = window.setTimeout(() => {
-      advanceTimerRef.current = null;
-      setFeedback(null);
-      if (answeredMode === "reading") {
-        promptStartedAtRef.current = { wallIso: new Date().toISOString(), clock: performance.now() };
-        setCurrentReadingNote((note) => getNextReadingNote(note.id, nextProgress));
-        return;
-      }
-      const nextPitch = getNextPitchNote(answeredPitchNote.id, nextProgress);
-      promptStartedAtRef.current = { wallIso: new Date().toISOString(), clock: performance.now() };
-      setCurrentPitchNote(nextPitch);
-      if (settings.autoPlayPitch) {
-        playPracticePrompt({
-          mode: "pitch",
-          settings,
-          melody: [],
-          readingFrequency: nextPitch.frequency,
-          pitchFrequency: nextPitch.frequency,
-        });
-      }
-    }, ADVANCE_DELAY_MS);
-  }
-  function handleReadingKeyAnswer(noteId: string) {
-    const key = getPianoKeyById(noteId);
-    if (!key) return;
-    recordAnswer(key.naturalName, key.id);
-  }
-
-  function handlePitchKeyAnswer(noteId: string) {
-    const key = getPianoKeyById(noteId);
-    if (!key) return;
-    recordAnswer(key.naturalName, key.id);
-  }
-  function handleMelodyNoteInput(noteId: string) {
-    if (mode !== "pitch" || settings.pitchExercise !== "melody" || !isRunning || feedback !== null) return;
-    if (melodyAnswerNoteIds.length >= currentMelody.length) return;
-    if (!getPitchNotes(settings.pitchRange, settings.customPitchRange).some((note) => note.id === noteId)) return;
-    setMelodyAnswerNoteIds((answer) => [...answer, noteId]);
-  }
-
-  function undoMelodyAnswer() {
-    if (feedback !== null) return;
-    setMelodyAnswerNoteIds((answer) => answer.slice(0, -1));
-  }
-
-  function clearMelodyAnswer() {
-    if (feedback !== null) return;
-    setMelodyAnswerNoteIds([]);
-  }
-
-  function submitMelodyAnswer() {
-    if (
-      mode !== "pitch" ||
-      settings.pitchExercise !== "melody" ||
-      !isRunning ||
-      feedback !== null ||
-      melodyAnswerNoteIds.length !== currentMelody.length
-    ) {
-      return;
-    }
-
-    submitMelodyPracticeAnswer({
-      progress,
-      melody: currentMelody,
-      answerNoteIds: melodyAnswerNoteIds,
-      currentStreak,
-      bestRoundStreak,
-      timing: promptStartedAtRef.current,
-      sessionId: sessionIdRef.current,
-      answerMidis: melodyAnswerNoteIds.map((id) => getPianoKeyById(id)?.midi),
-      setFeedback,
-      setRoundAttempts,
-      setRoundCorrect,
-      setCurrentStreak,
-      setBestRoundStreak,
-      onProgressChange,
-      clearAdvanceTimer,
-      setAdvanceTimer: (value) => {
-        advanceTimerRef.current = value;
-      },
-      getNextPitchMelody,
-      setCurrentMelody,
-      setMelodyAnswerNoteIds,
-      autoPlayPitch: settings.autoPlayPitch,
-      setPromptTiming: () => {
-        promptStartedAtRef.current = { wallIso: new Date().toISOString(), clock: performance.now() };
-      },
-    });
+    sessionIdRef.current = globalThis.crypto?.randomUUID?.() ?? `session-${Date.now()}`;
+    promptStartedAtRef.current = { wallIso: new Date().toISOString(), clock: performance.now() };
+    if (mode !== "reading" || !readingAcademy.startReplay(misses)) startRound();
   }
 
   function resetSession(nextSettings: PracticeSettings, nextProgress: PracticeProgress) {
     clearAdvanceTimer();
+    readingAcademy.reset();
     resetItems(nextSettings, nextProgress);
     setRoundAttempts(0);
     setRoundCorrect(0);
@@ -287,12 +238,14 @@ export function usePracticeSession({
     setTimeRemaining(nextSettings.roundLength);
   }
 
-  useReadingShortcuts({ mode, settings, onAnswer: handleReadingKeyAnswer });
+  useReadingShortcuts({ mode, settings, onAnswer: singleAnswerControls.handleReadingKeyAnswer });
 
   return {
     mode,
     setPracticeMode,
     currentReadingNote,
+    lookAheadReadingNote: readingAcademy.lookAheadReadingNote,
+    isReadingPromptHidden: readingAcademy.isReadingPromptHidden,
     currentPitchNote,
     currentMelody,
     melodyAnswerNoteIds,
@@ -306,15 +259,16 @@ export function usePracticeSession({
     isRunning,
     lastSummary,
     startRound,
+    startReplay,
     finishRound,
-    handleAnswer: (answer) => recordAnswer(answer),
-    handleReadingKeyAnswer,
-    handlePitchKeyAnswer,
-    handleMelodyNoteInput,
-    undoMelodyAnswer,
-    clearMelodyAnswer,
-    submitMelodyAnswer,
-    playCurrentNote,
+    handleAnswer: (answer) => singleAnswerControls.recordAnswer(answer),
+    handleReadingKeyAnswer: singleAnswerControls.handleReadingKeyAnswer,
+    handlePitchKeyAnswer: singleAnswerControls.handlePitchKeyAnswer,
+    handleMelodyNoteInput: melodyControls.handleMelodyNoteInput,
+    undoMelodyAnswer: melodyControls.undoMelodyAnswer,
+    clearMelodyAnswer: melodyControls.clearMelodyAnswer,
+    submitMelodyAnswer: melodyControls.submitMelodyAnswer,
+    playCurrentNote: singleAnswerControls.playCurrentNote,
     resetSession,
   };
 }

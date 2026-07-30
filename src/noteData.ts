@@ -115,7 +115,7 @@ export const TREBLE_ONE_OCTAVE_NOTES: TrainingNote[] = [
     frequency: 261.63,
     staffY: 136,
     clef: "treble",
-    ledgerLineY: 136,
+    ledgerLineYs: [136],
     keyboardShortcut: "1",
   },
   {

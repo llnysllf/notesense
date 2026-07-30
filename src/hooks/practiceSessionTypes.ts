@@ -5,6 +5,7 @@ import type {
   PracticeMode,
   PracticeProgress,
   PracticeSettings,
+  ReadingMiss,
   SessionSummary,
   TrainingNote,
 } from "../types";
@@ -19,6 +20,8 @@ export type UsePracticeSessionResult = {
   mode: PracticeMode;
   setPracticeMode: (nextMode: PracticeMode) => void;
   currentReadingNote: TrainingNote;
+  lookAheadReadingNote: TrainingNote | null;
+  isReadingPromptHidden: boolean;
   currentPitchNote: PitchNote;
   currentMelody: PitchNote[];
   melodyAnswerNoteIds: string[];
@@ -31,6 +34,7 @@ export type UsePracticeSessionResult = {
   isRunning: boolean;
   lastSummary: SessionSummary | null;
   startRound: () => void;
+  startReplay: (misses: readonly ReadingMiss[]) => void;
   finishRound: () => void;
   handleAnswer: (answer: NoteName) => void;
   handleReadingKeyAnswer: (noteId: string) => void;

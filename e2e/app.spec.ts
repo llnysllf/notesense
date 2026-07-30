@@ -269,7 +269,7 @@ test("switches to a wider mixed reading drill range", async ({ page }) => {
 test("sets a custom reading drill range from piano keys", async ({ page }) => {
   await page.goto("/practice/reading", { waitUntil: "domcontentloaded" });
 
-  await page.getByRole("button", { name: "Custom" }).click();
+  await page.getByRole("button", { name: "Custom", exact: true }).click();
   const customRangeCard = page.locator(".custom-range-card");
 
   await expect(customRangeCard.getByText("Custom C3-B4")).toBeVisible();
@@ -285,7 +285,7 @@ test("sets a custom reading drill range from piano keys", async ({ page }) => {
   await expect(page.getByLabel(/(?:Treble|Bass) staff note [GABC][34]/)).toBeVisible();
 
   await page.reload({ waitUntil: "domcontentloaded" });
-  await expect(page.getByRole("button", { name: "Custom" })).toHaveAttribute("aria-pressed", "true");
+  await expect(page.getByRole("button", { name: "Custom", exact: true })).toHaveAttribute("aria-pressed", "true");
   await expect(page.getByText("Adaptive | Custom G3-C4")).toBeVisible();
 });
 

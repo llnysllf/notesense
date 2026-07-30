@@ -54,6 +54,8 @@ export type PracticeProgress = {
   history: PracticeSessionRecord[];
 };
 
+import type { ReadingMode } from "./reading/readingMode";
+
 export type PracticeSettings = {
   roundLength: RoundLength;
   readingRange: ReadingRange;
@@ -65,6 +67,8 @@ export type PracticeSettings = {
   adaptivePractice: boolean;
   autoPlayPitch: boolean;
   revealPitchAfterAnswer: boolean;
+  // Which of the four sight-reading modes the reading screen is in.
+  readingMode: ReadingMode;
 };
 
 export type PracticeDataExport = {
