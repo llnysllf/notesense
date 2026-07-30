@@ -46,11 +46,4 @@ describe("MusicStaff", () => {
 
     expect(container.querySelector(".staff-note.next")).not.toBeNull();
   });
-
-  it("hides the current note for audiation prompts", () => {
-    const { container } = render(<MusicStaff hideNote note={STARTER_NOTES[0]!} />);
-
-    expect(container.querySelector(".staff-note.current")).toBeNull();
-    expect(container.querySelector(".audiation-cue")).toHaveTextContent(".");
-  });
 });

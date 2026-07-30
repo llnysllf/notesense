@@ -138,18 +138,6 @@ describe("usePracticeSession", () => {
     expect(onProgressChange).not.toHaveBeenCalled();
   });
 
-  it("hides Test prompts after the audiation preview window", () => {
-    const { result } = renderPracticeSession({
-      settings: { ...defaultSettings, readingMode: "test" },
-    });
-
-    act(() => result.current.startRound());
-    expect(result.current.isReadingPromptHidden).toBe(false);
-
-    act(() => vi.advanceTimersByTime(1200));
-    expect(result.current.isReadingPromptHidden).toBe(true);
-  });
-
   it("keeps a stable look-ahead note in Learn mode", () => {
     const { result } = renderPracticeSession({
       settings: { ...defaultSettings, readingMode: "learn" },

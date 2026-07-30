@@ -245,7 +245,6 @@ export function usePracticeSession({
     setPracticeMode,
     currentReadingNote,
     lookAheadReadingNote: readingAcademy.lookAheadReadingNote,
-    isReadingPromptHidden: readingAcademy.isReadingPromptHidden,
     currentPitchNote,
     currentMelody,
     melodyAnswerNoteIds,

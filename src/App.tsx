@@ -87,7 +87,6 @@ function App() {
     setPracticeMode,
     currentReadingNote,
     lookAheadReadingNote,
-    isReadingPromptHidden,
     currentPitchNote,
     currentMelody,
     melodyAnswerNoteIds,
@@ -242,7 +241,6 @@ function App() {
                 currentPitchNote={currentPitchNote}
                 currentMelody={currentMelody}
                 currentReadingNote={currentReadingNote}
-                isReadingPromptHidden={isReadingPromptHidden}
                 lookAheadReadingNote={lookAheadReadingNote}
                 currentStreak={currentStreak}
                 dataStatus={dataStatus}

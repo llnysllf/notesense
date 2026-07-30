@@ -29,7 +29,7 @@ function ReadingControls({ settings, onModeChange, onRangeChange, onCustomRangeC
       <ReadingModeSelector mode={settings.readingMode} onModeChange={onModeChange} />
       {rules.unseenMaterial ? (
         <p className="reading-fixed-range" role="note">
-          Fixed notes compare attempts.
+          A fixed 20-note form to compare attempts across sittings.
         </p>
       ) : (
         <ReadingRangeSelector
