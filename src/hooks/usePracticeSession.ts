@@ -15,6 +15,7 @@ import type {
   PracticeSettings,
   SessionSummary,
 } from "../types";
+import { getReadingModeRules } from "../types";
 export function usePracticeSession({
   settings,
   progress,
@@ -173,14 +174,16 @@ export function usePracticeSession({
     setBestRoundStreak(nextBestStreak);
     onProgressChange(nextProgress);
     const answerMidi = getPianoKeyById(answerId ?? "")?.midi;
-    captureSingleEvidenceAttempt({
-      timing: promptStartedAtRef.current,
-      sessionId: sessionIdRef.current,
-      mode: answeredMode,
-      promptId: answeredMode === "reading" ? answeredReadingNote.id : answeredPitchNote.id,
-      correct: isCorrect,
-      ...(answerMidi === undefined ? {} : { answerMidi }),
-    });
+    if (answeredMode !== "reading" || getReadingModeRules(settings.readingMode).contributesEvidence) {
+      captureSingleEvidenceAttempt({
+        timing: promptStartedAtRef.current,
+        sessionId: sessionIdRef.current,
+        mode: answeredMode,
+        promptId: answeredMode === "reading" ? answeredReadingNote.id : answeredPitchNote.id,
+        correct: isCorrect,
+        ...(answerMidi === undefined ? {} : { answerMidi }),
+      });
+    }
 
     clearAdvanceTimer();
     advanceTimerRef.current = window.setTimeout(() => {

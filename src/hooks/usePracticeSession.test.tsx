@@ -6,6 +6,13 @@ import { defaultSettings } from "../storage";
 import type { PracticeProgress, PracticeSettings } from "../types";
 import { usePracticeSession } from "./usePracticeSession";
 
+const { captureSingleEvidenceAttempt } = vi.hoisted(() => ({ captureSingleEvidenceAttempt: vi.fn() }));
+
+vi.mock("./evidenceCapture", () => ({
+  captureSingleEvidenceAttempt,
+  captureMelodyEvidenceAttempts: vi.fn(),
+}));
+
 vi.mock("../audio", () => ({
   playMelody: vi.fn(),
   playTone: vi.fn(),
@@ -93,6 +100,17 @@ describe("usePracticeSession", () => {
     act(() => vi.advanceTimersByTime(650));
 
     expect(result.current.feedback).toBeNull();
+  });
+
+  it("keeps Test-mode reading attempts out of shared evidence", () => {
+    const { result } = renderPracticeSession({
+      settings: { ...defaultSettings, readingMode: "test" },
+    });
+
+    act(() => result.current.startRound());
+    act(() => result.current.handleAnswer(result.current.currentReadingNote.name));
+
+    expect(captureSingleEvidenceAttempt).not.toHaveBeenCalled();
   });
 
   it("ignores answers before a round starts", () => {
