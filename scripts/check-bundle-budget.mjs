@@ -50,9 +50,9 @@ const totalBudget = {
   // The evidence-ledger chunk is deferred from the initial practice route but
   // remains part of the offline-capable Pages output, alongside the router and
   // the 404.html deep-link fallback added with URL-addressable destinations, and
-  // the Today screen.
-  rawBytes: 375 * KIB,
-  gzipBytes: 116 * KIB,
+  // the Today screen, and the Sight-Reading Academy.
+  rawBytes: 385 * KIB,
+  gzipBytes: 120 * KIB,
 };
 
 function collectFiles(directory) {

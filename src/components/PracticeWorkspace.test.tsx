@@ -13,6 +13,7 @@ function renderWorkspace(overrides: Partial<WorkspaceProps> = {}) {
     currentReadingNote: TREBLE_STARTER_NOTES[0]!,
     currentStreak: 2,
     dataStatus: null,
+    readingMisses: [],
     feedback: null,
     feedbackClass: "",
     feedbackText: "Ready",

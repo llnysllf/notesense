@@ -1,3 +1,4 @@
+import { normalizeReadingMode } from "./reading/readingMode";
 import type {
   CustomPitchRange,
   CustomReadingRange,
@@ -37,6 +38,7 @@ export const defaultSettings: PracticeSettings = {
   adaptivePractice: true,
   autoPlayPitch: true,
   revealPitchAfterAnswer: true,
+  readingMode: "practice",
 };
 
 export function isReadingRange(value: unknown): value is ReadingRange {
@@ -107,6 +109,7 @@ export function normalizeSettings(settings: unknown): PracticeSettings {
         : defaultSettings.adaptivePractice,
     autoPlayPitch:
       typeof settingsRecord.autoPlayPitch === "boolean" ? settingsRecord.autoPlayPitch : defaultSettings.autoPlayPitch,
+    readingMode: normalizeReadingMode(settingsRecord.readingMode),
     revealPitchAfterAnswer:
       typeof settingsRecord.revealPitchAfterAnswer === "boolean"
         ? settingsRecord.revealPitchAfterAnswer

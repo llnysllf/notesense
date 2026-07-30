@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { selectPitchMelody, selectPitchNote, selectReadingNote } from "../practiceEngine";
+import { getReadingModeRules } from "../types";
 import type { PitchNote, PracticeProgress, PracticeSettings, TrainingNote } from "../types";
 
 type UsePracticeItemsOptions = {
@@ -28,7 +29,9 @@ export function usePracticeItems({ settings, progress }: UsePracticeItemsOptions
       customReadingRange: settings.customReadingRange,
       progress: nextProgress.reading,
       readingRange: settings.readingRange,
-      useAdaptive: settings.adaptivePractice,
+      // Learn, Test, and Custom deliberately do not adapt: a test must not
+      // chase weak notes mid-run, and the other two follow the learner's lead.
+      useAdaptive: settings.adaptivePractice && getReadingModeRules(settings.readingMode).adaptiveSelection,
     };
     return selectReadingNote(previousNoteId === undefined ? options : { ...options, previousNoteId });
   }

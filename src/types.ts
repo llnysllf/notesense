@@ -60,6 +60,8 @@ export {
   ticksToSeconds,
   songToScore,
   scoreToSong,
+  midiToNoteId,
+  noteIdToMidi,
 } from "@notesense/shared";
 
 // Curriculum + exercise content platform (Slice 2).
@@ -152,6 +154,30 @@ export {
   isPlanStale,
   localDateKey,
   normalizeDailyPlan,
+} from "@notesense/shared";
+
+// Sight-Reading Academy (Slice 7).
+export type {
+  ReadingMode,
+  ReadingModeRules,
+  ReadingMistakeCode,
+  ReadingMiss,
+  MistakeGroup,
+  ReadingTestForm,
+  ReadingTestResult,
+} from "@notesense/shared";
+export {
+  READING_MODES,
+  READING_MODE_IDS,
+  READING_MISTAKE_LABELS,
+  getReadingModeRules,
+  normalizeReadingMode,
+  classifyReadingMistake,
+  groupMisses,
+  buildReplaySet,
+  describeMistakes,
+  buildReadingTestForm,
+  scoreReadingTest,
 } from "@notesense/shared";
 
 export type StaffClef = "treble" | "bass";
