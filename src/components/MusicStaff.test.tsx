@@ -45,7 +45,6 @@ describe("MusicStaff", () => {
     const { container } = render(<MusicStaff note={STARTER_NOTES[0]!} nextNote={STARTER_NOTES[1]!} />);
 
     expect(container.querySelector(".staff-note.next")).not.toBeNull();
-    expect(container.querySelector("svg")?.getAttribute("aria-label")).toContain(`next ${STARTER_NOTES[1]!.id}`);
   });
 
   it("hides the current note for audiation prompts", () => {

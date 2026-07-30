@@ -79,7 +79,7 @@ function summarizeReadingTest(answers: readonly ReadingTestAnswer[]): SessionSum
     mode: "reading",
     score,
     attempts,
-    accuracy: attempts ? Math.round((score / attempts) * 100) : 0,
+    accuracy: Math.round((100 * score) / attempts) || 0,
     bestStreak: 0,
     suggestion: "",
   };
