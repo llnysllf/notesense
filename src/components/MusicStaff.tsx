@@ -39,12 +39,15 @@ function MusicStaff({ hideNote = false, note, nextNote = null }: MusicStaffProps
   const clefLabel = note.clef === "treble" ? "Treble" : "Bass";
   const clefSymbol = note.clef === "treble" ? "𝄞" : "𝄢";
   const clefY = note.clef === "treble" ? 119 : 112;
-  const ariaLabel = nextNote
-    ? `${clefLabel} staff note ${note.id}, next ${nextNote.id}`
-    : `${clefLabel} staff note ${hideNote ? "hidden for audiation" : note.id}`;
+  const ariaDetail = nextNote ? `, next ${nextNote.id}` : hideNote ? ", hidden for audiation" : "";
 
   return (
-    <svg className="staff" viewBox="0 0 420 184" role="img" aria-label={ariaLabel}>
+    <svg
+      className="staff"
+      viewBox="0 0 420 184"
+      role="img"
+      aria-label={`${clefLabel} staff note ${note.id}` + ariaDetail}
+    >
       <text className={`clef ${note.clef}-clef`} x="54" y={clefY} aria-hidden="true">
         {clefSymbol}
       </text>
