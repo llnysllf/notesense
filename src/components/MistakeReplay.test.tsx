@@ -47,5 +47,6 @@ describe("MistakeReplay", () => {
     fireEvent.click(screen.getByRole("button", { name: "Practise these" }));
 
     expect(onReplay).toHaveBeenCalledTimes(1);
+    expect(onReplay).toHaveBeenCalledWith([miss(60, 61, "semitone-slip")]);
   });
 });

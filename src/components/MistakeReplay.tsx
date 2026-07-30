@@ -8,7 +8,7 @@ import { READING_MISTAKE_LABELS, groupMisses, midiToNoteId, type ReadingMiss } f
 
 type MistakeReplayProps = {
   misses: readonly ReadingMiss[];
-  onReplay: () => void;
+  onReplay: (misses: readonly ReadingMiss[]) => void;
 };
 
 function MistakeReplay({ misses, onReplay }: MistakeReplayProps) {
@@ -29,7 +29,7 @@ function MistakeReplay({ misses, onReplay }: MistakeReplayProps) {
           </li>
         ))}
       </ul>
-      <button type="button" className="secondary-button" onClick={onReplay}>
+      <button type="button" className="secondary-button" onClick={() => onReplay(misses)}>
         Practise these
       </button>
     </section>

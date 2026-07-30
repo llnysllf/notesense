@@ -103,14 +103,84 @@ describe("usePracticeSession", () => {
   });
 
   it("keeps Test-mode reading attempts out of shared evidence", () => {
-    const { result } = renderPracticeSession({
+    const { result, onProgressChange } = renderPracticeSession({
       settings: { ...defaultSettings, readingMode: "test" },
     });
 
     act(() => result.current.startRound());
     act(() => result.current.handleAnswer(result.current.currentReadingNote.name));
 
+    expect(onProgressChange).not.toHaveBeenCalled();
     expect(captureSingleEvidenceAttempt).not.toHaveBeenCalled();
+  });
+
+  it("runs Test mode as a fixed twenty-prompt form with a local score", () => {
+    const { result, onProgressChange } = renderPracticeSession({
+      settings: { ...defaultSettings, readingMode: "test" },
+    });
+
+    act(() => result.current.startRound());
+    const promptIds: string[] = [];
+    for (let index = 0; index < 20; index += 1) {
+      promptIds.push(result.current.currentReadingNote.id);
+      act(() => result.current.handleAnswer(result.current.currentReadingNote.name));
+      act(() => vi.advanceTimersByTime(650));
+    }
+
+    expect(promptIds).toHaveLength(20);
+    expect(result.current.isRunning).toBe(false);
+    expect(result.current.lastSummary).toMatchObject({
+      mode: "reading",
+      score: 20,
+      attempts: 20,
+      accuracy: 100,
+    });
+    expect(onProgressChange).not.toHaveBeenCalled();
+  });
+
+  it("hides Test prompts after the audiation preview window", () => {
+    const { result } = renderPracticeSession({
+      settings: { ...defaultSettings, readingMode: "test" },
+    });
+
+    act(() => result.current.startRound());
+    expect(result.current.isReadingPromptHidden).toBe(false);
+
+    act(() => vi.advanceTimersByTime(1200));
+    expect(result.current.isReadingPromptHidden).toBe(true);
+  });
+
+  it("keeps a stable look-ahead note in Learn mode", () => {
+    const { result } = renderPracticeSession({
+      settings: { ...defaultSettings, readingMode: "learn" },
+    });
+
+    act(() => result.current.startRound());
+
+    expect(result.current.lookAheadReadingNote).not.toBeNull();
+    expect(result.current.lookAheadReadingNote?.id).not.toBe(result.current.currentReadingNote.id);
+  });
+
+  it("replays missed reading notes until they are recovered", () => {
+    const { result, onProgressChange } = renderPracticeSession();
+    const misses = [{ expectedMidi: 60, answeredMidi: 62, code: "step-slip" as const }];
+
+    act(() => result.current.startReplay(misses));
+    expect(result.current.isRunning).toBe(true);
+    expect(result.current.currentReadingNote.id).toBe("C4");
+
+    act(() => result.current.handleReadingKeyAnswer("D4"));
+    act(() => vi.advanceTimersByTime(650));
+
+    expect(result.current.isRunning).toBe(true);
+    expect(result.current.currentReadingNote.id).toBe("C4");
+
+    act(() => result.current.handleReadingKeyAnswer("C4"));
+    act(() => vi.advanceTimersByTime(650));
+
+    expect(result.current.isRunning).toBe(false);
+    expect(result.current.lastSummary).toMatchObject({ mode: "reading", score: 1, attempts: 2, accuracy: 50 });
+    expect(onProgressChange).toHaveBeenCalled();
   });
 
   it("ignores answers before a round starts", () => {

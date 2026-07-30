@@ -1095,6 +1095,21 @@ h3 {
   stroke-width: 4;
 }
 
+.staff-note.next {
+  opacity: 0.42;
+}
+
+.staff-note.next .note-stem {
+  stroke-width: 3;
+}
+
+.audiation-cue {
+  fill: var(--color-muted);
+  font-size: 1rem;
+  font-weight: 800;
+  letter-spacing: 0;
+}
+
 .prompt-label {
   display: block;
   color: var(--color-text);

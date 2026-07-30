@@ -12,6 +12,9 @@ export type ReadingTestSpec = {
   // Inclusive sounding range the form draws from.
   lowMidi: number;
   highMidi: number;
+  // Optional explicit prompt pool, for instruments or staff views that do not
+  // expose every chromatic pitch in the MIDI span.
+  allowedMidis?: readonly number[];
   promptCount: number;
   seed: string;
 };
@@ -29,21 +32,36 @@ const MAX_PROMPTS = 60;
 
 // Generates a form. Deterministic in the seed, so the same seed always produces
 // the same test and results can be compared across sittings and devices.
-export function buildReadingTestForm({ lowMidi, highMidi, promptCount, seed }: ReadingTestSpec): ReadingTestForm {
+export function buildReadingTestForm({
+  lowMidi,
+  highMidi,
+  allowedMidis,
+  promptCount,
+  seed,
+}: ReadingTestSpec): ReadingTestForm {
   const low = Math.min(lowMidi, highMidi);
   const high = Math.max(lowMidi, highMidi);
   const count = Math.min(MAX_PROMPTS, Math.max(MIN_PROMPTS, Math.round(promptCount)));
   const rng = createRng(`reading-test:${seed}`);
+  const promptPool = Array.from(
+    new Set(allowedMidis?.filter((midi) => Number.isFinite(midi) && midi >= low && midi <= high) ?? []),
+  ).sort((a, b) => a - b);
+  const pool = promptPool.length > 0 ? promptPool : undefined;
 
   const prompts: number[] = [];
   let previous: number | undefined;
 
   for (let index = 0; index < count; index += 1) {
-    let midi = randInt(rng, low, high);
+    let midi = pool ? pool[randInt(rng, 0, pool.length - 1)]! : randInt(rng, low, high);
     // Avoid presenting the same pitch twice in a row: a repeat measures memory
     // of the last prompt rather than reading.
-    if (previous !== undefined && midi === previous && high > low) {
-      midi = midi === high ? midi - 1 : midi + 1;
+    if (previous !== undefined && midi === previous) {
+      if (pool && pool.length > 1) {
+        const currentIndex = pool.indexOf(midi);
+        midi = pool[currentIndex === pool.length - 1 ? currentIndex - 1 : currentIndex + 1]!;
+      } else if (high > low) {
+        midi = midi === high ? midi - 1 : midi + 1;
+      }
     }
     prompts.push(midi);
     previous = midi;

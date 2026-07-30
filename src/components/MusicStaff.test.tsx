@@ -40,4 +40,18 @@ describe("MusicStaff", () => {
     const { container } = render(<MusicStaff note={note} />);
     expect(container.querySelectorAll("line").length).toBe(STAFF_LINES + STEM_LINE);
   });
+
+  it("renders a look-ahead note when one is provided", () => {
+    const { container } = render(<MusicStaff note={STARTER_NOTES[0]!} nextNote={STARTER_NOTES[1]!} />);
+
+    expect(container.querySelector(".staff-note.next")).not.toBeNull();
+    expect(container.querySelector("svg")?.getAttribute("aria-label")).toContain(`next ${STARTER_NOTES[1]!.id}`);
+  });
+
+  it("hides the current note for audiation prompts", () => {
+    const { container } = render(<MusicStaff hideNote note={STARTER_NOTES[0]!} />);
+
+    expect(container.querySelector(".staff-note.current")).toBeNull();
+    expect(container.querySelector(".audiation-cue")).toHaveTextContent("Listen");
+  });
 });

@@ -25,7 +25,9 @@ type PracticeWorkspaceProps = {
   feedbackClass: string;
   feedbackText: string;
   isRunning: boolean;
+  isReadingPromptHidden: boolean;
   keyboardResetKey: string;
+  lookAheadReadingNote: TrainingNote | null;
   melodyAnswerNoteIds: string[];
   mode: PracticeMode;
   pitchExercise: PitchExercise;
@@ -45,6 +47,7 @@ type PracticeWorkspaceProps = {
   onMelodyNoteInput: (noteId: string) => void;
   onPitchKeyAnswer: (noteId: string) => void;
   onReadingKeyAnswer: (noteId: string) => void;
+  onStartReplay: (misses: readonly ReadingMiss[]) => void;
   onStartRound: () => void;
   onSubmitMelodyAnswer: () => void;
   onUndoMelodyAnswer: () => void;
@@ -60,7 +63,9 @@ function PracticeWorkspace({
   feedbackClass,
   feedbackText,
   isRunning,
+  isReadingPromptHidden,
   keyboardResetKey,
+  lookAheadReadingNote,
   melodyAnswerNoteIds,
   mode,
   pitchExercise,
@@ -78,6 +83,7 @@ function PracticeWorkspace({
   onMelodyNoteInput,
   onPitchKeyAnswer,
   onReadingKeyAnswer,
+  onStartReplay,
   onStartRound,
   onSubmitMelodyAnswer,
   onUndoMelodyAnswer,
@@ -93,7 +99,7 @@ function PracticeWorkspace({
       )}
 
       {rangeControls}
-      {mode === "reading" && !isRunning ? <MistakeReplay misses={readingMisses} onReplay={onStartRound} /> : null}
+      {mode === "reading" && !isRunning ? <MistakeReplay misses={readingMisses} onReplay={onStartReplay} /> : null}
 
       <div className="round-strip" aria-label="Current round status">
         <StatTile label="Time" value={`${timeRemaining}s`} />
@@ -104,7 +110,7 @@ function PracticeWorkspace({
 
       <div className={`staff-card ${mode === "pitch" ? "pitch-card" : ""}`}>
         {mode === "reading" ? (
-          <MusicStaff note={currentReadingNote} />
+          <MusicStaff hideNote={isReadingPromptHidden} note={currentReadingNote} nextNote={lookAheadReadingNote} />
         ) : pitchExercise === "melody" ? (
           <PitchSequenceAnswer
             answerNoteIds={melodyAnswerNoteIds}

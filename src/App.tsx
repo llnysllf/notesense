@@ -86,6 +86,8 @@ function App() {
     mode,
     setPracticeMode,
     currentReadingNote,
+    lookAheadReadingNote,
+    isReadingPromptHidden,
     currentPitchNote,
     currentMelody,
     melodyAnswerNoteIds,
@@ -97,6 +99,7 @@ function App() {
     isRunning,
     lastSummary,
     startRound,
+    startReplay,
     finishRound,
     handleReadingKeyAnswer,
     handlePitchKeyAnswer,
@@ -239,6 +242,8 @@ function App() {
                 currentPitchNote={currentPitchNote}
                 currentMelody={currentMelody}
                 currentReadingNote={currentReadingNote}
+                isReadingPromptHidden={isReadingPromptHidden}
+                lookAheadReadingNote={lookAheadReadingNote}
                 currentStreak={currentStreak}
                 dataStatus={dataStatus}
                 feedback={feedback}
@@ -263,6 +268,7 @@ function App() {
                 onMelodyNoteInput={handleMelodyNoteInput}
                 onPitchKeyAnswer={handlePitchKeyAnswer}
                 onReadingKeyAnswer={handleReadingKeyAnswer}
+                onStartReplay={startReplay}
                 onStartRound={startRound}
                 onSubmitMelodyAnswer={submitMelodyAnswer}
                 onUndoMelodyAnswer={undoMelodyAnswer}

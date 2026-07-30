@@ -132,6 +132,20 @@ describe("buildReadingTestForm", () => {
     }
   });
 
+  it("can draw from an explicit prompt pool inside the requested range", () => {
+    const form = buildReadingTestForm({
+      ...spec,
+      allowedMidis: [60, 64, 67, 76],
+      promptCount: 20,
+      seed: "pool",
+    });
+
+    expect(form.prompts.every((midi) => [60, 64, 67].includes(midi))).toBe(true);
+    for (let index = 1; index < form.prompts.length; index += 1) {
+      expect(form.prompts[index]).not.toBe(form.prompts[index - 1]);
+    }
+  });
+
   it("tolerates an inverted range and clamps absurd lengths", () => {
     const inverted = buildReadingTestForm({ lowMidi: 72, highMidi: 60, promptCount: 5, seed: "x" });
     expect(inverted.lowMidi).toBe(60);

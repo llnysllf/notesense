@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { getPianoKeyById, getPitchNotes } from "../noteData";
+import { getPianoKeyById, getPitchNotes, getReadingNotes } from "../noteData";
 import { ADVANCE_DELAY_MS } from "./practiceSessionConstants";
 import { captureSingleEvidenceAttempt } from "./evidenceCapture";
 import { playPracticePrompt, startPracticeRound, submitMelodyPracticeAnswer } from "./practiceSessionActions";
@@ -13,9 +13,69 @@ import type {
   PracticeMode,
   PracticeProgress,
   PracticeSettings,
+  ReadingMiss,
   SessionSummary,
+  TrainingNote,
 } from "../types";
-import { getReadingModeRules } from "../types";
+import { buildReadingTestForm, buildReplaySet, getReadingModeRules, scoreReadingTest } from "../types";
+
+type ReadingTestAnswer = { correct: boolean; responseMs: number };
+type ReadingFixedQueueKind = "test" | "replay";
+
+function buildReadingTestQueue(settings: PracticeSettings): TrainingNote[] {
+  const notes = getReadingNotes(settings.readingRange, settings.customReadingRange);
+  const noteMidis = notes.flatMap((note) => {
+    const midi = getPianoKeyById(note.id)?.midi;
+    return midi === undefined ? [] : [midi];
+  });
+  if (noteMidis.length === 0) return notes;
+
+  const noteByMidi = new Map(notes.map((note) => [getPianoKeyById(note.id)?.midi, note]));
+  const rules = getReadingModeRules(settings.readingMode);
+  const promptCount = rules.fixedPromptCount ?? 20;
+  const form = buildReadingTestForm({
+    lowMidi: Math.min(...noteMidis),
+    highMidi: Math.max(...noteMidis),
+    allowedMidis: noteMidis,
+    promptCount,
+    seed: `${settings.readingRange}:${settings.customReadingRange.startNoteId}-${settings.customReadingRange.endNoteId}:v1`,
+  });
+
+  return form.prompts.flatMap((midi) => {
+    const note = noteByMidi.get(midi);
+    return note === undefined ? [] : [note];
+  });
+}
+
+function summarizeReadingTest(answers: readonly ReadingTestAnswer[], completed: boolean): SessionSummary {
+  const result = scoreReadingTest(answers);
+  const accuracy = Math.round(result.accuracy * 100);
+  const median = result.medianResponseMs > 0 ? ` Median response ${result.medianResponseMs}ms.` : "";
+  return {
+    mode: "reading",
+    score: result.correct,
+    attempts: result.promptCount,
+    accuracy,
+    bestStreak: 0,
+    suggestion: completed
+      ? `Test complete: ${accuracy}% accuracy.${median}`
+      : `Test stopped early: ${result.correct}/${result.promptCount} correct.${median}`,
+  };
+}
+
+function buildReadingReplayQueue(settings: PracticeSettings, misses: readonly ReadingMiss[]): TrainingNote[] {
+  const replayMidis = buildReplaySet(misses);
+  if (replayMidis.length === 0) return [];
+
+  const notes = getReadingNotes(settings.readingRange, settings.customReadingRange);
+  const noteByMidi = new Map(notes.map((note) => [getPianoKeyById(note.id)?.midi, note]));
+
+  return replayMidis.flatMap((midi) => {
+    const note = noteByMidi.get(midi);
+    return note === undefined ? [] : [note];
+  });
+}
+
 export function usePracticeSession({
   settings,
   progress,
@@ -45,19 +105,58 @@ export function usePracticeSession({
   const [isRunning, setIsRunning] = useState(false);
   const [roundStartedAt, setRoundStartedAt] = useState<number | null>(null);
   const [lastSummary, setLastSummary] = useState<SessionSummary | null>(null);
+  const [lookAheadReadingNote, setLookAheadReadingNote] = useState<TrainingNote | null>(null);
+  const [isReadingPromptHidden, setIsReadingPromptHidden] = useState(false);
   const advanceTimerRef = useRef<number | null>(null);
+  const audiationTimerRef = useRef<number | null>(null);
   const promptStartedAtRef = useRef<{ wallIso: string; clock: number } | null>(null);
   const sessionIdRef = useRef<string>("");
+  const readingTestQueueRef = useRef<TrainingNote[]>([]);
+  const readingTestIndexRef = useRef(0);
+  const readingTestAnswersRef = useRef<ReadingTestAnswer[]>([]);
+  const readingFixedQueueKindRef = useRef<ReadingFixedQueueKind | null>(null);
   const clearAdvanceTimer = useCallback(() => {
     if (advanceTimerRef.current !== null) {
       window.clearTimeout(advanceTimerRef.current);
       advanceTimerRef.current = null;
     }
   }, []);
-  useEffect(() => () => clearAdvanceTimer(), [clearAdvanceTimer]);
+  const clearAudiationTimer = useCallback(() => {
+    if (audiationTimerRef.current !== null) {
+      window.clearTimeout(audiationTimerRef.current);
+      audiationTimerRef.current = null;
+    }
+  }, []);
+  const scheduleAudiationHide = useCallback(() => {
+    clearAudiationTimer();
+    setIsReadingPromptHidden(false);
+    audiationTimerRef.current = window.setTimeout(() => {
+      audiationTimerRef.current = null;
+      setIsReadingPromptHidden(true);
+    }, 1200);
+  }, [clearAudiationTimer]);
+  useEffect(
+    () => () => {
+      clearAdvanceTimer();
+      clearAudiationTimer();
+    },
+    [clearAdvanceTimer, clearAudiationTimer],
+  );
   const finishRound = useCallback(() => {
     if (!isRunning) return;
     clearAdvanceTimer();
+    clearAudiationTimer();
+    if (mode === "reading" && settings.readingMode === "test") {
+      setLastSummary(summarizeReadingTest(readingTestAnswersRef.current, false));
+      setIsRunning(false);
+      setRoundStartedAt(null);
+      setFeedback(null);
+      setTimeRemaining(settings.roundLength);
+      setLookAheadReadingNote(null);
+      setIsReadingPromptHidden(false);
+      readingFixedQueueKindRef.current = null;
+      return;
+    }
     const { nextProgress, summary } = completeSessionRound({
       mode,
       settings,
@@ -74,8 +173,12 @@ export function usePracticeSession({
     setRoundStartedAt(null);
     setFeedback(null);
     setTimeRemaining(settings.roundLength);
+    setLookAheadReadingNote(null);
+    setIsReadingPromptHidden(false);
+    readingFixedQueueKindRef.current = null;
   }, [
     bestRoundStreak,
+    clearAudiationTimer,
     clearAdvanceTimer,
     isRunning,
     mode,
@@ -98,10 +201,17 @@ export function usePracticeSession({
   }, [finishRound, isRunning, timeRemaining]);
   function setPracticeMode(nextMode: PracticeMode) {
     clearAdvanceTimer();
+    clearAudiationTimer();
+    readingTestQueueRef.current = [];
+    readingTestIndexRef.current = 0;
+    readingTestAnswersRef.current = [];
+    readingFixedQueueKindRef.current = null;
     setMode(nextMode);
     setFeedback(null);
     setMelodyAnswerNoteIds([]);
     setLastSummary(null);
+    setLookAheadReadingNote(null);
+    setIsReadingPromptHidden(false);
     setIsRunning(false);
     setRoundAttempts(0);
     setRoundCorrect(0);
@@ -112,8 +222,49 @@ export function usePracticeSession({
   }
   function startRound() {
     clearAdvanceTimer();
+    clearAudiationTimer();
     sessionIdRef.current = globalThis.crypto?.randomUUID?.() ?? `session-${Date.now()}`;
     promptStartedAtRef.current = { wallIso: new Date().toISOString(), clock: performance.now() };
+    if (mode === "reading" && settings.readingMode === "test") {
+      const queue = buildReadingTestQueue(settings);
+      readingTestQueueRef.current = queue;
+      readingTestIndexRef.current = 0;
+      readingTestAnswersRef.current = [];
+      readingFixedQueueKindRef.current = "test";
+      setRoundStartedAt(Date.now());
+      setIsRunning(true);
+      setFeedback(null);
+      setLastSummary(null);
+      setRoundAttempts(0);
+      setRoundCorrect(0);
+      setCurrentStreak(0);
+      setBestRoundStreak(0);
+      setTimeRemaining(settings.roundLength);
+      if (queue[0] !== undefined) setCurrentReadingNote(queue[0]);
+      setLookAheadReadingNote(null);
+      scheduleAudiationHide();
+      return;
+    }
+    if (mode === "reading" && settings.readingMode === "learn") {
+      const first = getNextReadingNote(currentReadingNote.id);
+      const next = getNextReadingNote(first.id);
+      readingFixedQueueKindRef.current = null;
+      setRoundStartedAt(Date.now());
+      setIsRunning(true);
+      setFeedback(null);
+      setLastSummary(null);
+      setRoundAttempts(0);
+      setRoundCorrect(0);
+      setCurrentStreak(0);
+      setBestRoundStreak(0);
+      setTimeRemaining(settings.roundLength);
+      setCurrentReadingNote(first);
+      setLookAheadReadingNote(next);
+      setIsReadingPromptHidden(false);
+      return;
+    }
+    setLookAheadReadingNote(null);
+    setIsReadingPromptHidden(false);
     startPracticeRound({
       mode,
       settings,
@@ -136,7 +287,38 @@ export function usePracticeSession({
       setCurrentPitchNote,
       setMelodyAnswerNoteIds,
     });
+    readingFixedQueueKindRef.current = null;
   }
+
+  function startReplay(misses: readonly ReadingMiss[]) {
+    const queue = buildReadingReplayQueue(settings, misses);
+    if (mode !== "reading" || queue.length === 0) {
+      startRound();
+      return;
+    }
+
+    clearAdvanceTimer();
+    clearAudiationTimer();
+    sessionIdRef.current = globalThis.crypto?.randomUUID?.() ?? `session-${Date.now()}`;
+    promptStartedAtRef.current = { wallIso: new Date().toISOString(), clock: performance.now() };
+    readingTestQueueRef.current = queue;
+    readingTestIndexRef.current = 0;
+    readingTestAnswersRef.current = [];
+    readingFixedQueueKindRef.current = "replay";
+    setRoundStartedAt(Date.now());
+    setIsRunning(true);
+    setFeedback(null);
+    setLastSummary(null);
+    setRoundAttempts(0);
+    setRoundCorrect(0);
+    setCurrentStreak(0);
+    setBestRoundStreak(0);
+    setTimeRemaining(settings.roundLength);
+    setLookAheadReadingNote(null);
+    setIsReadingPromptHidden(false);
+    setCurrentReadingNote(queue[0]!);
+  }
+
   function playCurrentNote() {
     playPracticePrompt({
       mode,
@@ -172,7 +354,21 @@ export function usePracticeSession({
     setRoundCorrect((n) => n + (isCorrect ? 1 : 0));
     setCurrentStreak(nextStreak);
     setBestRoundStreak(nextBestStreak);
-    onProgressChange(nextProgress);
+    const readingFixedKind = answeredMode === "reading" ? readingFixedQueueKindRef.current : null;
+    const isReadingTestAnswer = readingFixedKind === "test";
+    const isReadingReplayAnswer = readingFixedKind === "replay";
+    if (!isReadingTestAnswer) {
+      onProgressChange(nextProgress);
+    } else {
+      readingTestAnswersRef.current.push({
+        correct: isCorrect,
+        responseMs: Math.max(
+          0,
+          Math.round(performance.now() - (promptStartedAtRef.current?.clock ?? performance.now())),
+        ),
+      });
+    }
+    clearAudiationTimer();
     const answerMidi = getPianoKeyById(answerId ?? "")?.midi;
     if (answeredMode !== "reading" || getReadingModeRules(settings.readingMode).contributesEvidence) {
       captureSingleEvidenceAttempt({
@@ -190,8 +386,69 @@ export function usePracticeSession({
       advanceTimerRef.current = null;
       setFeedback(null);
       if (answeredMode === "reading") {
+        if (isReadingTestAnswer) {
+          const nextIndex = readingTestIndexRef.current + 1;
+          const nextTestNote = readingTestQueueRef.current[nextIndex];
+          if (nextTestNote === undefined) {
+            setLastSummary(summarizeReadingTest(readingTestAnswersRef.current, true));
+            setIsRunning(false);
+            setRoundStartedAt(null);
+            setTimeRemaining(settings.roundLength);
+            setIsReadingPromptHidden(false);
+            return;
+          }
+          readingTestIndexRef.current = nextIndex;
+          promptStartedAtRef.current = { wallIso: new Date().toISOString(), clock: performance.now() };
+          setCurrentReadingNote(nextTestNote);
+          scheduleAudiationHide();
+          return;
+        }
+        if (isReadingReplayAnswer) {
+          if (!isCorrect) {
+            promptStartedAtRef.current = { wallIso: new Date().toISOString(), clock: performance.now() };
+            return;
+          }
+
+          const nextIndex = readingTestIndexRef.current + 1;
+          const nextReplayNote = readingTestQueueRef.current[nextIndex];
+          if (nextReplayNote === undefined) {
+            const { nextProgress: completedProgress, summary } = completeSessionRound({
+              mode: "reading",
+              settings,
+              progress: nextProgress,
+              roundAttempts: roundAttempts + 1,
+              roundCorrect: roundCorrect + 1,
+              bestRoundStreak: nextBestStreak,
+              roundStartedAt,
+              timeRemaining,
+            });
+            onProgressChange(completedProgress);
+            setLastSummary(summary);
+            setIsRunning(false);
+            setRoundStartedAt(null);
+            setTimeRemaining(settings.roundLength);
+            setLookAheadReadingNote(null);
+            setIsReadingPromptHidden(false);
+            readingTestQueueRef.current = [];
+            readingTestIndexRef.current = 0;
+            readingFixedQueueKindRef.current = null;
+            return;
+          }
+
+          readingTestIndexRef.current = nextIndex;
+          promptStartedAtRef.current = { wallIso: new Date().toISOString(), clock: performance.now() };
+          setCurrentReadingNote(nextReplayNote);
+          return;
+        }
         promptStartedAtRef.current = { wallIso: new Date().toISOString(), clock: performance.now() };
-        setCurrentReadingNote((note) => getNextReadingNote(note.id, nextProgress));
+        if (settings.readingMode === "learn") {
+          const nextReadingNote = lookAheadReadingNote ?? getNextReadingNote(answeredReadingNote.id, nextProgress);
+          setCurrentReadingNote(nextReadingNote);
+          setLookAheadReadingNote(getNextReadingNote(nextReadingNote.id, nextProgress));
+        } else {
+          setCurrentReadingNote((note) => getNextReadingNote(note.id, nextProgress));
+          setLookAheadReadingNote(null);
+        }
         return;
       }
       const nextPitch = getNextPitchNote(answeredPitchNote.id, nextProgress);
@@ -278,6 +535,11 @@ export function usePracticeSession({
 
   function resetSession(nextSettings: PracticeSettings, nextProgress: PracticeProgress) {
     clearAdvanceTimer();
+    clearAudiationTimer();
+    readingTestQueueRef.current = [];
+    readingTestIndexRef.current = 0;
+    readingTestAnswersRef.current = [];
+    readingFixedQueueKindRef.current = null;
     resetItems(nextSettings, nextProgress);
     setRoundAttempts(0);
     setRoundCorrect(0);
@@ -285,6 +547,8 @@ export function usePracticeSession({
     setBestRoundStreak(0);
     setFeedback(null);
     setLastSummary(null);
+    setLookAheadReadingNote(null);
+    setIsReadingPromptHidden(false);
     setIsRunning(false);
     setRoundStartedAt(null);
     setTimeRemaining(nextSettings.roundLength);
@@ -296,6 +560,8 @@ export function usePracticeSession({
     mode,
     setPracticeMode,
     currentReadingNote,
+    lookAheadReadingNote,
+    isReadingPromptHidden,
     currentPitchNote,
     currentMelody,
     melodyAnswerNoteIds,
@@ -309,6 +575,7 @@ export function usePracticeSession({
     isRunning,
     lastSummary,
     startRound,
+    startReplay,
     finishRound,
     handleAnswer: (answer) => recordAnswer(answer),
     handleReadingKeyAnswer,
