@@ -45,9 +45,7 @@ const dueReadingAttempt: AttemptEvent = {
   responseMs: 1000,
   inputSource: "touch",
   result: { correct: true, totalScore: 1, components: {}, mistakeCodes: [] },
-  competencyEvidence: [
-    { competencyId: "reading.pitch.staff-to-key", dimensions: {}, correct: true, weight: 1 },
-  ],
+  competencyEvidence: [{ competencyId: "reading.pitch.staff-to-key", dimensions: {}, correct: true, weight: 1 }],
   versions: { scoringVersion: 1, curriculumVersion: 1, skillMappingVersion: 1, transportVersion: 1 },
   source: "live",
 };
