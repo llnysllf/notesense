@@ -25,7 +25,6 @@ type PracticeWorkspaceProps = {
   feedbackClass: string;
   feedbackText: string;
   isRunning: boolean;
-  isReadingPromptHidden: boolean;
   keyboardResetKey: string;
   lookAheadReadingNote: TrainingNote | null;
   melodyAnswerNoteIds: string[];
@@ -63,7 +62,6 @@ function PracticeWorkspace({
   feedbackClass,
   feedbackText,
   isRunning,
-  isReadingPromptHidden,
   keyboardResetKey,
   lookAheadReadingNote,
   melodyAnswerNoteIds,
@@ -110,7 +108,7 @@ function PracticeWorkspace({
 
       <div className={`staff-card ${mode === "pitch" ? "pitch-card" : ""}`}>
         {mode === "reading" ? (
-          <MusicStaff hideNote={isReadingPromptHidden} note={currentReadingNote} nextNote={lookAheadReadingNote} />
+          <MusicStaff note={currentReadingNote} nextNote={lookAheadReadingNote} />
         ) : pitchExercise === "melody" ? (
           <PitchSequenceAnswer
             answerNoteIds={melodyAnswerNoteIds}

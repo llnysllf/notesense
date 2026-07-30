@@ -35,7 +35,7 @@ describe("ReadingControls", () => {
 
   it("explains what the selected mode does", () => {
     renderControls("test");
-    expect(screen.getByText(/no-hint/i)).toBeInTheDocument();
+    expect(screen.getByText(/no hints/i)).toBeInTheDocument();
 
     renderControls("practice");
     expect(screen.getByText(/adaptive/i)).toBeInTheDocument();

@@ -1,7 +1,6 @@
 import type { TrainingNote } from "../types";
 
 type MusicStaffProps = {
-  hideNote?: boolean;
   note: TrainingNote;
   nextNote?: TrainingNote | null;
 };
@@ -34,7 +33,7 @@ function NoteGlyph({ note, x, variant = "current" }: { note: TrainingNote; x: nu
   );
 }
 
-function MusicStaff({ hideNote = false, note, nextNote = null }: MusicStaffProps) {
+function MusicStaff({ note, nextNote = null }: MusicStaffProps) {
   const staffLines = [56, 72, 88, 104, 120];
   const isTreble = note.clef === "treble";
   const clefLabel = isTreble ? "Treble" : "Bass";
@@ -49,13 +48,7 @@ function MusicStaff({ hideNote = false, note, nextNote = null }: MusicStaffProps
       {staffLines.map((lineY) => (
         <line key={lineY} x1="34" x2="386" y1={lineY} y2={lineY} className="staff-line" />
       ))}
-      {hideNote ? (
-        <text className="audiation-cue" x="244" y="96" textAnchor="middle" aria-hidden="true">
-          .
-        </text>
-      ) : (
-        <NoteGlyph note={note} x={232} />
-      )}
+      <NoteGlyph note={note} x={232} />
       {nextNote ? <NoteGlyph note={nextNote} x={318} variant="next" /> : null}
     </svg>
   );

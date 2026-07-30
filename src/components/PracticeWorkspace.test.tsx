@@ -18,7 +18,6 @@ function renderWorkspace(overrides: Partial<WorkspaceProps> = {}) {
     feedbackClass: "",
     feedbackText: "Ready",
     isRunning: false,
-    isReadingPromptHidden: false,
     keyboardResetKey: "round-1",
     lookAheadReadingNote: null,
     melodyAnswerNoteIds: [],

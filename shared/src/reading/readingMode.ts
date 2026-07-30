@@ -34,7 +34,7 @@ export const READING_MODES: Readonly<Record<ReadingMode, ReadingModeRules>> = {
   learn: {
     id: "learn",
     label: "Learn",
-    summary: "Guided.",
+    summary: "Guided practice with hints.",
     adaptiveSelection: false,
     revealAnswer: true,
     allowHints: true,
@@ -45,7 +45,7 @@ export const READING_MODES: Readonly<Record<ReadingMode, ReadingModeRules>> = {
   practice: {
     id: "practice",
     label: "Practice",
-    summary: "Adaptive.",
+    summary: "Adaptive practice for weak notes.",
     adaptiveSelection: true,
     revealAnswer: true,
     allowHints: false,
@@ -56,7 +56,7 @@ export const READING_MODES: Readonly<Record<ReadingMode, ReadingModeRules>> = {
   test: {
     id: "test",
     label: "Test",
-    summary: "No-hint fixed test.",
+    summary: "A fixed 20-note test with no hints or answers.",
     // A test measures; adapting or revealing would change what it measures.
     adaptiveSelection: false,
     revealAnswer: false,
@@ -71,7 +71,7 @@ export const READING_MODES: Readonly<Record<ReadingMode, ReadingModeRules>> = {
   custom: {
     id: "custom",
     label: "Custom",
-    summary: "Range.",
+    summary: "Set your own range and length.",
     adaptiveSelection: false,
     revealAnswer: true,
     allowHints: true,

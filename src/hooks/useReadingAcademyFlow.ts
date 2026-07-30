@@ -112,45 +112,23 @@ export function useReadingAcademyFlow(options: ReadingAcademyFlowOptions) {
     promptStartedAtRef,
   } = options;
   const [lookAheadReadingNote, setLookAheadReadingNote] = useState<TrainingNote | null>(null);
-  const [isReadingPromptHidden, setIsReadingPromptHidden] = useState(false);
   const queueRef = useRef<TrainingNote[]>([]);
   const queueIndexRef = useRef(0);
   const testAnswersRef = useRef<ReadingTestAnswer[]>([]);
   const queueKindRef = useRef<ReadingFixedQueueKind | null>(null);
-  const audiationTimerRef = useRef<number | null>(null);
-
-  const clearAudiationTimer = useCallback(() => {
-    if (audiationTimerRef.current !== null) {
-      window.clearTimeout(audiationTimerRef.current);
-      audiationTimerRef.current = null;
-    }
-  }, []);
-
-  const scheduleAudiationHide = useCallback(() => {
-    clearAudiationTimer();
-    setIsReadingPromptHidden(false);
-    audiationTimerRef.current = window.setTimeout(() => {
-      audiationTimerRef.current = null;
-      setIsReadingPromptHidden(true);
-    }, 1200);
-  }, [clearAudiationTimer]);
-
   const reset = useCallback(() => {
-    clearAudiationTimer();
     queueRef.current = [];
     queueIndexRef.current = 0;
     testAnswersRef.current = [];
     queueKindRef.current = null;
     setLookAheadReadingNote(null);
-    setIsReadingPromptHidden(false);
-  }, [clearAudiationTimer]);
+  }, []);
 
   useEffect(() => reset, [reset]);
 
   function finishTestRound(): boolean {
     if (queueKindRef.current !== "test") return false;
     clearAdvanceTimer();
-    clearAudiationTimer();
     setLastSummary(summarizeReadingTest(testAnswersRef.current));
     setIsRunning(false);
     setRoundStartedAt(null);
@@ -168,7 +146,6 @@ export function useReadingAcademyFlow(options: ReadingAcademyFlowOptions) {
       queueKindRef.current = "test";
       resetRoundCounters(options);
       if (queue[0] !== undefined) setCurrentReadingNote(queue[0]);
-      scheduleAudiationHide();
       return true;
     }
 
@@ -253,7 +230,6 @@ export function useReadingAcademyFlow(options: ReadingAcademyFlowOptions) {
       queueIndexRef.current = nextIndex;
       promptStartedAtRef.current = { wallIso: new Date().toISOString(), clock: performance.now() };
       setCurrentReadingNote(nextTestNote);
-      scheduleAudiationHide();
       return true;
     }
 
@@ -295,8 +271,6 @@ export function useReadingAcademyFlow(options: ReadingAcademyFlowOptions) {
 
   return {
     lookAheadReadingNote,
-    isReadingPromptHidden,
-    clearAudiationTimer,
     finishTestRound,
     startModeRound,
     startReplay,

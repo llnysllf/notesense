@@ -21,7 +21,6 @@ export type UsePracticeSessionResult = {
   setPracticeMode: (nextMode: PracticeMode) => void;
   currentReadingNote: TrainingNote;
   lookAheadReadingNote: TrainingNote | null;
-  isReadingPromptHidden: boolean;
   currentPitchNote: PitchNote;
   currentMelody: PitchNote[];
   melodyAnswerNoteIds: string[];

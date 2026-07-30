@@ -120,7 +120,6 @@ export function useSingleAnswerControls(options: SingleAnswerControlsOptions) {
 
     const isReadingTestAnswer = answeredMode === "reading" && readingAcademy.recordTestAnswer(isCorrect);
     if (!isReadingTestAnswer) onProgressChange(nextProgress);
-    readingAcademy.clearAudiationTimer();
 
     const answerMidi = getPianoKeyById(answerId ?? "")?.midi;
     if (answeredMode !== "reading" || getReadingModeRules(settings.readingMode).contributesEvidence) {
