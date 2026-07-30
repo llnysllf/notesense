@@ -103,8 +103,8 @@ describe("grouping and replay", () => {
   });
 
   it("summarises the dominant problem in plain language", () => {
-    expect(describeMistakes([miss(60, 72)])).toBe("Right note name, wrong octave — missed 1 time.");
-    expect(describeMistakes([miss(60, 62), miss(60, 62)])).toBe("One step away — missed 2 times.");
+    expect(describeMistakes([miss(60, 72)])).toBe("Octave — missed 1 time.");
+    expect(describeMistakes([miss(60, 62), miss(60, 62)])).toBe("Step — missed 2 times.");
   });
 });
 

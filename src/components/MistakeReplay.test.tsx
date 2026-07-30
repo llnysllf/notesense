@@ -27,10 +27,10 @@ describe("MistakeReplay", () => {
 
     const items = screen.getAllByRole("listitem");
     expect(items[0]).toHaveTextContent("C4");
-    expect(items[0]).toHaveTextContent("One step away");
-    expect(items[0]).toHaveTextContent("missed 2 times");
+    expect(items[0]).toHaveTextContent("Step");
+    expect(items[0]).toHaveTextContent("2x");
     expect(items[1]).toHaveTextContent("F4");
-    expect(items[1]).toHaveTextContent("missed 1 time");
+    expect(items[1]).toHaveTextContent("1x");
   });
 
   it("caps the list so a bad round is not a punishment queue", () => {
@@ -44,7 +44,7 @@ describe("MistakeReplay", () => {
     const onReplay = vi.fn();
     render(<MistakeReplay misses={[miss(60, 61, "semitone-slip")]} onReplay={onReplay} />);
 
-    fireEvent.click(screen.getByRole("button", { name: "Practise these" }));
+    fireEvent.click(screen.getByRole("button", { name: "Replay" }));
 
     expect(onReplay).toHaveBeenCalledTimes(1);
     expect(onReplay).toHaveBeenCalledWith([miss(60, 61, "semitone-slip")]);

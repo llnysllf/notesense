@@ -9,11 +9,11 @@
 export type ReadingMistakeCode = "wrong-octave" | "semitone-slip" | "step-slip" | "third-slip" | "distant-miss";
 
 export const READING_MISTAKE_LABELS: Readonly<Record<ReadingMistakeCode, string>> = {
-  "wrong-octave": "Right note name, wrong octave",
-  "semitone-slip": "One semitone away",
-  "step-slip": "One step away",
-  "third-slip": "Around a third away",
-  "distant-miss": "Not close",
+  "wrong-octave": "Octave",
+  "semitone-slip": "Semitone",
+  "step-slip": "Step",
+  "third-slip": "Third",
+  "distant-miss": "Far",
 };
 
 // Classifies a reading miss from the two sounding pitches. Returns undefined

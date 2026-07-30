@@ -17,20 +17,19 @@ function MistakeReplay({ misses, onReplay }: MistakeReplayProps) {
 
   return (
     <section className="mistake-replay" aria-labelledby="mistake-replay-heading">
-      <h3 id="mistake-replay-heading">Worth another look</h3>
+      <h3 id="mistake-replay-heading">Replay</h3>
       <ul className="mistake-list">
         {groups.slice(0, 5).map((group) => (
           <li key={group.expectedMidi}>
             <span className="mistake-note">{midiToNoteId(group.expectedMidi)}</span>
             <span className="mistake-detail">
-              {READING_MISTAKE_LABELS[group.dominantCode]} · missed {group.misses}
-              {group.misses === 1 ? " time" : " times"}
+              {READING_MISTAKE_LABELS[group.dominantCode]}: {group.misses}x
             </span>
           </li>
         ))}
       </ul>
       <button type="button" className="secondary-button" onClick={() => onReplay(misses)}>
-        Practise these
+        Replay
       </button>
     </section>
   );

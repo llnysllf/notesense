@@ -164,7 +164,6 @@ export type {
   ReadingMiss,
   MistakeGroup,
   ReadingTestForm,
-  ReadingTestResult,
 } from "@notesense/shared";
 export {
   READING_MODES,
@@ -175,9 +174,7 @@ export {
   classifyReadingMistake,
   groupMisses,
   buildReplaySet,
-  describeMistakes,
   buildReadingTestForm,
-  scoreReadingTest,
 } from "@notesense/shared";
 
 export type StaffClef = "treble" | "bass";

@@ -35,10 +35,10 @@ describe("ReadingControls", () => {
 
   it("explains what the selected mode does", () => {
     renderControls("test");
-    expect(screen.getByText(/no hints and no answers revealed/i)).toBeInTheDocument();
+    expect(screen.getByText(/no-hint/i)).toBeInTheDocument();
 
     renderControls("practice");
-    expect(screen.getByText(/returns to the notes you find hardest/i)).toBeInTheDocument();
+    expect(screen.getByText(/adaptive/i)).toBeInTheDocument();
   });
 
   it("reports a mode change", () => {
@@ -52,7 +52,7 @@ describe("ReadingControls", () => {
   it("hides the range picker in Test so two attempts stay comparable", () => {
     renderControls("test");
 
-    expect(screen.getByRole("note")).toHaveTextContent(/fixed set of notes/i);
+    expect(screen.getByRole("note")).toHaveTextContent(/compare attempts/i);
     expect(screen.queryByRole("group", { name: /reading range/i })).not.toBeInTheDocument();
   });
 
