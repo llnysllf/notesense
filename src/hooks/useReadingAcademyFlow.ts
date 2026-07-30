@@ -53,7 +53,7 @@ function buildReadingTestQueue(settings: PracticeSettings): TrainingNote[] {
     highMidi: Math.max(...noteMidis),
     allowedMidis: noteMidis,
     promptCount: getReadingModeRules(settings.readingMode).fixedPromptCount ?? 20,
-    seed: `${settings.readingRange}:${settings.customReadingRange.startNoteId}-${settings.customReadingRange.endNoteId}:v1`,
+    seed: `${settings.readingRange}${settings.customReadingRange.startNoteId}${settings.customReadingRange.endNoteId}`,
   });
 
   return form.prompts.flatMap((midi) => {
@@ -75,14 +75,13 @@ function buildReadingReplayQueue(settings: PracticeSettings, misses: readonly Re
 function summarizeReadingTest(answers: readonly ReadingTestAnswer[]): SessionSummary {
   const attempts = answers.length;
   const score = answers.filter((answer) => answer.correct).length;
-  const accuracy = attempts > 0 ? Math.round((score / attempts) * 100) : 0;
   return {
     mode: "reading",
     score,
     attempts,
-    accuracy,
+    accuracy: attempts ? Math.round((score / attempts) * 100) : 0,
     bestStreak: 0,
-    suggestion: `${score}/${attempts}`,
+    suggestion: "",
   };
 }
 

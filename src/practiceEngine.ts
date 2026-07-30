@@ -451,6 +451,10 @@ export function getPracticeWeight(noteId: string, progress?: ModeProgress): numb
   return 1 + (1 - accuracy) * 5 + Math.min(misses, 5) * 0.4;
 }
 
+function getSecureRandom(): number {
+  return crypto.getRandomValues(new Uint32Array(1))[0]! / 2 ** 32;
+}
+
 function selectPracticeNote<TNote extends { id: string }>(notes: TNote[], options: SelectNoteOptions): TNote {
   const fallbackNote = notes[0];
   if (!fallbackNote) {
@@ -459,7 +463,7 @@ function selectPracticeNote<TNote extends { id: string }>(notes: TNote[], option
 
   const availableNotes = notes.length > 1 ? notes.filter((note) => note.id !== options.previousNoteId) : notes;
   const candidateNotes = availableNotes.length > 0 ? availableNotes : [fallbackNote];
-  const rng = options.rng ?? Math.random;
+  const rng = options.rng ?? getSecureRandom;
 
   if (!options.useAdaptive) {
     return candidateNotes[Math.floor(rng() * candidateNotes.length)] ?? fallbackNote;

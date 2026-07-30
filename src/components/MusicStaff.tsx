@@ -36,17 +36,18 @@ function NoteGlyph({ note, x, variant = "current" }: { note: TrainingNote; x: nu
 
 function MusicStaff({ hideNote = false, note, nextNote = null }: MusicStaffProps) {
   const staffLines = [56, 72, 88, 104, 120];
-  const clefLabel = note.clef === "treble" ? "Treble" : "Bass";
-  const clefSymbol = note.clef === "treble" ? "𝄞" : "𝄢";
-  const clefY = note.clef === "treble" ? 119 : 112;
-  const ariaDetail = nextNote ? `, next ${nextNote.id}` : "";
+  const isTreble = note.clef === "treble";
+  const clefLabel = isTreble ? "Treble" : "Bass";
+  const clefSymbol = isTreble ? "𝄞" : "𝄢";
+  const clefY = isTreble ? 119 : 112;
+  const ariaDetail = nextNote ? ` next ${nextNote.id}` : "";
 
   return (
     <svg
       className="staff"
       viewBox="0 0 420 184"
       role="img"
-      aria-label={`${clefLabel} staff note ${note.id}` + ariaDetail}
+      aria-label={`${clefLabel} ${note.id}` + ariaDetail}
     >
       <text className={`clef ${note.clef}-clef`} x="54" y={clefY} aria-hidden="true">
         {clefSymbol}
