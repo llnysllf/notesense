@@ -105,7 +105,11 @@ export function useDailyPlan(events: readonly AttemptEvent[] | null = EMPTY_EVEN
   }, []);
 
   const regenerate = useCallback(() => {
-    const fresh = buildPlan(events ?? EMPTY_EVENTS, new Date());
+    // A manually requested refresh must not turn a still-loading ledger into a
+    // cached new-learner plan either.
+    if (events === null) return;
+
+    const fresh = buildPlan(events, new Date());
     saveDailyPlan(fresh);
     setPlan(fresh);
   }, [events]);

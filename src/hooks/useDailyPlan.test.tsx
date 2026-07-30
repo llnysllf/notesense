@@ -75,6 +75,20 @@ describe("useDailyPlan", () => {
     await waitFor(() => expect(readStored().blocks[0].role).toBe("review"));
   });
 
+  it("does not cache an empty plan while evidence is still loading overnight", () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date("2026-01-05T23:59:00.000Z"));
+    render(<PlanProbe events={null} />);
+
+    act(() => {
+      vi.setSystemTime(new Date("2026-01-06T00:01:00.000Z"));
+      window.dispatchEvent(new Event("focus"));
+      screen.getByRole("button", { name: "regenerate" }).click();
+    });
+
+    expect(window.localStorage.getItem(PLAN_KEY)).toBeNull();
+  });
+
   it("reuses a stored plan from the same day instead of regenerating", () => {
     const first = render(<PlanProbe />);
     const stored = readStored();
