@@ -29,70 +29,86 @@ type MelodyAnswerControlsOptions = {
 };
 
 export function useMelodyAnswerControls(options: MelodyAnswerControlsOptions) {
-  const promptStartedAtRef = options.promptStartedAtRef;
+  const {
+    mode,
+    settings,
+    progress,
+    currentMelody,
+    melodyAnswerNoteIds,
+    currentStreak,
+    bestRoundStreak,
+    isRunning,
+    feedback,
+    promptStartedAtRef,
+    sessionIdRef,
+    advanceTimerRef,
+    setFeedback,
+    setRoundAttempts,
+    setRoundCorrect,
+    setCurrentStreak,
+    setBestRoundStreak,
+    setCurrentMelody,
+    setMelodyAnswerNoteIds,
+    onProgressChange,
+    clearAdvanceTimer,
+    getNextPitchMelody,
+  } = options;
 
   function handleMelodyNoteInput(noteId: string) {
-    if (
-      options.mode !== "pitch" ||
-      options.settings.pitchExercise !== "melody" ||
-      !options.isRunning ||
-      options.feedback !== null
-    ) {
+    if (mode !== "pitch" || settings.pitchExercise !== "melody" || !isRunning || feedback !== null) {
       return;
     }
-    if (options.melodyAnswerNoteIds.length >= options.currentMelody.length) return;
-    if (
-      !getPitchNotes(options.settings.pitchRange, options.settings.customPitchRange).some((note) => note.id === noteId)
-    ) {
+    if (melodyAnswerNoteIds.length >= currentMelody.length) return;
+    if (!getPitchNotes(settings.pitchRange, settings.customPitchRange).some((note) => note.id === noteId)) {
       return;
     }
-    options.setMelodyAnswerNoteIds((answer) => [...answer, noteId]);
+    setMelodyAnswerNoteIds((answer) => [...answer, noteId]);
   }
 
   function undoMelodyAnswer() {
-    if (options.feedback !== null) return;
-    options.setMelodyAnswerNoteIds((answer) => answer.slice(0, -1));
+    if (feedback !== null) return;
+    setMelodyAnswerNoteIds((answer) => answer.slice(0, -1));
   }
 
   function clearMelodyAnswer() {
-    if (options.feedback !== null) return;
-    options.setMelodyAnswerNoteIds([]);
+    if (feedback !== null) return;
+    setMelodyAnswerNoteIds([]);
   }
 
   function submitMelodyAnswer() {
     if (
-      options.mode !== "pitch" ||
-      options.settings.pitchExercise !== "melody" ||
-      !options.isRunning ||
-      options.feedback !== null ||
-      options.melodyAnswerNoteIds.length !== options.currentMelody.length
+      mode !== "pitch" ||
+      settings.pitchExercise !== "melody" ||
+      !isRunning ||
+      feedback !== null ||
+      melodyAnswerNoteIds.length !== currentMelody.length
     ) {
       return;
     }
 
     submitMelodyPracticeAnswer({
-      progress: options.progress,
-      melody: options.currentMelody,
-      answerNoteIds: options.melodyAnswerNoteIds,
-      currentStreak: options.currentStreak,
-      bestRoundStreak: options.bestRoundStreak,
+      progress,
+      melody: currentMelody,
+      answerNoteIds: melodyAnswerNoteIds,
+      currentStreak,
+      bestRoundStreak,
       timing: promptStartedAtRef.current,
-      sessionId: options.sessionIdRef.current,
-      answerMidis: options.melodyAnswerNoteIds.map((id) => getPianoKeyById(id)?.midi),
-      setFeedback: options.setFeedback,
-      setRoundAttempts: options.setRoundAttempts,
-      setRoundCorrect: options.setRoundCorrect,
-      setCurrentStreak: options.setCurrentStreak,
-      setBestRoundStreak: options.setBestRoundStreak,
-      onProgressChange: options.onProgressChange,
-      clearAdvanceTimer: options.clearAdvanceTimer,
+      sessionId: sessionIdRef.current,
+      answerMidis: melodyAnswerNoteIds.map((id) => getPianoKeyById(id)?.midi),
+      setFeedback,
+      setRoundAttempts,
+      setRoundCorrect,
+      setCurrentStreak,
+      setBestRoundStreak,
+      onProgressChange,
+      clearAdvanceTimer,
       setAdvanceTimer: (value) => {
-        options.advanceTimerRef.current = value;
+        advanceTimerRef.current = value;
       },
-      getNextPitchMelody: options.getNextPitchMelody,
-      setCurrentMelody: options.setCurrentMelody,
-      setMelodyAnswerNoteIds: options.setMelodyAnswerNoteIds,
-      autoPlayPitch: options.settings.autoPlayPitch,
+      getNextPitchMelody,
+      setCurrentMelody,
+      setMelodyAnswerNoteIds,
+      autoPlayPitch: settings.autoPlayPitch,
       setPromptTiming: () => {
         promptStartedAtRef.current = { wallIso: new Date().toISOString(), clock: performance.now() };
       },

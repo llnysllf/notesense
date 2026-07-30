@@ -3,9 +3,9 @@ import type { MutableRefObject } from "react";
 import { getPianoKeyById, getReadingNotes } from "../noteData";
 import { completeSessionRound } from "./practiceSessionLogic";
 import type { PracticeProgress, PracticeSettings, ReadingMiss, SessionSummary, TrainingNote } from "../types";
-import { buildReadingTestForm, buildReplaySet, getReadingModeRules, scoreReadingTest } from "../types";
+import { buildReadingTestForm, buildReplaySet, getReadingModeRules } from "../types";
 
-type ReadingTestAnswer = { correct: boolean; responseMs: number };
+type ReadingTestAnswer = { correct: boolean };
 type ReadingFixedQueueKind = "test" | "replay";
 
 type PromptTimingRef = MutableRefObject<{ wallIso: string; clock: number } | null>;
@@ -72,19 +72,17 @@ function buildReadingReplayQueue(settings: PracticeSettings, misses: readonly Re
   });
 }
 
-function summarizeReadingTest(answers: readonly ReadingTestAnswer[], completed: boolean): SessionSummary {
-  const result = scoreReadingTest(answers);
-  const accuracy = Math.round(result.accuracy * 100);
-  const median = result.medianResponseMs > 0 ? ` Median response ${result.medianResponseMs}ms.` : "";
+function summarizeReadingTest(answers: readonly ReadingTestAnswer[]): SessionSummary {
+  const attempts = answers.length;
+  const score = answers.filter((answer) => answer.correct).length;
+  const accuracy = attempts > 0 ? Math.round((score / attempts) * 100) : 0;
   return {
     mode: "reading",
-    score: result.correct,
-    attempts: result.promptCount,
+    score,
+    attempts,
     accuracy,
     bestStreak: 0,
-    suggestion: completed
-      ? `Test complete: ${accuracy}% accuracy.${median}`
-      : `Test stopped early: ${result.correct}/${result.promptCount} correct.${median}`,
+    suggestion: `${score}/${attempts}`,
   };
 }
 
@@ -101,6 +99,19 @@ function resetRoundCounters(options: ReadingAcademyFlowOptions) {
 }
 
 export function useReadingAcademyFlow(options: ReadingAcademyFlowOptions) {
+  const {
+    settings,
+    currentReadingNote,
+    getNextReadingNote,
+    setCurrentReadingNote,
+    setRoundStartedAt,
+    setIsRunning,
+    setFeedback,
+    setLastSummary,
+    setTimeRemaining,
+    clearAdvanceTimer,
+    promptStartedAtRef,
+  } = options;
   const [lookAheadReadingNote, setLookAheadReadingNote] = useState<TrainingNote | null>(null);
   const [isReadingPromptHidden, setIsReadingPromptHidden] = useState(false);
   const queueRef = useRef<TrainingNote[]>([]);
@@ -108,7 +119,6 @@ export function useReadingAcademyFlow(options: ReadingAcademyFlowOptions) {
   const testAnswersRef = useRef<ReadingTestAnswer[]>([]);
   const queueKindRef = useRef<ReadingFixedQueueKind | null>(null);
   const audiationTimerRef = useRef<number | null>(null);
-  const promptStartedAtRef = options.promptStartedAtRef;
 
   const clearAudiationTimer = useCallback(() => {
     if (audiationTimerRef.current !== null) {
@@ -140,58 +150,54 @@ export function useReadingAcademyFlow(options: ReadingAcademyFlowOptions) {
 
   function finishTestRound(): boolean {
     if (queueKindRef.current !== "test") return false;
-    options.clearAdvanceTimer();
+    clearAdvanceTimer();
     clearAudiationTimer();
-    options.setLastSummary(summarizeReadingTest(testAnswersRef.current, false));
-    options.setIsRunning(false);
-    options.setRoundStartedAt(null);
-    options.setFeedback(null);
-    options.setTimeRemaining(options.settings.roundLength);
+    setLastSummary(summarizeReadingTest(testAnswersRef.current));
+    setIsRunning(false);
+    setRoundStartedAt(null);
+    setFeedback(null);
+    setTimeRemaining(settings.roundLength);
     reset();
     return true;
   }
 
   function startModeRound(): boolean {
     reset();
-    if (options.settings.readingMode === "test") {
-      const queue = buildReadingTestQueue(options.settings);
+    if (settings.readingMode === "test") {
+      const queue = buildReadingTestQueue(settings);
       queueRef.current = queue;
       queueKindRef.current = "test";
       resetRoundCounters(options);
-      if (queue[0] !== undefined) options.setCurrentReadingNote(queue[0]);
+      if (queue[0] !== undefined) setCurrentReadingNote(queue[0]);
       scheduleAudiationHide();
       return true;
     }
 
-    if (options.settings.readingMode !== "learn") return false;
+    if (settings.readingMode !== "learn") return false;
 
-    const first = options.getNextReadingNote(options.currentReadingNote.id);
-    const next = options.getNextReadingNote(first.id);
+    const first = getNextReadingNote(currentReadingNote.id);
+    const next = getNextReadingNote(first.id);
     resetRoundCounters(options);
-    options.setCurrentReadingNote(first);
+    setCurrentReadingNote(first);
     setLookAheadReadingNote(next);
     return true;
   }
 
   function startReplay(misses: readonly ReadingMiss[]): boolean {
-    const queue = buildReadingReplayQueue(options.settings, misses);
+    const queue = buildReadingReplayQueue(settings, misses);
     if (queue.length === 0) return false;
 
     reset();
     queueRef.current = queue;
     queueKindRef.current = "replay";
     resetRoundCounters(options);
-    options.setCurrentReadingNote(queue[0]!);
+    setCurrentReadingNote(queue[0]!);
     return true;
   }
 
-  function recordTestAnswer(isCorrect: boolean, promptClock: number | undefined) {
+  function recordTestAnswer(isCorrect: boolean) {
     if (queueKindRef.current !== "test") return false;
-    const now = performance.now();
-    testAnswersRef.current.push({
-      correct: isCorrect,
-      responseMs: Math.max(0, Math.round(now - (promptClock ?? now))),
-    });
+    testAnswersRef.current.push({ correct: isCorrect });
     return true;
   }
 
@@ -216,10 +222,10 @@ export function useReadingAcademyFlow(options: ReadingAcademyFlowOptions) {
       timeRemaining,
     });
     onProgressChange(completedProgress);
-    options.setLastSummary(summary);
-    options.setIsRunning(false);
-    options.setRoundStartedAt(null);
-    options.setTimeRemaining(settings.roundLength);
+    setLastSummary(summary);
+    setIsRunning(false);
+    setRoundStartedAt(null);
+    setTimeRemaining(settings.roundLength);
     reset();
   }
 
@@ -238,16 +244,16 @@ export function useReadingAcademyFlow(options: ReadingAcademyFlowOptions) {
       const nextIndex = queueIndexRef.current + 1;
       const nextTestNote = queueRef.current[nextIndex];
       if (nextTestNote === undefined) {
-        options.setLastSummary(summarizeReadingTest(testAnswersRef.current, true));
-        options.setIsRunning(false);
-        options.setRoundStartedAt(null);
-        options.setTimeRemaining(options.settings.roundLength);
+        setLastSummary(summarizeReadingTest(testAnswersRef.current));
+        setIsRunning(false);
+        setRoundStartedAt(null);
+        setTimeRemaining(settings.roundLength);
         reset();
         return true;
       }
       queueIndexRef.current = nextIndex;
       promptStartedAtRef.current = { wallIso: new Date().toISOString(), clock: performance.now() };
-      options.setCurrentReadingNote(nextTestNote);
+      setCurrentReadingNote(nextTestNote);
       scheduleAudiationHide();
       return true;
     }
@@ -262,7 +268,7 @@ export function useReadingAcademyFlow(options: ReadingAcademyFlowOptions) {
       const nextReplayNote = queueRef.current[nextIndex];
       if (nextReplayNote === undefined) {
         completeReplayRound({
-          settings: options.settings,
+          settings,
           nextProgress: params.nextProgress,
           roundAttempts: params.roundAttempts + 1,
           roundCorrect: params.roundCorrect + 1,
@@ -275,23 +281,22 @@ export function useReadingAcademyFlow(options: ReadingAcademyFlowOptions) {
       }
       queueIndexRef.current = nextIndex;
       promptStartedAtRef.current = { wallIso: new Date().toISOString(), clock: performance.now() };
-      options.setCurrentReadingNote(nextReplayNote);
+      setCurrentReadingNote(nextReplayNote);
       return true;
     }
 
-    if (options.settings.readingMode !== "learn") return false;
+    if (settings.readingMode !== "learn") return false;
 
     const nextReadingNote =
-      lookAheadReadingNote ?? options.getNextReadingNote(params.answeredReadingNote.id, params.nextProgress);
-    options.setCurrentReadingNote(nextReadingNote);
-    setLookAheadReadingNote(options.getNextReadingNote(nextReadingNote.id, params.nextProgress));
+      lookAheadReadingNote ?? getNextReadingNote(params.answeredReadingNote.id, params.nextProgress);
+    setCurrentReadingNote(nextReadingNote);
+    setLookAheadReadingNote(getNextReadingNote(nextReadingNote.id, params.nextProgress));
     return true;
   }
 
   return {
     lookAheadReadingNote,
     isReadingPromptHidden,
-    queueKindRef,
     clearAudiationTimer,
     finishTestRound,
     startModeRound,

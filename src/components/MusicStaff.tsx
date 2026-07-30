@@ -39,7 +39,7 @@ function MusicStaff({ hideNote = false, note, nextNote = null }: MusicStaffProps
   const clefLabel = note.clef === "treble" ? "Treble" : "Bass";
   const clefSymbol = note.clef === "treble" ? "𝄞" : "𝄢";
   const clefY = note.clef === "treble" ? 119 : 112;
-  const ariaDetail = nextNote ? `, next ${nextNote.id}` : hideNote ? ", hidden for audiation" : "";
+  const ariaDetail = nextNote ? `, next ${nextNote.id}` : "";
 
   return (
     <svg
@@ -56,7 +56,7 @@ function MusicStaff({ hideNote = false, note, nextNote = null }: MusicStaffProps
       ))}
       {hideNote ? (
         <text className="audiation-cue" x="244" y="96" textAnchor="middle" aria-hidden="true">
-          Listen
+          .
         </text>
       ) : (
         <NoteGlyph note={note} x={232} />

@@ -49,23 +49,53 @@ type SingleAnswerControlsOptions = {
 };
 
 export function useSingleAnswerControls(options: SingleAnswerControlsOptions) {
-  const promptStartedAtRef = options.promptStartedAtRef;
+  const {
+    mode,
+    settings,
+    progress,
+    currentMelody,
+    currentReadingNote,
+    currentPitchNote,
+    feedback,
+    isRunning,
+    currentStreak,
+    bestRoundStreak,
+    roundAttempts,
+    roundCorrect,
+    roundStartedAt,
+    timeRemaining,
+    readingAcademy,
+    getNextReadingNote,
+    getNextPitchNote,
+    setFeedback,
+    setRoundAttempts,
+    setRoundCorrect,
+    setCurrentStreak,
+    setBestRoundStreak,
+    setCurrentReadingNote,
+    setCurrentPitchNote,
+    onProgressChange,
+    clearAdvanceTimer,
+    advanceTimerRef,
+    promptStartedAtRef,
+    sessionIdRef,
+  } = options;
 
   function playCurrentNote() {
     playPracticePrompt({
-      mode: options.mode,
-      settings: options.settings,
-      melody: options.currentMelody,
-      readingFrequency: options.currentReadingNote.frequency,
-      pitchFrequency: options.currentPitchNote.frequency,
+      mode,
+      settings,
+      melody: currentMelody,
+      readingFrequency: currentReadingNote.frequency,
+      pitchFrequency: currentPitchNote.frequency,
     });
   }
 
   function recordAnswer(answer: NoteName, answerId?: string) {
-    if (options.feedback !== null || !options.isRunning) return;
-    const answeredMode = options.mode;
-    const answeredReadingNote = options.currentReadingNote;
-    const answeredPitchNote = options.currentPitchNote;
+    if (feedback !== null || !isRunning) return;
+    const answeredMode = mode;
+    const answeredReadingNote = currentReadingNote;
+    const answeredPitchNote = currentPitchNote;
     const {
       feedback: nextFeedback,
       isCorrect,
@@ -78,27 +108,25 @@ export function useSingleAnswerControls(options: SingleAnswerControlsOptions) {
       mode: answeredMode,
       readingNote: answeredReadingNote,
       pitchNote: answeredPitchNote,
-      currentStreak: options.currentStreak,
-      bestRoundStreak: options.bestRoundStreak,
-      progress: options.progress,
+      currentStreak,
+      bestRoundStreak,
+      progress,
     });
-    options.setFeedback(nextFeedback);
-    options.setRoundAttempts((n) => n + 1);
-    options.setRoundCorrect((n) => n + (isCorrect ? 1 : 0));
-    options.setCurrentStreak(nextStreak);
-    options.setBestRoundStreak(nextBestStreak);
+    setFeedback(nextFeedback);
+    setRoundAttempts((n) => n + 1);
+    setRoundCorrect((n) => n + (isCorrect ? 1 : 0));
+    setCurrentStreak(nextStreak);
+    setBestRoundStreak(nextBestStreak);
 
-    const isReadingTestAnswer =
-      answeredMode === "reading" &&
-      options.readingAcademy.recordTestAnswer(isCorrect, promptStartedAtRef.current?.clock);
-    if (!isReadingTestAnswer) options.onProgressChange(nextProgress);
-    options.readingAcademy.clearAudiationTimer();
+    const isReadingTestAnswer = answeredMode === "reading" && readingAcademy.recordTestAnswer(isCorrect);
+    if (!isReadingTestAnswer) onProgressChange(nextProgress);
+    readingAcademy.clearAudiationTimer();
 
     const answerMidi = getPianoKeyById(answerId ?? "")?.midi;
-    if (answeredMode !== "reading" || getReadingModeRules(options.settings.readingMode).contributesEvidence) {
+    if (answeredMode !== "reading" || getReadingModeRules(settings.readingMode).contributesEvidence) {
       captureSingleEvidenceAttempt({
         timing: promptStartedAtRef.current,
-        sessionId: options.sessionIdRef.current,
+        sessionId: sessionIdRef.current,
         mode: answeredMode,
         promptId: answeredMode === "reading" ? answeredReadingNote.id : answeredPitchNote.id,
         correct: isCorrect,
@@ -106,39 +134,39 @@ export function useSingleAnswerControls(options: SingleAnswerControlsOptions) {
       });
     }
 
-    options.clearAdvanceTimer();
-    options.advanceTimerRef.current = window.setTimeout(() => {
-      options.advanceTimerRef.current = null;
-      options.setFeedback(null);
+    clearAdvanceTimer();
+    advanceTimerRef.current = window.setTimeout(() => {
+      advanceTimerRef.current = null;
+      setFeedback(null);
       if (answeredMode === "reading") {
         promptStartedAtRef.current = { wallIso: new Date().toISOString(), clock: performance.now() };
         if (
-          options.readingAcademy.advanceAfterReadingAnswer({
+          readingAcademy.advanceAfterReadingAnswer({
             answeredReadingNote,
             isCorrect,
             nextProgress,
-            roundAttempts: options.roundAttempts,
-            roundCorrect: options.roundCorrect,
+            roundAttempts,
+            roundCorrect,
             nextBestStreak,
-            roundStartedAt: options.roundStartedAt,
-            timeRemaining: options.timeRemaining,
-            onProgressChange: options.onProgressChange,
+            roundStartedAt,
+            timeRemaining,
+            onProgressChange,
           })
         ) {
           return;
         }
-        options.setCurrentReadingNote((note) => options.getNextReadingNote(note.id, nextProgress));
-        options.readingAcademy.reset();
+        setCurrentReadingNote((note) => getNextReadingNote(note.id, nextProgress));
+        readingAcademy.reset();
         return;
       }
 
-      const nextPitch = options.getNextPitchNote(answeredPitchNote.id, nextProgress);
+      const nextPitch = getNextPitchNote(answeredPitchNote.id, nextProgress);
       promptStartedAtRef.current = { wallIso: new Date().toISOString(), clock: performance.now() };
-      options.setCurrentPitchNote(nextPitch);
-      if (options.settings.autoPlayPitch) {
+      setCurrentPitchNote(nextPitch);
+      if (settings.autoPlayPitch) {
         playPracticePrompt({
           mode: "pitch",
-          settings: options.settings,
+          settings,
           melody: [],
           readingFrequency: nextPitch.frequency,
           pitchFrequency: nextPitch.frequency,

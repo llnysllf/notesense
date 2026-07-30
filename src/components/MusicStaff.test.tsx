@@ -52,6 +52,6 @@ describe("MusicStaff", () => {
     const { container } = render(<MusicStaff hideNote note={STARTER_NOTES[0]!} />);
 
     expect(container.querySelector(".staff-note.current")).toBeNull();
-    expect(container.querySelector(".audiation-cue")).toHaveTextContent("Listen");
+    expect(container.querySelector(".audiation-cue")).toHaveTextContent(".");
   });
 });
