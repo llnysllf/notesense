@@ -82,3 +82,4 @@ Architecture Decision Records document durable product and engineering decisions
 - [ADR 0065: Add Today And The Daily Plan](0065-today-daily-plan.md) - Accepted
 - [ADR 0066: Add The Sight-Reading Academy](0066-sight-reading-academy.md) - Accepted
 - [ADR 0067: Add The Rhythm And Timing Engine](0067-rhythm-and-timing-engine.md) - Accepted
+- [ADR 0068: Add Web MIDI As An Input Source](0068-web-midi-input.md) - Accepted

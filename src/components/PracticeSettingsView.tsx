@@ -1,5 +1,7 @@
 import type { ReactNode } from "react";
 import { ROUND_LENGTHS } from "../practiceEngine";
+import MidiSettings from "./MidiSettings";
+import type { MidiPanelProps } from "../midi/webMidi";
 import type { PracticeMode, PracticeSettings } from "../types";
 
 type PracticeSettingsViewProps = {
@@ -8,6 +10,7 @@ type PracticeSettingsViewProps = {
   rangeControls?: ReactNode;
   settings: PracticeSettings;
   onSettingsChange: (patch: Partial<PracticeSettings>) => void;
+  midi: MidiPanelProps;
 };
 
 function PracticeSettingsView({
@@ -16,9 +19,12 @@ function PracticeSettingsView({
   rangeControls,
   settings,
   onSettingsChange,
+  midi,
 }: PracticeSettingsViewProps) {
   return (
     <>
+      <MidiSettings {...midi} />
+
       {rangeControls && (
         <div className="range-group">
           <h3>{mode === "reading" ? "Reading range" : "Pitch training"}</h3>

@@ -7,6 +7,7 @@ import PitchTrainingControls from "./components/PitchTrainingControls";
 import ReadingControls from "./components/ReadingControls";
 import { useAppRoute } from "./hooks/useAppRoute";
 import { useRhythmDrill } from "./hooks/useRhythmDrill";
+import { useMidiAppInput } from "./hooks/useMidiAppInput";
 import { useRoundMisses } from "./hooks/useRoundMisses";
 import { useDailyPlan } from "./hooks/useDailyPlan";
 import { useDataPortability } from "./hooks/useDataPortability";
@@ -20,7 +21,7 @@ import type { AppSection } from "./routes";
 import { getPracticeFeedbackText } from "./practiceFeedback";
 import { requiresSessionReset } from "./settingsChange";
 import { resetProgress } from "./storage";
-import type { CustomReadingRange, DataStatus, PracticeProgress, PracticeSettings, ReadingRange } from "./types";
+import type { DataStatus, PracticeProgress, PracticeSettings } from "./types";
 
 const STORAGE_WARNING = "Progress is not being saved on this device right now.";
 const PracticeStatsPanel = lazy(() => import("./components/PracticeStatsPanel"));
@@ -56,8 +57,6 @@ function App() {
 
   const [dataStatus, setDataStatus] = useState<DataStatus>(null);
   const [isNavOpen, setIsNavOpen] = useState(false);
-  // The URL owns which destination is showing, so reloads, bookmarks, and
-  // browser back/forward all land on the same screen.
   const { route, isUnknownPath } = useAppRoute();
   const activeSection = route.section;
 
@@ -123,14 +122,6 @@ function App() {
     if (requiresSessionReset(settings, patch)) session.resetSession(next, progress);
   }
 
-  function handleReadingRangeChange(readingRange: ReadingRange) {
-    updateSettings({ readingRange });
-  }
-
-  function handleCustomReadingRangeChange(customReadingRange: CustomReadingRange) {
-    updateSettings({ customReadingRange, readingRange: "custom" });
-  }
-
   function handleResetProgress() {
     if (!window.confirm("Reset all saved NoteSense progress?")) return;
     const next = resetProgress();
@@ -139,6 +130,16 @@ function App() {
     session.resetSession(settings, next);
   }
 
+  const midi = useMidiAppInput({
+    activeSection,
+    mode,
+    latencyMs: settings.midiLatencyMs,
+    onLatencyChange: (midiLatencyMs) => updateSettings({ midiLatencyMs }),
+    onRhythmTap: rhythmDrill.session.tap,
+    onSongAnswer: songSession.answerCurrentEvent,
+    onReadingAnswer: handleReadingKeyAnswer,
+    onPitchAnswer: handlePitchKeyAnswer,
+  });
   const activeNote = mode === "reading" ? currentReadingNote : currentPitchNote;
   const { misses } = useRoundMisses({ mode, feedback, expectedNoteId: activeNote.id, isRunning });
   const {
@@ -160,8 +161,6 @@ function App() {
     roundAccuracy,
   } = usePracticeDashboard({ mode, progress, roundAttempts, roundCorrect, settings });
 
-  // The reading/pitch drills are separate destinations, so the practice mode
-  // follows the URL rather than being toggled independently of it.
   useEffect(() => {
     if (route.mode && route.mode !== mode) setPracticeMode(route.mode);
   }, [mode, route.mode, setPracticeMode]);
@@ -187,8 +186,8 @@ function App() {
       <ReadingControls
         settings={settings}
         onModeChange={(readingMode) => updateSettings({ readingMode })}
-        onCustomRangeChange={handleCustomReadingRangeChange}
-        onRangeChange={handleReadingRangeChange}
+        onCustomRangeChange={(customReadingRange) => updateSettings({ customReadingRange, readingRange: "custom" })}
+        onRangeChange={(readingRange) => updateSettings({ readingRange })}
       />
     ) : (
       <PitchTrainingControls settings={settings} onSettingsChange={updateSettings} />
@@ -298,6 +297,7 @@ function App() {
                 mode={mode}
                 modeLabel={modeLabel}
                 practicePlan={practicePlan}
+                midi={midi.panel}
                 rangeControls={rangeControls}
                 rangeDetail={mode === "reading" ? readingRange.detail : pitchRange.detail}
                 settings={settings}

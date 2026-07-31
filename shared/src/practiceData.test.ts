@@ -102,7 +102,11 @@ describe("catalog-less normalization (server path)", () => {
       customPitchRange: { startNoteId: "C3", endNoteId: "B4" },
       pitchExercise: "single",
       melodyLength: 3,
+      midiLatencyMs: 0,
     });
+
+    expect(normalizeSettings({ midiLatencyMs: 83.7 })).toMatchObject({ midiLatencyMs: 84 });
+    expect(normalizeSettings({ midiLatencyMs: 900 })).toMatchObject({ midiLatencyMs: 0 });
 
     expect(
       normalizeSettings({

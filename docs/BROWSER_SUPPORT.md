@@ -20,6 +20,7 @@ Performance expectations live in [PERFORMANCE.md](PERFORMANCE.md).
 - SVG support is required for staff notation and practice insight charts.
 - CSS custom properties, `prefers-color-scheme`, and `prefers-reduced-motion` support are part of the UI baseline.
 - Storage failures should not crash the practice loop; the app should surface non-blocking save-status messaging.
+- Web MIDI is optional. It is detected at runtime rather than inferred from a browser list, requires a secure context, and is permission-gated. As of writing it ships in Chromium-family browsers (Chrome, Edge, Opera) and not in Safari or Firefox, but the app never hardcodes that: it asks the browser. Every screen works without it, using the on-screen keyboard.
 
 ## Unsupported Surface
 
@@ -28,6 +29,7 @@ Performance expectations live in [PERFORMANCE.md](PERFORMANCE.md).
 - Direct database access, third-party scripts, telemetry beacons, cookies, websockets, and external network APIs are not part of the current browser support contract.
 - Custom service-worker runtime API caching, background sync, push notifications, and practice-data service-worker storage are not supported.
 - Right-to-left layout and runtime locale negotiation are not part of the current browser support contract.
+- MIDI SysEx, MIDI output, and device-specific drivers are out of scope; NoteSense requests non-SysEx input access only.
 
 ## Verification Evidence
 

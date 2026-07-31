@@ -16,6 +16,17 @@ function renderSettingsView(overrides: Partial<Parameters<typeof PracticeSetting
     mode: "reading" as const,
     rangeDetail: "Treble clef C4-G4",
     settings: makeSettings(),
+    midi: {
+      support: "unsupported" as const,
+      status: "unavailable" as const,
+      devices: [],
+      selectedId: null,
+      latencyMs: 0,
+      onConnect: () => {},
+      onDisconnect: () => {},
+      onSelectDevice: () => {},
+      onSetLatencyMs: () => {},
+    },
     onSettingsChange: vi.fn(),
     ...overrides,
   };
