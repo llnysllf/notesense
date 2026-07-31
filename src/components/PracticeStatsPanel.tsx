@@ -19,6 +19,7 @@ import PracticeDataView from "./PracticeDataView";
 import PracticeCoach from "./PracticeCoach";
 import PracticeInsights from "./PracticeInsights";
 import PracticeSettingsView from "./PracticeSettingsView";
+import type { MidiPanelProps } from "../midi/webMidi";
 import SessionHistory from "./SessionHistory";
 import StatTile from "./StatTile";
 
@@ -51,6 +52,7 @@ type PracticeStatsPanelProps = {
   onImportData: (file: File) => void;
   onResetProgress: () => void;
   onSettingsChange: (patch: Partial<PracticeSettings>) => void;
+  midi: MidiPanelProps;
 };
 
 function PracticeStatsPanel({
@@ -74,6 +76,7 @@ function PracticeStatsPanel({
   onImportData,
   onResetProgress,
   onSettingsChange,
+  midi,
 }: PracticeStatsPanelProps) {
   return (
     <aside className="stats-panel" aria-label="Practice progress">
@@ -149,6 +152,7 @@ function PracticeStatsPanel({
 
         {activeView === "settings" && (
           <PracticeSettingsView
+            midi={midi}
             mode={mode}
             rangeDetail={rangeDetail}
             rangeControls={rangeControls}

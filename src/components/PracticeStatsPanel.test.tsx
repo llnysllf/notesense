@@ -120,6 +120,16 @@ function makeProps(overrides: Partial<PracticeStatsPanelProps> = {}): PracticeSt
     onExportData: vi.fn(),
     onImportData: vi.fn(),
     onResetProgress: vi.fn(),
+    midi: {
+      support: "unsupported" as const,
+      status: "unavailable" as const,
+      devices: [],
+      selectedId: null,
+      latencyMs: 0,
+      onConnect: () => {},
+      onDisconnect: () => {},
+      onSelectDevice: () => {},
+    },
     onSettingsChange: vi.fn(),
     ...overrides,
   };

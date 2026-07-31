@@ -229,6 +229,18 @@ export type RhythmSessionView = {
   newPattern: () => void;
 };
 
+// Web MIDI (Slice 9).
+export type { MidiMessage, MidiAdapter, LatencySample, LatencyEstimate } from "@notesense/shared";
+export {
+  parseMidiMessage,
+  createSustainTracker,
+  createMidiAdapter,
+  isPianoMidi,
+  estimateLatency,
+  describeLatency,
+  MIN_LATENCY_SAMPLES,
+} from "@notesense/shared";
+
 export type StaffClef = "treble" | "bass";
 
 export type TrainingNote = {

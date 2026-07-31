@@ -11,3 +11,4 @@ export * from "./evidence";
 export * from "./plan";
 export * from "./reading";
 export * from "./rhythm";
+export * from "./midi";

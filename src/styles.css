@@ -2210,3 +2210,47 @@ h3 {
   font-size: 0.9rem;
   list-style: none;
 }
+
+/* Connecting a digital piano. The panel is always present so an unsupported
+   browser reads as "not possible here" rather than as a missing feature. */
+.midi-settings {
+  display: grid;
+  gap: 10px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-card);
+  background: var(--color-surface);
+  padding: var(--space-card);
+}
+
+.midi-settings h3 {
+  margin: 0;
+  font-size: 1rem;
+}
+
+.midi-status,
+.midi-note {
+  margin: 0;
+  color: var(--color-muted-strong);
+  font-size: 0.88rem;
+}
+
+.midi-device-picker {
+  display: grid;
+  gap: 4px;
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+.midi-device-picker select {
+  min-height: 40px;
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-control);
+  background: var(--color-control-soft);
+  padding: 0 10px;
+  color: var(--color-text);
+  font: inherit;
+}
+
+.midi-settings .secondary-button {
+  justify-self: start;
+}
