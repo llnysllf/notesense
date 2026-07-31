@@ -186,6 +186,18 @@ describe("App", () => {
     );
   });
 
+  it("opens the rhythm drill from its own destination", async () => {
+    window.history.replaceState(null, "", "/practice/rhythm");
+    render(<App />);
+
+    expect(await screen.findByRole("heading", { name: "Tap the rhythm" })).toBeInTheDocument();
+    expect(screen.getByRole("group", { name: "Tempo" })).toBeInTheDocument();
+
+    // Rhythm settings live with the drill, so changing them is handled here.
+    fireEvent.click(screen.getByRole("button", { name: "120 BPM" }));
+    expect(screen.getByRole("button", { name: "120 BPM" })).toHaveAttribute("aria-pressed", "true");
+  });
+
   it("sets a custom reading range from piano keys", () => {
     render(<App />);
 

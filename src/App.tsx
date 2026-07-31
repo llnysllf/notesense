@@ -6,6 +6,7 @@ import type { PracticePanelView } from "./components/PracticeStatsPanel";
 import PitchTrainingControls from "./components/PitchTrainingControls";
 import ReadingControls from "./components/ReadingControls";
 import { useAppRoute } from "./hooks/useAppRoute";
+import { useRhythmDrill } from "./hooks/useRhythmDrill";
 import { useRoundMisses } from "./hooks/useRoundMisses";
 import { useDailyPlan } from "./hooks/useDailyPlan";
 import { useDataPortability } from "./hooks/useDataPortability";
@@ -25,9 +26,13 @@ const STORAGE_WARNING = "Progress is not being saved on this device right now.";
 const PracticeStatsPanel = lazy(() => import("./components/PracticeStatsPanel"));
 const SongsWorkspace = lazy(() => import("./components/SongsWorkspace"));
 const TodayWorkspace = lazy(() => import("./components/TodayWorkspace"));
+const RhythmWorkspace = lazy(() => import("./components/RhythmWorkspace"));
 const PracticeWorkspace = lazy(() => import("./components/PracticeWorkspace"));
 const RouteNotFound = lazy(() => import("./components/RouteNotFound"));
-const STATS_SECTION_BY_APP_SECTION: Record<Exclude<AppSection, "today" | "practice" | "songs">, PracticePanelView> = {
+const STATS_SECTION_BY_APP_SECTION: Record<
+  Exclude<AppSection, "today" | "practice" | "rhythm" | "songs">,
+  PracticePanelView
+> = {
   progress: "overview",
   map: "map",
   history: "history",
@@ -36,7 +41,7 @@ const STATS_SECTION_BY_APP_SECTION: Record<Exclude<AppSection, "today" | "practi
 };
 
 function getStatsView(section: AppSection): PracticePanelView {
-  if (section === "today" || section === "practice" || section === "songs") return "overview";
+  if (section === "today" || section === "practice" || section === "rhythm" || section === "songs") return "overview";
 
   return STATS_SECTION_BY_APP_SECTION[section];
 }
@@ -57,6 +62,7 @@ function App() {
   const activeSection = route.section;
 
   const { settings, setSettings, persistSettings } = useSettings();
+  const rhythmDrill = useRhythmDrill();
   const songSession = useSongSession();
   const { progress, evidenceEvents, setProgress, persistProgress } = usePracticeProgress();
   const dailyPlan = useDailyPlan(evidenceEvents);
@@ -234,6 +240,12 @@ function App() {
               <RouteNotFound path={window.location.pathname} />
             ) : activeSection === "today" ? (
               <TodayWorkspace plan={dailyPlan.plan} progress={dailyPlan.progress} onOpenBlock={dailyPlan.openBlock} />
+            ) : activeSection === "rhythm" ? (
+              <RhythmWorkspace
+                settings={rhythmDrill.settings}
+                session={rhythmDrill.session}
+                onSettingsChange={rhythmDrill.updateSettings}
+              />
             ) : activeSection === "songs" ? (
               <SongsWorkspace songSession={songSession} />
             ) : activeSection === "practice" ? (

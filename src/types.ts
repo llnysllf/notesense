@@ -1,4 +1,13 @@
-import type { NoteName, PracticeMode, PracticeSessionRecord, ReadingNoteName } from "@notesense/shared";
+import type {
+  Meter,
+  NoteName,
+  PracticeMode,
+  PracticeSessionRecord,
+  ReadingNoteName,
+  RhythmPattern,
+  RhythmScore,
+  RhythmVocabulary,
+} from "@notesense/shared";
 
 export { MAX_PITCH_SEQUENCE_LENGTH, MIN_PITCH_SEQUENCE_LENGTH } from "@notesense/shared";
 
@@ -176,6 +185,49 @@ export {
   buildReplaySet,
   buildReadingTestForm,
 } from "@notesense/shared";
+
+// Rhythm and timing engine (Slice 8).
+export type {
+  RhythmPattern,
+  RhythmEvent,
+  RhythmVocabulary,
+  RhythmScore,
+  OnsetResult,
+  TapVerdict,
+} from "@notesense/shared";
+export {
+  RHYTHM_VOCABULARIES,
+  generateRhythmPattern,
+  patternOnsetTicks,
+  patternLengthTicks,
+  gradeRhythm,
+  describeRhythm,
+  toleranceForTempo,
+} from "@notesense/shared";
+
+// What a rhythm drill is configured with, and what the screen needs from a
+// running session. Declared here so the workspace stays presentational and does
+// not import its behaviour from a hook.
+export type RhythmSettings = {
+  bpm: number;
+  meter: Meter;
+  bars: number;
+  vocabulary: RhythmVocabulary;
+};
+
+export type RhythmSessionView = {
+  pattern: RhythmPattern;
+  isRunning: boolean;
+  isCountingIn: boolean;
+  score: RhythmScore | null;
+  toleranceMs: number;
+  // 0..1 playback position, driven from the metronome's audio clock.
+  cursorProgress: number;
+  start: () => void;
+  stop: () => void;
+  tap: () => void;
+  newPattern: () => void;
+};
 
 export type StaffClef = "treble" | "bass";
 

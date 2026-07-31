@@ -12,12 +12,14 @@ import type { PracticeMode } from "./types";
 // Which workspace a destination shows. Owned here rather than by the nav
 // component so hooks and the router can use it without depending on
 // presentation.
-export type AppSection = "today" | "practice" | "songs" | "progress" | "map" | "history" | "settings" | "data";
+export type AppSection =
+  "today" | "practice" | "rhythm" | "songs" | "progress" | "map" | "history" | "settings" | "data";
 
 export type RouteId =
   | "today"
   | "practice-reading"
   | "practice-pitch"
+  | "rhythm"
   | "songs"
   | "progress"
   | "progress-map"
@@ -56,6 +58,7 @@ export const ROUTES: readonly RouteDefinition[] = [
     section: "practice",
     mode: "pitch",
   },
+  { id: "rhythm", path: "/practice/rhythm", label: "Rhythm", group: "Practice", section: "rhythm" },
   { id: "songs", path: "/practice/songs", label: "Songs", group: "Practice", section: "songs" },
   { id: "progress", path: "/progress", label: "Overview", group: "Progress", section: "progress" },
   { id: "progress-map", path: "/progress/map", label: "Map", group: "Progress", section: "map" },

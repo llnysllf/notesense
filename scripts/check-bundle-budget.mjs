@@ -51,8 +51,10 @@ const totalBudget = {
   // remains part of the offline-capable Pages output, alongside the router and
   // the 404.html deep-link fallback added with URL-addressable destinations, and
   // the Today screen, and the Sight-Reading Academy.
-  rawBytes: 385 * KIB,
-  gzipBytes: 120 * KIB,
+  // The rhythm engine is a new lazy practice capability with its own session,
+  // grading, and accessible feedback surface.
+  rawBytes: 397 * KIB,
+  gzipBytes: 124 * KIB,
 };
 
 function collectFiles(directory) {
