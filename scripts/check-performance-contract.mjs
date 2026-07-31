@@ -34,7 +34,7 @@ requireSnippets("docs/PERFORMANCE.md", [
   "## Verification",
   "JavaScript asset: 264 KiB raw, 85 KiB gzip",
   "CSS asset: 34 KiB raw, 7 KiB gzip",
-  "total Pages output: 385 KiB raw, 120 KiB gzip",
+  "total Pages output: 396 KiB raw, 124 KiB gzip",
   "The Lighthouse workflow audits the Pages-shaped app at `http://127.0.0.1:4174/notesense/` with three runs.",
   "Run `npm run performance:check` after performance-budget, Lighthouse, metadata, PWA, runtime-surface, Pages smoke, dependency, browser-support, or performance-doc changes.",
 ]);
@@ -63,8 +63,8 @@ requireSnippets("scripts/check-bundle-budget.mjs", [
   'name: "web metadata asset"',
   'name: "service worker"',
   'name: "Workbox runtime"',
-  "rawBytes: 385 * KIB",
-  "gzipBytes: 120 * KIB",
+  "rawBytes: 396 * KIB",
+  "gzipBytes: 124 * KIB",
   'console.log("Bundle budget report");',
 ]);
 

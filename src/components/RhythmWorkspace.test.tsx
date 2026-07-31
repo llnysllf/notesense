@@ -88,6 +88,9 @@ describe("RhythmWorkspace", () => {
 
     fireEvent.click(screen.getByRole("button", { name: "Triplets" }));
     expect(onSettingsChange).toHaveBeenCalledWith({ vocabulary: "triplets" });
+
+    fireEvent.click(screen.getByRole("button", { name: "6/8" }));
+    expect(onSettingsChange).toHaveBeenCalledWith({ meter: { beats: 6, beatUnit: 8 } });
   });
 
   it("keeps the tap pad disabled until a round is running", () => {

@@ -171,6 +171,14 @@ describe("gradeRhythm", () => {
     expect(scattered.pulseSteadiness).toBeLessThan(steadyEarly.pulseSteadiness);
   });
 
+  it("keeps near misses as actionable early or late verdicts", () => {
+    const early = gradeRhythm({ expectedTicks: [0], playedSeconds: [-0.18], bpm: 120 });
+    const late = gradeRhythm({ expectedTicks: [0], playedSeconds: [0.18], bpm: 120 });
+
+    expect(early.onsets[0]?.verdict).toBe("early");
+    expect(late.onsets[0]?.verdict).toBe("late");
+  });
+
   it("marks onsets nothing was played for as missed", () => {
     const score = gradeRhythm({ expectedTicks, playedSeconds: [0, 0.5], bpm: 120 });
 

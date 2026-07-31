@@ -22,6 +22,10 @@ const VOCABULARY_LABELS: Record<RhythmVocabulary, string> = {
 };
 
 const TEMPOS = [60, 80, 100, 120] as const;
+const METERS = [
+  { label: "4/4", value: { beats: 4, beatUnit: 4 } },
+  { label: "6/8", value: { beats: 6, beatUnit: 8 } },
+] as const;
 
 type RhythmWorkspaceProps = {
   settings: RhythmSettings;
@@ -79,6 +83,22 @@ function RhythmWorkspace({ settings, session, onSettingsChange }: RhythmWorkspac
         ))}
       </div>
 
+      <div className="mode-switch" role="group" aria-label="Meter">
+        {METERS.map(({ label, value }) => (
+          <button
+            key={label}
+            type="button"
+            aria-pressed={value.beats === settings.meter.beats && value.beatUnit === settings.meter.beatUnit}
+            className={
+              value.beats === settings.meter.beats && value.beatUnit === settings.meter.beatUnit ? "active" : ""
+            }
+            onClick={() => onSettingsChange({ meter: value })}
+          >
+            {label}
+          </button>
+        ))}
+      </div>
+
       <ol className="rhythm-strip" aria-label="Rhythm pattern">
         {session.pattern.events.map((event, index) => (
           <li
@@ -125,6 +145,13 @@ function RhythmWorkspace({ settings, session, onSettingsChange }: RhythmWorkspac
             <li>Completed: {Math.round(session.score.completion * 100)}%</li>
             {session.score.extraTaps > 0 ? <li>Extra taps: {session.score.extraTaps}</li> : null}
           </ul>
+          <ol className="rhythm-verdicts" aria-label="Timing feedback for each onset">
+            {session.score.onsets.map((onset, index) => (
+              <li key={`${index}-${onset.expectedSeconds}`} className={onset.verdict}>
+                Beat {index + 1}: {onset.verdict}
+              </li>
+            ))}
+          </ol>
         </div>
       ) : null}
     </section>

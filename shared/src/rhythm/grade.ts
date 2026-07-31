@@ -58,6 +58,7 @@ export type GradeOptions = {
 const MIN_TOLERANCE_MS = 60;
 const MAX_TOLERANCE_MS = 200;
 const BEAT_FRACTION = 0.25;
+const FEEDBACK_WINDOW_MULTIPLIER = 2;
 
 // A quarter of a beat, clamped. At 120bpm that is 125ms; at 200bpm it floors at
 // 60ms rather than shrinking to something no human can hit.
@@ -101,15 +102,16 @@ export function gradeRhythm({
       }
     }
 
-    if (bestIndex === -1 || bestDistance > tolerance / 1000) {
+    // Keep a wider, bounded feedback band than the on-time band. A near
+    // miss is useful information (early or late); a distant tap is an extra
+    // tap and the expected onset is genuinely missed.
+    if (bestIndex === -1 || bestDistance > (tolerance * FEEDBACK_WINDOW_MULTIPLIER) / 1000) {
       return { expectedSeconds: expected, verdict: "missed" };
     }
 
     used.add(bestIndex);
     const played = corrected[bestIndex] as number;
     const errorMs = (played - expected) * 1000;
-    // Inside the band it is on time; the sign still tells them which way they
-    // lean, but a hit is a hit.
     const verdict: TapVerdict = Math.abs(errorMs) <= tolerance ? "on-time" : errorMs < 0 ? "early" : "late";
     return { expectedSeconds: expected, playedSeconds: played, errorMs, verdict };
   });
