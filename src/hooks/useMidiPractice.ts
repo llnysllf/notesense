@@ -16,11 +16,23 @@ export type UseMidiPractice = UseMidiInput & { panel: MidiPanelProps };
 
 export type MidiPracticeOptions = {
   mode: PracticeMode;
+  enabled?: boolean;
+  latencyMs?: number;
+  onLatencyChange?: (latencyMs: number) => void;
+  onMidiNoteOn?: (noteId: string) => void;
   onReadingAnswer: (noteId: string) => void;
   onPitchAnswer: (noteId: string) => void;
 };
 
-export function useMidiPractice({ mode, onReadingAnswer, onPitchAnswer }: MidiPracticeOptions): UseMidiPractice {
+export function useMidiPractice({
+  mode,
+  enabled = true,
+  latencyMs,
+  onLatencyChange,
+  onMidiNoteOn,
+  onReadingAnswer,
+  onPitchAnswer,
+}: MidiPracticeOptions): UseMidiPractice {
   const onInput = useCallback(
     (event: InputEvent) => {
       // Only a key going down is an answer. Releases and the pedal matter for
@@ -30,17 +42,24 @@ export function useMidiPractice({ mode, onReadingAnswer, onPitchAnswer }: MidiPr
       const noteId = midiToNoteId(event.midi);
       if (noteId.length === 0) return;
 
+      onMidiNoteOn?.(noteId);
+      if (!enabled) return;
       if (mode === "reading") onReadingAnswer(noteId);
       else onPitchAnswer(noteId);
     },
-    [mode, onPitchAnswer, onReadingAnswer],
+    [enabled, mode, onMidiNoteOn, onPitchAnswer, onReadingAnswer],
   );
 
   // MIDI shares the audio clock elsewhere; here only ordering matters, so the
   // performance clock is enough and needs no audio context.
   const now = useCallback(() => performance.now() / 1000, []);
 
-  const midi = useMidiInput({ now, onInput });
+  const midi = useMidiInput({
+    now,
+    onInput,
+    ...(latencyMs === undefined ? {} : { latencyMs }),
+    ...(onLatencyChange === undefined ? {} : { onLatencyChange }),
+  });
 
   return {
     ...midi,
@@ -50,6 +69,7 @@ export function useMidiPractice({ mode, onReadingAnswer, onPitchAnswer }: MidiPr
       devices: midi.devices,
       selectedId: midi.selectedId,
       latencyMs: midi.latencyMs,
+      onSetLatencyMs: midi.setLatencyMs,
       onConnect: midi.connect,
       onDisconnect: midi.disconnect,
       onSelectDevice: midi.selectDevice,

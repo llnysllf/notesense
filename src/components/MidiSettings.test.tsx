@@ -15,6 +15,7 @@ function renderSettings(overrides: Partial<Props> = {}) {
     onConnect: vi.fn(),
     onDisconnect: vi.fn(),
     onSelectDevice: vi.fn(),
+    onSetLatencyMs: vi.fn(),
     ...overrides,
   };
   render(<MidiSettings {...props} />);
@@ -95,5 +96,12 @@ describe("MidiSettings", () => {
 
     fireEvent.click(screen.getByRole("button", { name: "Disconnect" }));
     expect(props.onDisconnect).toHaveBeenCalledTimes(1);
+  });
+
+  it("keeps a timing correction on the current device", () => {
+    const props = renderSettings({ status: "connected", devices: [{ id: "a", name: "Piano" }], selectedId: "a" });
+
+    fireEvent.change(screen.getByLabelText("Timing correction (ms)"), { target: { value: "85" } });
+    expect(props.onSetLatencyMs).toHaveBeenCalledWith(85);
   });
 });

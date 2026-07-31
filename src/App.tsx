@@ -7,7 +7,7 @@ import PitchTrainingControls from "./components/PitchTrainingControls";
 import ReadingControls from "./components/ReadingControls";
 import { useAppRoute } from "./hooks/useAppRoute";
 import { useRhythmDrill } from "./hooks/useRhythmDrill";
-import { useMidiPractice } from "./hooks/useMidiPractice";
+import { useMidiAppInput } from "./hooks/useMidiAppInput";
 import { useRoundMisses } from "./hooks/useRoundMisses";
 import { useDailyPlan } from "./hooks/useDailyPlan";
 import { useDataPortability } from "./hooks/useDataPortability";
@@ -57,8 +57,6 @@ function App() {
 
   const [dataStatus, setDataStatus] = useState<DataStatus>(null);
   const [isNavOpen, setIsNavOpen] = useState(false);
-  // The URL owns which destination is showing, so reloads, bookmarks, and
-  // browser back/forward all land on the same screen.
   const { route, isUnknownPath } = useAppRoute();
   const activeSection = route.section;
 
@@ -132,7 +130,16 @@ function App() {
     session.resetSession(settings, next);
   }
 
-  const midi = useMidiPractice({ mode, onReadingAnswer: handleReadingKeyAnswer, onPitchAnswer: handlePitchKeyAnswer });
+  const midi = useMidiAppInput({
+    activeSection,
+    mode,
+    latencyMs: settings.midiLatencyMs,
+    onLatencyChange: (midiLatencyMs) => updateSettings({ midiLatencyMs }),
+    onRhythmTap: rhythmDrill.session.tap,
+    onSongAnswer: songSession.answerCurrentEvent,
+    onReadingAnswer: handleReadingKeyAnswer,
+    onPitchAnswer: handlePitchKeyAnswer,
+  });
   const activeNote = mode === "reading" ? currentReadingNote : currentPitchNote;
   const { misses } = useRoundMisses({ mode, feedback, expectedNoteId: activeNote.id, isRunning });
   const {
@@ -154,8 +161,6 @@ function App() {
     roundAccuracy,
   } = usePracticeDashboard({ mode, progress, roundAttempts, roundCorrect, settings });
 
-  // The reading/pitch drills are separate destinations, so the practice mode
-  // follows the URL rather than being toggled independently of it.
   useEffect(() => {
     if (route.mode && route.mode !== mode) setPracticeMode(route.mode);
   }, [mode, route.mode, setPracticeMode]);

@@ -25,6 +25,7 @@ function renderSettingsView(overrides: Partial<Parameters<typeof PracticeSetting
       onConnect: () => {},
       onDisconnect: () => {},
       onSelectDevice: () => {},
+      onSetLatencyMs: () => {},
     },
     onSettingsChange: vi.fn(),
     ...overrides,

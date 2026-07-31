@@ -26,6 +26,7 @@ function MidiSettings({
   onConnect,
   onDisconnect,
   onSelectDevice,
+  onSetLatencyMs,
 }: MidiPanelProps) {
   return (
     <section className="midi-settings" aria-labelledby="midi-heading">
@@ -57,7 +58,21 @@ function MidiSettings({
           ) : null}
 
           {status === "connected" && latencyMs > 0 ? (
-            <p className="midi-note">Timing is corrected for a {latencyMs}ms delay measured on your setup.</p>
+            <p className="midi-note">Timing is corrected for a {latencyMs}ms delay on this device.</p>
+          ) : null}
+
+          {status === "connected" ? (
+            <label className="midi-device-picker">
+              <span>Timing correction (ms)</span>
+              <input
+                type="number"
+                min="0"
+                max="400"
+                step="1"
+                value={latencyMs}
+                onChange={(event) => onSetLatencyMs(Number(event.target.value))}
+              />
+            </label>
           ) : null}
 
           <button

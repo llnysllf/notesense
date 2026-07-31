@@ -23,6 +23,7 @@ export type MidiPanelProps = {
   devices: MidiDevice[];
   selectedId: string | null;
   latencyMs: number;
+  onSetLatencyMs: (latencyMs: number) => void;
   onConnect: () => void;
   onDisconnect: () => void;
   onSelectDevice: (deviceId: string) => void;

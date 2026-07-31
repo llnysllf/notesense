@@ -129,6 +129,7 @@ function makeProps(overrides: Partial<PracticeStatsPanelProps> = {}): PracticeSt
       onConnect: () => {},
       onDisconnect: () => {},
       onSelectDevice: () => {},
+      onSetLatencyMs: () => {},
     },
     onSettingsChange: vi.fn(),
     ...overrides,

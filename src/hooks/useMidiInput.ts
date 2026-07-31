@@ -35,16 +35,23 @@ export type UseMidiInputOptions = {
   // metronome click are directly comparable.
   now: () => number;
   onInput: (event: InputEvent) => void;
+  latencyMs?: number;
+  onLatencyChange?: (latencyMs: number) => void;
 };
 
-export function useMidiInput({ now, onInput }: UseMidiInputOptions): UseMidiInput {
+export function useMidiInput({
+  now,
+  onInput,
+  latencyMs: configuredLatencyMs = 0,
+  onLatencyChange,
+}: UseMidiInputOptions): UseMidiInput {
   const [support] = useState<MidiSupport>(() => detectMidiSupport());
   const [status, setStatus] = useState<MidiStatus>(() =>
     detectMidiSupport() === "available" ? "idle" : "unavailable",
   );
   const [devices, setDevices] = useState<MidiDevice[]>([]);
   const [selectedId, setSelectedId] = useState<string | null>(null);
-  const [latencyMs, setLatencyMs] = useState(0);
+  const latencyMs = configuredLatencyMs;
 
   const connectionRef = useRef<MidiConnection | null>(null);
   const adapterRef = useRef(createMidiAdapter());
@@ -112,5 +119,23 @@ export function useMidiInput({ now, onInput }: UseMidiInputOptions): UseMidiInpu
     adapterRef.current.reset();
   }, []);
 
-  return { support, status, devices, selectedId, latencyMs, connect, disconnect, selectDevice, setLatencyMs };
+  const updateLatencyMs = useCallback(
+    (nextLatencyMs: number) => {
+      const safeLatencyMs = Math.min(400, Math.max(0, Math.round(nextLatencyMs)));
+      onLatencyChange?.(safeLatencyMs);
+    },
+    [onLatencyChange],
+  );
+
+  return {
+    support,
+    status,
+    devices,
+    selectedId,
+    latencyMs,
+    connect,
+    disconnect,
+    selectDevice,
+    setLatencyMs: updateLatencyMs,
+  };
 }

@@ -38,6 +38,7 @@ export const defaultSettings: PracticeSettings = {
   adaptivePractice: true,
   autoPlayPitch: true,
   revealPitchAfterAnswer: true,
+  midiLatencyMs: 0,
   readingMode: "practice",
 };
 
@@ -85,6 +86,7 @@ export function normalizeSettings(settings: unknown): PracticeSettings {
     ? (Number(settingsRecord.roundLength) as PracticeSettings["roundLength"])
     : defaultSettings.roundLength;
   const melodyLength = Number(settingsRecord.melodyLength);
+  const midiLatencyMs = Number(settingsRecord.midiLatencyMs);
 
   return {
     roundLength,
@@ -114,5 +116,9 @@ export function normalizeSettings(settings: unknown): PracticeSettings {
       typeof settingsRecord.revealPitchAfterAnswer === "boolean"
         ? settingsRecord.revealPitchAfterAnswer
         : defaultSettings.revealPitchAfterAnswer,
+    midiLatencyMs:
+      Number.isFinite(midiLatencyMs) && midiLatencyMs >= 0 && midiLatencyMs <= 400
+        ? Math.round(midiLatencyMs)
+        : defaultSettings.midiLatencyMs,
   };
 }

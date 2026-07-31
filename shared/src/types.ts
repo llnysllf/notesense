@@ -67,6 +67,9 @@ export type PracticeSettings = {
   adaptivePractice: boolean;
   autoPlayPitch: boolean;
   revealPitchAfterAnswer: boolean;
+  // A learner's measured MIDI input delay. This is device-local configuration,
+  // never raw MIDI traffic or a device identifier.
+  midiLatencyMs: number;
   // Which of the four sight-reading modes the reading screen is in.
   readingMode: ReadingMode;
 };
