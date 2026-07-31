@@ -7,8 +7,14 @@
 // crossing timebases.
 
 export type RhythmClock = {
-  // Audio-clock seconds since the round started.
+  // Audio-clock seconds since the pattern started. Negative during the
+  // count-in, so a tap before the first beat is recognisably not part of the
+  // performance.
   now: () => number;
+  // How long until the pattern begins: the count-in plus the small scheduling
+  // lead the metronome needs. Callers that must know when the round ends should
+  // use this rather than re-deriving it, which would couple them to that lead.
+  secondsUntilStart: number;
   stop: () => void;
 };
 
@@ -73,13 +79,10 @@ export function startMetronome(context: AudioContext, options: MetronomeOptions)
 
   return {
     now: () => context.currentTime - zeroAt,
+    secondsUntilStart: zeroAt - context.currentTime,
     stop: () => {
       if (timer !== null) window.clearInterval(timer);
       timer = null;
     },
   };
-}
-
-export function countInSeconds(bpm: number, beatsPerBar: number, countInBars = 1): number {
-  return (60 / Math.max(1, bpm)) * beatsPerBar * Math.max(0, countInBars);
 }

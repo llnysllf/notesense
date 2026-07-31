@@ -105,7 +105,7 @@ export function useRhythmSession(settings: RhythmSettings): RhythmSessionView {
         setScore(gradeRhythm({ expectedTicks, playedSeconds: tapsRef.current, bpm: settings.bpm }));
         stop();
       },
-      Math.max(0, (clock.now() < 0 ? -clock.now() : 0) + lengthSeconds + beatSeconds) * 1000,
+      Math.max(0, clock.secondsUntilStart + lengthSeconds + beatSeconds) * 1000,
     );
   }, [cleanup, pattern, settings.bpm, stop]);
 
