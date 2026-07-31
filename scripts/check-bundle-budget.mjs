@@ -53,7 +53,7 @@ const totalBudget = {
   // the Today screen, and the Sight-Reading Academy.
   // The rhythm engine is a new lazy practice capability with its own session,
   // grading, and accessible feedback surface.
-  rawBytes: 396 * KIB,
+  rawBytes: 397 * KIB,
   gzipBytes: 124 * KIB,
 };
 

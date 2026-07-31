@@ -39,11 +39,13 @@ export function useRhythmSession(settings: RhythmSettings): RhythmSessionView {
   const [isRunning, setIsRunning] = useState(false);
   const [isCountingIn, setIsCountingIn] = useState(false);
   const [score, setScore] = useState<RhythmScore | null>(null);
+  const [cursorProgress, setCursorProgress] = useState(0);
 
   const clockRef = useRef<RhythmClock | null>(null);
   const contextRef = useRef<AudioContext | null>(null);
   const tapsRef = useRef<number[]>([]);
   const endTimerRef = useRef<number | null>(null);
+  const cursorTimerRef = useRef<number | null>(null);
 
   // The pattern is derived from the seed and the settings that shape it, so it
   // is recomputed during render when those change rather than a frame later.
@@ -61,6 +63,8 @@ export function useRhythmSession(settings: RhythmSettings): RhythmSessionView {
     clockRef.current = null;
     if (endTimerRef.current !== null) window.clearTimeout(endTimerRef.current);
     endTimerRef.current = null;
+    if (cursorTimerRef.current !== null) window.clearInterval(cursorTimerRef.current);
+    cursorTimerRef.current = null;
   }, []);
 
   useEffect(() => cleanup, [cleanup]);
@@ -75,6 +79,7 @@ export function useRhythmSession(settings: RhythmSettings): RhythmSessionView {
     cleanup();
     tapsRef.current = [];
     setScore(null);
+    setCursorProgress(0);
     setIsRunning(true);
     setIsCountingIn(true);
 
@@ -97,6 +102,10 @@ export function useRhythmSession(settings: RhythmSettings): RhythmSessionView {
       },
     });
     clockRef.current = clock;
+
+    const updateCursor = () => setCursorProgress(Math.min(1, Math.max(0, clock.now() / lengthSeconds)));
+    updateCursor();
+    cursorTimerRef.current = window.setInterval(updateCursor, 50);
 
     // End a beat after the last note so a final tap still lands in its window.
     const beatSeconds = 60 / Math.max(1, settings.bpm);
@@ -130,6 +139,7 @@ export function useRhythmSession(settings: RhythmSettings): RhythmSessionView {
     isCountingIn,
     score,
     toleranceMs: toleranceForTempo(settings.bpm),
+    cursorProgress,
     start,
     stop,
     tap,

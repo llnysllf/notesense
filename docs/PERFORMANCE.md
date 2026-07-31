@@ -24,7 +24,7 @@ Current per-file budgets:
 
 Current total budget:
 
-- total Pages output: 396 KiB raw, 124 KiB gzip
+- total Pages output: 397 KiB raw, 124 KiB gzip
 
 Secondary statistics, song screens, the evidence ledger, and the lazy rhythm workspace are split from the initial practice route. The total raw budget includes those deferred chunks and PWA precache metadata; the 124 KiB gzip cap remains the shipped-network constraint. It was raised for the rhythm engine's timing, grading, and accessible feedback surface. It was previously raised when the Today screen added the daily-plan UI and its styles, and from 105 KiB when URL-addressable destinations added a router (about 2 KiB gzip) and a 404.html shell copy so GitHub Pages can serve deep links.
 

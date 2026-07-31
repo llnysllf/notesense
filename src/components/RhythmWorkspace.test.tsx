@@ -101,6 +101,14 @@ describe("RhythmWorkspace", () => {
     expect(pad).toHaveTextContent("Press Start");
   });
 
+  it("shows a playback cursor while the pattern is running", () => {
+    renderWorkspace();
+    expect(screen.queryByLabelText("Playback position")).not.toBeInTheDocument();
+
+    act(() => screen.getByRole("button", { name: "Start" }).click());
+    expect(screen.getByLabelText("Playback position")).toBeInTheDocument();
+  });
+
   it("regenerates the pattern on request", () => {
     renderWorkspace();
     const before = screen.getAllByRole("listitem").length;

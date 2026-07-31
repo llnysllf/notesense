@@ -2125,6 +2125,7 @@ h3 {
    duration, so the notation itself shows the rhythm. */
 .rhythm-strip {
   display: flex;
+  position: relative;
   gap: 4px;
   margin: 0;
   padding: 10px;
@@ -2132,6 +2133,18 @@ h3 {
   border-radius: var(--radius-control);
   background: var(--color-surface);
   list-style: none;
+}
+
+.rhythm-cursor {
+  position: absolute;
+  z-index: 1;
+  top: -8px;
+  bottom: -8px;
+  width: 3px;
+  border-radius: var(--radius-pill);
+  background: var(--color-brand);
+  box-shadow: 0 0 0 2px var(--color-surface);
+  transform: translateX(-50%);
 }
 
 .rhythm-cell {

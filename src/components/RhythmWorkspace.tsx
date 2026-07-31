@@ -100,6 +100,13 @@ function RhythmWorkspace({ settings, session, onSettingsChange }: RhythmWorkspac
       </div>
 
       <ol className="rhythm-strip" aria-label="Rhythm pattern">
+        {session.isRunning ? (
+          <li
+            className="rhythm-cursor"
+            aria-label="Playback position"
+            style={{ left: `${session.cursorProgress * 100}%` }}
+          />
+        ) : null}
         {session.pattern.events.map((event, index) => (
           <li
             key={`${index}-${event.offset.num}/${event.offset.den}`}

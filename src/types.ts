@@ -221,6 +221,8 @@ export type RhythmSessionView = {
   isCountingIn: boolean;
   score: RhythmScore | null;
   toleranceMs: number;
+  // 0..1 playback position, driven from the metronome's audio clock.
+  cursorProgress: number;
   start: () => void;
   stop: () => void;
   tap: () => void;
