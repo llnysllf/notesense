@@ -198,6 +198,27 @@ describe("App", () => {
     expect(screen.getByRole("button", { name: "120 BPM" })).toHaveAttribute("aria-pressed", "true");
   });
 
+  it("opens the placement check and lets the learner leave it for practice", async () => {
+    window.history.replaceState(null, "", "/assess/placement");
+    render(<App />);
+
+    expect(await screen.findByRole("heading", { name: "Where should you start?" })).toBeInTheDocument();
+
+    // Placement is optional by design: skipping it must land somewhere useful.
+    fireEvent.click(screen.getByRole("button", { name: "Skip the check" }));
+
+    expect(await screen.findByRole("button", { name: "Start drill" })).toBeInTheDocument();
+    expect(window.location.pathname).toBe("/practice/reading");
+  });
+
+  it("opens the Reading Score on its own destination", async () => {
+    window.history.replaceState(null, "", "/assess/reading-score");
+    render(<App />);
+
+    expect(await screen.findByRole("heading", { name: "Reading Score" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Start the assessment" })).toBeInTheDocument();
+  });
+
   it("sets a custom reading range from piano keys", () => {
     render(<App />);
 

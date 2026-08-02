@@ -1,6 +1,13 @@
 import type {
+  AssessmentPassage,
   Meter,
   NoteName,
+  PlacementOutcome,
+  PlacementStartingPoint,
+  PlacementState,
+  ReadingScoreRecord,
+  ReadingScoreResult,
+  ReadingScoreTrend,
   PracticeMode,
   PracticeSessionRecord,
   ReadingNoteName,
@@ -240,6 +247,82 @@ export {
   describeLatency,
   MIN_LATENCY_SAMPLES,
 } from "@notesense/shared";
+
+// Placement and the Reading Score (Slice 10).
+export type { AttemptInputSource } from "@notesense/shared";
+export type {
+  AssessmentAnswer,
+  AssessmentNote,
+  AssessmentPassage,
+  PassageProfile,
+  PlacementOutcome,
+  PlacementStartingPoint,
+  PlacementState,
+  ReadingScoreComponents,
+  ReadingScoreRecord,
+  ReadingScoreResult,
+  ReadingScoreTrend,
+  ShareCardContent,
+  ShareCardInput,
+} from "@notesense/shared";
+export {
+  answerPlacement,
+  appendReadingScore,
+  buildAssessmentPassage,
+  buildShareCard,
+  createReadingScoreRecord,
+  describeReadingScore,
+  isPlacementComplete,
+  isTrendworthy,
+  normalizePlacementOutcome,
+  normalizeReadingScoreHistory,
+  passageProfile,
+  placementOutcome,
+  placementPrior,
+  placementStartingPoint,
+  readingScoreTrend,
+  scoreReadingAssessment,
+  shareCardAltText,
+  shouldOfferPlacement,
+  startPlacement,
+  READING_SCORE_ALGORITHM_VERSION,
+} from "@notesense/shared";
+
+// What the assessment screens render. Declared here rather than beside the
+// hooks that build them, so a presentational component can be typed against a
+// view without importing a hook.
+export type ReadingScoreRunStatus = "idle" | "count-in" | "running" | "complete";
+
+export type PlacementView = {
+  state: PlacementState;
+  promptNoteId: string;
+  isComplete: boolean;
+  outcome: PlacementOutcome | undefined;
+  startingPoint: PlacementStartingPoint | undefined;
+  saved: PlacementOutcome | undefined;
+  storageWarning: boolean;
+  answer: (noteId: string) => void;
+  restart: () => void;
+  accept: () => void;
+};
+
+export type ReadingScoreView = {
+  passage: AssessmentPassage;
+  status: ReadingScoreRunStatus;
+  answeredCount: number;
+  result: ReadingScoreResult | null;
+  isAudible: boolean;
+  isTrendworthy: boolean;
+  latest: ReadingScoreRecord | undefined;
+  trend: ReadingScoreTrend;
+  storageWarning: boolean;
+  start: () => void;
+  finish: () => void;
+  play: (noteId: string) => void;
+  retake: () => void;
+};
+
+export type AssessmentView = { placement: PlacementView; readingScore: ReadingScoreView };
 
 export type StaffClef = "treble" | "bass";
 

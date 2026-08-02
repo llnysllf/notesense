@@ -20,6 +20,8 @@ The browser app owns these LocalStorage keys through `src/storage.ts`:
 - `notesense.settings.v3`: current practice settings, including the selected sight-reading mode (Learn, Practice, Test, or Custom).
 - `notesense.songProgress.v1`: per-song sheet-reading results (best accuracy, completion count, last played time); no imported file contents and no note-by-note answer history.
 - `notesense.dailyPlan.v1`: today's generated plan (blocks, why each was chosen, which are finished). A derived cache, not a learning record: if it is missing or malformed it is regenerated from the evidence ledger, so losing it costs no progress.
+- `notesense.readingScores.v1`: Reading Score results (score, its components, difficulty band, declared input source, algorithm version, timestamp). Assessment records are kept apart from practice evidence: a measurement must not feed the adaptive repetition that decides what to practise, or the next assessment would no longer be unseen. Capped at the newest 50 sittings.
+- `notesense.placement.v1`: the accepted placement result (difficulty, band, confidence, why the check stopped). A starting hint only, written when the learner accepts it and never applied over real practice evidence.
 - `notesense.progress.v1`: legacy progress key that may be read and normalized during migration.
 
 No other browser storage key is part of the supported app contract.

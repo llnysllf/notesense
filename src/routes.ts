@@ -13,7 +13,17 @@ import type { PracticeMode } from "./types";
 // component so hooks and the router can use it without depending on
 // presentation.
 export type AppSection =
-  "today" | "practice" | "rhythm" | "songs" | "progress" | "map" | "history" | "settings" | "data";
+  | "today"
+  | "practice"
+  | "rhythm"
+  | "songs"
+  | "placement"
+  | "reading-score"
+  | "progress"
+  | "map"
+  | "history"
+  | "settings"
+  | "data";
 
 export type RouteId =
   | "today"
@@ -21,13 +31,15 @@ export type RouteId =
   | "practice-pitch"
   | "rhythm"
   | "songs"
+  | "assess-placement"
+  | "assess-reading-score"
   | "progress"
   | "progress-map"
   | "progress-history"
   | "settings"
   | "settings-data";
 
-export type RouteGroup = "Today" | "Practice" | "Progress" | "Settings";
+export type RouteGroup = "Today" | "Practice" | "Assess" | "Progress" | "Settings";
 
 export type RouteDefinition = {
   id: RouteId;
@@ -60,6 +72,14 @@ export const ROUTES: readonly RouteDefinition[] = [
   },
   { id: "rhythm", path: "/practice/rhythm", label: "Rhythm", group: "Practice", section: "rhythm" },
   { id: "songs", path: "/practice/songs", label: "Songs", group: "Practice", section: "songs" },
+  { id: "assess-placement", path: "/assess/placement", label: "Placement", group: "Assess", section: "placement" },
+  {
+    id: "assess-reading-score",
+    path: "/assess/reading-score",
+    label: "Reading Score",
+    group: "Assess",
+    section: "reading-score",
+  },
   { id: "progress", path: "/progress", label: "Overview", group: "Progress", section: "progress" },
   { id: "progress-map", path: "/progress/map", label: "Map", group: "Progress", section: "map" },
   { id: "progress-history", path: "/progress/history", label: "History", group: "Progress", section: "history" },
@@ -67,7 +87,7 @@ export const ROUTES: readonly RouteDefinition[] = [
   { id: "settings-data", path: "/settings/data", label: "Data", group: "Settings", section: "data" },
 ];
 
-export const ROUTE_GROUPS: readonly RouteGroup[] = ["Today", "Practice", "Progress", "Settings"];
+export const ROUTE_GROUPS: readonly RouteGroup[] = ["Today", "Practice", "Assess", "Progress", "Settings"];
 
 // Where the app lands when no destination is given.
 export const DEFAULT_ROUTE = ROUTES[0] as RouteDefinition;

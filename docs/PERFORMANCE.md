@@ -16,7 +16,7 @@ NoteSense should feel instant enough for short practice sessions on desktop and 
 Current per-file budgets:
 
 - JavaScript asset: 264 KiB raw, 85 KiB gzip
-- CSS asset: 34 KiB raw, 7 KiB gzip
+- CSS asset: 37 KiB raw, 8 KiB gzip
 - HTML shell: 4 KiB raw, 1 KiB gzip
 - web metadata asset: 6 KiB raw, 3 KiB gzip
 - service worker: 8 KiB raw, 4 KiB gzip
@@ -24,9 +24,9 @@ Current per-file budgets:
 
 Current total budget:
 
-- total Pages output: 410 KiB raw, 128 KiB gzip
+- total Pages output: 435 KiB raw, 137 KiB gzip
 
-Secondary statistics, song screens, the evidence ledger, and the lazy rhythm workspace are split from the initial practice route. The total raw budget includes those deferred chunks and PWA precache metadata; the 128 KiB gzip cap remains the shipped-network constraint. It was raised for the rhythm engine's timing, grading, and accessible feedback surface. It was previously raised when the Today screen added the daily-plan UI and its styles, and from 105 KiB when URL-addressable destinations added a router (about 2 KiB gzip) and a 404.html shell copy so GitHub Pages can serve deep links.
+Secondary statistics, song screens, the evidence ledger, and the lazy rhythm and assessment workspaces are split from the initial practice route. The total raw budget includes those deferred chunks and PWA precache metadata; the 137 KiB gzip cap remains the shipped-network constraint. It was raised for placement and the Reading Score: generated assessment passages, component scoring, a passage staff, and the locally drawn share card, none of which load on the practice route. It was previously raised for the rhythm engine's timing, grading, and accessible feedback surface. It was previously raised when the Today screen added the daily-plan UI and its styles, and from 105 KiB when URL-addressable destinations added a router (about 2 KiB gzip) and a 404.html shell copy so GitHub Pages can serve deep links.
 
 ## Lighthouse Signal
 

@@ -4,6 +4,8 @@ import {
   normalizeDailyPlan,
   defaultSettings,
   normalizeProgress,
+  normalizePlacementOutcome,
+  normalizeReadingScoreHistory,
   normalizeSettings,
   parsePracticeDataImport as parseSharedImport,
   serializePracticeDataExport as serializeSharedExport,
@@ -13,6 +15,8 @@ import { emptyProgress, getPianoKeyById } from "./noteData";
 import type {
   DailyPlan,
   NoteName,
+  PlacementOutcome,
+  ReadingScoreRecord,
   SongProgress,
   PitchNote,
   PracticeDataExport,
@@ -29,6 +33,8 @@ const LEGACY_STORAGE_KEY = "notesense.progress.v1";
 const SETTINGS_STORAGE_KEY = "notesense.settings.v3";
 const SONG_PROGRESS_STORAGE_KEY = "notesense.songProgress.v1";
 const DAILY_PLAN_STORAGE_KEY = "notesense.dailyPlan.v1";
+const READING_SCORE_STORAGE_KEY = "notesense.readingScores.v1";
+const PLACEMENT_STORAGE_KEY = "notesense.placement.v1";
 
 export {
   compareSongsByDifficulty,
@@ -110,6 +116,47 @@ export function loadDailyPlan(): DailyPlan | undefined {
 export function saveDailyPlan(plan: DailyPlan): boolean {
   try {
     window.localStorage.setItem(DAILY_PLAN_STORAGE_KEY, JSON.stringify(plan));
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+// Assessment results are their own record, kept apart from practice evidence.
+// A Reading Score is a measurement of the learner, not a practice attempt, and
+// mixing the two would let a test quietly drive adaptive repetition.
+export function loadReadingScores(): ReadingScoreRecord[] {
+  try {
+    const stored = window.localStorage.getItem(READING_SCORE_STORAGE_KEY);
+    return stored ? normalizeReadingScoreHistory(JSON.parse(stored) as unknown) : [];
+  } catch {
+    return [];
+  }
+}
+
+export function saveReadingScores(history: readonly ReadingScoreRecord[]): boolean {
+  try {
+    window.localStorage.setItem(READING_SCORE_STORAGE_KEY, JSON.stringify(history));
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+// The placement result is a starting hint, so a missing or malformed one costs
+// nothing: the learner is simply offered the check again.
+export function loadPlacement(): PlacementOutcome | undefined {
+  try {
+    const stored = window.localStorage.getItem(PLACEMENT_STORAGE_KEY);
+    return stored ? normalizePlacementOutcome(JSON.parse(stored) as unknown) : undefined;
+  } catch {
+    return undefined;
+  }
+}
+
+export function savePlacement(outcome: PlacementOutcome): boolean {
+  try {
+    window.localStorage.setItem(PLACEMENT_STORAGE_KEY, JSON.stringify(outcome));
     return true;
   } catch {
     return false;

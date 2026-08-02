@@ -1,11 +1,10 @@
-import { lazy, Suspense, useCallback, useEffect, useState } from "react";
-import AppSectionNav from "./components/AppSectionNav";
-import AppTopbar from "./components/AppTopbar";
-import ErrorBoundary from "./components/ErrorBoundary";
+import { lazy, useCallback, useEffect, useState } from "react";
+import AppShell from "./components/AppShell";
 import type { PracticePanelView } from "./components/PracticeStatsPanel";
 import PitchTrainingControls from "./components/PitchTrainingControls";
 import ReadingControls from "./components/ReadingControls";
 import { useAppRoute } from "./hooks/useAppRoute";
+import { useAssessment } from "./hooks/useAssessment";
 import { useRhythmDrill } from "./hooks/useRhythmDrill";
 import { useMidiAppInput } from "./hooks/useMidiAppInput";
 import { useRoundMisses } from "./hooks/useRoundMisses";
@@ -30,10 +29,10 @@ const TodayWorkspace = lazy(() => import("./components/TodayWorkspace"));
 const RhythmWorkspace = lazy(() => import("./components/RhythmWorkspace"));
 const PracticeWorkspace = lazy(() => import("./components/PracticeWorkspace"));
 const RouteNotFound = lazy(() => import("./components/RouteNotFound"));
-const STATS_SECTION_BY_APP_SECTION: Record<
-  Exclude<AppSection, "today" | "practice" | "rhythm" | "songs">,
-  PracticePanelView
-> = {
+const AssessWorkspace = lazy(() => import("./components/AssessWorkspace"));
+type WorkspaceSection = "today" | "practice" | "rhythm" | "songs" | "placement" | "reading-score";
+
+const STATS_SECTION_BY_APP_SECTION: Record<Exclude<AppSection, WorkspaceSection>, PracticePanelView> = {
   progress: "overview",
   map: "map",
   history: "history",
@@ -41,10 +40,12 @@ const STATS_SECTION_BY_APP_SECTION: Record<
   data: "data",
 };
 
-function getStatsView(section: AppSection): PracticePanelView {
-  if (section === "today" || section === "practice" || section === "rhythm" || section === "songs") return "overview";
+const WORKSPACE_SECTIONS = new Set<string>(["today", "practice", "rhythm", "songs", "placement", "reading-score"]);
 
-  return STATS_SECTION_BY_APP_SECTION[section];
+function getStatsView(section: AppSection): PracticePanelView {
+  if (WORKSPACE_SECTIONS.has(section)) return "overview";
+
+  return STATS_SECTION_BY_APP_SECTION[section as Exclude<AppSection, WorkspaceSection>];
 }
 
 const shouldForceRenderError = () =>
@@ -57,7 +58,7 @@ function App() {
 
   const [dataStatus, setDataStatus] = useState<DataStatus>(null);
   const [isNavOpen, setIsNavOpen] = useState(false);
-  const { route, isUnknownPath } = useAppRoute();
+  const { route, isUnknownPath, goToSection } = useAppRoute();
   const activeSection = route.section;
 
   const { settings, setSettings, persistSettings } = useSettings();
@@ -140,6 +141,13 @@ function App() {
     onReadingAnswer: handleReadingKeyAnswer,
     onPitchAnswer: handlePitchKeyAnswer,
   });
+  // An assessment played on a piano is not the same test as one tapped on
+  // glass, so the input source is declared with the result rather than guessed
+  // at later.
+  const assessment = useAssessment({
+    inputSource: midi.status === "connected" ? "midi" : "touch",
+    latencyMs: settings.midiLatencyMs,
+  });
   const activeNote = mode === "reading" ? currentReadingNote : currentPitchNote;
   const { misses } = useRoundMisses({ mode, feedback, expectedNoteId: activeNote.id, isRunning });
   const {
@@ -204,113 +212,102 @@ function App() {
     });
 
   return (
-    <main
-      className={`app-shell app-section-${activeSection} ${mode === "reading" ? "reading-layout" : "pitch-layout"}`}
+    <AppShell
+      activeRouteId={route.id}
+      activeSection={activeSection}
+      layoutClass={mode === "reading" ? "reading-layout" : "pitch-layout"}
+      subtitle={
+        activeSection === "practice" ? (mode === "reading" ? readingRange.detail : pitchRange.detail) : route.label
+      }
+      sessionStateLabel={sessionStateLabel}
+      sessionStateTone={sessionStateTone}
+      replayButtonLabel={replayButtonLabel}
+      isNavOpen={isNavOpen}
+      errorResetKey={isUnknownPath ? window.location.pathname : route.id}
+      onOpenNav={() => setIsNavOpen(true)}
+      onCloseNav={() => setIsNavOpen(false)}
+      onNavigate={handleNavigated}
+      onReplay={playCurrentNote}
     >
-      <AppSectionNav
-        activeRouteId={route.id}
-        isOpen={isNavOpen}
-        onClose={() => setIsNavOpen(false)}
-        onNavigate={handleNavigated}
-      />
-
-      <div className="app-main">
-        <AppTopbar
-          subtitle={
-            activeSection === "practice" ? (mode === "reading" ? readingRange.detail : pitchRange.detail) : route.label
-          }
-          sessionStateLabel={sessionStateLabel}
-          sessionStateTone={sessionStateTone}
-          replayButtonLabel={replayButtonLabel}
-          isNavOpen={isNavOpen}
-          onOpenNav={() => setIsNavOpen(true)}
-          onReplay={playCurrentNote}
+      {isUnknownPath ? (
+        <RouteNotFound path={window.location.pathname} />
+      ) : activeSection === "today" ? (
+        <TodayWorkspace plan={dailyPlan.plan} progress={dailyPlan.progress} onOpenBlock={dailyPlan.openBlock} />
+      ) : activeSection === "rhythm" ? (
+        <RhythmWorkspace
+          settings={rhythmDrill.settings}
+          session={rhythmDrill.session}
+          onSettingsChange={rhythmDrill.updateSettings}
         />
-
-        <ErrorBoundary resetKey={isUnknownPath ? window.location.pathname : route.id}>
-          <Suspense
-            fallback={
-              <section className="practice-panel" aria-label="Loading section">
-                <p role="status">Loading section...</p>
-              </section>
-            }
-          >
-            {isUnknownPath ? (
-              <RouteNotFound path={window.location.pathname} />
-            ) : activeSection === "today" ? (
-              <TodayWorkspace plan={dailyPlan.plan} progress={dailyPlan.progress} onOpenBlock={dailyPlan.openBlock} />
-            ) : activeSection === "rhythm" ? (
-              <RhythmWorkspace
-                settings={rhythmDrill.settings}
-                session={rhythmDrill.session}
-                onSettingsChange={rhythmDrill.updateSettings}
-              />
-            ) : activeSection === "songs" ? (
-              <SongsWorkspace songSession={songSession} />
-            ) : activeSection === "practice" ? (
-              <PracticeWorkspace
-                currentPitchNote={currentPitchNote}
-                currentMelody={currentMelody}
-                currentReadingNote={currentReadingNote}
-                lookAheadReadingNote={lookAheadReadingNote}
-                currentStreak={currentStreak}
-                dataStatus={dataStatus}
-                feedback={feedback}
-                feedbackClass={feedbackClass}
-                feedbackText={getFeedbackText()}
-                isRunning={isRunning}
-                keyboardResetKey={`${mode}-${settings.readingRange}-${normalizedCustomRange.startNoteId}-${normalizedCustomRange.endNoteId}-${settings.pitchRange}-${normalizedCustomPitchRange.startNoteId}-${normalizedCustomPitchRange.endNoteId}`}
-                melodyAnswerNoteIds={melodyAnswerNoteIds}
-                mode={mode}
-                pitchExercise={settings.pitchExercise}
-                pitchRangeNoteIds={pitchRangeNoteIds}
-                promptDetail={promptDetail}
-                rangeControls={rangeControls}
-                readingMisses={misses}
-                roundAccuracy={roundAccuracy}
-                roundAttempts={roundAttempts}
-                roundCorrect={roundCorrect}
-                shouldRevealPitch={shouldRevealPitch}
-                timeRemaining={timeRemaining}
-                onClearMelodyAnswer={clearMelodyAnswer}
-                onFinishRound={finishRound}
-                onMelodyNoteInput={handleMelodyNoteInput}
-                onPitchKeyAnswer={handlePitchKeyAnswer}
-                onReadingKeyAnswer={handleReadingKeyAnswer}
-                onStartReplay={startReplay}
-                onStartRound={startRound}
-                onSubmitMelodyAnswer={submitMelodyAnswer}
-                onUndoMelodyAnswer={undoMelodyAnswer}
-              />
-            ) : (
-              <PracticeStatsPanel
-                activeProgress={activeProgress}
-                activeView={activeStatsView}
-                dailyGoalSummary={dailyGoalSummary}
-                dataStatus={dataStatus}
-                focusItems={focusItems}
-                historySummary={historySummary}
-                insightSummary={insightSummary}
-                lastSummary={lastSummary}
-                lifetimeAccuracy={lifetimeAccuracy}
-                masterySummary={masterySummary}
-                mode={mode}
-                modeLabel={modeLabel}
-                practicePlan={practicePlan}
-                midi={midi.panel}
-                rangeControls={rangeControls}
-                rangeDetail={mode === "reading" ? readingRange.detail : pitchRange.detail}
-                settings={settings}
-                onExportData={handleExportData}
-                onImportData={handleImportData}
-                onResetProgress={handleResetProgress}
-                onSettingsChange={updateSettings}
-              />
-            )}
-          </Suspense>
-        </ErrorBoundary>
-      </div>
-    </main>
+      ) : activeSection === "songs" ? (
+        <SongsWorkspace songSession={songSession} />
+      ) : activeSection === "placement" || activeSection === "reading-score" ? (
+        <AssessWorkspace
+          view={activeSection}
+          assessment={assessment}
+          onSkipPlacement={() => goToSection("practice", "reading")}
+        />
+      ) : activeSection === "practice" ? (
+        <PracticeWorkspace
+          currentPitchNote={currentPitchNote}
+          currentMelody={currentMelody}
+          currentReadingNote={currentReadingNote}
+          lookAheadReadingNote={lookAheadReadingNote}
+          currentStreak={currentStreak}
+          dataStatus={dataStatus}
+          feedback={feedback}
+          feedbackClass={feedbackClass}
+          feedbackText={getFeedbackText()}
+          isRunning={isRunning}
+          keyboardResetKey={`${mode}-${settings.readingRange}-${normalizedCustomRange.startNoteId}-${normalizedCustomRange.endNoteId}-${settings.pitchRange}-${normalizedCustomPitchRange.startNoteId}-${normalizedCustomPitchRange.endNoteId}`}
+          melodyAnswerNoteIds={melodyAnswerNoteIds}
+          mode={mode}
+          pitchExercise={settings.pitchExercise}
+          pitchRangeNoteIds={pitchRangeNoteIds}
+          promptDetail={promptDetail}
+          rangeControls={rangeControls}
+          readingMisses={misses}
+          roundAccuracy={roundAccuracy}
+          roundAttempts={roundAttempts}
+          roundCorrect={roundCorrect}
+          shouldRevealPitch={shouldRevealPitch}
+          timeRemaining={timeRemaining}
+          onClearMelodyAnswer={clearMelodyAnswer}
+          onFinishRound={finishRound}
+          onMelodyNoteInput={handleMelodyNoteInput}
+          onPitchKeyAnswer={handlePitchKeyAnswer}
+          onReadingKeyAnswer={handleReadingKeyAnswer}
+          onStartReplay={startReplay}
+          onStartRound={startRound}
+          onSubmitMelodyAnswer={submitMelodyAnswer}
+          onUndoMelodyAnswer={undoMelodyAnswer}
+        />
+      ) : (
+        <PracticeStatsPanel
+          activeProgress={activeProgress}
+          activeView={activeStatsView}
+          dailyGoalSummary={dailyGoalSummary}
+          dataStatus={dataStatus}
+          focusItems={focusItems}
+          historySummary={historySummary}
+          insightSummary={insightSummary}
+          lastSummary={lastSummary}
+          lifetimeAccuracy={lifetimeAccuracy}
+          masterySummary={masterySummary}
+          mode={mode}
+          modeLabel={modeLabel}
+          practicePlan={practicePlan}
+          midi={midi.panel}
+          rangeControls={rangeControls}
+          rangeDetail={mode === "reading" ? readingRange.detail : pitchRange.detail}
+          settings={settings}
+          onExportData={handleExportData}
+          onImportData={handleImportData}
+          onResetProgress={handleResetProgress}
+          onSettingsChange={updateSettings}
+        />
+      )}
+    </AppShell>
   );
 }
 
