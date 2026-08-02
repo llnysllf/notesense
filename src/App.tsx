@@ -1,4 +1,4 @@
-import { lazy, useCallback, useEffect, useState } from "react";
+import { lazy, useCallback, useEffect, useRef, useState } from "react";
 import AppShell from "./components/AppShell";
 import type { PracticePanelView } from "./components/PracticeStatsPanel";
 import PitchTrainingControls from "./components/PitchTrainingControls";
@@ -64,6 +64,7 @@ function App() {
   const { settings, setSettings, persistSettings } = useSettings();
   const rhythmDrill = useRhythmDrill();
   const songSession = useSongSession();
+  const assessmentPlayRef = useRef<(noteId: string) => void>(() => {});
   const { progress, evidenceEvents, setProgress, persistProgress } = usePracticeProgress();
   const dailyPlan = useDailyPlan(evidenceEvents);
 
@@ -137,6 +138,7 @@ function App() {
     latencyMs: settings.midiLatencyMs,
     onLatencyChange: (midiLatencyMs) => updateSettings({ midiLatencyMs }),
     onRhythmTap: rhythmDrill.session.tap,
+    onAssessmentPlay: (noteId) => assessmentPlayRef.current(noteId),
     onSongAnswer: songSession.answerCurrentEvent,
     onReadingAnswer: handleReadingKeyAnswer,
     onPitchAnswer: handlePitchKeyAnswer,
@@ -148,6 +150,7 @@ function App() {
     inputSource: midi.status === "connected" ? "midi" : "touch",
     latencyMs: settings.midiLatencyMs,
   });
+  assessmentPlayRef.current = assessment.readingScore.play;
   const activeNote = mode === "reading" ? currentReadingNote : currentPitchNote;
   const { misses } = useRoundMisses({ mode, feedback, expectedNoteId: activeNote.id, isRunning });
   const {

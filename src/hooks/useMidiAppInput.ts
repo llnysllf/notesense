@@ -12,6 +12,7 @@ type MidiAppInputOptions = {
   onPitchAnswer: (noteId: string) => void;
   onReadingAnswer: (noteId: string) => void;
   onRhythmTap: () => void;
+  onAssessmentPlay: (noteId: string) => void;
   onSongAnswer: (noteIds: string[]) => void;
 };
 
@@ -23,6 +24,7 @@ export function useMidiAppInput({
   onPitchAnswer,
   onReadingAnswer,
   onRhythmTap,
+  onAssessmentPlay,
   onSongAnswer,
 }: MidiAppInputOptions): UseMidiPractice {
   return useMidiPractice({
@@ -33,6 +35,7 @@ export function useMidiAppInput({
     onMidiNoteOn: (noteId) => {
       if (activeSection === "rhythm") onRhythmTap();
       if (activeSection === "songs") onSongAnswer([noteId]);
+      if (activeSection === "reading-score") onAssessmentPlay(noteId);
     },
     onReadingAnswer,
     onPitchAnswer,
