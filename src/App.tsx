@@ -150,7 +150,9 @@ function App() {
     inputSource: midi.status === "connected" ? "midi" : "touch",
     latencyMs: settings.midiLatencyMs,
   });
-  assessmentPlayRef.current = assessment.readingScore.play;
+  useEffect(() => {
+    assessmentPlayRef.current = assessment.readingScore.play;
+  }, [assessment.readingScore.play]);
   const activeNote = mode === "reading" ? currentReadingNote : currentPitchNote;
   const { misses } = useRoundMisses({ mode, feedback, expectedNoteId: activeNote.id, isRunning });
   const {
