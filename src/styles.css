@@ -145,7 +145,8 @@ input:focus-visible {
   outline-offset: 3px;
 }
 
-.file-input {
+.file-input,
+.visually-hidden {
   position: absolute;
   width: 1px;
   height: 1px;
@@ -2253,4 +2254,132 @@ h3 {
 
 .midi-settings .secondary-button {
   justify-self: start;
+}
+
+/* Placement and the Reading Score. Both screens are deliberately plain: an
+   assessment that looks like a game invites the learner to play it rather than
+   read. */
+.placement-check,
+.reading-score-runner,
+.reading-score-report {
+  display: grid;
+  gap: 12px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-card);
+  background: var(--color-surface);
+  padding: var(--space-card);
+}
+
+.placement-check h3,
+.reading-score-runner h3,
+.reading-score-report h3 {
+  margin: 0;
+  font-size: 1.05rem;
+}
+
+.placement-intro,
+.placement-progress,
+.placement-result,
+.placement-explanation,
+.placement-caveat,
+.reading-score-context,
+.reading-score-rules,
+.reading-score-status,
+.reading-score-summary,
+.reading-score-trend,
+.reading-score-caveat {
+  margin: 0;
+  color: var(--color-muted-strong);
+  font-size: 0.9rem;
+}
+
+.placement-result,
+.reading-score-summary {
+  color: var(--color-text);
+  font-weight: 700;
+}
+
+.placement-caveat,
+.reading-score-caveat,
+.reading-score-rules {
+  border-left: 3px solid var(--color-border-strong);
+  padding-left: 10px;
+}
+
+.placement-actions,
+.reading-score-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.reading-score-value {
+  margin: 0;
+  color: var(--color-text);
+  font-size: 3.4rem;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.reading-score-components {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+}
+
+.reading-score-component {
+  display: grid;
+  gap: 2px;
+}
+
+.reading-score-component dt {
+  font-size: 0.85rem;
+  font-weight: 800;
+}
+
+.reading-score-component dd {
+  display: grid;
+  gap: 2px;
+  margin: 0;
+}
+
+.reading-score-component-value {
+  color: var(--color-text);
+  font-weight: 700;
+}
+
+.reading-score-component-note {
+  color: var(--color-muted-strong);
+  font-size: 0.82rem;
+}
+
+.assessment-staff {
+  width: 100%;
+  max-width: 100%;
+  height: auto;
+}
+
+.assessment-note .note-head,
+.assessment-note .note-stem {
+  fill: var(--color-text);
+  stroke: var(--color-text);
+}
+
+/* Where the reader has got to. Nothing here says right or wrong: during an
+   assessment that would be feedback, and feedback changes what is measured. */
+.assessment-note.done .note-head,
+.assessment-note.done .note-stem {
+  fill: var(--color-muted);
+  stroke: var(--color-muted);
+}
+
+.assessment-note.current .note-head,
+.assessment-note.current .note-stem {
+  fill: var(--color-accent);
+  stroke: var(--color-accent);
+}
+
+.assessment-accidental {
+  fill: var(--color-text);
+  font-size: 20px;
 }

@@ -13,6 +13,8 @@ The app stores data in the learner's browser:
 
 Song practice results (best accuracy, completions, last played time) are saved in LocalStorage under `notesense.songProgress.v1`. They include selected drill ranges, including the custom piano span.
 
+- Reading Score results are saved in LocalStorage under `notesense.readingScores.v1`, and an accepted placement result under `notesense.placement.v1`. Neither contains a name, an account, or a device identifier.
+- A Reading Score share card is drawn on a canvas in the page and saved to the device only when the learner asks for it. It is never uploaded, and it carries the result and the date only — no identifier and no time of day.
 - Older local progress may be read from `notesense.progress.v1` and normalized into the current shape.
 - Data stays on the current browser profile unless the learner exports it.
 - The service worker cache stores reviewed static app assets only. It does not cache practice progress, exported data, or imported files.

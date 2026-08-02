@@ -537,3 +537,32 @@ test("plays a song from the library start to finish", async ({ page }) => {
   await page.getByRole("button", { name: "Back to songs" }).click();
   await expect(twinkleCard.getByText(/Best 9[0-9]% \| Completed 1x/)).toBeVisible();
 });
+
+test("takes a placement check and starts a Reading Score", async ({ page }) => {
+  await page.goto("/assess/placement", { waitUntil: "domcontentloaded" });
+
+  await expect(page.getByRole("heading", { name: "Where should you start?" })).toBeVisible();
+  // The check must read as optional, not as an entrance exam.
+  await expect(page.getByText(/you can skip it/i)).toBeVisible();
+  await expect(page.getByText("Question 1")).toBeVisible();
+
+  // Answering moves it along, whatever the answer is.
+  await clickPianoKey(page.getByRole("button", { name: "White piano key C4" }));
+  await expect(page.getByText("Question 2")).toBeVisible();
+
+  await openAppSection(page, "Reading Score");
+  await expect(page.getByRole("heading", { name: "Reading Score" })).toBeVisible();
+  await expect(page.getByText(/have not seen before/i)).toBeVisible();
+
+  // Nothing is answerable until the count-in has finished.
+  await expect(page.getByRole("button", { name: "White piano key C4" })).toHaveAttribute("aria-disabled", "true");
+
+  await page.getByRole("button", { name: "Start the assessment" }).click();
+  await expect(page.getByRole("button", { name: "Stop here" })).toBeVisible();
+
+  // Stopping early still produces a result, and says why it was not recorded.
+  await page.getByRole("button", { name: "Stop here" }).click();
+  await expect(page.getByRole("heading", { name: "Your Reading Score" })).toBeVisible();
+  await expect(page.getByText(/not a standardized measure/i)).toBeVisible();
+  await expect(page.getByText(/not been added to your history/i)).toBeVisible();
+});

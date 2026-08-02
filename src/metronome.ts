@@ -60,6 +60,7 @@ export function startMetronome(context: AudioContext, options: MetronomeOptions)
 
   let nextBeat = 0;
   let timer: number | null = null;
+  const notificationTimers = new Set<number>();
 
   const pump = () => {
     while (startedAt + nextBeat * beatSeconds < context.currentTime + LOOKAHEAD_SECONDS) {
@@ -67,9 +68,20 @@ export function startMetronome(context: AudioContext, options: MetronomeOptions)
       const isCountIn = nextBeat < countInBeats;
       const beatInBar = (nextBeat - countInBeats) % beatsPerBar;
       const isDownbeat = isCountIn ? nextBeat % beatsPerBar === 0 : beatInBar === 0;
+      const beatIndex = nextBeat - countInBeats;
 
       click(context, at, isDownbeat);
-      onBeat?.({ index: nextBeat - countInBeats, isDownbeat, isCountIn });
+      // Scheduling happens ahead of audibility. Notify consumers at the beat,
+      // not when its oscillator was queued, so visual or accessibility cues do
+      // not lead the click by the look-ahead window.
+      const notification = window.setTimeout(
+        () => {
+          notificationTimers.delete(notification);
+          onBeat?.({ index: beatIndex, isDownbeat, isCountIn });
+        },
+        Math.max(0, (at - context.currentTime) * 1000),
+      );
+      notificationTimers.add(notification);
       nextBeat += 1;
     }
   };
@@ -83,6 +95,8 @@ export function startMetronome(context: AudioContext, options: MetronomeOptions)
     stop: () => {
       if (timer !== null) window.clearInterval(timer);
       timer = null;
+      for (const notification of notificationTimers) window.clearTimeout(notification);
+      notificationTimers.clear();
     },
   };
 }
