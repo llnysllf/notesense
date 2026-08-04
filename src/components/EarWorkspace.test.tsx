@@ -10,6 +10,7 @@ function drillFor(family: EarFamilyId, overrides: Partial<EarDrillView> = {}, re
     family,
     families: EAR_FAMILIES,
     mode: "practice",
+    midiNote: vi.fn(),
     session: {
       definition,
       result,

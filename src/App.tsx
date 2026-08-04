@@ -124,6 +124,7 @@ function App() {
     onRhythmTap: rhythmDrill.session.tap,
     assessmentPlayRef,
     onSongAnswer: songSession.answerCurrentEvent,
+    onEarNote: earDrill.midiNote,
     onReadingAnswer: handleReadingKeyAnswer,
     onPitchAnswer: handlePitchKeyAnswer,
   });

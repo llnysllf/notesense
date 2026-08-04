@@ -123,6 +123,21 @@ export function useEarDrill({ difficulty = 0.4, onGraded }: UseEarDrillOptions =
     setTaps((current) => [...current, performance.now() / 1000]);
   }, [session]);
 
+  const midiNote = useCallback(
+    (noteId: string) => {
+      if (family === "ear.rhythm-echo") return tap();
+      if (family !== "ear.transcription") return playNote(noteId);
+      const midi = midiForNoteId(noteId);
+      if (midi === undefined) return;
+      const selectedOnset =
+        transcriber.selected === null ? undefined : transcriber.notes[transcriber.selected]?.onsetTicks;
+      const target =
+        selectedOnset ?? slots.find((onset) => !transcriber.notes.some((note) => note.onsetTicks === onset));
+      if (target !== undefined) transcriber.place(target, midi);
+    },
+    [family, playNote, slots, tap, transcriber],
+  );
+
   const playAnswer = useCallback(() => {
     if (family === "ear.transcription") playPitches(transcriber.notes.map((note) => note.midi));
     else playPitches(entered);
@@ -173,6 +188,7 @@ export function useEarDrill({ difficulty = 0.4, onGraded }: UseEarDrillOptions =
     setFamily: chooseFamily,
     setMode,
     playNote,
+    midiNote,
     undoNote,
     clearNotes,
     tap,

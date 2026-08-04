@@ -371,6 +371,8 @@ export type EarDrillView = {
   setFamily: (family: EarFamilyId) => void;
   setMode: (mode: ReadingMode) => void;
   playNote: (noteId: string) => void;
+  // Routes a physical piano note through the same answer assembly as touch.
+  midiNote: (noteId: string) => void;
   undoNote: () => void;
   clearNotes: () => void;
   tap: () => void;
