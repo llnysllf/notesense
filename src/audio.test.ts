@@ -136,3 +136,37 @@ describe("playMelody", () => {
     expect(AudioContextMock).not.toHaveBeenCalled();
   });
 });
+
+describe("playPitchGroups", () => {
+  it("plays a chord as simultaneous tones", async () => {
+    const { context, oscillators } = installAudioContextMock();
+    const { playPitchGroups } = await import("./audio");
+
+    playPitchGroups([[261.63, 329.63, 392]]);
+
+    expect(oscillators).toHaveLength(3);
+    // A chord is three notes at once, not three notes in a row.
+    for (const oscillator of oscillators) {
+      expect(oscillator.start).toHaveBeenCalledWith(context.currentTime);
+    }
+  });
+
+  it("spaces successive groups so a cadence sounds like two chords", async () => {
+    const { context, oscillators } = installAudioContextMock();
+    const { playPitchGroups } = await import("./audio");
+
+    playPitchGroups([[261.63], [392]], 0.5);
+
+    expect(oscillators[0]?.start).toHaveBeenCalledWith(context.currentTime);
+    expect(oscillators[1]?.start).toHaveBeenCalledWith(context.currentTime + 0.5);
+  });
+
+  it("does nothing when there is nothing to play", async () => {
+    const { AudioContextMock } = installAudioContextMock();
+    const { playPitchGroups } = await import("./audio");
+
+    playPitchGroups([]);
+
+    expect(AudioContextMock).not.toHaveBeenCalled();
+  });
+});

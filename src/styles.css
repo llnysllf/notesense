@@ -2383,3 +2383,133 @@ h3 {
   fill: var(--color-text);
   font-size: 20px;
 }
+
+/* Ear training. Answering looks different per family — a name, notes played
+   back, taps, a written phrase — so the shared parts are the prompt, the
+   actions row, and the feedback. */
+.ear-workspace {
+  display: grid;
+  gap: var(--space-panel);
+}
+
+.ear-prompt,
+.ear-feedback,
+.ear-transcriber,
+.ear-note-answer,
+.ear-rhythm-echo {
+  display: grid;
+  gap: 10px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-card);
+  background: var(--color-surface);
+  padding: var(--space-card);
+}
+
+.ear-prompt h3,
+.ear-feedback h4 {
+  margin: 0;
+  font-size: 1.05rem;
+}
+
+.ear-summary,
+.ear-replays,
+.ear-entered,
+.ear-hint,
+.ear-feedback-detail {
+  margin: 0;
+  color: var(--color-muted-strong);
+  font-size: 0.88rem;
+}
+
+.ear-question,
+.ear-feedback-summary {
+  margin: 0;
+  color: var(--color-text);
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.ear-picker {
+  display: grid;
+  gap: 4px;
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+.ear-picker select {
+  min-height: 40px;
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-control);
+  background: var(--color-control-soft);
+  padding: 0 10px;
+  color: var(--color-text);
+  font: inherit;
+}
+
+.ear-modes,
+.ear-actions,
+.ear-choices,
+.ear-slots {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+/* On a phone the positions scroll sideways rather than wrapping into a block
+   that no longer reads left to right like the music does. */
+.ear-slots {
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  padding-bottom: 4px;
+}
+
+.ear-choice-correct {
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+}
+
+.ear-slot-selected {
+  border-color: var(--color-accent);
+}
+
+.ear-transcriber-staff {
+  width: 100%;
+  max-width: 100%;
+  height: auto;
+}
+
+.ear-written-note .note-head {
+  fill: var(--color-text);
+}
+
+.ear-written-note.wrong .note-head {
+  fill: var(--color-danger);
+}
+
+.ear-note-selection {
+  fill: none;
+  stroke: var(--color-accent);
+  stroke-width: 2;
+}
+
+.ear-tap-button {
+  min-width: 120px;
+  min-height: 64px;
+}
+
+.ear-feedback-notes {
+  display: grid;
+  gap: 2px;
+  margin: 0;
+  padding-left: 18px;
+  color: var(--color-muted-strong);
+  font-size: 0.85rem;
+}
+
+/* Wrong entries are named in the text as well as coloured, so the feedback
+   survives without colour vision. */
+.ear-step-wrong,
+.ear-step-missing,
+.ear-step-extra {
+  color: var(--color-text);
+}

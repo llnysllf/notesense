@@ -1,5 +1,10 @@
 import type {
   AssessmentPassage,
+  ExerciseDefinition,
+  SequenceComparison,
+  TranscriptionScore,
+  NotatedNote,
+  ReadingMode,
   Meter,
   NoteName,
   PlacementOutcome,
@@ -247,6 +252,134 @@ export {
   describeLatency,
   MIN_LATENCY_SAMPLES,
 } from "@notesense/shared";
+
+// Ear training and staff transcription (Slice 11).
+export type {
+  NotatedNote,
+  Interval,
+  IntervalId,
+  ChordQuality,
+  ChordQualityId,
+  Scale,
+  ScaleId,
+  Cadence,
+  CadenceId,
+  SequenceStep,
+  SequenceComparison,
+  TranscribedNote,
+  TranscriptionScore,
+  ReplayPolicy,
+  EarChoiceOption,
+} from "@notesense/shared";
+export {
+  INTERVALS,
+  CHORD_QUALITIES,
+  SCALES,
+  CADENCES,
+  chordMidi,
+  scaleMidi,
+  cadenceMidi,
+  intervalBySemitones,
+  compareSequences,
+  describeSequenceComparison,
+  scoreTranscription,
+  canReplay,
+  describeReplays,
+  REPLAY_POLICIES,
+  earChoiceOptions,
+  EAR_GENERATORS,
+  MAX_SEQUENCE_LENGTH,
+  MIN_SEQUENCE_LENGTH,
+} from "@notesense/shared";
+
+// The ear families a learner can pick, in the order they meet them.
+export type EarFamilyId =
+  | "ear.interval"
+  | "ear.chord"
+  | "ear.scale"
+  | "ear.cadence"
+  | "ear.interval-play"
+  | "ear.sequence"
+  | "ear.key-centre"
+  | "ear.rhythm-echo"
+  | "ear.transcription";
+
+export type EarFamily = { id: EarFamilyId; label: string; summary: string };
+
+// What an ear answer earned, and what to tell the learner about it. The
+// comparison travels with the verdict so the screen can point at the note that
+// went wrong rather than only showing a total.
+export type EarResult = {
+  correct: boolean;
+  score: number;
+  summary: string;
+  expectedOptionId?: string;
+  comparison?: SequenceComparison;
+  transcription?: TranscriptionScore;
+  rhythm?: RhythmScore;
+};
+
+export type EarSessionView = {
+  definition: ExerciseDefinition | undefined;
+  result: EarResult | null;
+  canPlay: boolean;
+  // Absent when replays are not limited in this mode.
+  replaysLeft: string | undefined;
+  play: () => void;
+  submit: (answer: EarAnswerInput) => void;
+  next: () => void;
+  noteEntered: () => void;
+};
+
+export type EarAnswerInput =
+  | { kind: "choice"; optionId: string }
+  | { kind: "pitch-sequence"; midi: number[] }
+  | { kind: "transcription"; notes: NotatedNote[] }
+  // Tapped back, so this one is performed time: audio-clock seconds measured
+  // against the tempo the phrase was played at.
+  | { kind: "rhythm"; onsetsSeconds: number[]; bpm: number };
+
+// The transcription editor, as the screen sees it.
+export type TranscriberView = {
+  notes: NotatedNote[];
+  selected: number | null;
+  canUndo: boolean;
+  canRedo: boolean;
+  select: (index: number | null) => void;
+  place: (onsetTicks: number, midi: number) => void;
+  removeAt: (index: number) => void;
+  nudgePitch: (semitones: number) => void;
+  nudgeOnset: (slots: number) => void;
+  clear: () => void;
+  undo: () => void;
+  redo: () => void;
+};
+
+export type EarDrillView = {
+  family: EarFamilyId;
+  families: readonly EarFamily[];
+  mode: ReadingMode;
+  session: EarSessionView;
+  transcriber: TranscriberView;
+  // Onset positions a transcribed note may occupy, in ticks.
+  slots: number[];
+  lowMidi: number;
+  highMidi: number;
+  // Notes played back so far for the reproduction families.
+  entered: number[];
+  taps: number[];
+  setFamily: (family: EarFamilyId) => void;
+  setMode: (mode: ReadingMode) => void;
+  playNote: (noteId: string) => void;
+  undoNote: () => void;
+  clearNotes: () => void;
+  tap: () => void;
+  // Named answers submit immediately; assembled answers submit when the learner
+  // says they are done.
+  submitChoice: (optionId: string) => void;
+  submit: () => void;
+  playAnswer: () => void;
+};
 
 // Placement and the Reading Score (Slice 10).
 export type { AttemptInputSource } from "@notesense/shared";

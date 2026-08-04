@@ -13,3 +13,4 @@ export * from "./reading";
 export * from "./rhythm";
 export * from "./midi";
 export * from "./assessment";
+export * from "./ear";

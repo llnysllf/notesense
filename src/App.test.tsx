@@ -198,6 +198,16 @@ describe("App", () => {
     expect(screen.getByRole("button", { name: "120 BPM" })).toHaveAttribute("aria-pressed", "true");
   });
 
+  it("opens ear training on its own destination", async () => {
+    window.history.replaceState(null, "", "/practice/ear");
+    render(<App />);
+
+    expect(await screen.findByRole("heading", { name: "Ear training" })).toBeInTheDocument();
+    expect(screen.getByLabelText("Exercise")).toBeInTheDocument();
+    // Every family is reachable from one picker.
+    expect(within(screen.getByLabelText("Exercise")).getAllByRole("option")).toHaveLength(9);
+  });
+
   it("opens the placement check and lets the learner leave it for practice", async () => {
     window.history.replaceState(null, "", "/assess/placement");
     render(<App />);

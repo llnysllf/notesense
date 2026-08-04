@@ -16,6 +16,7 @@ export type AppSection =
   | "today"
   | "practice"
   | "rhythm"
+  | "ear"
   | "songs"
   | "placement"
   | "reading-score"
@@ -30,6 +31,7 @@ export type RouteId =
   | "practice-reading"
   | "practice-pitch"
   | "rhythm"
+  | "ear"
   | "songs"
   | "assess-placement"
   | "assess-reading-score"
@@ -71,6 +73,7 @@ export const ROUTES: readonly RouteDefinition[] = [
     mode: "pitch",
   },
   { id: "rhythm", path: "/practice/rhythm", label: "Rhythm", group: "Practice", section: "rhythm" },
+  { id: "ear", path: "/practice/ear", label: "Ear training", group: "Practice", section: "ear" },
   { id: "songs", path: "/practice/songs", label: "Songs", group: "Practice", section: "songs" },
   { id: "assess-placement", path: "/assess/placement", label: "Placement", group: "Assess", section: "placement" },
   {
