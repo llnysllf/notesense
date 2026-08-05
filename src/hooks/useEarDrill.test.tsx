@@ -77,6 +77,31 @@ describe("useEarDrill", () => {
     expect(result.current.entered).toEqual([]);
   });
 
+  it("routes a MIDI note through the same reproduction answer as touch", () => {
+    const { result } = renderHook(() => useEarDrill());
+    act(() => result.current.setFamily("ear.sequence"));
+
+    act(() => result.current.midiNote("C4"));
+    expect(result.current.entered).toEqual([60]);
+  });
+
+  it("uses MIDI notes as taps for rhythm echo", () => {
+    const { result } = renderHook(() => useEarDrill());
+    act(() => result.current.setFamily("ear.rhythm-echo"));
+
+    act(() => result.current.midiNote("C4"));
+    expect(result.current.taps).toHaveLength(1);
+  });
+
+  it("writes MIDI notes into successive transcription slots", () => {
+    const { result } = renderHook(() => useEarDrill());
+    act(() => result.current.setFamily("ear.transcription"));
+
+    act(() => result.current.midiNote("C4"));
+    const [first] = result.current.slots;
+    expect(result.current.transcriber.notes).toEqual([{ midi: 60, onsetTicks: first }]);
+  });
+
   it("submits a named answer straight away", () => {
     const { result } = renderHook(() => useEarDrill());
     const expected = result.current.session.definition?.expectedAnswer;
