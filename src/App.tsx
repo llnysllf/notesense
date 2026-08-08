@@ -1,10 +1,10 @@
 import { lazy, useCallback, useEffect, useRef, useState } from "react";
 import AppShell from "./components/AppShell";
-import type { PracticePanelView } from "./components/PracticeStatsPanel";
 import PitchTrainingControls from "./components/PitchTrainingControls";
 import ReadingControls from "./components/ReadingControls";
 import { useAppRoute } from "./hooks/useAppRoute";
 import { useAssessment } from "./hooks/useAssessment";
+import { useEarDrill } from "./hooks/useEarDrill";
 import { useRhythmDrill } from "./hooks/useRhythmDrill";
 import { useMidiAppInput } from "./hooks/useMidiAppInput";
 import { useRoundMisses } from "./hooks/useRoundMisses";
@@ -16,8 +16,8 @@ import { useSongSession } from "./hooks/useSongSession";
 import { usePracticeProgress } from "./hooks/usePracticeProgress";
 import { usePracticeSession } from "./hooks/usePracticeSession";
 import { useSettings } from "./hooks/useSettings";
-import type { AppSection } from "./routes";
 import { getPracticeFeedbackText } from "./practiceFeedback";
+import { getStatsView } from "./statsView";
 import { requiresSessionReset } from "./settingsChange";
 import { resetProgress } from "./storage";
 import type { DataStatus, PracticeProgress, PracticeSettings } from "./types";
@@ -30,24 +30,7 @@ const RhythmWorkspace = lazy(() => import("./components/RhythmWorkspace"));
 const PracticeWorkspace = lazy(() => import("./components/PracticeWorkspace"));
 const RouteNotFound = lazy(() => import("./components/RouteNotFound"));
 const AssessWorkspace = lazy(() => import("./components/AssessWorkspace"));
-type WorkspaceSection = "today" | "practice" | "rhythm" | "songs" | "placement" | "reading-score";
-
-const STATS_SECTION_BY_APP_SECTION: Record<Exclude<AppSection, WorkspaceSection>, PracticePanelView> = {
-  progress: "overview",
-  map: "map",
-  history: "history",
-  settings: "settings",
-  data: "data",
-};
-
-const WORKSPACE_SECTIONS = new Set<string>(["today", "practice", "rhythm", "songs", "placement", "reading-score"]);
-
-function getStatsView(section: AppSection): PracticePanelView {
-  if (WORKSPACE_SECTIONS.has(section)) return "overview";
-
-  return STATS_SECTION_BY_APP_SECTION[section as Exclude<AppSection, WorkspaceSection>];
-}
-
+const EarWorkspace = lazy(() => import("./components/EarWorkspace"));
 const shouldForceRenderError = () =>
   import.meta.env.MODE === "resilience" && window.sessionStorage.getItem("notesense.forceRenderError") === "true";
 
@@ -63,6 +46,7 @@ function App() {
 
   const { settings, setSettings, persistSettings } = useSettings();
   const rhythmDrill = useRhythmDrill();
+  const earDrill = useEarDrill();
   const songSession = useSongSession();
   const assessmentPlayRef = useRef<(noteId: string) => void>(() => {});
   const { progress, evidenceEvents, setProgress, persistProgress } = usePracticeProgress();
@@ -140,6 +124,7 @@ function App() {
     onRhythmTap: rhythmDrill.session.tap,
     assessmentPlayRef,
     onSongAnswer: songSession.answerCurrentEvent,
+    onEarNote: earDrill.midiNote,
     onReadingAnswer: handleReadingKeyAnswer,
     onPitchAnswer: handlePitchKeyAnswer,
   });
@@ -244,6 +229,8 @@ function App() {
           session={rhythmDrill.session}
           onSettingsChange={rhythmDrill.updateSettings}
         />
+      ) : activeSection === "ear" ? (
+        <EarWorkspace drill={earDrill} />
       ) : activeSection === "songs" ? (
         <SongsWorkspace songSession={songSession} />
       ) : activeSection === "placement" || activeSection === "reading-score" ? (

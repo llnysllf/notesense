@@ -18,6 +18,11 @@ export type SungSummary = {
 
 export type PerformedNote = { midi: number; onsetSeconds: number; durationSeconds?: number; velocity?: number };
 
+// A note as *written down* rather than as played: musical time, on the tick
+// grid. Transcription is notation, so an entered note either sits on the written
+// beat or it does not — there is no performed-time tolerance to apply.
+export type NotatedNote = { midi: number; onsetTicks: number };
+
 export type UserAnswer =
   | { kind: "pitch"; midi: number }
   | { kind: "pitch-set"; midi: number[] }
@@ -25,6 +30,7 @@ export type UserAnswer =
   | { kind: "rhythm"; onsetsSeconds: number[] }
   | { kind: "performance"; notes: PerformedNote[] }
   | { kind: "choice"; optionId: string }
+  | { kind: "transcription"; notes: NotatedNote[] }
   | { kind: "voice"; summary: SungSummary };
 
 export type ExpectedAnswer =
@@ -33,6 +39,7 @@ export type ExpectedAnswer =
   | { kind: "pitch-sequence"; midi: number[] }
   | { kind: "rhythm"; onsetTicks: number[]; transport: Transport }
   | { kind: "choice"; optionId: string }
+  | { kind: "transcription"; notes: NotatedNote[]; transport: Transport }
   | { kind: "voice"; targetMidi: number[] };
 
 function isMidi(value: unknown): value is number {
@@ -62,6 +69,23 @@ function normalizeTransport(value: unknown): Transport | undefined {
     return undefined;
   }
   return { version: candidate.version, ppq: candidate.ppq };
+}
+
+function notatedNotes(value: unknown): NotatedNote[] | undefined {
+  if (!Array.isArray(value)) return undefined;
+  const notes: NotatedNote[] = [];
+  for (const entry of value) {
+    if (typeof entry !== "object" || entry === null) return undefined;
+    const note = entry as { midi?: unknown; onsetTicks?: unknown };
+    if (!isMidi(note.midi)) return undefined;
+    if (typeof note.onsetTicks !== "number" || !Number.isInteger(note.onsetTicks) || note.onsetTicks < 0) {
+      return undefined;
+    }
+    notes.push({ midi: note.midi, onsetTicks: note.onsetTicks });
+  }
+  // Written order is the reading order, so notes are kept in time order rather
+  // than in whatever order they were clicked onto the staff.
+  return notes.sort((a, b) => a.onsetTicks - b.onsetTicks);
 }
 
 export function normalizeUserAnswer(value: unknown): UserAnswer | undefined {
@@ -123,6 +147,10 @@ export function normalizeUserAnswer(value: unknown): UserAnswer | undefined {
       }
       return { kind: "performance", notes };
     }
+    case "transcription": {
+      const notes = notatedNotes(candidate.notes);
+      return notes ? { kind: "transcription", notes } : undefined;
+    }
     case "voice": {
       if (typeof candidate.summary !== "object" || candidate.summary === null) return undefined;
       const summary = candidate.summary as Record<string, unknown>;
@@ -177,6 +205,11 @@ export function normalizeExpectedAnswer(value: unknown): ExpectedAnswer | undefi
     const transport = normalizeTransport(candidate.transport);
     return transport ? { kind: "rhythm", onsetTicks: [...candidate.onsetTicks], transport } : undefined;
   }
+  if (candidate.kind === "transcription") {
+    const notes = notatedNotes((candidate as { notes?: unknown }).notes);
+    const transport = normalizeTransport(candidate.transport);
+    return notes && notes.length > 0 && transport ? { kind: "transcription", notes, transport } : undefined;
+  }
   if (candidate.kind === "voice") {
     const targetMidi = midiArray(candidate.targetMidi);
     return targetMidi ? { kind: "voice", targetMidi } : undefined;
@@ -192,8 +225,9 @@ const sameSet = (a: number[], b: number[]) =>
 const sameSequence = (a: number[], b: number[]) => a.length === b.length && a.every((v, i) => v === b[i]);
 
 // Exact-match grading for the pitch and choice families. Rhythm, performance,
-// and voice answers require the transport clock and scoring policy, so they are
-// graded by the runtime/scoring slices and reported as not gradable here.
+// transcription, and voice answers need partial credit, the transport clock, or
+// a scoring policy, so they are graded by the runtime and ear scorers and
+// reported as not gradable here.
 export function matchAnswer(expected: ExpectedAnswer, user: UserAnswer): AnswerMatch {
   if (expected.kind === "pitch" && user.kind === "pitch") {
     return {

@@ -566,3 +566,30 @@ test("takes a placement check and starts a Reading Score", async ({ page }) => {
   await expect(page.getByText(/not a standardized measure/i)).toBeVisible();
   await expect(page.getByText(/not been added to your history/i)).toBeVisible();
 });
+
+test("names an interval by ear and writes down a phrase", async ({ page }) => {
+  await page.goto("/practice/ear", { waitUntil: "domcontentloaded" });
+
+  await expect(page.getByRole("heading", { name: "Ear training" })).toBeVisible();
+  await expect(page.getByRole("status")).toHaveText("3 replays left.");
+
+  // Named answers: every option in the family is offered.
+  const options = page.getByRole("group", { name: "Answer options" }).getByRole("button");
+  await expect(options).toHaveCount(13);
+
+  await page.getByRole("button", { name: "Perfect 5th" }).click();
+  // Whatever the verdict, the right answer is named in text, not only coloured.
+  await expect(page.getByRole("button", { name: /correct answer$/ })).toBeVisible();
+  await page.getByRole("button", { name: "Next" }).click();
+
+  // The written family gets an editor that works without a mouse.
+  await page.getByLabel("Exercise").selectOption("ear.transcription");
+  await expect(page.getByRole("group", { name: "Where each note goes" })).toBeVisible();
+  await expect(page.getByRole("img", { name: /Empty staff/ })).toBeVisible();
+
+  await clickPianoKey(page.getByRole("button", { name: "White piano key C4" }));
+  await expect(page.getByRole("img", { name: /Your transcription: C4/ })).toBeVisible();
+
+  await page.getByRole("button", { name: "Undo" }).click();
+  await expect(page.getByRole("img", { name: /Empty staff/ })).toBeVisible();
+});
