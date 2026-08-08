@@ -5,6 +5,7 @@ import {
   defaultSettings,
   normalizeProgress,
   normalizePlacementOutcome,
+  normalizeVocalRange,
   normalizeReadingScoreHistory,
   normalizeSettings,
   parsePracticeDataImport as parseSharedImport,
@@ -17,6 +18,7 @@ import type {
   NoteName,
   PlacementOutcome,
   ReadingScoreRecord,
+  VocalRange,
   SongProgress,
   PitchNote,
   PracticeDataExport,
@@ -35,6 +37,7 @@ const SONG_PROGRESS_STORAGE_KEY = "notesense.songProgress.v1";
 const DAILY_PLAN_STORAGE_KEY = "notesense.dailyPlan.v1";
 const READING_SCORE_STORAGE_KEY = "notesense.readingScores.v1";
 const PLACEMENT_STORAGE_KEY = "notesense.placement.v1";
+const VOCAL_RANGE_STORAGE_KEY = "notesense.vocalRange.v1";
 
 export {
   compareSongsByDifficulty,
@@ -157,6 +160,27 @@ export function loadPlacement(): PlacementOutcome | undefined {
 export function savePlacement(outcome: PlacementOutcome): boolean {
   try {
     window.localStorage.setItem(PLACEMENT_STORAGE_KEY, JSON.stringify(outcome));
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+// The learner's comfortable singing range: two MIDI numbers. No audio, no pitch
+// frames, no contour — those exist only for the length of a take and are never
+// written anywhere.
+export function loadVocalRange(): VocalRange | undefined {
+  try {
+    const stored = window.localStorage.getItem(VOCAL_RANGE_STORAGE_KEY);
+    return stored ? normalizeVocalRange(JSON.parse(stored) as unknown) : undefined;
+  } catch {
+    return undefined;
+  }
+}
+
+export function saveVocalRange(range: VocalRange): boolean {
+  try {
+    window.localStorage.setItem(VOCAL_RANGE_STORAGE_KEY, JSON.stringify(range));
     return true;
   } catch {
     return false;

@@ -19,6 +19,7 @@ Observability and incident-learning expectations live in [OBSERVABILITY.md](OBSE
 - No backend API.
 - No server-side database.
 - No analytics, telemetry, advertising, cookies, or third-party scripts.
+- No raw-audio persistence and no raw-audio network. Microphone samples are converted to a pitch estimate inside the audio callback and never leave it; tests spy on `fetch` and `localStorage` to assert a singing take writes nothing and sends nothing.
 
 ## Data Classification
 

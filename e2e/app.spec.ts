@@ -593,3 +593,22 @@ test("names an interval by ear and writes down a phrase", async ({ page }) => {
   await page.getByRole("button", { name: "Undo" }).click();
   await expect(page.getByRole("img", { name: /Empty staff/ })).toBeVisible();
 });
+
+test("explains what happens to the microphone before recording anything", async ({ page }) => {
+  await page.goto("/practice/singing", { waitUntil: "domcontentloaded" });
+
+  await expect(page.getByRole("heading", { name: "Singing" })).toBeVisible();
+
+  // The promise is made before the ask, not buried in settings.
+  const privacy = page.getByText(/No audio is recorded, saved, or sent anywhere/);
+  await expect(privacy).toBeVisible();
+  await expect(privacy).toContainText("only while you are singing");
+
+  // Nothing is listening until the learner says so.
+  await expect(page.getByRole("meter", { name: "Microphone input level" })).toHaveAttribute("aria-valuenow", "0");
+  await expect(page.getByRole("button", { name: "Sing it" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Hear the starting note" })).toBeVisible();
+
+  // The phrase is described in text, not drawn as a waveform.
+  await expect(page.getByRole("img", { name: /Phrase to sing:/ })).toBeVisible();
+});

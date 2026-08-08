@@ -7,7 +7,8 @@
 import type { PracticePanelView } from "./components/PracticeStatsPanel";
 import type { AppSection } from "./routes";
 
-export type WorkspaceSection = "today" | "practice" | "rhythm" | "ear" | "songs" | "placement" | "reading-score";
+export type WorkspaceSection =
+  "today" | "practice" | "rhythm" | "ear" | "singing" | "songs" | "placement" | "reading-score";
 
 const STATS_SECTION_BY_APP_SECTION: Record<Exclude<AppSection, WorkspaceSection>, PracticePanelView> = {
   progress: "overview",
@@ -22,6 +23,7 @@ const WORKSPACE_SECTIONS = new Set<string>([
   "practice",
   "rhythm",
   "ear",
+  "singing",
   "songs",
   "placement",
   "reading-score",

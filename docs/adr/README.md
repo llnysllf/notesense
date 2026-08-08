@@ -85,3 +85,4 @@ Architecture Decision Records document durable product and engineering decisions
 - [ADR 0068: Add Web MIDI As An Input Source](0068-web-midi-input.md) - Accepted
 - [ADR 0069: Placement And Reading Score](0069-placement-and-reading-score.md) - Accepted
 - [ADR 0070: Ear Training And Staff Transcription](0070-ear-training-and-transcription.md) - Accepted
+- [ADR 0071: Singing And Microphone Analysis](0071-singing-and-microphone.md) - Accepted

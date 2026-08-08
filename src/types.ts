@@ -1,5 +1,11 @@
+import type { MicStatus, MicSupport } from "./voice/microphone";
 import type {
   AssessmentPassage,
+  SingingStage,
+  SingingStageId,
+  SingingExercise,
+  SungScore,
+  VocalRange,
   ExerciseDefinition,
   SequenceComparison,
   TranscriptionScore,
@@ -291,6 +297,71 @@ export {
   MAX_SEQUENCE_LENGTH,
   MIN_SEQUENCE_LENGTH,
 } from "@notesense/shared";
+
+// Singing and microphone analysis (Slice 12).
+export type {
+  PitchEstimate,
+  PitchFrame,
+  SungSummary,
+  SungTarget,
+  SungComponents,
+  SungNoteResult,
+  SungScore,
+  VocalRange,
+  SingingStage,
+  SingingStageId,
+  SingingExercise,
+} from "@notesense/shared";
+export {
+  detectPitch,
+  hertzToMidi,
+  midiToHertz,
+  centsBetween,
+  buildContour,
+  voicedFrames,
+  centreMidi,
+  centreLine,
+  onsetSeconds,
+  scoreSinging,
+  describeSinging,
+  deriveVocalRange,
+  normalizeVocalRange,
+  fitToRange,
+  isSingable,
+  referenceMidi,
+  describeRange,
+  IN_TUNE_CENTS,
+  VOCAL_RANGE_VERSION,
+  SINGING_STAGES,
+  singingStage,
+  buildSingingExercise,
+  exerciseSeconds,
+} from "@notesense/shared";
+
+// What the singing screen renders. Declared here so the workspace stays
+// presentational and does not import its behaviour from a hook.
+export type SingingDrillView = {
+  support: MicSupport;
+  status: MicStatus;
+  stages: readonly SingingStage[];
+  stageId: SingingStageId;
+  exercise: SingingExercise;
+  // Absent until the learner has calibrated.
+  range: VocalRange | undefined;
+  // 0..1 input meter, so a learner can see the microphone is hearing them.
+  level: number;
+  score: SungScore | null;
+  isCalibrating: boolean;
+  feedback: string | undefined;
+  setStage: (stageId: SingingStageId) => void;
+  start: () => void;
+  stop: () => void;
+  startCalibration: () => void;
+  playReference: () => void;
+  next: () => void;
+};
+
+export type { MicSupport, MicStatus, MicPanelProps } from "./voice/microphone";
 
 // The ear families a learner can pick, in the order they meet them.
 export type EarFamilyId =

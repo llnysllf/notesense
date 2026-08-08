@@ -58,3 +58,5 @@ Performance expectations live in [PERFORMANCE.md](PERFORMANCE.md).
 - Playwright configs keep preview-server ports explicit and aligned with their `baseURL` and readiness URL
 - browser specs continue to cover accessibility, keyboard, import/export, storage failures, responsive layout, Pages base path, and visual-regression shells
 - README, contributing, accessibility, testing, quality, release, architecture, operations, privacy, ADR, changelog, and PR review guidance stay connected to browser support
+
+- Singing needs `getUserMedia` and a secure context, both detected at runtime rather than assumed from a browser list. Where either is missing the screen says which, and every other exercise still works.
