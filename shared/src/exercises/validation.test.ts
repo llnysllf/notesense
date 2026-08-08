@@ -107,6 +107,67 @@ describe("validateExerciseDefinition", () => {
   });
 });
 
+describe("validateExerciseDefinition and answers that are not reproductions", () => {
+  const problems = (def: ExerciseDefinition) => validateExerciseDefinition(def).map((issue) => issue.problem);
+
+  it("still catches a generator that plays one thing and marks another", () => {
+    // The rule this check exists for: reproduce what you heard.
+    expect(
+      problems(
+        withOverrides({
+          stimulus: { kind: "audio-pitch", midi: [60, 64, 67], playback: "arpeggio" },
+          expectedAnswer: { kind: "pitch-sequence", midi: [60, 64, 68] },
+        }),
+      ),
+    ).toContain("arpeggio audio stimulus does not match the expected sequence");
+  });
+
+  it("allows naming what you heard rather than reproducing it", () => {
+    // Hearing two notes and answering "minor third" is a legitimate exercise;
+    // demanding the answer equal the audio would forbid the whole family.
+    expect(
+      validateExerciseDefinition(
+        withOverrides({
+          stimulus: { kind: "audio-pitch", midi: [60, 63], playback: "arpeggio" },
+          expectedAnswer: { kind: "choice", optionId: "minor-3rd" },
+        }),
+      ),
+    ).toEqual([]);
+  });
+
+  it("allows asking for a note that was deliberately never played", () => {
+    // Finding the key centre: playing the tonic would hand over the answer.
+    expect(
+      validateExerciseDefinition(
+        withOverrides({
+          stimulus: { kind: "audio-pitch", midi: [62, 64, 65], playback: "arpeggio" },
+          expectedAnswer: { kind: "pitch", midi: 60 },
+        }),
+      ),
+    ).toEqual([]);
+  });
+
+  it("checks a transcription answer is written down in order and in range", () => {
+    const transcription = (notes: { midi: number; onsetTicks: number }[]) =>
+      withOverrides({
+        stimulus: { kind: "audio-pitch", midi: notes.map((note) => note.midi), playback: "arpeggio" },
+        expectedAnswer: { kind: "transcription", notes, transport: { version: 1, ppq: 960 } },
+      });
+
+    expect(validateExerciseDefinition(transcription([{ midi: 60, onsetTicks: 0 }]))).toEqual([]);
+    expect(problems(transcription([]))).toContain("empty expected transcription");
+    expect(problems(transcription([{ midi: 200, onsetTicks: 0 }]))).toContain("expected transcription out of range");
+    expect(
+      problems(
+        transcription([
+          { midi: 60, onsetTicks: 960 },
+          { midi: 62, onsetTicks: 0 },
+        ]),
+      ),
+    ).toContain("expected transcription onsets are not in order");
+  });
+});
+
 describe("validateExercises", () => {
   it("flags duplicate ids across a batch", () => {
     const def = base();

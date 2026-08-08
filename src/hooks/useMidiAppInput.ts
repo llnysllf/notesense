@@ -15,6 +15,7 @@ type MidiAppInputOptions = {
   onRhythmTap: () => void;
   assessmentPlayRef: MutableRefObject<(noteId: string) => void>;
   onSongAnswer: (noteIds: string[]) => void;
+  onEarNote: (noteId: string) => void;
 };
 
 export function useMidiAppInput({
@@ -27,6 +28,7 @@ export function useMidiAppInput({
   onRhythmTap,
   assessmentPlayRef,
   onSongAnswer,
+  onEarNote,
 }: MidiAppInputOptions): UseMidiPractice {
   return useMidiPractice({
     mode,
@@ -36,6 +38,7 @@ export function useMidiAppInput({
     onMidiNoteOn: (noteId) => {
       if (activeSection === "rhythm") onRhythmTap();
       if (activeSection === "songs") onSongAnswer([noteId]);
+      if (activeSection === "ear") onEarNote(noteId);
       if (activeSection === "reading-score") assessmentPlayRef.current(noteId);
     },
     onReadingAnswer,

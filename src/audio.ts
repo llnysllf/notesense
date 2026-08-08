@@ -27,6 +27,21 @@ function scheduleTone(context: AudioContext, frequency: number, startAt: number,
   oscillator.stop(startAt + duration);
 }
 
+// Playing an ear-training stimulus: one note, a chord, notes in turn, or a
+// sequence of chords. Grouped playback is what lets a cadence sound like two
+// chords instead of one six-note pile.
+export function playPitchGroups(groups: number[][], gapSeconds = 0.9): void {
+  if (groups.length === 0) return;
+
+  const context = getAudioContext();
+  void context.resume?.();
+
+  groups.forEach((frequencies, index) => {
+    const startAt = context.currentTime + index * gapSeconds;
+    for (const frequency of frequencies) scheduleTone(context, frequency, startAt, gapSeconds * 0.85);
+  });
+}
+
 export function playMelody(frequencies: number[]): void {
   if (frequencies.length === 0) return;
 

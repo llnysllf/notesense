@@ -16,6 +16,11 @@ export type CompetencyId =
   | "rhythm.syncopation"
   | "ear.pitch.absolute-anchor"
   | "ear.interval.melodic"
+  | "ear.chord.quality"
+  | "ear.scale.mode"
+  | "ear.key.centre"
+  | "ear.cadence"
+  | "ear.rhythm.echo"
   | "ear.sequence.transcription"
   | "voice.pitch-match"
   | "voice.sight-sing";
@@ -66,6 +71,36 @@ export const COMPETENCIES: readonly Competency[] = [
     domain: "ear",
     label: "Melodic interval",
     summary: "Identify the interval between two heard pitches.",
+  },
+  {
+    id: "ear.chord.quality",
+    domain: "ear",
+    label: "Chord quality",
+    summary: "Tell major, minor, diminished, augmented, and sevenths apart by ear.",
+  },
+  {
+    id: "ear.scale.mode",
+    domain: "ear",
+    label: "Scale and mode",
+    summary: "Recognize a scale or mode from hearing it played.",
+  },
+  {
+    id: "ear.key.centre",
+    domain: "ear",
+    label: "Key centre",
+    summary: "Find the tonic of a passage by ear.",
+  },
+  {
+    id: "ear.cadence",
+    domain: "ear",
+    label: "Cadence",
+    summary: "Recognize how a phrase closes.",
+  },
+  {
+    id: "ear.rhythm.echo",
+    domain: "ear",
+    label: "Rhythm echo",
+    summary: "Play back a rhythm after hearing it.",
   },
   {
     id: "ear.sequence.transcription",

@@ -15,7 +15,10 @@ export type ExerciseInputMode = "touch" | "computer-keyboard" | "midi" | "microp
 export type ExerciseStimulus =
   | { kind: "notation"; scoreId: string }
   | { kind: "prompt-note"; midi: number }
-  | { kind: "audio-pitch"; midi: number[]; playback: "single" | "block" | "arpeggio" };
+  // `groupSize` splits the pitches into successive chords, so a cadence can be
+  // two blocks rather than one six-note pile. Absent means the whole array is
+  // one group, which is what every other family wants.
+  | { kind: "audio-pitch"; midi: number[]; playback: "single" | "block" | "arpeggio"; groupSize?: number };
 
 export type ContentSource = "builtin" | "generated" | "imported";
 
@@ -50,7 +53,13 @@ function isMidi(value: unknown): value is number {
 
 function normalizeStimulus(value: unknown): ExerciseStimulus | undefined {
   if (typeof value !== "object" || value === null) return undefined;
-  const candidate = value as { kind?: unknown; scoreId?: unknown; midi?: unknown; playback?: unknown };
+  const candidate = value as {
+    kind?: unknown;
+    scoreId?: unknown;
+    midi?: unknown;
+    playback?: unknown;
+    groupSize?: unknown;
+  };
   if (candidate.kind === "notation" && typeof candidate.scoreId === "string" && candidate.scoreId.length > 0) {
     return { kind: "notation", scoreId: candidate.scoreId };
   }
@@ -64,7 +73,16 @@ function normalizeStimulus(value: unknown): ExerciseStimulus | undefined {
     candidate.midi.every(isMidi) &&
     (candidate.playback === "single" || candidate.playback === "block" || candidate.playback === "arpeggio")
   ) {
-    return { kind: "audio-pitch", midi: [...candidate.midi], playback: candidate.playback };
+    const groupSize =
+      typeof candidate.groupSize === "number" && Number.isInteger(candidate.groupSize) && candidate.groupSize > 0
+        ? candidate.groupSize
+        : undefined;
+    return {
+      kind: "audio-pitch",
+      midi: [...candidate.midi],
+      playback: candidate.playback,
+      ...(groupSize === undefined ? {} : { groupSize }),
+    };
   }
   return undefined;
 }
