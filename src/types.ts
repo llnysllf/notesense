@@ -352,12 +352,17 @@ export type SingingDrillView = {
   level: number;
   score: SungScore | null;
   isCalibrating: boolean;
+  // Counts down after permission is granted, before frames are captured.
+  countdownSeconds: number | null;
+  // The currently detected pitch, only while listening. It is never stored.
+  liveMidi: number | null;
   feedback: string | undefined;
   setStage: (stageId: SingingStageId) => void;
   start: () => void;
   stop: () => void;
   startCalibration: () => void;
   playReference: () => void;
+  playPrompt: () => void;
   next: () => void;
 };
 

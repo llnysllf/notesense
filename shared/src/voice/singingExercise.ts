@@ -12,7 +12,8 @@ import { createRng, randInt } from "../exercises/seededRng";
 import { fitToRange, type VocalRange } from "./vocalRange";
 import { type SungTarget } from "./sungScore";
 
-export type SingingStageId = "match-one" | "two-notes" | "short-phrase" | "rhythm-on-one" | "sight-sing";
+export type SingingStageId =
+  "match-one" | "two-notes" | "short-phrase" | "long-phrase" | "rhythm-on-one" | "sight-sing" | "with-accompaniment";
 
 export type SingingStage = {
   id: SingingStageId;
@@ -23,6 +24,8 @@ export type SingingStage = {
   noteSeconds: number;
   // Whether the notes are notated for the learner to read, or played to copy.
   reading: boolean;
+  // Whether the phrase plays while the learner sings it.
+  accompaniment?: boolean;
 };
 
 export const SINGING_STAGES: readonly SingingStage[] = [
@@ -51,6 +54,14 @@ export const SINGING_STAGES: readonly SingingStage[] = [
     reading: false,
   },
   {
+    id: "long-phrase",
+    label: "Longer phrase",
+    summary: "Sing back a phrase of six notes.",
+    noteCount: 6,
+    noteSeconds: 1,
+    reading: false,
+  },
+  {
     id: "rhythm-on-one",
     label: "Rhythm on one note",
     summary: "Sing a written rhythm on a single pitch.",
@@ -65,6 +76,15 @@ export const SINGING_STAGES: readonly SingingStage[] = [
     noteCount: 4,
     noteSeconds: 1,
     reading: true,
+  },
+  {
+    id: "with-accompaniment",
+    label: "With accompaniment",
+    summary: "Sing a short written phrase along with the notes.",
+    noteCount: 4,
+    noteSeconds: 1,
+    reading: true,
+    accompaniment: true,
   },
 ];
 
@@ -85,6 +105,7 @@ export type SingingExercise = {
   referenceMidi: number;
   targets: SungTarget[];
   reading: boolean;
+  accompaniment: boolean;
 };
 
 export type BuildSingingExerciseOptions = {
@@ -130,6 +151,7 @@ export function buildSingingExercise({ stageId, range, seed }: BuildSingingExerc
     referenceMidi: (fitted[0] as number) ?? centre,
     targets,
     reading: stage.reading,
+    accompaniment: stage.accompaniment === true,
   };
 }
 

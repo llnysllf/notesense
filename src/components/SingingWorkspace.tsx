@@ -91,17 +91,30 @@ function SingingWorkspace({ drill }: SingingWorkspaceProps) {
         <p className="singing-status" aria-live="polite">
           {drill.status === "requesting"
             ? "Asking for the microphone…"
-            : drill.isCalibrating
-              ? "Sing from your lowest comfortable note to your highest."
-              : drill.status === "listening"
-                ? "Listening — sing the phrase."
-                : "Ready when you are."}
+            : drill.countdownSeconds !== null
+              ? `Starting in ${drill.countdownSeconds}…`
+              : drill.isCalibrating
+                ? "Sing from your lowest comfortable note to your highest."
+                : drill.status === "listening"
+                  ? "Listening — sing the phrase."
+                  : "Ready when you are."}
         </p>
+
+        {drill.status === "listening" && drill.liveMidi !== null ? (
+          <p className="singing-pitch" aria-live="polite">
+            Hearing {midiToNoteId(Math.round(drill.liveMidi))}
+          </p>
+        ) : null}
 
         <div className="singing-actions">
           <button type="button" className="secondary-button" onClick={drill.playReference} disabled={isListening}>
             Hear the starting note
           </button>
+          {!drill.exercise.reading ? (
+            <button type="button" className="secondary-button" onClick={drill.playPrompt} disabled={isListening}>
+              Hear the phrase
+            </button>
+          ) : null}
           {isListening ? (
             <button type="button" className="primary-button" onClick={drill.stop}>
               Stop

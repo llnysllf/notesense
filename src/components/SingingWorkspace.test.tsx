@@ -23,12 +23,15 @@ function renderableDrill(overrides: Partial<SingingDrillView> = {}): SingingDril
     level: 0,
     score: null,
     isCalibrating: false,
+    countdownSeconds: null,
+    liveMidi: null,
     feedback: undefined,
     setStage: vi.fn(),
     start: vi.fn(),
     stop: vi.fn(),
     startCalibration: vi.fn(),
     playReference: vi.fn(),
+    playPrompt: vi.fn(),
     next: vi.fn(),
     ...overrides,
   };
@@ -54,6 +57,13 @@ describe("SingingWorkspace", () => {
 
     fireEvent.click(screen.getByRole("button", { name: "Hear the starting note" }));
     expect(drill.playReference).toHaveBeenCalled();
+  });
+
+  it("plays a copying prompt before a non-reading exercise", () => {
+    const drill = renderDrill();
+
+    fireEvent.click(screen.getByRole("button", { name: "Hear the phrase" }));
+    expect(drill.playPrompt).toHaveBeenCalled();
   });
 
   it("records only when asked", () => {
@@ -158,6 +168,13 @@ describe("SingingWorkspace detail", () => {
     renderDrill({ status: "requesting" });
 
     expect(screen.getByText("Asking for the microphone…")).toBeInTheDocument();
+  });
+
+  it("counts down and shows the live detected pitch before recording", () => {
+    renderDrill({ status: "listening", countdownSeconds: 2, liveMidi: 60.1 });
+
+    expect(screen.getByText("Starting in 2…")).toBeInTheDocument();
+    expect(screen.getByText("Hearing C4")).toBeInTheDocument();
   });
 
   it("marks a note that was sung out of tune differently from one in tune", () => {

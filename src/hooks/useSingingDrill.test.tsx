@@ -1,6 +1,7 @@
 import { act, renderHook } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { useSingingDrill } from "./useSingingDrill";
+import { playMelody } from "../audio";
 import { startListening } from "../voice/microphone";
 import type { PitchFrame } from "../types";
 
@@ -10,6 +11,10 @@ vi.mock("../audio", () => ({ playTone: vi.fn(), playMelody: vi.fn(), playPitchGr
 // the frames it is handed, and what it does not do with them.
 let deliver: ((frame: PitchFrame) => void) | undefined;
 let stopped = 0;
+
+function beginCapture() {
+  act(() => vi.advanceTimersByTime(3000));
+}
 
 vi.mock("../voice/microphone", () => ({
   detectMicSupport: vi.fn(() => "available"),
@@ -65,6 +70,7 @@ describe("useSingingDrill", () => {
   it("scores a sung take and releases the microphone", async () => {
     const { result } = renderHook(() => useSingingDrill());
     await act(async () => result.current.start());
+    beginCapture();
 
     const target = result.current.exercise.targets[0]?.midi ?? 60;
     act(() => sing(target));
@@ -78,6 +84,7 @@ describe("useSingingDrill", () => {
   it("keeps no audio, no frames, and no contour once a take ends", async () => {
     const { result } = renderHook(() => useSingingDrill());
     await act(async () => result.current.start());
+    beginCapture();
     act(() => sing(result.current.exercise.targets[0]?.midi ?? 60));
     act(() => result.current.stop());
 
@@ -108,6 +115,7 @@ describe("useSingingDrill", () => {
     const { result } = renderHook(() => useSingingDrill());
 
     await act(async () => result.current.start());
+    beginCapture();
     act(() => sing(result.current.exercise.targets[0]?.midi ?? 60));
     act(() => result.current.stop());
 
@@ -122,6 +130,7 @@ describe("useSingingDrill", () => {
     const { result } = renderHook(() => useSingingDrill());
 
     await act(async () => result.current.start());
+    beginCapture();
     act(() => sing(result.current.exercise.targets[0]?.midi ?? 60));
     act(() => result.current.stop());
 
@@ -140,6 +149,27 @@ describe("useSingingDrill", () => {
     expect(result.current.level).toBe(0);
   });
 
+  it("does not capture a voice frame during the countdown", async () => {
+    const { result } = renderHook(() => useSingingDrill());
+    await act(async () => result.current.start());
+
+    act(() => sing(result.current.exercise.targets[0]?.midi ?? 60));
+    act(() => result.current.stop());
+
+    expect(result.current.score?.components.completion).toBe(0);
+  });
+
+  it("counts down before collecting the take", async () => {
+    const { result } = renderHook(() => useSingingDrill());
+    await act(async () => result.current.start());
+
+    expect(result.current.countdownSeconds).toBe(3);
+    act(() => vi.advanceTimersByTime(1000));
+    expect(result.current.countdownSeconds).toBe(2);
+    beginCapture();
+    expect(result.current.countdownSeconds).toBeNull();
+  });
+
   it("says so when permission is refused", async () => {
     vi.mocked(startListening).mockResolvedValueOnce(null);
     const { result } = renderHook(() => useSingingDrill());
@@ -154,6 +184,7 @@ describe("useSingingDrill", () => {
 
     await act(async () => result.current.startCalibration());
     expect(result.current.isCalibrating).toBe(true);
+    beginCapture();
 
     act(() => {
       for (let index = 0; index < 40; index += 1) {
@@ -189,9 +220,34 @@ describe("useSingingDrill", () => {
     expect(result.current.score).toBeNull();
   });
 
+  it("plays accompaniment on the exercise beat after the countdown", async () => {
+    const { result } = renderHook(() => useSingingDrill());
+    act(() => result.current.setStage("with-accompaniment"));
+
+    await act(async () => result.current.start());
+    beginCapture();
+
+    expect(playMelody).toHaveBeenCalledWith(
+      expect.any(Array),
+      expect.any(Number),
+      result.current.exercise.targets[0]?.durationSeconds,
+    );
+  });
+
+  it("finishes and releases the microphone when the take duration expires", async () => {
+    const { result } = renderHook(() => useSingingDrill());
+    await act(async () => result.current.start());
+    beginCapture();
+    act(() => vi.advanceTimersByTime(4000));
+
+    expect(result.current.status).toBe("idle");
+    expect(stopped).toBe(1);
+  });
+
   it("offers a fresh phrase after a take", async () => {
     const { result } = renderHook(() => useSingingDrill());
     await act(async () => result.current.start());
+    beginCapture();
     act(() => sing(result.current.exercise.targets[0]?.midi ?? 60));
     act(() => result.current.stop());
     const seed = result.current.exercise.seed;
@@ -212,5 +268,68 @@ describe("useSingingDrill", () => {
 
     // The one piece of help that does not do the exercise for the learner.
     expect(result.current.exercise.referenceMidi).toBe(result.current.exercise.targets[0]?.midi);
+  });
+
+  it("plays the full prompt for a copying exercise", () => {
+    const { result } = renderHook(() => useSingingDrill());
+
+    act(() => result.current.playPrompt());
+
+    expect(playMelody).toHaveBeenCalledWith(expect.any(Array));
+  });
+
+  it("stops a microphone session that resolves after the learner presses Stop", async () => {
+    let resolveSession: ((session: { stop: () => void }) => void) | undefined;
+    vi.mocked(startListening).mockImplementationOnce(
+      () =>
+        new Promise((resolve) => {
+          resolveSession = resolve;
+        }),
+    );
+    const { result } = renderHook(() => useSingingDrill());
+
+    act(() => result.current.start());
+    expect(result.current.status).toBe("requesting");
+    act(() => result.current.stop());
+    expect(result.current.status).toBe("idle");
+
+    await act(async () => resolveSession?.({ stop: () => (stopped += 1) }));
+
+    expect(stopped).toBe(1);
+    expect(result.current.status).toBe("idle");
+  });
+
+  it("stops a microphone session that resolves after the singing screen unmounts", async () => {
+    let resolveSession: ((session: { stop: () => void }) => void) | undefined;
+    vi.mocked(startListening).mockImplementationOnce(
+      () =>
+        new Promise((resolve) => {
+          resolveSession = resolve;
+        }),
+    );
+    const { result, unmount } = renderHook(() => useSingingDrill());
+
+    act(() => result.current.start());
+    unmount();
+    await act(async () => resolveSession?.({ stop: () => (stopped += 1) }));
+
+    expect(stopped).toBe(1);
+  });
+
+  it("does not surface a denial from an abandoned permission request", async () => {
+    let resolveRequest: ((session: null) => void) | undefined;
+    vi.mocked(startListening).mockImplementationOnce(
+      () =>
+        new Promise((resolve) => {
+          resolveRequest = resolve;
+        }),
+    );
+    const { result } = renderHook(() => useSingingDrill());
+
+    act(() => result.current.start());
+    act(() => result.current.stop());
+    await act(async () => resolveRequest?.(null));
+
+    expect(result.current.status).toBe("idle");
   });
 });

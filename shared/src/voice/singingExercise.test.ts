@@ -18,8 +18,10 @@ describe("singing progression", () => {
       "match-one",
       "two-notes",
       "short-phrase",
+      "long-phrase",
       "rhythm-on-one",
       "sight-sing",
+      "with-accompaniment",
     ]);
   });
 
@@ -87,5 +89,12 @@ describe("singing progression", () => {
   it("marks which stages are read rather than copied", () => {
     expect(buildSingingExercise({ stageId: "match-one", range: BARITONE, seed: "s" }).reading).toBe(false);
     expect(buildSingingExercise({ stageId: "sight-sing", range: BARITONE, seed: "s" }).reading).toBe(true);
+  });
+
+  it("includes a longer phrase and an accompaniment stage", () => {
+    expect(buildSingingExercise({ stageId: "long-phrase", range: BARITONE, seed: "s" }).targets).toHaveLength(6);
+    expect(buildSingingExercise({ stageId: "with-accompaniment", range: BARITONE, seed: "s" }).accompaniment).toBe(
+      true,
+    );
   });
 });
