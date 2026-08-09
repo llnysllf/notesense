@@ -208,6 +208,17 @@ describe("App", () => {
     expect(within(screen.getByLabelText("Exercise")).getAllByRole("option")).toHaveLength(9);
   });
 
+  it("opens singing on its own destination, and says so where a microphone is unavailable", async () => {
+    window.history.replaceState(null, "", "/practice/singing");
+    render(<App />);
+
+    expect(await screen.findByRole("heading", { name: "Singing" })).toBeInTheDocument();
+    // This environment has no microphone at all, which is a case the screen has
+    // to handle honestly rather than by rendering a dead record button.
+    expect(screen.getByRole("note")).toHaveTextContent(/cannot use a microphone/i);
+    expect(screen.queryByRole("button", { name: "Sing it" })).not.toBeInTheDocument();
+  });
+
   it("opens the placement check and lets the learner leave it for practice", async () => {
     window.history.replaceState(null, "", "/assess/placement");
     render(<App />);

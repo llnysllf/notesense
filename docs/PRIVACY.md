@@ -15,6 +15,10 @@ Song practice results (best accuracy, completions, last played time) are saved i
 
 - Reading Score results are saved in LocalStorage under `notesense.readingScores.v1`, and an accepted placement result under `notesense.placement.v1`. Neither contains a name, an account, or a device identifier.
 - A Reading Score share card is drawn on a canvas in the page and saved to the device only when the learner asks for it. It is never uploaded, and it carries the result and the date only — no identifier and no time of day.
+- Singing exercises use the microphone only while a take is running, and only after the learner presses record. Permission is never requested on load.
+- **No audio is recorded, stored, or transmitted.** Samples are read from the microphone, converted to a pitch estimate, and the buffer is immediately reused. Pitch frames and the derived contour live only for the length of a take and are discarded when it ends. What can be kept is a `SungSummary` — five derived numbers describing how close the singing was — and the learner's comfortable range under `notesense.vocalRange.v1`.
+- Echo cancellation, noise suppression, and automatic gain are requested off, because they are tuned for speech and would bend the pitch being measured. This does not change what is stored.
+- The microphone is released when a take ends or the screen is left, which is what turns the browser's recording indicator off.
 - Older local progress may be read from `notesense.progress.v1` and normalized into the current shape.
 - Data stays on the current browser profile unless the learner exports it.
 - The service worker cache stores reviewed static app assets only. It does not cache practice progress, exported data, or imported files.

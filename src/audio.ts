@@ -42,12 +42,10 @@ export function playPitchGroups(groups: number[][], gapSeconds = 0.9): void {
   });
 }
 
-export function playMelody(frequencies: number[]): void {
+export function playMelody(frequencies: number[], noteDuration = 0.62, noteStep = 0.72): void {
   if (frequencies.length === 0) return;
 
   const context = getAudioContext();
-  const noteDuration = 0.62;
-  const noteStep = 0.72;
 
   frequencies.forEach((frequency, index) => {
     scheduleTone(context, frequency, context.currentTime + index * noteStep, noteDuration);

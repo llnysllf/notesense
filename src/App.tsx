@@ -5,6 +5,7 @@ import ReadingControls from "./components/ReadingControls";
 import { useAppRoute } from "./hooks/useAppRoute";
 import { useAssessment } from "./hooks/useAssessment";
 import { useEarDrill } from "./hooks/useEarDrill";
+import { useSingingDrill } from "./hooks/useSingingDrill";
 import { useRhythmDrill } from "./hooks/useRhythmDrill";
 import { useMidiAppInput } from "./hooks/useMidiAppInput";
 import { useRoundMisses } from "./hooks/useRoundMisses";
@@ -31,6 +32,7 @@ const PracticeWorkspace = lazy(() => import("./components/PracticeWorkspace"));
 const RouteNotFound = lazy(() => import("./components/RouteNotFound"));
 const AssessWorkspace = lazy(() => import("./components/AssessWorkspace"));
 const EarWorkspace = lazy(() => import("./components/EarWorkspace"));
+const SingingWorkspace = lazy(() => import("./components/SingingWorkspace"));
 const shouldForceRenderError = () =>
   import.meta.env.MODE === "resilience" && window.sessionStorage.getItem("notesense.forceRenderError") === "true";
 
@@ -47,6 +49,7 @@ function App() {
   const { settings, setSettings, persistSettings } = useSettings();
   const rhythmDrill = useRhythmDrill();
   const earDrill = useEarDrill();
+  const singingDrill = useSingingDrill();
   const songSession = useSongSession();
   const assessmentPlayRef = useRef<(noteId: string) => void>(() => {});
   const { progress, evidenceEvents, setProgress, persistProgress } = usePracticeProgress();
@@ -231,6 +234,8 @@ function App() {
         />
       ) : activeSection === "ear" ? (
         <EarWorkspace drill={earDrill} />
+      ) : activeSection === "singing" ? (
+        <SingingWorkspace drill={singingDrill} />
       ) : activeSection === "songs" ? (
         <SongsWorkspace songSession={songSession} />
       ) : activeSection === "placement" || activeSection === "reading-score" ? (
