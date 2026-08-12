@@ -2664,3 +2664,100 @@ h3 {
   color: var(--color-text);
   font-weight: 700;
 }
+
+/* Importing your own music. Every control that changes what an import loses
+   sits next to a preview of the result, so the cost is visible before it is
+   agreed to. */
+.import-workspace {
+  display: grid;
+  gap: var(--space-panel);
+}
+
+.import-card {
+  display: grid;
+  gap: 10px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-card);
+  background: var(--color-surface);
+  padding: var(--space-card);
+}
+
+.import-card h3,
+.import-card h4 {
+  margin: 0;
+  font-size: 1.05rem;
+}
+
+.import-note,
+.import-file,
+.import-warning,
+.import-saved-message {
+  margin: 0;
+  color: var(--color-muted-strong);
+  font-size: 0.88rem;
+}
+
+.import-warning {
+  border-left: 3px solid var(--color-border-strong);
+  padding-left: 10px;
+}
+
+.import-error {
+  margin: 0;
+  color: var(--color-danger);
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.import-actions,
+.import-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.import-picker {
+  display: grid;
+  gap: 4px;
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+.import-picker select,
+.import-picker input {
+  min-height: 40px;
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-control);
+  background: var(--color-control-soft);
+  padding: 0 10px;
+  color: var(--color-text);
+  font: inherit;
+}
+
+.import-staff {
+  width: 100%;
+  max-width: 100%;
+  height: auto;
+}
+
+.import-note .note-head,
+.import-staff .note-head {
+  fill: var(--color-text);
+}
+
+.import-saved {
+  display: grid;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.import-saved li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  color: var(--color-muted-strong);
+  font-size: 0.88rem;
+}

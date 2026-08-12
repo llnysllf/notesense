@@ -19,6 +19,7 @@ export type AppSection =
   | "ear"
   | "singing"
   | "songs"
+  | "import"
   | "placement"
   | "reading-score"
   | "progress"
@@ -35,6 +36,7 @@ export type RouteId =
   | "ear"
   | "singing"
   | "songs"
+  | "import"
   | "assess-placement"
   | "assess-reading-score"
   | "progress"
@@ -78,6 +80,7 @@ export const ROUTES: readonly RouteDefinition[] = [
   { id: "ear", path: "/practice/ear", label: "Ear training", group: "Practice", section: "ear" },
   { id: "singing", path: "/practice/singing", label: "Singing", group: "Practice", section: "singing" },
   { id: "songs", path: "/practice/songs", label: "Songs", group: "Practice", section: "songs" },
+  { id: "import", path: "/practice/import", label: "Import", group: "Practice", section: "import" },
   { id: "assess-placement", path: "/assess/placement", label: "Placement", group: "Assess", section: "placement" },
   {
     id: "assess-reading-score",

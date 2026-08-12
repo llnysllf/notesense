@@ -1,11 +1,11 @@
 import SongLibrary from "./SongLibrary";
 import SongPlayer from "./SongPlayer";
-import { BUILT_IN_SONGS } from "../songLibraryData";
 import type { SongPlaythrough, SongPlaythroughSummary, SongSessionStatus } from "../songEngine";
 import type { Song, SongProgress } from "../types";
 import "./songs.css";
 
 export type SongsWorkspaceSession = {
+  songs: Song[];
   activeSong: Song | null;
   playthrough: SongPlaythrough | null;
   status: SongSessionStatus;
@@ -41,7 +41,11 @@ function SongsWorkspace({ songSession }: SongsWorkspaceProps) {
 
   return (
     <section className="practice-panel" aria-label="Song library">
-      <SongLibrary songs={BUILT_IN_SONGS} songProgress={songSession.songProgress} onOpenSong={songSession.openSong} />
+      <SongLibrary
+        songs={songSession.songs}
+        songProgress={songSession.songProgress}
+        onOpenSong={songSession.openSong}
+      />
     </section>
   );
 }

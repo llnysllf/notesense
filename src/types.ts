@@ -1,6 +1,11 @@
 import type { MicStatus, MicSupport } from "./voice/microphone";
 import type {
   AssessmentPassage,
+  ParsedMidiFile,
+  MidiImportPreview,
+  HandSelection,
+  QuantizeGrid,
+  Song,
   SingingStage,
   SingingStageId,
   SingingExercise,
@@ -367,6 +372,57 @@ export type SingingDrillView = {
 };
 
 export type { MicSupport, MicStatus, MicPanelProps } from "./voice/microphone";
+
+// Repertoire and MIDI import (Slice 13).
+export type {
+  MidiNote,
+  MidiTrackSummary,
+  ParsedMidiFile,
+  MidiParseResult,
+  MidiImportOptions,
+  MidiImportPreview,
+  HandSelection,
+  QuantizeGrid,
+} from "@notesense/shared";
+export {
+  parseMidiFile,
+  initialBpm,
+  initialMeter,
+  midiToSong,
+  describeImport,
+  normalizeImportedSongs,
+  HAND_SPLIT_MIDI,
+  MAX_IMPORTED_SONGS,
+  MIN_SONG_EVENTS,
+  MAX_MIDI_FILE_BYTES,
+} from "@notesense/shared";
+
+// What the import screen renders. Declared here so the workspace stays
+// presentational and does not import its behaviour from a hook.
+export type MidiImportView = {
+  file: ParsedMidiFile | null;
+  fileName: string;
+  error: string | null;
+  preview: MidiImportPreview | null;
+  // What this import will cost, or nothing when it is clean.
+  summary: string | undefined;
+  saved: Song[];
+  savedMessage: string | null;
+  trackIndex: number | undefined;
+  channel: number | undefined;
+  grid: QuantizeGrid;
+  hand: HandSelection;
+  transpose: number;
+  openFile: (file: File) => void;
+  clearFile: () => void;
+  setTrackIndex: (index: number | undefined) => void;
+  setChannel: (channel: number | undefined) => void;
+  setGrid: (grid: QuantizeGrid) => void;
+  setHand: (hand: HandSelection) => void;
+  setTranspose: (semitones: number) => void;
+  save: () => void;
+  remove: (songId: string) => void;
+};
 
 // The ear families a learner can pick, in the order they meet them.
 export type EarFamilyId =

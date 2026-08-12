@@ -4,6 +4,7 @@ import {
   normalizeDailyPlan,
   defaultSettings,
   normalizeProgress,
+  normalizeImportedSongs,
   normalizePlacementOutcome,
   normalizeVocalRange,
   normalizeReadingScoreHistory,
@@ -18,6 +19,7 @@ import type {
   NoteName,
   PlacementOutcome,
   ReadingScoreRecord,
+  Song,
   VocalRange,
   SongProgress,
   PitchNote,
@@ -38,6 +40,7 @@ const DAILY_PLAN_STORAGE_KEY = "notesense.dailyPlan.v1";
 const READING_SCORE_STORAGE_KEY = "notesense.readingScores.v1";
 const PLACEMENT_STORAGE_KEY = "notesense.placement.v1";
 const VOCAL_RANGE_STORAGE_KEY = "notesense.vocalRange.v1";
+const IMPORTED_SONGS_STORAGE_KEY = "notesense.importedSongs.v1";
 
 export {
   compareSongsByDifficulty,
@@ -181,6 +184,27 @@ export function loadVocalRange(): VocalRange | undefined {
 export function saveVocalRange(range: VocalRange): boolean {
   try {
     window.localStorage.setItem(VOCAL_RANGE_STORAGE_KEY, JSON.stringify(range));
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+// Pieces the learner brought in themselves. Stored locally and never uploaded;
+// the cap is enforced on read as well as write, so an edited file cannot make
+// the library unbounded.
+export function loadImportedSongs(): Song[] {
+  try {
+    const stored = window.localStorage.getItem(IMPORTED_SONGS_STORAGE_KEY);
+    return stored ? normalizeImportedSongs(JSON.parse(stored) as unknown) : [];
+  } catch {
+    return [];
+  }
+}
+
+export function saveImportedSongs(songs: readonly Song[]): boolean {
+  try {
+    window.localStorage.setItem(IMPORTED_SONGS_STORAGE_KEY, JSON.stringify({ songs }));
     return true;
   } catch {
     return false;

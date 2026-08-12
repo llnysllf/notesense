@@ -23,6 +23,7 @@ The browser app owns these LocalStorage keys through `src/storage.ts`:
 - `notesense.readingScores.v1`: Reading Score results (score, its components, difficulty band, declared input source, algorithm version, timestamp). Assessment records are kept apart from practice evidence: a measurement must not feed the adaptive repetition that decides what to practise, or the next assessment would no longer be unseen. Capped at the newest 50 sittings.
 - `notesense.placement.v1`: the accepted placement result (difficulty, band, confidence, why the check stopped). A starting hint only, written when the learner accepts it and never applied over real practice evidence.
 - `notesense.vocalRange.v1`: the learner's comfortable singing range, as two MIDI numbers and a version. No audio, no pitch frames, and no pitch contour are stored here or anywhere else — those exist only for the length of a take and are discarded when it ends.
+- `notesense.importedSongs.v1`: pieces the learner imported from their own MIDI files, as the same song shape built-in pieces use. Capped at 20 pieces and 300 events each, enforced on read as well as write. No original file is retained — only the mapped, playable result.
 - `notesense.progress.v1`: legacy progress key that may be read and normalized during migration.
 
 No other browser storage key is part of the supported app contract.

@@ -9,6 +9,7 @@ vi.mock("./SongPlayer", () => ({ default: () => <p>Song player view</p> }));
 
 function createSongSession(): SongsWorkspaceSession {
   return {
+    songs: BUILT_IN_SONGS,
     activeSong: null,
     playthrough: null,
     status: "idle",
