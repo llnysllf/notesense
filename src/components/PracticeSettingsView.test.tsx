@@ -1,7 +1,7 @@
 import { fireEvent, render, screen } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 import { defaultSettings } from "../storage";
-import type { PracticeSettings } from "../types";
+import { BUILT_IN_SOUND_WORLDS, DEFAULT_SOUND_WORLD_ID, type PracticeSettings } from "../types";
 import PracticeSettingsView from "./PracticeSettingsView";
 
 function makeSettings(overrides: Partial<PracticeSettings> = {}): PracticeSettings {
@@ -26,6 +26,13 @@ function renderSettingsView(overrides: Partial<Parameters<typeof PracticeSetting
       onDisconnect: () => {},
       onSelectDevice: () => {},
       onSetLatencyMs: () => {},
+    },
+    sound: {
+      worlds: BUILT_IN_SOUND_WORLDS,
+      activeId: DEFAULT_SOUND_WORLD_ID,
+      notice: null,
+      select: () => {},
+      preview: () => {},
     },
     onSettingsChange: vi.fn(),
     ...overrides,

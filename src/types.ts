@@ -1,4 +1,5 @@
 import type { MicStatus, MicSupport } from "./voice/microphone";
+import type { SoundWorld } from "@notesense/shared";
 import type {
   AssessmentPassage,
   ParsedMidiFile,
@@ -422,6 +423,39 @@ export type MidiImportView = {
   setTranspose: (semitones: number) => void;
   save: () => void;
   remove: (songId: string) => void;
+};
+
+// Sound worlds (Slice 14).
+export type { SoundWorld, SoundWorldId, SoundWorldKind, SynthVoice, AssetLicense, CachedPack } from "@notesense/shared";
+export {
+  BUILT_IN_SOUND_WORLDS,
+  DEFAULT_SOUND_WORLD_ID,
+  ALLOWED_ASSET_LICENSES,
+  defaultSoundWorld,
+  soundWorldById,
+  validateSoundWorld,
+  validateBuiltInSoundWorlds,
+  normalizeSoundWorld,
+  describeSoundWorld,
+  coversRange,
+  planCache,
+  canCache,
+  cachedBytes,
+  describeCache,
+  normalizeCacheIndex,
+  SOUND_CACHE_BUDGET_BYTES,
+} from "@notesense/shared";
+
+// What the sound-world picker renders. Declared here so the picker stays
+// presentational and does not import its behaviour from a hook.
+export type SoundWorldView = {
+  worlds: readonly SoundWorld[];
+  activeId: string;
+  // Set only when the chosen world could not be used and something else is
+  // being heard instead. Silence about that would be worse than the fallback.
+  notice: string | null;
+  select: (id: string) => void;
+  preview: (id: string) => void;
 };
 
 // The ear families a learner can pick, in the order they meet them.

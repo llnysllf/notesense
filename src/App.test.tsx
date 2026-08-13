@@ -1,7 +1,7 @@
 import { fireEvent, render, screen, waitFor, within } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import App from "./App";
-import { playMelody, playTone } from "./audio";
+import { playMelody, playSoundWorldPreview, playTone } from "./audio";
 import { PITCH_NOTES, emptyProgress } from "./noteData";
 import { defaultSettings, serializePracticeDataExport } from "./storage";
 import type { PracticeProgress } from "./types";
@@ -9,6 +9,7 @@ import type { PracticeProgress } from "./types";
 vi.mock("./audio", () => ({
   playMelody: vi.fn(),
   playTone: vi.fn(),
+  playSoundWorldPreview: vi.fn(),
 }));
 
 const PROGRESS_STORAGE_KEY = "notesense.progress.v2";
@@ -165,6 +166,22 @@ describe("App", () => {
     // The chosen range is shown where it applies: on the drill itself.
     fireEvent.click(screen.getByRole("link", { name: "Note reading" }));
     expect(await screen.findByText("Mixed clef C3-B4")).toBeInTheDocument();
+  });
+
+  it("keeps the chosen sound world, and previews one without choosing it", async () => {
+    render(<App />);
+
+    fireEvent.click(screen.getByRole("link", { name: "Preferences" }));
+    fireEvent.click(await screen.findByRole("button", { name: "Preview Reed" }));
+
+    // Hearing a voice must not be the same as committing to it.
+    expect(playSoundWorldPreview).toHaveBeenCalledWith(expect.objectContaining({ id: "reed" }));
+    expect(window.localStorage.getItem(SETTINGS_STORAGE_KEY)).toBeNull();
+
+    fireEvent.click(screen.getByRole("button", { name: /^Warm/ }));
+
+    expect(readStoredJson<typeof defaultSettings>(SETTINGS_STORAGE_KEY).soundWorldId).toBe("warm");
+    expect(screen.getByRole("button", { name: /^Warm/ })).toHaveAttribute("aria-pressed", "true");
   });
 
   it("credits a Today block only after its drill actually finishes", async () => {

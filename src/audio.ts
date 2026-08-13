@@ -1,3 +1,6 @@
+import { renderNote } from "./sound/soundWorlds";
+import type { SoundWorld } from "./types";
+
 let audioContext: AudioContext | null = null;
 
 function getAudioContext(): AudioContext {
@@ -11,20 +14,10 @@ export function playTone(frequency: number): void {
 }
 
 function scheduleTone(context: AudioContext, frequency: number, startAt: number, duration: number): void {
-  const oscillator = context.createOscillator();
-  const gain = context.createGain();
-  const releaseAt = startAt + Math.max(0.08, duration - 0.05);
-
-  oscillator.type = "triangle";
-  oscillator.frequency.setValueAtTime(frequency, startAt);
-  gain.gain.setValueAtTime(0, startAt);
-  gain.gain.linearRampToValueAtTime(0.22, startAt + 0.02);
-  gain.gain.exponentialRampToValueAtTime(0.001, releaseAt);
-
-  oscillator.connect(gain);
-  gain.connect(context.destination);
-  oscillator.start(startAt);
-  oscillator.stop(startAt + duration);
+  // Every sound in the app goes through the active sound world, so changing it
+  // changes ear training, melodies, and reading playback together rather than
+  // leaving one screen on the old voice.
+  renderNote(context, frequency, startAt, duration);
 }
 
 // Playing an ear-training stimulus: one note, a chord, notes in turn, or a
@@ -49,5 +42,20 @@ export function playMelody(frequencies: number[], noteDuration = 0.62, noteStep 
 
   frequencies.forEach((frequency, index) => {
     scheduleTone(context, frequency, context.currentTime + index * noteStep, noteDuration);
+  });
+}
+
+// A short arpeggio in one particular world, for the picker.
+//
+// Three notes rather than one: a single tone tells you almost nothing about a
+// voice, while an onset, a middle, and a release let you actually hear the
+// difference you are choosing between. The world is passed in, so previewing
+// does not change what practice sounds like until the choice is made.
+export function playSoundWorldPreview(world: SoundWorld): void {
+  const context = getAudioContext();
+  void context.resume?.();
+
+  [261.63, 329.63, 392].forEach((frequency, index) => {
+    renderNote(context, frequency, context.currentTime + index * 0.26, 0.5, world);
   });
 }

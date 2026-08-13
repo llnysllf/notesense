@@ -1,4 +1,5 @@
 import { normalizeReadingMode } from "./reading/readingMode";
+import { soundWorldById, DEFAULT_SOUND_WORLD_ID } from "./sound/registry";
 import type {
   CustomPitchRange,
   CustomReadingRange,
@@ -40,6 +41,7 @@ export const defaultSettings: PracticeSettings = {
   revealPitchAfterAnswer: true,
   midiLatencyMs: 0,
   readingMode: "practice",
+  soundWorldId: DEFAULT_SOUND_WORLD_ID,
 };
 
 export function isReadingRange(value: unknown): value is ReadingRange {
@@ -112,6 +114,9 @@ export function normalizeSettings(settings: unknown): PracticeSettings {
     autoPlayPitch:
       typeof settingsRecord.autoPlayPitch === "boolean" ? settingsRecord.autoPlayPitch : defaultSettings.autoPlayPitch,
     readingMode: normalizeReadingMode(settingsRecord.readingMode),
+    // Resolving through the registry means an id for a world that no longer
+    // ships comes back as the default rather than as silence.
+    soundWorldId: soundWorldById(String(settingsRecord.soundWorldId ?? "")).id,
     revealPitchAfterAnswer:
       typeof settingsRecord.revealPitchAfterAnswer === "boolean"
         ? settingsRecord.revealPitchAfterAnswer

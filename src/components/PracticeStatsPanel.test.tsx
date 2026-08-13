@@ -3,6 +3,7 @@ import type { ComponentProps } from "react";
 import { describe, expect, it, vi } from "vitest";
 import { STARTER_NOTES } from "../noteData";
 import { defaultSettings } from "../storage";
+import { BUILT_IN_SOUND_WORLDS, DEFAULT_SOUND_WORLD_ID } from "../types";
 import type {
   DailyGoalSummary,
   MasterySummary,
@@ -95,6 +96,13 @@ function makeLastSummary(overrides: Partial<SessionSummary> = {}): SessionSummar
 
 function makeProps(overrides: Partial<PracticeStatsPanelProps> = {}): PracticeStatsPanelProps {
   return {
+    sound: {
+      worlds: BUILT_IN_SOUND_WORLDS,
+      activeId: DEFAULT_SOUND_WORLD_ID,
+      notice: null,
+      select: () => {},
+      preview: () => {},
+    },
     activeProgress: makeModeProgress(),
     activeView: "overview",
     dailyGoalSummary: makeDailyGoal(),

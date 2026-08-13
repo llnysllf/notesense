@@ -1280,6 +1280,79 @@ h3 {
   accent-color: var(--color-action);
 }
 
+/* Sound worlds: choosing and hearing are separate controls, so the row keeps
+   the choice wide and the preview narrow rather than making them compete. */
+.sound-world-list {
+  display: grid;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.sound-world {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 6px 12px;
+  padding: 12px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-control);
+  background: var(--color-surface);
+}
+
+.sound-world.active {
+  border-color: var(--color-brand);
+  box-shadow: inset 0 0 0 1px var(--color-brand);
+}
+
+/* The row is the card, so the choose button carries no chrome of its own —
+   nesting a second filled box inside a bordered row reads as two controls. */
+.sound-world-choose {
+  display: grid;
+  gap: 4px;
+  min-height: 44px;
+  padding: 2px 0;
+  border: 0;
+  background: none;
+  box-shadow: none;
+  text-align: left;
+}
+
+.sound-world.active .sound-world-label {
+  color: var(--color-brand-strong);
+}
+
+.sound-world-label {
+  color: var(--color-text);
+  font-size: 0.95rem;
+  font-weight: 800;
+}
+
+.sound-world-description,
+.sound-world-credit {
+  color: var(--color-muted);
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+
+.sound-world-preview {
+  align-self: center;
+  min-height: 44px;
+  padding: 0 14px;
+}
+
+.sound-world-credit {
+  grid-column: 1 / -1;
+  margin: 0;
+}
+
+.sound-world-notice {
+  margin: 0;
+  color: var(--color-muted-strong);
+  font-size: 0.85rem;
+}
+
 .summary-card {
   display: grid;
   gap: 14px;
@@ -1851,6 +1924,16 @@ h3 {
 @media (max-width: 640px) {
   h1 {
     font-size: 2.8rem;
+  }
+
+  /* On a phone, squeezing the description into a column beside Preview costs
+     more than the row it saves. */
+  .sound-world {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .sound-world-preview {
+    justify-self: stretch;
   }
 
   .error-panel h1 {

@@ -72,6 +72,9 @@ export type PracticeSettings = {
   midiLatencyMs: number;
   // Which of the four sight-reading modes the reading screen is in.
   readingMode: ReadingMode;
+  // Which sound world practice is heard in. Stored as an id rather than the
+  // world itself so a stale export cannot pin an old voice definition.
+  soundWorldId: string;
 };
 
 export type PracticeDataExport = {

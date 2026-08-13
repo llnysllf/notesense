@@ -17,7 +17,7 @@ silently corrupted. The legacy `Song` compatibility adapter rejects scores it ca
 The browser app owns these LocalStorage keys through `src/storage.ts`:
 
 - `notesense.progress.v2`: current practice progress, note stats, pitch stats, and capped session history.
-- `notesense.settings.v3`: current practice settings, including the selected sight-reading mode (Learn, Practice, Test, or Custom).
+- `notesense.settings.v3`: current practice settings, including the selected sight-reading mode (Learn, Practice, Test, or Custom) and the chosen sound world. The sound world is stored as an id, not as a voice definition, so a world that is renamed or withdrawn resolves to the built-in tone instead of pinning a stale definition.
 - `notesense.songProgress.v1`: per-song sheet-reading results (best accuracy, completion count, last played time); no imported file contents and no note-by-note answer history.
 - `notesense.dailyPlan.v1`: today's generated plan (blocks, why each was chosen, which are finished). A derived cache, not a learning record: if it is missing or malformed it is regenerated from the evidence ledger, so losing it costs no progress.
 - `notesense.readingScores.v1`: Reading Score results (score, its components, difficulty band, declared input source, algorithm version, timestamp). Assessment records are kept apart from practice evidence: a measurement must not feed the adaptive repetition that decides what to practise, or the next assessment would no longer be unseen. Capped at the newest 50 sittings.
