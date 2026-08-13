@@ -612,3 +612,18 @@ test("explains what happens to the microphone before recording anything", async 
   // The phrase is described in text, not drawn as a waveform.
   await expect(page.getByRole("img", { name: /Phrase to sing:/ })).toBeVisible();
 });
+
+test("offers MIDI import and says the file stays on the device", async ({ page }) => {
+  await page.goto("/practice/import", { waitUntil: "domcontentloaded" });
+
+  await expect(page.getByRole("heading", { name: "Import a MIDI file" })).toBeVisible();
+
+  // Said before a file is chosen, not after.
+  const note = page.getByRole("note");
+  await expect(note).toContainText("Nothing is uploaded");
+  await expect(note).toContainText("right to use");
+
+  await expect(page.getByRole("button", { name: "Choose a MIDI file" })).toBeVisible();
+  // Nothing to preview or save until a file is actually loaded.
+  await expect(page.getByRole("button", { name: "Save to my songs" })).toHaveCount(0);
+});

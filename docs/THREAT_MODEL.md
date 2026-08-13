@@ -19,6 +19,7 @@ Observability and incident-learning expectations live in [OBSERVABILITY.md](OBSE
 - No backend API.
 - No server-side database.
 - No analytics, telemetry, advertising, cookies, or third-party scripts.
+- Imported files are untrusted input. The MIDI parser is bounded at every point a file declares a size — file bytes, track count, event count, variable-length values — so a small hostile file cannot drive unbounded allocation or a runaway loop. Parsing happens locally; no import reaches the network.
 - No raw-audio persistence and no raw-audio network. Microphone samples are converted to a pitch estimate inside the audio callback and never leave it; tests spy on `fetch` and `localStorage` to assert a singing take writes nothing and sends nothing.
 
 ## Data Classification

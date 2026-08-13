@@ -10,7 +10,7 @@ const budgets = [
   {
     name: "JavaScript asset",
     matches: (file) => file.startsWith("assets/") && file.endsWith(".js"),
-    rawBytes: 264 * KIB,
+    rawBytes: 268 * KIB,
     gzipBytes: 85 * KIB,
   },
   {
@@ -53,8 +53,8 @@ const totalBudget = {
   // the Today screen, and the Sight-Reading Academy.
   // The rhythm engine is a new lazy practice capability with its own session,
   // grading, and accessible feedback surface.
-  rawBytes: 490 * KIB,
-  gzipBytes: 155 * KIB,
+  rawBytes: 505 * KIB,
+  gzipBytes: 160 * KIB,
 };
 
 function collectFiles(directory) {

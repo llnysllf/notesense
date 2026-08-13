@@ -11,7 +11,8 @@ import {
   type SongPlaythrough,
   type SongPlaythroughSummary,
 } from "../songEngine";
-import { loadSongProgress, recordSongCompletion, saveSongProgress } from "../storage";
+import { loadImportedSongs, loadSongProgress, recordSongCompletion, saveSongProgress } from "../storage";
+import { BUILT_IN_SONGS } from "../songLibraryData";
 
 const WRONG_FEEDBACK_MS = 650;
 const REST_HOLD_MS = 500;
@@ -19,6 +20,9 @@ const REST_HOLD_MS = 500;
 export type { SongSessionStatus } from "../songEngine";
 
 export type UseSongSessionResult = {
+  // Built-in pieces plus anything the learner imported. One list, so an
+  // imported piece practises exactly like a built-in one.
+  songs: Song[];
   activeSong: Song | null;
   playthrough: SongPlaythrough | null;
   status: SongSessionStatus;
@@ -29,6 +33,7 @@ export type UseSongSessionResult = {
   closeSong: () => void;
   restartSong: () => void;
   answerCurrentEvent: (noteIds: string[]) => void;
+  refreshImportedSongs: (songs: Song[]) => void;
 };
 
 export function useSongSession(): UseSongSessionResult {
@@ -36,6 +41,7 @@ export function useSongSession(): UseSongSessionResult {
   const [playthrough, setPlaythrough] = useState<SongPlaythrough | null>(null);
   const [status, setStatus] = useState<SongSessionStatus>("idle");
   const [songProgress, setSongProgress] = useState<SongProgress>(() => loadSongProgress());
+  const [importedSongs, setImportedSongs] = useState<Song[]>(() => loadImportedSongs());
   const [storageWarning, setStorageWarning] = useState(false);
   const wrongTimerRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
 
@@ -123,10 +129,12 @@ export function useSongSession(): UseSongSessionResult {
     status,
     summary,
     songProgress,
+    songs: [...BUILT_IN_SONGS, ...importedSongs],
     storageWarning,
     openSong,
     closeSong,
     restartSong,
     answerCurrentEvent,
+    refreshImportedSongs: setImportedSongs,
   };
 }

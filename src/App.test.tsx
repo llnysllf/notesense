@@ -219,6 +219,14 @@ describe("App", () => {
     expect(screen.queryByRole("button", { name: "Sing it" })).not.toBeInTheDocument();
   });
 
+  it("opens the import screen and says what happens to the file", async () => {
+    window.history.replaceState(null, "", "/practice/import");
+    render(<App />);
+
+    expect(await screen.findByRole("heading", { name: "Import a MIDI file" })).toBeInTheDocument();
+    expect(screen.getByRole("note")).toHaveTextContent(/Nothing is uploaded/i);
+  });
+
   it("opens the placement check and lets the learner leave it for practice", async () => {
     window.history.replaceState(null, "", "/assess/placement");
     render(<App />);

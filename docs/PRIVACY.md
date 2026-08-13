@@ -19,6 +19,7 @@ Song practice results (best accuracy, completions, last played time) are saved i
 - **No audio is recorded, stored, or transmitted.** Samples are read from the microphone, converted to a pitch estimate, and the buffer is immediately reused. Pitch frames and the derived contour live only for the length of a take and are discarded when it ends. What can be kept is a `SungSummary` — five derived numbers describing how close the singing was — and the learner's comfortable range under `notesense.vocalRange.v1`.
 - Echo cancellation, noise suppression, and automatic gain are requested off, because they are tuned for speech and would bend the pitch being measured. This does not change what is stored.
 - The microphone is released when a take ends or the screen is left, which is what turns the browser's recording indicator off.
+- Imported MIDI files are read and parsed in the browser tab and never uploaded. Only the mapped result is stored, under `notesense.importedSongs.v1`; the original file is not kept. Importing is the learner's choice and the rights to the material are theirs to confirm.
 - Older local progress may be read from `notesense.progress.v1` and normalized into the current shape.
 - Data stays on the current browser profile unless the learner exports it.
 - The service worker cache stores reviewed static app assets only. It does not cache practice progress, exported data, or imported files.
