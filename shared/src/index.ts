@@ -16,3 +16,4 @@ export * from "./assessment";
 export * from "./ear";
 export * from "./voice";
 export * from "./import";
+export * from "./sound";

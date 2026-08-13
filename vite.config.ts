@@ -227,6 +227,12 @@ export default defineConfig({
         "shared/src/assessment/placement.ts",
         "shared/src/assessment/history.ts",
         "shared/src/assessment/shareCard.ts",
+        "shared/src/sound/soundWorld.ts",
+        "shared/src/sound/registry.ts",
+        "shared/src/sound/cachePolicy.ts",
+        "src/sound/soundWorlds.ts",
+        "src/hooks/useSoundWorld.ts",
+        "src/components/SoundWorldPicker.tsx",
       ],
       thresholds: {
         perFile: true,

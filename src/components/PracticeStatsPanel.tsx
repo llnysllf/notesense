@@ -11,6 +11,7 @@ import type {
   PracticePlan,
   SessionHistorySummary,
   SessionSummary,
+  SoundWorldView,
   TrainingNote,
 } from "../types";
 import DailyGoal from "./DailyGoal";
@@ -53,6 +54,7 @@ type PracticeStatsPanelProps = {
   onResetProgress: () => void;
   onSettingsChange: (patch: Partial<PracticeSettings>) => void;
   midi: MidiPanelProps;
+  sound: SoundWorldView;
 };
 
 function PracticeStatsPanel({
@@ -77,6 +79,7 @@ function PracticeStatsPanel({
   onResetProgress,
   onSettingsChange,
   midi,
+  sound,
 }: PracticeStatsPanelProps) {
   return (
     <aside className="stats-panel" aria-label="Practice progress">
@@ -153,6 +156,7 @@ function PracticeStatsPanel({
         {activeView === "settings" && (
           <PracticeSettingsView
             midi={midi}
+            sound={sound}
             mode={mode}
             rangeDetail={rangeDetail}
             rangeControls={rangeControls}

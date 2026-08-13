@@ -1,8 +1,9 @@
 import type { ReactNode } from "react";
 import { ROUND_LENGTHS } from "../practiceEngine";
 import MidiSettings from "./MidiSettings";
+import SoundWorldPicker from "./SoundWorldPicker";
 import type { MidiPanelProps } from "../midi/webMidi";
-import type { PracticeMode, PracticeSettings } from "../types";
+import type { PracticeMode, PracticeSettings, SoundWorldView } from "../types";
 
 type PracticeSettingsViewProps = {
   mode: PracticeMode;
@@ -11,6 +12,7 @@ type PracticeSettingsViewProps = {
   settings: PracticeSettings;
   onSettingsChange: (patch: Partial<PracticeSettings>) => void;
   midi: MidiPanelProps;
+  sound: SoundWorldView;
 };
 
 function PracticeSettingsView({
@@ -20,6 +22,7 @@ function PracticeSettingsView({
   settings,
   onSettingsChange,
   midi,
+  sound,
 }: PracticeSettingsViewProps) {
   return (
     <>
@@ -78,6 +81,8 @@ function PracticeSettingsView({
           <span>Reveal pitch answer</span>
         </label>
       </div>
+
+      <SoundWorldPicker sound={sound} />
 
       <div className="range-card">
         <h3>Active range</h3>

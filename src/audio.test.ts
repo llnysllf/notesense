@@ -82,18 +82,21 @@ describe("playTone", () => {
 
     playTone(440);
 
+    // One envelope gain per note, then one gain per partial feeding it. The
+    // default world has no partials, so a plain tone is fundamental only.
     const oscillator = oscillators[0];
-    const gain = gains[0];
+    const envelope = gains[0];
+    const partial = gains[1];
     expect(AudioContextMock).toHaveBeenCalledTimes(1);
-    expect(oscillator).toBeDefined();
-    expect(gain).toBeDefined();
+    expect(oscillators).toHaveLength(1);
     expect(oscillator?.type).toBe("triangle");
     expect(oscillator?.frequency.setValueAtTime).toHaveBeenCalledWith(440, 12.5);
-    expect(gain?.gain.setValueAtTime).toHaveBeenCalledWith(0, 12.5);
-    expect(gain?.gain.linearRampToValueAtTime).toHaveBeenCalledWith(0.22, 12.52);
-    expect(gain?.gain.exponentialRampToValueAtTime).toHaveBeenCalledWith(0.001, 13.35);
-    expect(oscillator?.connect).toHaveBeenCalledWith(gain);
-    expect(gain?.connect).toHaveBeenCalledWith(destination);
+    expect(envelope?.gain.setValueAtTime).toHaveBeenCalledWith(0, 12.5);
+    expect(envelope?.gain.linearRampToValueAtTime).toHaveBeenCalledWith(0.22, 12.52);
+    expect(envelope?.gain.exponentialRampToValueAtTime).toHaveBeenCalledWith(0.001, 12.5 + 0.9 * 0.94);
+    expect(oscillator?.connect).toHaveBeenCalledWith(partial);
+    expect(partial?.connect).toHaveBeenCalledWith(envelope);
+    expect(envelope?.connect).toHaveBeenCalledWith(destination);
     expect(oscillator?.start).toHaveBeenCalledWith(12.5);
     expect(oscillator?.stop).toHaveBeenCalledWith(13.4);
   });
@@ -107,7 +110,7 @@ describe("playTone", () => {
 
     expect(AudioContextMock).toHaveBeenCalledTimes(1);
     expect(context.createOscillator).toHaveBeenCalledTimes(2);
-    expect(context.createGain).toHaveBeenCalledTimes(2);
+    expect(context.createGain).toHaveBeenCalledTimes(4);
   });
 });
 
@@ -120,7 +123,7 @@ describe("playMelody", () => {
 
     expect(AudioContextMock).toHaveBeenCalledTimes(1);
     expect(oscillators).toHaveLength(3);
-    expect(gains).toHaveLength(3);
+    expect(gains).toHaveLength(6);
     expect(oscillators[0]?.frequency.setValueAtTime).toHaveBeenCalledWith(261.63, 12.5);
     expect(oscillators[1]?.frequency.setValueAtTime).toHaveBeenCalledWith(329.63, 13.22);
     expect(oscillators[2]?.frequency.setValueAtTime).toHaveBeenCalledWith(392, 13.94);

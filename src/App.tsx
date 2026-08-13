@@ -18,6 +18,7 @@ import { useSongSession } from "./hooks/useSongSession";
 import { usePracticeProgress } from "./hooks/usePracticeProgress";
 import { usePracticeSession } from "./hooks/usePracticeSession";
 import { useSettings } from "./hooks/useSettings";
+import { useSoundWorld } from "./hooks/useSoundWorld";
 import { getPracticeFeedbackText } from "./practiceFeedback";
 import { getStatsView } from "./statsView";
 import { requiresSessionReset } from "./settingsChange";
@@ -121,6 +122,8 @@ function App() {
     setProgress(next);
     session.resetSession(settings, next);
   }
+
+  const sound = useSoundWorld(settings.soundWorldId, (soundWorldId) => updateSettings({ soundWorldId }));
 
   const midi = useMidiAppInput({
     activeSection,
@@ -300,6 +303,7 @@ function App() {
           modeLabel={modeLabel}
           practicePlan={practicePlan}
           midi={midi.panel}
+          sound={sound}
           rangeControls={rangeControls}
           rangeDetail={mode === "reading" ? readingRange.detail : pitchRange.detail}
           settings={settings}

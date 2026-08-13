@@ -40,10 +40,19 @@ Release safety and provenance expectations live in [RELEASE_SAFETY.md](RELEASE_S
 - New dependency licenses should be reviewed through [DEPENDENCY_MAINTENANCE.md](DEPENDENCY_MAINTENANCE.md).
 - Do not use dependency license allowlists as a substitute for the root project license.
 
+## Bundled Audio Assets
+
+- Sound worlds are content, not code: a sampled instrument is somebody's recording, and shipping one is a licensing decision, not an implementation detail.
+- Every sound world declares a licence and an attribution in its manifest, and `validateSoundWorld` in `shared/src/sound/soundWorld.ts` rejects any licence outside `ALLOWED_ASSET_LICENSES` (CC0-1.0, CC-BY-4.0, Apache-2.0, MIT, public-domain). An unknown licence fails rather than being assumed acceptable.
+- Everything shipped today is synthesized in the browser from a voice definition, is public-domain, and downloads nothing. The manifest, cache policy, and fallback exist so a sampled pack can be added deliberately, not so one can arrive by accident.
+- Adding a downloadable pack requires owner approval covering its licence, its attribution text, its size against the download budget in [PERFORMANCE.md](PERFORMANCE.md), and its effect on the runtime surface — a pack means a network request the app does not currently make.
+- Asset licence review is separate from dependency licence review: `npm run compliance:licenses` covers installed packages and says nothing about bundled audio.
+
 ## Change Rules
 
 - Run `npm run legal:check` after changing the root license, package license metadata, legal docs, user-facing terms, privacy-policy hosting, contributor community expectations, code-of-conduct expectations, dependency license policy, release guidance, or PR review guidance.
 - Owner approval is required before changing the project from all-rights-reserved terms to an open-source license.
+- Owner approval is also required before adding a bundled or downloadable audio asset, and the allowed asset licence list must be updated in the same change as the asset.
 - Keep README, contributing, quality, release, architecture, dependency-maintenance, security/privacy, ADR, changelog, and PR review guidance aligned when legal or licensing expectations change.
 
 ## Verification

@@ -627,3 +627,24 @@ test("offers MIDI import and says the file stays on the device", async ({ page }
   // Nothing to preview or save until a file is actually loaded.
   await expect(page.getByRole("button", { name: "Save to my songs" })).toHaveCount(0);
 });
+
+test("keeps the chosen sound world, and shows what each one costs", async ({ page }) => {
+  await page.goto("/practice/reading", { waitUntil: "domcontentloaded" });
+  await openAppSection(page, "Preferences");
+
+  const worlds = page.getByRole("list", { name: "Sound world" });
+  await expect(worlds).toBeVisible();
+
+  // Size and licence are stated for every world, so "free" is something the
+  // learner can read rather than assume.
+  await expect(worlds.getByText(/No download/).first()).toBeVisible();
+  await expect(worlds.getByText(/public-domain/).first()).toBeVisible();
+
+  await worlds.getByRole("button", { name: /^Warm/ }).click();
+  await expect(worlds.getByRole("button", { name: /^Warm/ })).toHaveAttribute("aria-pressed", "true");
+
+  // The choice survives a reload, because it is a setting and not a session mood.
+  await page.reload({ waitUntil: "domcontentloaded" });
+  await openAppSection(page, "Preferences");
+  await expect(worlds.getByRole("button", { name: /^Warm/ })).toHaveAttribute("aria-pressed", "true");
+});
