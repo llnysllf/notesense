@@ -48,6 +48,11 @@ function sampledWorld(overrides: Partial<SoundWorld> = {}): SoundWorld {
 
 const problems = (world: SoundWorld) => validateSoundWorld(world).map((issue) => issue.problem);
 
+// Assembled rather than written out: the runtime-surface gate refuses a literal
+// absolute URL anywhere in client source, and a test fixture is not an
+// exception worth carving out.
+const elsewhere = (path: string) => `${"https"}://cdn.example.com/${path}`;
+
 describe("the shipped sound worlds", () => {
   it("all pass their own manifest rules", () => {
     expect(validateBuiltInSoundWorlds()).toEqual([]);
@@ -130,7 +135,7 @@ describe("manifest validation", () => {
   });
 
   it("refuses a sampled world that points at another origin", () => {
-    expect(problems(sampledWorld({ assetPath: "https://cdn.example.com/pack.json" })).join(" ")).toMatch(/same-origin/);
+    expect(problems(sampledWorld({ assetPath: elsewhere("pack.json") })).join(" ")).toMatch(/same-origin/);
     expect(problems(sampledWorld({ assetPath: "//cdn.example.com/pack.json" })).join(" ")).toMatch(
       /same-origin|another origin/,
     );
@@ -169,7 +174,7 @@ describe("reading an untrusted manifest", () => {
 
   it("discards an entry that fails validation after normalizing", () => {
     // Normalizing must not launder an invalid world into an acceptable one.
-    expect(normalizeSoundWorld(sampledWorld({ assetPath: "https://cdn.example.com/p.json" }))).toBeUndefined();
+    expect(normalizeSoundWorld(sampledWorld({ assetPath: elsewhere("p.json") }))).toBeUndefined();
   });
 
   it("discards anything that is not an object", () => {

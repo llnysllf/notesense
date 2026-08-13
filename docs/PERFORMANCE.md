@@ -16,7 +16,7 @@ NoteSense should feel instant enough for short practice sessions on desktop and 
 Current per-file budgets:
 
 - JavaScript asset: 268 KiB raw, 85 KiB gzip
-- CSS asset: 41 KiB raw, 9 KiB gzip
+- CSS asset: 42 KiB raw, 9 KiB gzip
 - HTML shell: 4 KiB raw, 1 KiB gzip
 - web metadata asset: 6 KiB raw, 3 KiB gzip
 - service worker: 8 KiB raw, 4 KiB gzip
@@ -26,9 +26,8 @@ Current total budget:
 
 - total Pages output: 505 KiB raw, 160 KiB gzip
 
+The CSS budget was raised by 1 KiB for the sound-world picker, which is a list of rows rather than a single control. Sound worlds add no download: all four ship as voice definitions synthesized in the browser, so choosing one costs bytes only in the manifest. `SOUND_CACHE_BUDGET_BYTES` in `shared/src/sound/cachePolicy.ts` caps any future downloaded packs at 24 MB total, held apart from this bundle budget because it is device storage rather than shipped bytes; the policy refuses a pack larger than the whole budget up front and evicts least-recently-used packs rather than the one being practised with.
 Secondary statistics, song screens, the evidence ledger, and the lazy rhythm, assessment, ear, singing, and import workspaces are split from the initial practice route. The total raw budget includes those deferred chunks and PWA precache metadata; the 160 KiB gzip cap remains the shipped-network constraint. It was raised for MIDI import: a bounded parser, the mapping into the song model, and the import screen, behind a lazily loaded route. It was previously raised for singing: pitch detection, the sung-score model, and the singing workspace, all behind a lazily loaded route so nothing that does not sing pays for it. It was previously raised for ear training: nine exercise families, alignment-based comparison, and the transcription editor, all behind a lazily loaded workspace so the practice route does not pay for them. It was previously raised for placement and the Reading Score: generated assessment passages, component scoring, a passage staff, and the locally drawn share card, none of which load on the practice route. It was previously raised for the rhythm engine's timing, grading, and accessible feedback surface. It was previously raised when the Today screen added the daily-plan UI and its styles, and from 105 KiB when URL-addressable destinations added a router (about 2 KiB gzip) and a 404.html shell copy so GitHub Pages can serve deep links.
-
-Sound worlds add no download: all four ship as voice definitions synthesized in the browser, so choosing one costs bytes only in the manifest. `SOUND_CACHE_BUDGET_BYTES` in `shared/src/sound/cachePolicy.ts` caps any future downloaded packs at 24 MB total, held apart from this bundle budget because it is device storage rather than shipped bytes; the policy refuses a pack larger than the whole budget up front and evicts least-recently-used packs rather than the one being practised with.
 
 ## Lighthouse Signal
 

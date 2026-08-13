@@ -630,7 +630,7 @@ test("offers MIDI import and says the file stays on the device", async ({ page }
 
 test("keeps the chosen sound world, and shows what each one costs", async ({ page }) => {
   await page.goto("/practice/reading", { waitUntil: "domcontentloaded" });
-  await page.getByRole("link", { name: "Preferences" }).click();
+  await openAppSection(page, "Preferences");
 
   const worlds = page.getByRole("list", { name: "Sound world" });
   await expect(worlds).toBeVisible();
@@ -645,6 +645,6 @@ test("keeps the chosen sound world, and shows what each one costs", async ({ pag
 
   // The choice survives a reload, because it is a setting and not a session mood.
   await page.reload({ waitUntil: "domcontentloaded" });
-  await page.getByRole("link", { name: "Preferences" }).click();
+  await openAppSection(page, "Preferences");
   await expect(worlds.getByRole("button", { name: /^Warm/ })).toHaveAttribute("aria-pressed", "true");
 });
