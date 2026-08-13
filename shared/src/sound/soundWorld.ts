@@ -92,6 +92,7 @@ export function validateSoundWorld(world: SoundWorld): ManifestIssue[] {
     if (world.approxBytes !== 0) fail("a synth world downloads nothing and must declare zero bytes");
     if (world.assetPath) fail("a synth world must not point at an asset");
   } else {
+    if (world.voice) fail("a sampled world must not carry a synth voice");
     if (!world.assetPath) fail("a sampled world needs an asset path");
     if (world.approxBytes <= 0) fail("a sampled world must declare its size");
     // A manifest asking the app to fetch from elsewhere is refused outright
@@ -111,26 +112,40 @@ export function normalizeSoundWorld(value: unknown): SoundWorld | undefined {
 
   const id = typeof candidate.id === "string" ? candidate.id.trim().slice(0, 60) : "";
   const label = typeof candidate.label === "string" ? candidate.label.trim().slice(0, 60) : "";
-  const kind = candidate.kind === "sampled" ? "sampled" : "synth";
+  const kind = candidate.kind;
   const license = typeof candidate.license === "string" ? candidate.license : "";
-  if (id.length === 0 || label.length === 0 || !LICENSES.has(license)) return undefined;
+  if (
+    id.length === 0 ||
+    label.length === 0 ||
+    !LICENSES.has(license) ||
+    (kind !== "synth" && kind !== "sampled") ||
+    !isFiniteInRange(candidate.version, 1, 9999) ||
+    !isFiniteInRange(candidate.approxBytes, 0, 50_000_000) ||
+    !isFiniteInRange(candidate.lowMidi, 21, 108) ||
+    !isFiniteInRange(candidate.highMidi, 21, 108)
+  ) {
+    return undefined;
+  }
 
   const world: SoundWorld = {
     id,
     label,
     description: typeof candidate.description === "string" ? candidate.description.trim().slice(0, 200) : "",
     kind,
-    version: isFiniteInRange(candidate.version, 1, 9999) ? Math.round(candidate.version) : 1,
+    version: Math.round(candidate.version),
     license: license as AssetLicense,
     attribution: typeof candidate.attribution === "string" ? candidate.attribution.trim().slice(0, 200) : "",
-    approxBytes: isFiniteInRange(candidate.approxBytes, 0, 50_000_000) ? Math.round(candidate.approxBytes) : 0,
-    lowMidi: isFiniteInRange(candidate.lowMidi, 21, 108) ? Math.round(candidate.lowMidi) : 21,
-    highMidi: isFiniteInRange(candidate.highMidi, 21, 108) ? Math.round(candidate.highMidi) : 108,
+    approxBytes: Math.round(candidate.approxBytes),
+    lowMidi: Math.round(candidate.lowMidi),
+    highMidi: Math.round(candidate.highMidi),
   };
 
-  const voice = normalizeVoice(candidate.voice);
-  if (voice) world.voice = voice;
-  if (typeof candidate.assetPath === "string" && candidate.assetPath.startsWith("/")) {
+  if (kind === "synth") {
+    const voice = normalizeVoice(candidate.voice);
+    if (!voice) return undefined;
+    world.voice = voice;
+  } else {
+    if (candidate.voice !== undefined || typeof candidate.assetPath !== "string") return undefined;
     world.assetPath = candidate.assetPath.slice(0, 200);
   }
 
@@ -142,14 +157,26 @@ function normalizeVoice(value: unknown): SynthVoice | undefined {
   const candidate = value as Record<string, unknown>;
   if (typeof candidate.wave !== "string" || !WAVES.has(candidate.wave)) return undefined;
 
+  const attackSeconds = candidate.attackSeconds;
+  const decayShare = candidate.decayShare;
+  const peakGain = candidate.peakGain;
+  if (
+    !isFiniteInRange(attackSeconds, 0, 1) ||
+    !isFiniteInRange(decayShare, 0.05, 1) ||
+    !isFiniteInRange(peakGain, 0.01, 1) ||
+    !Array.isArray(candidate.partials) ||
+    candidate.partials.length > 6 ||
+    !candidate.partials.every((level) => isFiniteInRange(level, 0, 1))
+  ) {
+    return undefined;
+  }
+
   return {
     wave: candidate.wave as SynthVoice["wave"],
-    attackSeconds: isFiniteInRange(candidate.attackSeconds, 0, 1) ? candidate.attackSeconds : 0.02,
-    decayShare: isFiniteInRange(candidate.decayShare, 0.05, 1) ? candidate.decayShare : 0.9,
-    peakGain: isFiniteInRange(candidate.peakGain, 0.01, 1) ? candidate.peakGain : 0.22,
-    partials: Array.isArray(candidate.partials)
-      ? candidate.partials.filter((level): level is number => isFiniteInRange(level, 0, 1)).slice(0, 6)
-      : [],
+    attackSeconds,
+    decayShare,
+    peakGain,
+    partials: [...candidate.partials],
   };
 }
 

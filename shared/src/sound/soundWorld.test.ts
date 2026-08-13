@@ -146,6 +146,12 @@ describe("manifest validation", () => {
     expect(problems(without(sampledWorld(), "assetPath"))).toContain("a sampled world needs an asset path");
   });
 
+  it("refuses a sampled world that carries a synth voice", () => {
+    expect(problems(sampledWorld({ voice: synthWorld().voice! }))).toContain(
+      "a sampled world must not carry a synth voice",
+    );
+  });
+
   it("refuses a synth world that claims a download or an asset", () => {
     expect(problems(synthWorld({ approxBytes: 1024 })).join(" ")).toMatch(/zero bytes/);
     expect(problems(synthWorld({ assetPath: "/sounds/x.json" })).join(" ")).toMatch(/must not point at an asset/);
@@ -183,17 +189,26 @@ describe("reading an untrusted manifest", () => {
     expect(normalizeSoundWorld([])).toBeUndefined();
   });
 
-  it("clamps hostile numbers instead of trusting them", () => {
-    const world = normalizeSoundWorld(
-      synthWorld({
-        voice: { wave: "sine", attackSeconds: 99, decayShare: 50, peakGain: 900, partials: [5, 0.2, -1] },
-      }),
-    );
+  it("discards hostile numeric voice fields instead of repairing them", () => {
+    expect(
+      normalizeSoundWorld(
+        synthWorld({
+          voice: { wave: "sine", attackSeconds: 99, decayShare: 50, peakGain: 900, partials: [5, 0.2, -1] },
+        }),
+      ),
+    ).toBeUndefined();
+  });
 
-    expect(world?.voice?.attackSeconds).toBe(0.02);
-    expect(world?.voice?.peakGain).toBe(0.22);
-    // Out-of-range partials are dropped, not clamped into something audible.
-    expect(world?.voice?.partials).toEqual([0.2]);
+  it("does not turn an unknown kind into a synth world", () => {
+    expect(normalizeSoundWorld({ ...synthWorld(), kind: "remote-pack" })).toBeUndefined();
+  });
+
+  it("discards a voice with an out-of-range partial instead of dropping just that partial", () => {
+    expect(
+      normalizeSoundWorld(
+        synthWorld({ voice: { wave: "sine", attackSeconds: 0.02, decayShare: 0.9, peakGain: 0.2, partials: [1.1] } }),
+      ),
+    ).toBeUndefined();
   });
 
   it("refuses a voice with a waveform it cannot make", () => {
