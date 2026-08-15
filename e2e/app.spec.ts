@@ -46,7 +46,11 @@ async function openAppSection(page: Page, name: string) {
   // The app is behind a lazy import now, so it may not be on the page yet.
   // Asking whether the drawer toggle is visible before the app has rendered
   // answers "no" and silently skips opening the drawer.
-  await appNav(page).waitFor({ state: "attached" });
+  //
+  // Waited for by CSS rather than by role: on a phone the sidebar is off-canvas
+  // and therefore absent from the accessibility tree, so a role query does not
+  // match it even as "attached".
+  await page.locator("#app-sidebar").waitFor({ state: "attached" });
 
   const toggle = page.getByRole("button", { name: "Open menu" });
   if (await toggle.isVisible()) {
