@@ -104,4 +104,12 @@ describe("MidiSettings", () => {
     fireEvent.change(screen.getByLabelText("Timing correction (ms)"), { target: { value: "85" } });
     expect(props.onSetLatencyMs).toHaveBeenCalledWith(85);
   });
+
+  it("offers a guided timing measurement when a piano is connected", () => {
+    const calibration = { state: "idle" as const, samples: 0, message: null, start: vi.fn(), cancel: vi.fn() };
+    renderSettings({ status: "connected", devices: [{ id: "a", name: "Piano" }], selectedId: "a", calibration });
+
+    fireEvent.click(screen.getByRole("button", { name: "Measure piano timing" }));
+    expect(calibration.start).toHaveBeenCalledOnce();
+  });
 });

@@ -15,7 +15,9 @@ export default defineConfig({
   },
   webServer: {
     command: "npm run build:pages && node scripts/serve-pages-preview.mjs --port 4174",
-    reuseExistingServer: !process.env.CI,
+    // Pages checks must serve this checkout's Pages-shaped build, not an
+    // unrelated local preview that happens to use the conventional port.
+    reuseExistingServer: false,
     url: "http://127.0.0.1:4174/notesense/",
   },
   projects: [

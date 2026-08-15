@@ -16,7 +16,9 @@ export default defineConfig({
   },
   webServer: {
     command: "npm run build && npm run preview -- --host 127.0.0.1 --port 4173 --strictPort",
-    reuseExistingServer: !process.env.CI,
+    // A server on this port might belong to another checkout. Never let local
+    // tests silently exercise it; fail at startup with the occupied port.
+    reuseExistingServer: false,
     url: "http://127.0.0.1:4173",
   },
   projects: [
