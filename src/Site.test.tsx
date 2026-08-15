@@ -67,7 +67,10 @@ describe("which of the two things a URL is", () => {
 
   it("treats a path the router cannot report as the site root", async () => {
     vi.resetModules();
-    vi.doMock("raviger", () => ({ usePath: () => null, navigate: vi.fn() }));
+    vi.doMock("raviger", async (importOriginal) => ({
+      ...(await importOriginal<typeof import("raviger")>()),
+      usePath: () => null,
+    }));
     const { default: SiteWithoutPath } = await import("./Site");
 
     render(<SiteWithoutPath />);

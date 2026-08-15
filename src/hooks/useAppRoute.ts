@@ -6,7 +6,7 @@
 // section-in-useState approach.
 
 import { useCallback } from "react";
-import { navigate, usePath } from "raviger";
+import { useNavigate, usePath } from "raviger";
 import {
   DEFAULT_ROUTE,
   matchRoute,
@@ -27,17 +27,28 @@ export type AppRoute = {
 };
 
 export function useAppRoute(): AppRoute {
+  // The base-aware navigate, not the imported one. The deployed site is served
+  // from a sub-path, and the bare `navigate` does not prepend it: it sends a
+  // learner to a URL that does not exist there. Found while building the public
+  // site, where every link had the same problem.
+  const navigate = useNavigate();
   const path = usePath() ?? "/";
   const matched = matchRoute(path);
   const isUnknownPath = matched === undefined && normalizeRoutePath(path) !== "/";
 
-  const goToRoute = useCallback((next: RouteDefinition) => {
-    navigate(next.path);
-  }, []);
+  const goToRoute = useCallback(
+    (next: RouteDefinition) => {
+      navigate(next.path);
+    },
+    [navigate],
+  );
 
-  const goToSection = useCallback((section: AppSection, mode: PracticeMode = "reading") => {
-    navigate(routeForSection(section, mode).path);
-  }, []);
+  const goToSection = useCallback(
+    (section: AppSection, mode: PracticeMode = "reading") => {
+      navigate(routeForSection(section, mode).path);
+    },
+    [navigate],
+  );
 
   return {
     route: matched ?? DEFAULT_ROUTE,

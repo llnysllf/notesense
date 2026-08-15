@@ -15,9 +15,9 @@ function renderDemo(overrides: Partial<ReadingDemoView> = {}) {
     next: vi.fn(),
     ...overrides,
   };
-  const onStart = vi.fn();
+  const action = { label: "Start practising", href: "/practice/reading" };
 
-  return { ...render(<ReadingDemo demo={demo} onStart={onStart} />), demo, onStart };
+  return { ...render(<ReadingDemo demo={demo} action={action} />), demo, action };
 }
 
 describe("the demo on the home page", () => {
@@ -85,10 +85,8 @@ describe("the demo on the home page", () => {
   });
 
   it("offers the real thing from inside the demo", () => {
-    const { onStart } = renderDemo();
+    renderDemo();
 
-    fireEvent.click(screen.getByRole("button", { name: "Start practising" }));
-
-    expect(onStart).toHaveBeenCalled();
+    expect(screen.getByRole("link", { name: "Start practising" })).toHaveAttribute("href", "/practice/reading");
   });
 });

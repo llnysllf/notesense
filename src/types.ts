@@ -461,7 +461,6 @@ export type MarketingView = {
   navPages: readonly MarketingPage[];
   // The live demo on the home page, or nothing on pages that do not carry one.
   demo: ReadingDemoView | null;
-  onNavigate: (path: string) => void;
 };
 
 // A real reading prompt, drawn with the app's own staff and answered against

@@ -1,8 +1,6 @@
-import { act, renderHook } from "@testing-library/react";
-import { describe, expect, it, vi } from "vitest";
+import { renderHook } from "@testing-library/react";
+import { describe, expect, it } from "vitest";
 
-const navigate = vi.fn();
-vi.mock("raviger", () => ({ navigate: (path: string) => navigate(path) }));
 import { useMarketingSite } from "./useMarketingSite";
 import { ROUTES } from "../routes";
 import { MARKETING_PAGES, validateMarketingPages, type MarketingPage } from "../types";
@@ -32,14 +30,6 @@ describe("assembling a public page", () => {
     const { result } = renderHook(() => useMarketingSite(pageById("home")));
 
     expect(result.current.navPages.some((entry) => entry.id === "home")).toBe(false);
-  });
-
-  it("moves through the router rather than reloading the page", () => {
-    const { result } = renderHook(() => useMarketingSite(pageById("home")));
-
-    act(() => result.current.onNavigate("/practice/ear"));
-
-    expect(navigate).toHaveBeenCalledWith("/practice/ear");
   });
 
   it("never offers a claim whose screen the app does not have", () => {

@@ -1,9 +1,10 @@
+import { Link } from "raviger";
 import MusicStaff from "../MusicStaff";
-import type { ReadingDemoView } from "../../types";
+import type { PrimaryAction, ReadingDemoView } from "../../types";
 
 type ReadingDemoProps = {
   demo: ReadingDemoView;
-  onStart: () => void;
+  action: PrimaryAction;
 };
 
 // A real prompt, drawn by the app's own staff component and drawn from the
@@ -12,7 +13,7 @@ type ReadingDemoProps = {
 // A screenshot would load faster and would be a claim rather than a
 // demonstration. This is the product, minus the parts a first-time visitor has
 // not agreed to: nothing is saved, and no round is running.
-function ReadingDemo({ demo, onStart }: ReadingDemoProps) {
+function ReadingDemo({ demo, action }: ReadingDemoProps) {
   const { note, options, verdict, lastAnswer } = demo;
 
   return (
@@ -47,9 +48,9 @@ function ReadingDemo({ demo, onStart }: ReadingDemoProps) {
         <button type="button" className="secondary-button" onClick={demo.next} disabled={verdict === "unanswered"}>
           Another note
         </button>
-        <button type="button" className="primary-button" onClick={onStart}>
-          Start practising
-        </button>
+        <Link className="primary-button" href={action.href}>
+          {action.label}
+        </Link>
       </div>
 
       {demo.answered > 0 && (

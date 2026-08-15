@@ -669,7 +669,9 @@ test("shows the public site at the root and only claims what is shipped", async 
   // way through to the product is the thing this whole surface must not become.
   const claims = page.getByRole("region", { name: "What you can do" });
   await expect(claims.getByRole("listitem").first()).toBeVisible();
-  await expect(claims.getByRole("button", { name: /^Open note reading/i })).toBeVisible();
+  // A link, not a button: the deployed site lives under a sub-path, and a
+  // visitor should be able to open a claim in a new tab like any other link.
+  await expect(claims.getByRole("link", { name: /^Open note reading/i })).toHaveAttribute("href", "/practice/reading");
 
   // No pricing and no sign-in, because there is neither.
   await expect(page.getByRole("link", { name: /pricing|sign in|log in/i })).toHaveCount(0);

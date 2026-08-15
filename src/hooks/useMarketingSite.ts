@@ -1,5 +1,4 @@
-import { useCallback, useMemo } from "react";
-import { navigate } from "raviger";
+import { useMemo } from "react";
 import { ROUTES } from "../routes";
 import { useReadingDemo } from "./useReadingDemo";
 import {
@@ -28,15 +27,10 @@ export function useMarketingSite(page: MarketingPage): MarketingView {
       .filter((capability) => capability !== undefined);
   }, [page]);
 
-  const onNavigate = useCallback((path: string) => {
-    navigate(path);
-  }, []);
-
   return {
     page,
     claims,
     navPages: marketingNavPages(),
     demo,
-    onNavigate,
   };
 }

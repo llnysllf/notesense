@@ -1,3 +1,4 @@
+import { Link } from "raviger";
 import MarketingShell from "./MarketingShell";
 import ReadingDemo from "./ReadingDemo";
 import type { MarketingView } from "../../types";
@@ -13,10 +14,10 @@ type MarketingPageViewProps = {
 // product rather than from copy written here. That is what keeps the site
 // honest when a screen changes: there is no second place to update.
 function MarketingPageView({ site }: MarketingPageViewProps) {
-  const { page, claims, demo, navPages, onNavigate } = site;
+  const { page, claims, demo, navPages } = site;
 
   return (
-    <MarketingShell page={page} navPages={navPages} onNavigate={onNavigate}>
+    <MarketingShell page={page} navPages={navPages}>
       <section className="site-hero">
         <h1>{page.heading}</h1>
         <p className="site-intro">{page.intro}</p>
@@ -24,13 +25,13 @@ function MarketingPageView({ site }: MarketingPageViewProps) {
             asking someone to commit before they have tried it, and then again
             after, is the same ask printed twice. */}
         {!demo && (
-          <button type="button" className="primary-button" onClick={() => onNavigate(page.primaryAction.href)}>
+          <Link className="primary-button" href={page.primaryAction.href}>
             {page.primaryAction.label}
-          </button>
+          </Link>
         )}
       </section>
 
-      {demo && <ReadingDemo demo={demo} onStart={() => onNavigate(page.primaryAction.href)} />}
+      {demo && <ReadingDemo demo={demo} action={page.primaryAction} />}
 
       <section className="site-claims" aria-labelledby="claims-heading">
         <h2 id="claims-heading">What you can do</h2>
@@ -41,13 +42,9 @@ function MarketingPageView({ site }: MarketingPageViewProps) {
               <p className="site-claim-line">{capability.claim}</p>
               <p className="site-claim-detail">{capability.detail}</p>
               {capability.routePath && (
-                <button
-                  type="button"
-                  className="ghost-button"
-                  onClick={() => onNavigate(capability.routePath as string)}
-                >
+                <Link className="ghost-button" href={capability.routePath}>
                   Open {capability.label.toLowerCase()}
-                </button>
+                </Link>
               )}
             </li>
           ))}

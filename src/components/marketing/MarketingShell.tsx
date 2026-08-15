@@ -1,10 +1,10 @@
 import type { ReactNode } from "react";
+import { Link } from "raviger";
 import { SOURCE_URL, type MarketingPage } from "../../types";
 
 type MarketingShellProps = {
   page: MarketingPage;
   navPages: readonly MarketingPage[];
-  onNavigate: (path: string) => void;
   children: ReactNode;
 };
 
@@ -13,50 +13,34 @@ type MarketingShellProps = {
 //
 // Navigation is a list of links rather than a menu that opens, because eight
 // destinations fit on a phone and a menu that hides them buys nothing.
-function MarketingShell({ page, navPages, onNavigate, children }: MarketingShellProps) {
+//
+// Every internal link is a router Link, not a bare anchor. The deployed site is
+// served from a sub-path, and only Link knows about it: an anchor written with
+// the app's own path sends a visitor to a URL that does not exist there, and an
+// imperative navigate() drops the prefix in exactly the same way.
+function MarketingShell({ page, navPages, children }: MarketingShellProps) {
   return (
     <div className="site">
       <header className="site-header">
-        <a
-          className="site-wordmark"
-          href="/"
-          onClick={(event) => {
-            event.preventDefault();
-            onNavigate("/");
-          }}
-        >
+        <Link className="site-wordmark" href="/">
           NoteSense
-        </a>
+        </Link>
 
         <nav className="site-nav" aria-label="Site">
           <ul>
             {navPages.map((entry) => (
               <li key={entry.id}>
-                <a
-                  href={entry.path}
-                  aria-current={entry.path === page.path ? "page" : undefined}
-                  onClick={(event) => {
-                    event.preventDefault();
-                    onNavigate(entry.path);
-                  }}
-                >
+                <Link href={entry.path} aria-current={entry.path === page.path ? "page" : undefined}>
                   {entry.navLabel}
-                </a>
+                </Link>
               </li>
             ))}
           </ul>
         </nav>
 
-        <a
-          className="site-action"
-          href="/practice/reading"
-          onClick={(event) => {
-            event.preventDefault();
-            onNavigate("/practice/reading");
-          }}
-        >
+        <Link className="site-action" href="/practice/reading">
           Start practising
-        </a>
+        </Link>
       </header>
 
       <main className="site-main">{children}</main>
@@ -65,26 +49,10 @@ function MarketingShell({ page, navPages, onNavigate, children }: MarketingShell
         <p>NoteSense runs in your browser. No account, no servers, no tracking.</p>
         <ul>
           <li>
-            <a
-              href="/privacy"
-              onClick={(event) => {
-                event.preventDefault();
-                onNavigate("/privacy");
-              }}
-            >
-              Privacy
-            </a>
+            <Link href="/privacy">Privacy</Link>
           </li>
           <li>
-            <a
-              href="/help"
-              onClick={(event) => {
-                event.preventDefault();
-                onNavigate("/help");
-              }}
-            >
-              Help
-            </a>
+            <Link href="/help">Help</Link>
           </li>
           <li>
             <a href={SOURCE_URL}>Source</a>

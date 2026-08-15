@@ -1,4 +1,4 @@
-import { fireEvent, render, screen, within } from "@testing-library/react";
+import { render, screen, within } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 import MarketingPageView from "./MarketingPageView";
 import { CAPABILITIES, MARKETING_PAGES, marketingNavPages, type MarketingView } from "../../types";
@@ -12,7 +12,6 @@ function renderPage(overrides: Partial<MarketingView> = {}) {
     claims: CAPABILITIES.filter((capability) => rhythm.capabilities.includes(capability.id)),
     navPages: marketingNavPages(),
     demo: null,
-    onNavigate: vi.fn(),
     ...overrides,
   };
 
@@ -27,12 +26,13 @@ describe("a public page", () => {
     expect(screen.getByText(rhythm.intro)).toBeInTheDocument();
   });
 
-  it("offers one primary action, and takes the visitor there", () => {
-    const { site } = renderPage();
+  it("offers one primary action, as a link a visitor can also open in a new tab", () => {
+    renderPage();
 
-    fireEvent.click(screen.getByRole("button", { name: rhythm.primaryAction.label }));
-
-    expect(site.onNavigate).toHaveBeenCalledWith(rhythm.primaryAction.href);
+    expect(screen.getByRole("link", { name: rhythm.primaryAction.label })).toHaveAttribute(
+      "href",
+      rhythm.primaryAction.href,
+    );
   });
 
   it("prints only the claims it was given, in the product's own words", () => {
@@ -54,11 +54,9 @@ describe("a public page", () => {
   });
 
   it("opens the screen behind a claim", () => {
-    const { site } = renderPage();
+    renderPage();
 
-    fireEvent.click(screen.getByRole("button", { name: /Open rhythm/i }));
-
-    expect(site.onNavigate).toHaveBeenCalledWith("/practice/rhythm");
+    expect(screen.getByRole("link", { name: /Open rhythm/i })).toHaveAttribute("href", "/practice/rhythm");
   });
 
   it("marks the current page in the site navigation", () => {
@@ -69,12 +67,14 @@ describe("a public page", () => {
     expect(nav.getByRole("link", { name: "Singing" })).not.toHaveAttribute("aria-current");
   });
 
-  it("routes navigation through the app rather than reloading the page", () => {
-    const { site } = renderPage();
+  it("routes navigation through the router rather than as bare anchors", () => {
+    renderPage();
 
-    fireEvent.click(within(screen.getByRole("navigation", { name: "Site" })).getByRole("link", { name: "Privacy" }));
-
-    expect(site.onNavigate).toHaveBeenCalledWith("/privacy");
+    // A bare anchor loses the sub-path the deployed site is served from, and
+    // sends a visitor to a URL that does not exist there.
+    expect(
+      within(screen.getByRole("navigation", { name: "Site" })).getByRole("link", { name: "Privacy" }),
+    ).toHaveAttribute("href", "/privacy");
   });
 
   it("offers no screen link for a claim that is not a screen", () => {
@@ -82,11 +82,11 @@ describe("a public page", () => {
     renderPage({ claims: CAPABILITIES.filter((capability) => capability.id === "offline") });
 
     expect(screen.getByText("Local-first")).toBeVisible();
-    expect(screen.queryByRole("button", { name: /^Open / })).toBeNull();
+    expect(screen.queryByRole("link", { name: /^Open / })).toBeNull();
   });
 
   it("starts practice from inside the demo", () => {
-    const { site } = renderPage({
+    renderPage({
       page: home,
       demo: {
         note: { id: "C4", name: "C", octave: 4, frequency: 261.63, staffY: 10, clef: "treble", keyboardShortcut: "c" },
@@ -100,10 +100,15 @@ describe("a public page", () => {
       },
     });
 
-    // The home page shows its one action under the demo, not above it.
-    fireEvent.click(screen.getByRole("button", { name: home.primaryAction.label }));
-
-    expect(site.onNavigate).toHaveBeenCalledWith(home.primaryAction.href);
+    // The home page shows its one action under the demo, not above it; the
+    // header keeps its own permanent way in, which is chrome rather than the
+    // page's ask.
+    const demoSection = within(screen.getByRole("region", { name: "Try one now" }));
+    expect(demoSection.getByRole("link", { name: home.primaryAction.label })).toHaveAttribute(
+      "href",
+      home.primaryAction.href,
+    );
+    expect(within(screen.getByRole("banner")).getAllByRole("link", { name: home.primaryAction.label })).toHaveLength(1);
   });
 
   it("carries the demo only on the page that has one", () => {
