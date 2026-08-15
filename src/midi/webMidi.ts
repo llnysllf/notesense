@@ -15,6 +15,14 @@ export type MidiDevice = { id: string; name: string };
 // Where a connection attempt has got to, from the learner's point of view.
 export type MidiStatus = "idle" | "connecting" | "connected" | "denied" | "unavailable";
 
+export type MidiCalibration = {
+  state: "idle" | "running" | "complete";
+  samples: number;
+  message: string | null;
+  start: () => void;
+  cancel: () => void;
+};
+
 // What the settings panel needs to render a connection. Declared beside the
 // device layer so a hook can shape it without importing a component.
 export type MidiPanelProps = {
@@ -23,6 +31,7 @@ export type MidiPanelProps = {
   devices: MidiDevice[];
   selectedId: string | null;
   latencyMs: number;
+  calibration?: MidiCalibration;
   onSetLatencyMs: (latencyMs: number) => void;
   onConnect: () => void;
   onDisconnect: () => void;

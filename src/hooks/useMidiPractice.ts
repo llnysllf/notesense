@@ -69,6 +69,7 @@ export function useMidiPractice({
       devices: midi.devices,
       selectedId: midi.selectedId,
       latencyMs: midi.latencyMs,
+      calibration: midi.calibration,
       onSetLatencyMs: midi.setLatencyMs,
       onConnect: midi.connect,
       onDisconnect: midi.disconnect,

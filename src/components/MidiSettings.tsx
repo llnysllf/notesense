@@ -27,6 +27,7 @@ function MidiSettings({
   onDisconnect,
   onSelectDevice,
   onSetLatencyMs,
+  calibration,
 }: MidiPanelProps) {
   return (
     <section className="midi-settings" aria-labelledby="midi-heading">
@@ -59,6 +60,24 @@ function MidiSettings({
 
           {status === "connected" && latencyMs > 0 ? (
             <p className="midi-note">Timing is corrected for a {latencyMs}ms delay on this device.</p>
+          ) : null}
+
+          {status === "connected" ? (
+            <div className="midi-calibration">
+              <p className="midi-note" role="note">
+                {calibration?.message ?? "Measure your piano's timing instead of guessing a correction."}
+              </p>
+              {calibration?.state === "running" ? (
+                <p aria-live="polite">Clicks matched: {calibration.samples} of 6</p>
+              ) : null}
+              <button
+                type="button"
+                className="secondary-button"
+                onClick={calibration?.state === "running" ? calibration.cancel : calibration?.start}
+              >
+                {calibration?.state === "running" ? "Cancel timing check" : "Measure piano timing"}
+              </button>
+            </div>
           ) : null}
 
           {status === "connected" ? (

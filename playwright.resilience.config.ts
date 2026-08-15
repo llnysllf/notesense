@@ -15,7 +15,7 @@ export default defineConfig({
   },
   webServer: {
     command: "npm run build -- --mode resilience && npm run preview -- --host 127.0.0.1 --port 4175 --strictPort",
-    reuseExistingServer: !process.env.CI,
+    reuseExistingServer: false,
     url: "http://127.0.0.1:4175",
   },
   projects: [
