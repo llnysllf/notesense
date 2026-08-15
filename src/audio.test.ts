@@ -27,6 +27,7 @@ function installAudioContextMock() {
   const context = {
     currentTime: 12.5,
     destination,
+    resume: vi.fn(() => Promise.resolve()),
     createOscillator: vi.fn(() => {
       const oscillator: MockOscillator = {
         type: "sine",
@@ -99,6 +100,15 @@ describe("playTone", () => {
     expect(envelope?.connect).toHaveBeenCalledWith(destination);
     expect(oscillator?.start).toHaveBeenCalledWith(12.5);
     expect(oscillator?.stop).toHaveBeenCalledWith(13.4);
+  });
+
+  it("resumes a suspended context from the same playback call", async () => {
+    const { context } = installAudioContextMock();
+    const { playTone } = await import("./audio");
+
+    playTone(440);
+
+    expect(context.resume).toHaveBeenCalledOnce();
   });
 
   it("reuses one audio context across repeated tones", async () => {

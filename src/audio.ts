@@ -8,8 +8,20 @@ function getAudioContext(): AudioContext {
   return audioContext;
 }
 
+// Safari commonly creates a context in the suspended state until a user
+// interaction explicitly resumes it. Creating oscillators alone still makes
+// the browser show audio activity, but nothing reaches the speakers. Every
+// public playback entry point calls this synchronously so a click on “play”
+// remains the gesture Safari needs; delayed auto-play can then use the context
+// that the learner has already unlocked.
+function resumeAudio(context: AudioContext): void {
+  const resumed = context.resume?.();
+  void resumed?.catch(() => undefined);
+}
+
 export function playTone(frequency: number): void {
   const context = getAudioContext();
+  resumeAudio(context);
   scheduleTone(context, frequency, context.currentTime, 0.9);
 }
 
@@ -27,7 +39,7 @@ export function playPitchGroups(groups: number[][], gapSeconds = 0.9): void {
   if (groups.length === 0) return;
 
   const context = getAudioContext();
-  void context.resume?.();
+  resumeAudio(context);
 
   groups.forEach((frequencies, index) => {
     const startAt = context.currentTime + index * gapSeconds;
@@ -39,6 +51,7 @@ export function playMelody(frequencies: number[], noteDuration = 0.62, noteStep 
   if (frequencies.length === 0) return;
 
   const context = getAudioContext();
+  resumeAudio(context);
 
   frequencies.forEach((frequency, index) => {
     scheduleTone(context, frequency, context.currentTime + index * noteStep, noteDuration);
@@ -53,7 +66,7 @@ export function playMelody(frequencies: number[], noteDuration = 0.62, noteStep 
 // does not change what practice sounds like until the choice is made.
 export function playSoundWorldPreview(world: SoundWorld): void {
   const context = getAudioContext();
-  void context.resume?.();
+  resumeAudio(context);
 
   [261.63, 329.63, 392].forEach((frequency, index) => {
     renderNote(context, frequency, context.currentTime + index * 0.26, 0.5, world);
