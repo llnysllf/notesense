@@ -97,7 +97,11 @@ function findAbsoluteUrls(content) {
 
 function checkAllowedUrls(file, content, failures) {
   for (const { index, value } of findAbsoluteUrls(content)) {
-    if (!ALLOWED_ABSOLUTE_URLS.has(value)) {
+    // The site origin is already deliberately approved as a prefix for built
+    // HTML (canonical links differ per page). Keep source files on the same
+    // rule so first-party, static metadata assets such as the social card do
+    // not need one fragile allowlist entry per filename.
+    if (!isApprovedUrl(value)) {
       failures.push(`${file}:${getLineNumber(content, index)} uses unapproved absolute URL ${value}`);
     }
   }
