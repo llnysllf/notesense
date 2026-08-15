@@ -8,8 +8,9 @@ type MarketingShellProps = {
   children: ReactNode;
 };
 
-// The frame around every public page: who this is, where else to go, and the
-// one action worth taking.
+// The frame around every public page: who this is and where else to go. The
+// page itself owns its one primary action, so the header never competes with
+// the learner's next step.
 //
 // Navigation is a list of links rather than a menu that opens, because eight
 // destinations fit on a phone and a menu that hides them buys nothing.
@@ -37,10 +38,6 @@ function MarketingShell({ page, navPages, children }: MarketingShellProps) {
             ))}
           </ul>
         </nav>
-
-        <Link className="site-action" href="/practice/reading">
-          Start practising
-        </Link>
       </header>
 
       <main className="site-main">{children}</main>
@@ -53,6 +50,9 @@ function MarketingShell({ page, navPages, children }: MarketingShellProps) {
           </li>
           <li>
             <Link href="/help">Help</Link>
+          </li>
+          <li>
+            <Link href="/terms">Terms</Link>
           </li>
           <li>
             <a href={SOURCE_URL}>Source</a>

@@ -12,8 +12,10 @@ const SHELL_TAGS = [
   '<meta property="og:title" content="shell" />',
   '<meta property="og:description" content="shell" />',
   '<meta property="og:url" content="shell" />',
+  '<meta property="og:image" content="shell" />',
   '<meta name="twitter:title" content="shell" />',
   '<meta name="twitter:description" content="shell" />',
+  '<meta name="twitter:image" content="shell" />',
   '<link rel="canonical" href="shell" />',
 ].join("");
 
@@ -109,5 +111,8 @@ describe("which of the two things a URL is", () => {
       /no audio is recorded/i,
     );
     expect(document.head.querySelector('meta[property="og:title"]')?.getAttribute("content")).toBe("Singing practice");
+    expect(document.head.querySelector('meta[property="og:image"]')?.getAttribute("content")).toMatch(
+      /social-card\.png$/,
+    );
   });
 });

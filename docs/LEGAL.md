@@ -31,7 +31,7 @@ Release safety and provenance expectations live in [RELEASE_SAFETY.md](RELEASE_S
 - The public site makes claims about the product to people who have not used it, so its claims are generated from the shipped route table and validated by `validateMarketingPages` rather than written as free copy.
 - There is no pricing page, because there is no commercial offer, and no sign-in page, because there are no accounts. Adding either requires adding the thing it describes first, and updating this contract, [PRODUCT_SCOPE.md](PRODUCT_SCOPE.md), and the user-facing legal surface above in the same change.
 - The site collects nothing. There is no waitlist, no email capture, no form that leaves the device, and no conversion measurement. Adding any of them means a network request, a widened content policy, an externally hosted privacy policy, and owner approval before implementation.
-- Terms of Service remain unnecessary while the site sells nothing, hosts no accounts, and accepts no user submissions.
+- The public Terms page records the simple boundary for the current local tool. It is not an account, payment, subscription, upload, or support contract; add formal Terms of Service before any of those surfaces ship.
 
 ## Community Conduct
 

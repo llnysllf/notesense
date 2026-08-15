@@ -448,6 +448,7 @@ export {
   MAX_DESCRIPTION_LENGTH,
   SITE_URL,
   SOURCE_URL,
+  SOCIAL_CARD_URL,
   withoutTrailingSlash,
 } from "@notesense/shared";
 

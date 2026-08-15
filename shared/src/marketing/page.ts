@@ -14,9 +14,10 @@
 import type { CapabilityId } from "./capability";
 import { MARKETING_PAGE_DATA } from "./pageData";
 
-export { SITE_URL, SOURCE_URL, withoutTrailingSlash } from "./pageData";
+export { SITE_URL, SOURCE_URL, SOCIAL_CARD_URL, withoutTrailingSlash } from "./pageData";
 
-export type MarketingPageId = "home" | "how-it-works" | "reading" | "rhythm" | "ear" | "singing" | "privacy" | "help";
+export type MarketingPageId =
+  "home" | "how-it-works" | "reading" | "rhythm" | "ear" | "singing" | "privacy" | "help" | "terms";
 
 // What the page asks the visitor to do. One per page: a page with three equal
 // calls to action is a page that has not decided what it is for.

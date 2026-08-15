@@ -19,8 +19,10 @@ const requiredHtmlSnippets = [
   '<meta property="og:site_name" content="NoteSense"',
   '<meta property="og:title" content="NoteSense | Piano Note Reading Trainer"',
   `<meta property="og:url" content="${LIVE_URL}"`,
-  '<meta name="twitter:card" content="summary"',
+  `<meta property="og:image" content="${LIVE_URL}social-card.png"`,
+  '<meta name="twitter:card" content="summary_large_image"',
   '<meta name="twitter:title" content="NoteSense | Piano Note Reading Trainer"',
+  `<meta name="twitter:image" content="${LIVE_URL}social-card.png"`,
 ];
 
 function assert(condition, message) {
@@ -84,6 +86,11 @@ assertIncludes(iconSvg, "viewBox=", "icon.svg");
 assertIncludes(iconSvg, "<title", "icon.svg");
 console.log("- icon.svg passed");
 
+const socialCard = join(DIST_DIR, "social-card.png");
+assert(existsSync(socialCard), "social-card.png must be emitted for shared-link previews");
+assert(readFileSync(socialCard).subarray(1, 4).toString("ascii") === "PNG", "social-card.png must be a PNG image");
+console.log("- social card passed");
+
 const robots = readDistFile("robots.txt");
 assertIncludes(robots, "User-agent: *", "robots.txt");
 assertIncludes(robots, "Allow: /", "robots.txt");
@@ -120,12 +127,14 @@ for (const name of publicPages) {
   const canonical = /<link[^>]*rel="canonical"[^>]*href="([^"]*)"/.exec(pageHtml)?.[1] ?? "";
   const description = /<meta[^>]*name="description"[^>]*content="([^"]*)"/.exec(pageHtml)?.[1] ?? "";
   const ogUrl = /<meta[^>]*property="og:url"[^>]*content="([^"]*)"/.exec(pageHtml)?.[1] ?? "";
+  const ogImage = /<meta[^>]*property="og:image"[^>]*content="([^"]*)"/.exec(pageHtml)?.[1] ?? "";
 
   assert(title.length > 0 && title !== shellTitle, `${name}/index.html still carries the shell title`);
   assert(description.length > 0, `${name}/index.html has no description`);
   assert(description !== shellDescription, `${name}/index.html still carries the shell description`);
   assert(canonical === `${LIVE_URL}${name}`, `${name}/index.html canonical is ${canonical || "missing"}`);
   assert(ogUrl === canonical, `${name}/index.html og:url does not match its canonical`);
+  assert(ogImage === `${LIVE_URL}social-card.png`, `${name}/index.html has the wrong social-card image`);
   assertIncludes(pageHtml, `<meta property="og:title" content="${title}"`, `${name}/index.html`);
 }
 console.log(`- prerendered public pages checked: ${publicPages.length}`);

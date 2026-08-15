@@ -26,10 +26,10 @@ describe("the frame around every public page", () => {
     expect(screen.getByRole("link", { name: "NoteSense" })).toHaveAttribute("href", "/");
   });
 
-  it("keeps one way into the app in the header, on every page", () => {
+  it("leaves the one primary action to the page rather than competing in the header", () => {
     renderShell(MARKETING_PAGES[3] as MarketingPage);
 
-    expect(screen.getByRole("link", { name: "Start practising" })).toHaveAttribute("href", "/practice/reading");
+    expect(within(screen.getByRole("banner")).queryByRole("link", { name: "Start practising" })).toBeNull();
   });
 
   it("lists every public page except the one it is the front of", () => {
@@ -46,6 +46,7 @@ describe("the frame around every public page", () => {
 
     expect(footer.getByRole("link", { name: "Privacy" })).toHaveAttribute("href", "/privacy");
     expect(footer.getByRole("link", { name: "Help" })).toHaveAttribute("href", "/help");
+    expect(footer.getByRole("link", { name: "Terms" })).toHaveAttribute("href", "/terms");
   });
 
   it("says what the product does not do, where a visitor will read it", () => {

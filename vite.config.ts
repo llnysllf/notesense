@@ -6,7 +6,13 @@ import type { Plugin } from "vite";
 import { VitePWA } from "vite-plugin-pwa";
 import { defineConfig } from "vitest/config";
 
-import { MARKETING_PAGE_DATA, SITE_URL, sitemapUrls, withoutTrailingSlash } from "./shared/src/marketing/pageData.ts";
+import {
+  MARKETING_PAGE_DATA,
+  SITE_URL,
+  SOCIAL_CARD_URL,
+  sitemapUrls,
+  withoutTrailingSlash,
+} from "./shared/src/marketing/pageData.ts";
 
 const sharedEntry = fileURLToPath(new URL("./shared/src/index.ts", import.meta.url));
 
@@ -108,8 +114,10 @@ function notesenseMarketingPrerenderPlugin(): Plugin {
         html = replaceMeta(html, "property", "og:title", page.title);
         html = replaceMeta(html, "property", "og:description", page.description);
         html = replaceMeta(html, "property", "og:url", canonical);
+        html = replaceMeta(html, "property", "og:image", SOCIAL_CARD_URL);
         html = replaceMeta(html, "name", "twitter:title", page.title);
         html = replaceMeta(html, "name", "twitter:description", page.description);
+        html = replaceMeta(html, "name", "twitter:image", SOCIAL_CARD_URL);
         html = replaceCanonical(html, canonical);
 
         if (page.path === "/") {
@@ -152,7 +160,7 @@ export default defineConfig({
       injectRegister: null,
       manifest: false,
       workbox: {
-        globPatterns: ["**/*.{js,css,html,svg,webmanifest,txt,xml}"],
+        globPatterns: ["**/*.{js,css,html,png,svg,webmanifest,txt,xml}"],
         navigateFallback: null,
       },
       devOptions: { enabled: false },

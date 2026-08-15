@@ -100,15 +100,14 @@ describe("a public page", () => {
       },
     });
 
-    // The home page shows its one action under the demo, not above it; the
-    // header keeps its own permanent way in, which is chrome rather than the
-    // page's ask.
+    // The home page shows its one action under the demo, not above it or in
+    // the header.
     const demoSection = within(screen.getByRole("region", { name: "Try one now" }));
     expect(demoSection.getByRole("link", { name: home.primaryAction.label })).toHaveAttribute(
       "href",
       home.primaryAction.href,
     );
-    expect(within(screen.getByRole("banner")).getAllByRole("link", { name: home.primaryAction.label })).toHaveLength(1);
+    expect(within(screen.getByRole("banner")).queryByRole("link", { name: home.primaryAction.label })).toBeNull();
   });
 
   it("carries the demo only on the page that has one", () => {

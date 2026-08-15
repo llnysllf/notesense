@@ -20,7 +20,7 @@ Practice:
 - Rhythm drills: generated patterns tapped against a metronome and graded on timing.
 - Ear training: intervals, chords, scales, and cadences by ear, plus staff transcription of what was heard.
 - Singing: sung phrases analysed in the browser for pitch, steadiness, and timing.
-- Songs: self-paced sheet reading from a built-in public-domain library.
+- Songs: self-paced sheet reading from a built-in public-domain song library.
 - MIDI import: a local MIDI file mapped into the song model, previewed and saved to the learner's own songs.
 
 Assessment and progress:
@@ -36,6 +36,8 @@ Input, sound, and platform:
 - URL-addressable destinations, local JSON import/export, and an installable PWA with offline practice.
 - A public marketing site served from the same static deployment, whose claims are generated from the shipped route table.
 - Static GitHub Pages deployment.
+
+Every entry above is checked against the product. Each capability in `shared/src/marketing/capability.ts` declares the phrase this document must use for it while it ships, and `npm run product:check` fails when a shipped feature is missing from this section or still named as a non-goal below. This section drifted for four slices before that check existed.
 
 ## Explicitly Out Of Scope
 

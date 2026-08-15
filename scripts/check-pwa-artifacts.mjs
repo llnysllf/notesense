@@ -3,7 +3,14 @@ import { extname, join } from "node:path";
 
 const DIST_DIR = "dist";
 const SW_FILE = "sw.js";
-const REQUIRED_PRECACHE_ENTRIES = ["index.html", "icon.svg", "site.webmanifest", "robots.txt", "sitemap.xml"];
+const REQUIRED_PRECACHE_ENTRIES = [
+  "index.html",
+  "icon.svg",
+  "social-card.png",
+  "site.webmanifest",
+  "robots.txt",
+  "sitemap.xml",
+];
 const DISALLOWED_SERVICE_WORKER_PATTERNS = [
   {
     pattern: /\bhttps?:\/\//,

@@ -10,6 +10,9 @@
 // sitemap, the prerendered <head> tags, and the footer cannot disagree.
 export const SITE_URL = "https://llnysllf.github.io/notesense/";
 export const SOURCE_URL = "https://github.com/llnysllf/notesense";
+// One real, static preview image for shared links. Keeping it local means a
+// shared link never makes a visitor or a crawler talk to a third party.
+export const SOCIAL_CARD_URL = "https://llnysllf.github.io/notesense/social-card.png";
 
 export const MARKETING_PAGE_DATA = [
   {
@@ -112,6 +115,19 @@ export const MARKETING_PAGE_DATA = [
     intro:
       "NoteSense needs a modern browser and nothing else. A digital piano over USB is optional; a mouse, a touchscreen, or your computer keyboard all work.",
     capabilities: ["midi", "offline", "progress"],
+    primaryAction: { label: "Start practising", href: "/practice/reading" },
+  },
+  {
+    id: "terms",
+    path: "/terms",
+    navLabel: "Terms",
+    title: "Terms for using NoteSense",
+    description:
+      "The simple terms for using NoteSense: a free local practice tool with no account, uploads, paid service, or support contract.",
+    heading: "A simple tool, with simple terms.",
+    intro:
+      "NoteSense is a free, local practice tool. It has no accounts, paid service, uploads, or support contract. You are responsible for your device, browser storage, and any files you choose to open; see Privacy for how the app handles them.",
+    capabilities: ["offline", "import", "singing"],
     primaryAction: { label: "Start practising", href: "/practice/reading" },
   },
 ] as const;

@@ -1,5 +1,6 @@
 import { existsSync, readFileSync } from "node:fs";
 import { includesContractSnippet } from "./lib/contract-checks.mjs";
+import { findScopeDrift, parseScopeSections, parseScopeTerms } from "./lib/scope-drift.mjs";
 
 const failures = [];
 
@@ -23,6 +24,21 @@ function requireSnippets(file, snippets) {
 }
 
 console.log("Product scope report");
+
+// The scope document against the product it describes. Prose next to code goes
+// stale — this one listed three shipped features as non-goals for four slices —
+// so every capability declares the phrase the document must use for it, and
+// this is what makes somebody notice.
+const scopeTerms = parseScopeTerms(readProjectFile("shared/src/marketing/capability.ts"));
+const scopeSections = parseScopeSections(readProjectFile("docs/PRODUCT_SCOPE.md"));
+
+if (scopeTerms.length === 0) {
+  failures.push("no scope terms found in shared/src/marketing/capability.ts");
+}
+
+for (const problem of findScopeDrift(scopeTerms, scopeSections)) {
+  failures.push(`docs/PRODUCT_SCOPE.md ${problem}`);
+}
 
 requireSnippets("docs/PRODUCT_SCOPE.md", [
   "# Product Scope Contract",
@@ -80,6 +96,7 @@ requireSnippets("docs/ACCESSIBILITY.md", [
 requireSnippets("docs/OPERATIONS.md", ["NoteSense is currently a static, local-first app deployed to GitHub Pages."]);
 
 console.log("- product scope documentation checked");
+console.log(`- shipped capabilities checked against the scope document: ${scopeTerms.length}`);
 console.log("- README scope and explicit non-goals checked");
 console.log("- contributor, review, architecture, release, data, privacy, and backend boundary docs checked");
 

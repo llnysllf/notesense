@@ -16,7 +16,7 @@ test("serves the GitHub Pages build under the /notesense/ base path", async ({ p
   const failedRequests: string[] = [];
   const failedAssetResponses: string[] = [];
   const failedMetadataResponses: string[] = [];
-  const metadataPaths = ["/notesense/icon.svg", "/notesense/site.webmanifest"];
+  const metadataPaths = ["/notesense/icon.svg", "/notesense/social-card.png", "/notesense/site.webmanifest"];
 
   page.on("requestfailed", (request) => {
     failedRequests.push(`${request.method()} ${request.url()}: ${request.failure()?.errorText ?? "unknown error"}`);
@@ -49,6 +49,15 @@ test("serves the GitHub Pages build under the /notesense/ base path", async ({ p
   await expect(page).toHaveTitle("NoteSense | Piano Note Reading Trainer");
   await expect(page.locator('link[rel="manifest"]')).toHaveAttribute("href", "/notesense/site.webmanifest");
   await expect(page.locator('link[rel="icon"]')).toHaveAttribute("href", "/notesense/icon.svg");
+  await expect(page.locator('meta[property="og:image"]')).toHaveAttribute(
+    "content",
+    "https://llnysllf.github.io/notesense/social-card.png",
+  );
+  await expect(page.locator('meta[name="twitter:image"]')).toHaveAttribute(
+    "content",
+    "https://llnysllf.github.io/notesense/social-card.png",
+  );
+  await expect(page.locator('meta[name="twitter:card"]')).toHaveAttribute("content", "summary_large_image");
   await expect(page.locator('meta[name="theme-color"]')).toHaveAttribute("content", "#1d1d1f");
   await expect(page.locator('meta[http-equiv="Content-Security-Policy"]')).toHaveAttribute(
     "content",

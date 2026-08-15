@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { withoutTrailingSlash, type MarketingPage } from "../types";
+import { SOCIAL_CARD_URL, withoutTrailingSlash, type MarketingPage } from "../types";
 
 // Keeps the document head in step with the page being shown.
 //
@@ -25,8 +25,10 @@ export function usePageMetadata(page: MarketingPage, siteUrl: string): void {
     setMeta('meta[property="og:title"]', "content", page.title);
     setMeta('meta[property="og:description"]', "content", page.description);
     setMeta('meta[property="og:url"]', "content", canonical);
+    setMeta('meta[property="og:image"]', "content", SOCIAL_CARD_URL);
     setMeta('meta[name="twitter:title"]', "content", page.title);
     setMeta('meta[name="twitter:description"]', "content", page.description);
+    setMeta('meta[name="twitter:image"]', "content", SOCIAL_CARD_URL);
     setMeta('link[rel="canonical"]', "href", canonical);
   }, [page, siteUrl]);
 }
