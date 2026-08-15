@@ -36,14 +36,7 @@ const AssessWorkspace = lazy(() => import("./components/AssessWorkspace"));
 const EarWorkspace = lazy(() => import("./components/EarWorkspace"));
 const SingingWorkspace = lazy(() => import("./components/SingingWorkspace"));
 const ImportWorkspace = lazy(() => import("./components/ImportWorkspace"));
-const shouldForceRenderError = () =>
-  import.meta.env.MODE === "resilience" && window.sessionStorage.getItem("notesense.forceRenderError") === "true";
-
 function App() {
-  if (shouldForceRenderError()) {
-    throw new Error("Forced NoteSense render failure");
-  }
-
   const [dataStatus, setDataStatus] = useState<DataStatus>(null);
   const [isNavOpen, setIsNavOpen] = useState(false);
   const { route, isUnknownPath, goToSection } = useAppRoute();

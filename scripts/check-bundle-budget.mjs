@@ -16,8 +16,8 @@ const budgets = [
   {
     name: "CSS asset",
     matches: (file) => file.startsWith("assets/") && file.endsWith(".css"),
-    rawBytes: 42 * KIB,
-    gzipBytes: 9 * KIB,
+    rawBytes: 45 * KIB,
+    gzipBytes: 10 * KIB,
   },
   {
     name: "HTML shell",
@@ -25,6 +25,15 @@ const budgets = [
     matches: (file) => file === "index.html" || file === "404.html",
     rawBytes: 4 * KIB,
     gzipBytes: 1 * KIB,
+  },
+  {
+    // One small file per public page: the shell with its head tags swapped, so
+    // a direct load carries the right title and description before any script
+    // runs. Same size as the shell, because that is what each one is.
+    name: "prerendered public page",
+    matches: (file) => file.endsWith("/index.html"),
+    rawBytes: 4 * KIB,
+    gzipBytes: 2 * KIB,
   },
   {
     name: "web metadata asset",
@@ -55,8 +64,8 @@ const totalBudget = {
   // grading, and accessible feedback surface.
   // Deliberate headroom for the next learner-facing slice. This is not a
   // waiver: every built asset remains individually budgeted above.
-  rawBytes: 520 * KIB,
-  gzipBytes: 165 * KIB,
+  rawBytes: 560 * KIB,
+  gzipBytes: 178 * KIB,
 };
 
 function collectFiles(directory) {

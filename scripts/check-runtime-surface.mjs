@@ -10,7 +10,20 @@ const ALLOWED_ABSOLUTE_URLS = new Set([
   "http://www.w3.org/2000/svg",
   "https://llnysllf.github.io/notesense/",
   "https://llnysllf.github.io/notesense/sitemap.xml",
+  // An outbound link to the project's own public repository. A link is not a
+  // request: it adds no network surface to the running client, and a public
+  // site with no way to read its own source is worse for a visitor.
+  "https://github.com/llnysllf/notesense",
 ]);
+
+// The site's own canonical space. A page pointing at its own public URL is a
+// self-reference, not an external resource, and every prerendered page carries
+// one in its canonical link.
+const SITE_ORIGIN_PREFIX = "https://llnysllf.github.io/notesense/";
+
+function isApprovedUrl(value) {
+  return ALLOWED_ABSOLUTE_URLS.has(value) || value.startsWith(SITE_ORIGIN_PREFIX);
+}
 
 const bannedRuntimePatterns = [
   {
@@ -104,10 +117,29 @@ function getHtmlAttributes(html, attribute) {
   return [...html.matchAll(new RegExp(`\\b${attribute}="([^"]+)"`, "g"))].map((match) => match[1]);
 }
 
-function checkBuiltHtml(failures) {
-  const htmlPath = join(DIST_DIR, "index.html");
-  assert(existsSync(htmlPath), `${htmlPath} does not exist. Run npm run build:pages first.`);
+// Every HTML file the build emits, not only the shell. The public site is
+// prerendered as one small file per page, and a prerendered page that pointed
+// at an unscoped asset would be broken on the deployed site while the shell
+// stayed fine.
+function collectBuiltHtml() {
+  const files = [];
 
+  const walk = (directory) => {
+    for (const entry of readdirSync(directory, { withFileTypes: true }).sort((a, b) => a.name.localeCompare(b.name))) {
+      const path = join(directory, entry.name);
+      if (entry.isDirectory()) {
+        if (entry.name !== "assets") walk(path);
+        continue;
+      }
+      if (entry.name.endsWith(".html")) files.push(path);
+    }
+  };
+
+  walk(DIST_DIR);
+  return files;
+}
+
+function checkOneBuiltHtml(htmlPath, failures) {
   const html = readFileSync(htmlPath, "utf8");
   const references = [...getHtmlAttributes(html, "href"), ...getHtmlAttributes(html, "src")];
 
@@ -117,7 +149,7 @@ function checkBuiltHtml(failures) {
     }
 
     if (reference.startsWith("http://") || reference.startsWith("https://")) {
-      if (!ALLOWED_ABSOLUTE_URLS.has(reference)) {
+      if (!isApprovedUrl(reference)) {
         failures.push(`${htmlPath} references unapproved external resource ${reference}`);
       }
       continue;
@@ -136,6 +168,18 @@ function checkBuiltHtml(failures) {
   }
 }
 
+function checkBuiltHtml(failures) {
+  const shellPath = join(DIST_DIR, "index.html");
+  assert(existsSync(shellPath), `${shellPath} does not exist. Run npm run build:pages first.`);
+
+  const htmlFiles = collectBuiltHtml();
+  for (const htmlPath of htmlFiles) {
+    checkOneBuiltHtml(htmlPath, failures);
+  }
+
+  return htmlFiles.length;
+}
+
 console.log("Runtime surface report");
 
 const failures = [];
@@ -147,10 +191,10 @@ for (const file of clientSourceFiles) {
   checkRuntimePatterns(file, content, failures);
 }
 
-checkBuiltHtml(failures);
+const builtHtmlCount = checkBuiltHtml(failures);
 
 console.log(`- client files checked: ${clientSourceFiles.length}`);
-console.log("- build HTML references checked");
+console.log(`- build HTML files checked: ${builtHtmlCount}`);
 
 if (failures.length > 0) {
   console.error("\nRuntime surface check failed:");

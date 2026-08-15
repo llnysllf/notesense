@@ -8,7 +8,7 @@ const sourceSizeBudgets = [
   {
     label: "app shell",
     maxLines: 320,
-    matches: (file) => file === "src/App.tsx",
+    matches: (file) => file === "src/App.tsx" || file === "src/Site.tsx",
   },
   {
     label: "core practice or storage module",

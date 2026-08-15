@@ -1,10 +1,12 @@
-import { copyFileSync, existsSync } from "node:fs";
+import { copyFileSync, existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 import react from "@vitejs/plugin-react";
 import type { Plugin } from "vite";
 import { VitePWA } from "vite-plugin-pwa";
 import { defineConfig } from "vitest/config";
+
+import { MARKETING_PAGE_DATA, SITE_URL, sitemapUrls } from "./shared/src/marketing/pageData.ts";
 
 const sharedEntry = fileURLToPath(new URL("./shared/src/index.ts", import.meta.url));
 
@@ -56,6 +58,80 @@ function notesensePagesFallbackPlugin(): Plugin {
   };
 }
 
+// A crawler, a shared link, and a browser tab all read the <head> of whatever
+// HTML the server actually returns. A single-page app has one of those, so
+// every public page would otherwise carry the home page's title and
+// description.
+//
+// This writes one small HTML file per public page — the built shell with its
+// head tags swapped — so a direct load of /rhythm is already correct before any
+// JavaScript runs. It is not server rendering: the body is still the app's
+// empty root, and the client takes over as usual. It is the metadata that has
+// to be right at the moment the response arrives.
+function notesenseMarketingPrerenderPlugin(): Plugin {
+  // Tags are matched whole and rewritten whole, because the shell is formatted
+  // source: Prettier breaks a long tag across lines, and a pattern that assumed
+  // `name="x" content="y"` sat on one line stopped matching the moment the
+  // description got longer. It failed silently, leaving every page with the
+  // home page's description.
+  const replaceMeta = (html: string, attribute: string, key: string, content: string) =>
+    html.replace(
+      new RegExp(`<meta[^>]*${attribute}="${key}"[^>]*>`),
+      `<meta ${attribute}="${key}" content="${escapeHtml(content)}" />`,
+    );
+
+  const replaceCanonical = (html: string, href: string) =>
+    html.replace(/<link[^>]*rel="canonical"[^>]*>/, `<link rel="canonical" href="${href}" />`);
+
+  return {
+    name: "notesense-marketing-prerender",
+    apply: "build",
+    // After the fallback plugin, so 404.html stays a copy of the home shell.
+    closeBundle() {
+      const outDir = fileURLToPath(new URL("./dist", import.meta.url));
+      const shellPath = join(outDir, "index.html");
+      if (!existsSync(shellPath)) return;
+
+      const shell = readFileSync(shellPath, "utf8");
+
+      for (const page of MARKETING_PAGE_DATA) {
+        const canonical = page.path === "/" ? SITE_URL : `${SITE_URL.replace(/\/+$/, "")}${page.path}`;
+        let html = shell.replace(/<title>[^<]*<\/title>/, `<title>${escapeHtml(page.title)}</title>`);
+        html = replaceMeta(html, "name", "description", page.description);
+        html = replaceMeta(html, "property", "og:title", page.title);
+        html = replaceMeta(html, "property", "og:description", page.description);
+        html = replaceMeta(html, "property", "og:url", canonical);
+        html = replaceMeta(html, "name", "twitter:title", page.title);
+        html = replaceMeta(html, "name", "twitter:description", page.description);
+        html = replaceCanonical(html, canonical);
+
+        if (page.path === "/") {
+          writeFileSync(shellPath, html);
+          continue;
+        }
+
+        const pageDir = join(outDir, page.path.replace(/^\//, ""));
+        mkdirSync(pageDir, { recursive: true });
+        writeFileSync(join(pageDir, "index.html"), html);
+      }
+
+      // The sitemap lists the public pages and nothing else: the app's own
+      // destinations live behind a client router and are of no use to a crawler.
+      const urls = sitemapUrls(SITE_URL)
+        .map((url) => `  <url>\n    <loc>${url}</loc>\n  </url>`)
+        .join("\n");
+      writeFileSync(
+        join(outDir, "sitemap.xml"),
+        `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls}\n</urlset>\n`,
+      );
+    },
+  };
+}
+
+function escapeHtml(value: string): string {
+  return value.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+}
+
 export default defineConfig({
   resolve: {
     alias: {
@@ -76,6 +152,7 @@ export default defineConfig({
     }),
     notesenseSecurityPolicyPlugin(),
     notesensePagesFallbackPlugin(),
+    notesenseMarketingPrerenderPlugin(),
   ],
   test: {
     environment: "jsdom",
@@ -233,6 +310,17 @@ export default defineConfig({
         "src/sound/soundWorlds.ts",
         "src/hooks/useSoundWorld.ts",
         "src/components/SoundWorldPicker.tsx",
+        "shared/src/marketing/capability.ts",
+        "shared/src/marketing/page.ts",
+        "shared/src/marketing/claims.ts",
+        "shared/src/marketing/pageData.ts",
+        "src/Site.tsx",
+        "src/hooks/useMarketingSite.ts",
+        "src/hooks/useReadingDemo.ts",
+        "src/hooks/usePageMetadata.ts",
+        "src/components/marketing/MarketingShell.tsx",
+        "src/components/marketing/MarketingPageView.tsx",
+        "src/components/marketing/ReadingDemo.tsx",
       ],
       thresholds: {
         perFile: true,

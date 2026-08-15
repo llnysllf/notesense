@@ -58,3 +58,5 @@ Future localization must not introduce remote translation services, locale analy
 Learners can remove NoteSense data by using the app's reset control or by clearing site data for `llnysllf.github.io` in the browser.
 
 Last reviewed: 2026-06-15
+
+- The public marketing site is part of the same static deployment and behaves the same way: no analytics, no third-party scripts, no cookies, and no form that sends anything anywhere. The live demo on the home page runs entirely in the browser and deliberately writes nothing to local storage, so trying NoteSense leaves no trace on the device either.

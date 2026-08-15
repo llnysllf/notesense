@@ -1,7 +1,7 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { RouterProvider } from "raviger";
-import App from "./App";
+import Site from "./Site";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { installRuntimeFailureReporting } from "./observability";
 import "./styles.css";
@@ -20,7 +20,7 @@ createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <ErrorBoundary>
       <RouterProvider basePath={basePath}>
-        <App />
+        <Site />
       </RouterProvider>
     </ErrorBoundary>
   </StrictMode>,

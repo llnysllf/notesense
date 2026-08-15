@@ -1,5 +1,5 @@
 import type { MicStatus, MicSupport } from "./voice/microphone";
-import type { SoundWorld } from "@notesense/shared";
+import type { Capability, MarketingPage, SoundWorld } from "@notesense/shared";
 import type {
   AssessmentPassage,
   ParsedMidiFile,
@@ -423,6 +423,58 @@ export type MidiImportView = {
   setTranspose: (semitones: number) => void;
   save: () => void;
   remove: (songId: string) => void;
+};
+
+// The public marketing site (Slice 15).
+export type {
+  Capability,
+  CapabilityId,
+  MarketingPage,
+  MarketingPageId,
+  PrimaryAction,
+  ClaimIssue,
+} from "@notesense/shared";
+export {
+  CAPABILITIES,
+  MARKETING_PAGES,
+  capabilityById,
+  shippedCapabilities,
+  marketingPageByPath,
+  marketingPagePaths,
+  marketingNavPages,
+  validateMarketingPages,
+  sitemapUrls,
+  MAX_TITLE_LENGTH,
+  MAX_DESCRIPTION_LENGTH,
+  SITE_URL,
+  SOURCE_URL,
+} from "@notesense/shared";
+
+// What a public page renders. Declared here so the marketing components stay
+// presentational and receive their behaviour, like every other screen.
+export type MarketingView = {
+  page: MarketingPage;
+  // The capabilities this page may talk about, already filtered to what is
+  // actually reachable. A page never decides that for itself.
+  claims: readonly Capability[];
+  navPages: readonly MarketingPage[];
+  // The live demo on the home page, or nothing on pages that do not carry one.
+  demo: ReadingDemoView | null;
+  onNavigate: (path: string) => void;
+};
+
+// A real reading prompt, drawn with the app's own staff and answered against
+// the app's own note selection. A fake screenshot would be easier and would be
+// a lie about what the product does.
+export type ReadingDemoView = {
+  note: TrainingNote;
+  options: readonly ReadingNoteName[];
+  verdict: "unanswered" | "correct" | "wrong";
+  lastAnswer: ReadingNoteName | null;
+  answered: number;
+  correct: number;
+  answer: (name: ReadingNoteName) => void;
+  next: () => void;
 };
 
 // Sound worlds (Slice 14).
