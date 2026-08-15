@@ -719,7 +719,9 @@ test("moves between public pages and into the app without a reload", async ({ pa
   await expect(page.getByRole("heading", { level: 1 })).toContainText("Rhythm you can see");
   await expect(page).toHaveTitle("Rhythm practice");
 
-  await page.getByRole("link", { name: "Start practising" }).first().click();
-  await expect(page).toHaveURL(/\/practice\/reading$/);
-  await expect(page.getByRole("button", { name: "Start drill" })).toBeVisible();
+  // Each public page owns one primary action. Rhythm therefore goes straight
+  // to the rhythm drill rather than relying on a competing site-wide CTA.
+  await page.getByRole("link", { name: "Try a rhythm drill" }).click();
+  await expect(page).toHaveURL(/\/practice\/rhythm$/);
+  await expect(page.getByRole("button", { name: "Start" })).toBeVisible();
 });
