@@ -6,7 +6,7 @@ import type { Plugin } from "vite";
 import { VitePWA } from "vite-plugin-pwa";
 import { defineConfig } from "vitest/config";
 
-import { MARKETING_PAGE_DATA, SITE_URL, sitemapUrls } from "./shared/src/marketing/pageData.ts";
+import { MARKETING_PAGE_DATA, SITE_URL, sitemapUrls, withoutTrailingSlash } from "./shared/src/marketing/pageData.ts";
 
 const sharedEntry = fileURLToPath(new URL("./shared/src/index.ts", import.meta.url));
 
@@ -90,12 +90,19 @@ function notesenseMarketingPrerenderPlugin(): Plugin {
     closeBundle() {
       const outDir = fileURLToPath(new URL("./dist", import.meta.url));
       const shellPath = join(outDir, "index.html");
-      if (!existsSync(shellPath)) return;
 
-      const shell = readFileSync(shellPath, "utf8");
+      // Read first and handle absence from the failure, rather than asking
+      // whether the file exists and then reading it: between those two calls
+      // the answer can change.
+      let shell: string;
+      try {
+        shell = readFileSync(shellPath, "utf8");
+      } catch {
+        return;
+      }
 
       for (const page of MARKETING_PAGE_DATA) {
-        const canonical = page.path === "/" ? SITE_URL : `${SITE_URL.replace(/\/+$/, "")}${page.path}`;
+        const canonical = page.path === "/" ? SITE_URL : `${withoutTrailingSlash(SITE_URL)}${page.path}`;
         let html = shell.replace(/<title>[^<]*<\/title>/, `<title>${escapeHtml(page.title)}</title>`);
         html = replaceMeta(html, "name", "description", page.description);
         html = replaceMeta(html, "property", "og:title", page.title);

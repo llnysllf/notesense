@@ -116,10 +116,23 @@ export const MARKETING_PAGE_DATA = [
   },
 ] as const;
 
+// Trailing slashes, removed without a regular expression.
+//
+// The obvious `/\/+$/` is quadratic on a string of many slashes that does not
+// end in one, because the engine retries the match at every position. This runs
+// once per build over a constant, so the cost is theoretical — but a URL is the
+// kind of value that later arrives from somewhere else, and a scan flagged it
+// rather than waiting to find out.
+export function withoutTrailingSlash(value: string): string {
+  let end = value.length;
+  while (end > 0 && value[end - 1] === "/") end -= 1;
+  return value.slice(0, end);
+}
+
 // The public URLs, in the order a sitemap should list them. Only marketing
 // pages: the app's own destinations are behind a client-side router and are of
 // no use to a crawler.
 export function sitemapUrls(baseUrl: string, paths: readonly string[] = MARKETING_PAGE_DATA.map((p) => p.path)) {
-  const trimmed = baseUrl.replace(/\/+$/, "");
+  const trimmed = withoutTrailingSlash(baseUrl);
   return paths.map((path) => (path === "/" ? `${trimmed}/` : `${trimmed}${path}`));
 }

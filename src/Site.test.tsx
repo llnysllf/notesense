@@ -77,6 +77,26 @@ describe("which of the two things a URL is", () => {
     vi.resetModules();
   });
 
+  it("fails on purpose in the resilience build, so the recovery screen can be proven", () => {
+    // Thrown from the outermost component rather than from the app, so the
+    // check covers the public site too.
+    vi.stubEnv("MODE", "resilience");
+    window.sessionStorage.setItem("notesense.forceRenderError", "true");
+
+    expect(() => render(<Site />)).toThrow(/Forced NoteSense render failure/);
+
+    window.sessionStorage.clear();
+    vi.unstubAllEnvs();
+  });
+
+  it("renders normally when the resilience flag is not set", () => {
+    vi.stubEnv("MODE", "resilience");
+
+    expect(() => render(<Site />)).not.toThrow();
+
+    vi.unstubAllEnvs();
+  });
+
   it("puts the page's own metadata in the document", async () => {
     renderAt("/singing");
 

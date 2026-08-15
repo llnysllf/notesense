@@ -1,6 +1,12 @@
 import { describe, expect, it } from "vitest";
 import { CAPABILITIES, capabilityById, shippedCapabilities } from "./capability";
-import { MARKETING_PAGES, marketingNavPages, marketingPageByPath, marketingPagePaths } from "./page";
+import {
+  MARKETING_PAGES,
+  marketingNavPages,
+  marketingPageByPath,
+  marketingPagePaths,
+  withoutTrailingSlash,
+} from "./page";
 import {
   MAX_DESCRIPTION_LENGTH,
   MAX_TITLE_LENGTH,
@@ -199,6 +205,16 @@ describe("what a crawler is given", () => {
   it("does not double the slash at the site root", () => {
     const root = `${"https"}://example.com/`;
     expect(sitemapUrls(root)).toContain(root);
+  });
+
+  it("trims however many trailing slashes it is given, in linear time", () => {
+    // The obvious regular expression for this is quadratic on a long run of
+    // slashes, which a security scan flagged before it could ever bite.
+    expect(withoutTrailingSlash(`${testSite()}//`)).toBe(withoutTrailingSlash(testSite()));
+    expect(withoutTrailingSlash("/")).toBe("");
+    expect(withoutTrailingSlash("")).toBe("");
+    expect(withoutTrailingSlash("/a/b")).toBe("/a/b");
+    expect(withoutTrailingSlash("/".repeat(50_000))).toBe("");
   });
 });
 

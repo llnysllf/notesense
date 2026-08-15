@@ -448,6 +448,7 @@ export {
   MAX_DESCRIPTION_LENGTH,
   SITE_URL,
   SOURCE_URL,
+  withoutTrailingSlash,
 } from "@notesense/shared";
 
 // What a public page renders. Declared here so the marketing components stay

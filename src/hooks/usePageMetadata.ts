@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import type { MarketingPage } from "../types";
+import { withoutTrailingSlash, type MarketingPage } from "../types";
 
 // Keeps the document head in step with the page being shown.
 //
@@ -18,7 +18,7 @@ function setMeta(selector: string, attribute: string, value: string): void {
 
 export function usePageMetadata(page: MarketingPage, siteUrl: string): void {
   useEffect(() => {
-    const canonical = page.path === "/" ? siteUrl : `${siteUrl.replace(/\/+$/, "")}${page.path}`;
+    const canonical = page.path === "/" ? siteUrl : `${withoutTrailingSlash(siteUrl)}${page.path}`;
 
     document.title = page.title;
     setMeta('meta[name="description"]', "content", page.description);

@@ -14,7 +14,7 @@
 import type { CapabilityId } from "./capability";
 import { MARKETING_PAGE_DATA } from "./pageData";
 
-export { SITE_URL, SOURCE_URL } from "./pageData";
+export { SITE_URL, SOURCE_URL, withoutTrailingSlash } from "./pageData";
 
 export type MarketingPageId = "home" | "how-it-works" | "reading" | "rhythm" | "ear" | "singing" | "privacy" | "help";
 
