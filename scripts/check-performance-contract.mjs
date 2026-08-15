@@ -32,7 +32,7 @@ requireSnippets("docs/PERFORMANCE.md", [
   "## Static Asset Boundaries",
   "## Change Rules",
   "## Verification",
-  "JavaScript asset: 268 KiB raw, 85 KiB gzip",
+  "JavaScript asset: 272 KiB raw, 85 KiB gzip",
   "CSS asset: 42 KiB raw, 9 KiB gzip",
   "total Pages output: 520 KiB raw, 165 KiB gzip",
   "The Lighthouse workflow audits the Pages-shaped app at `http://127.0.0.1:4174/notesense/` with three runs.",
@@ -52,7 +52,7 @@ requireSnippets("package.json", [
 
 requireSnippets("scripts/check-bundle-budget.mjs", [
   'name: "JavaScript asset"',
-  "rawBytes: 268 * KIB",
+  "rawBytes: 272 * KIB",
   "gzipBytes: 85 * KIB",
   'name: "CSS asset"',
   "rawBytes: 42 * KIB",

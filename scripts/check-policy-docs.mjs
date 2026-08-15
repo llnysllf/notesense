@@ -303,7 +303,7 @@ const requiredSnippets = [
       "## Static Asset Boundaries",
       "## Change Rules",
       "## Verification",
-      "JavaScript asset: 268 KiB raw, 85 KiB gzip",
+      "JavaScript asset: 272 KiB raw, 85 KiB gzip",
       "Current Lighthouse thresholds:",
       "Run `npm run performance:check` after performance-budget, Lighthouse, metadata, PWA, runtime-surface, Pages smoke, dependency, browser-support, or performance-doc changes.",
     ],

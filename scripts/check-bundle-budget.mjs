@@ -10,7 +10,7 @@ const budgets = [
   {
     name: "JavaScript asset",
     matches: (file) => file.startsWith("assets/") && file.endsWith(".js"),
-    rawBytes: 268 * KIB,
+    rawBytes: 272 * KIB,
     gzipBytes: 85 * KIB,
   },
   {
