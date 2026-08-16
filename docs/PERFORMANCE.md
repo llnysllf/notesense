@@ -19,7 +19,7 @@ Current per-file budgets:
 - CSS asset: 45 KiB raw, 10 KiB gzip
 - HTML shell: 4 KiB raw, 1 KiB gzip
 - prerendered public page: 4 KiB raw, 2 KiB gzip
-- social card: 80 KiB raw, 80 KiB gzip
+- social card: 64 KiB raw, 64 KiB gzip
 - web metadata asset: 6 KiB raw, 3 KiB gzip
 - service worker: 8 KiB raw, 4 KiB gzip
 - Workbox runtime: 32 KiB raw, 12 KiB gzip

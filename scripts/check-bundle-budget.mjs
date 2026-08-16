@@ -36,17 +36,6 @@ const budgets = [
     gzipBytes: 2 * KIB,
   },
   {
-    // The link-preview image and the artwork it is generated from. Budgeted on
-    // its own and left out of the page-weight total below: no page requests it,
-    // so counting a PNG that gzip cannot compress against the shipped-network
-    // cap would inflate that number without telling anyone anything.
-    name: "social card",
-    matches: (file) => file === "social-card.png" || file === "social-card.svg",
-    rawBytes: 80 * KIB,
-    gzipBytes: 80 * KIB,
-    excludeFromTotal: true,
-  },
-  {
     name: "web metadata asset",
     matches: (file) => ["icon.svg", "robots.txt", "site.webmanifest", "sitemap.xml"].includes(file),
     rawBytes: 6 * KIB,
@@ -57,10 +46,16 @@ const budgets = [
     // social crawlers. This is an intentional public-site asset, not an
     // unbudgeted exception; PNGs are already compressed so their gzip budget
     // is deliberately close to their raw budget.
+    //
+    // Left out of the page-weight total below, because no page requests it —
+    // only a crawler following og:image does. Counting a PNG that gzip cannot
+    // compress against the shipped-network cap would move that number without
+    // saying anything about what a visit costs. This cap still bounds it.
     name: "social card",
     matches: (file) => file === "social-card.png" || file === "social-card.svg",
     rawBytes: 64 * KIB,
     gzipBytes: 64 * KIB,
+    excludeFromTotal: true,
   },
   {
     name: "service worker",
