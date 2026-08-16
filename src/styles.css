@@ -2844,3 +2844,192 @@ h3 {
   color: var(--color-muted-strong);
   font-size: 0.88rem;
 }
+
+/* The public site.
+   A separate surface from the app shell: no sidebar, no persistent state, and
+   a single column that reads top to bottom on any width. It shares the app's
+   tokens so the two do not look like different products. */
+.site {
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  gap: 28px;
+  min-height: 100dvh;
+  padding: 20px clamp(16px, 5vw, 48px) 32px;
+}
+
+.site-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px 20px;
+}
+
+.site-wordmark {
+  color: var(--color-ink);
+  font-size: 1.25rem;
+  font-weight: 800;
+  text-decoration: none;
+}
+
+.site-nav {
+  flex: 1 1 auto;
+}
+
+.site-nav ul,
+.site-footer ul {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 18px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.site-nav a,
+.site-footer a {
+  display: inline-block;
+  min-height: 44px;
+  padding: 11px 0;
+  color: var(--color-muted-strong);
+  font-size: 0.9rem;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.site-nav a[aria-current="page"] {
+  color: var(--color-brand-strong);
+}
+
+.site-main {
+  display: grid;
+  gap: 28px;
+  align-content: start;
+  max-width: 900px;
+  width: 100%;
+}
+
+.site-hero h1 {
+  margin: 0 0 12px;
+  font-size: clamp(2rem, 5vw, 3rem);
+  line-height: 1.1;
+}
+
+.site-intro {
+  margin: 0 0 20px;
+  max-width: 60ch;
+  color: var(--color-muted-strong);
+  font-size: 1.05rem;
+}
+
+.site-claims h2,
+.demo h2 {
+  margin: 0 0 4px;
+  font-size: 1.1rem;
+}
+
+.site-claims ul {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 14px;
+  margin: 14px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.site-claim {
+  display: grid;
+  gap: 6px;
+  align-content: start;
+  padding: var(--space-card);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-card);
+  background: var(--color-surface);
+}
+
+.site-claim h3 {
+  margin: 0;
+  font-size: 1rem;
+}
+
+.site-claim-line {
+  margin: 0;
+  color: var(--color-text);
+  font-weight: 600;
+}
+
+.site-claim-detail {
+  margin: 0;
+  color: var(--color-muted);
+  font-size: 0.88rem;
+}
+
+.site-claim .ghost-button {
+  justify-self: start;
+  min-height: 44px;
+}
+
+/* The live demo. Bordered because it is interactive and the rest of the page
+   is not: a visitor should be able to see where the product starts. */
+.demo {
+  display: grid;
+  gap: 12px;
+  padding: var(--space-card);
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-card);
+  background: var(--color-surface);
+}
+
+/* The staff is drawn for the practice screen, where it owns the viewport. Here
+   it is one element among several, so it is capped rather than left to fill. */
+.demo svg {
+  max-height: 200px;
+}
+
+.demo-intro,
+.demo-tally {
+  margin: 0;
+  color: var(--color-muted);
+  font-size: 0.88rem;
+}
+
+.demo-options {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(58px, 1fr));
+  gap: 8px;
+}
+
+.demo-option {
+  min-height: 48px;
+  font-size: 1rem;
+  font-weight: 800;
+}
+
+.demo-verdict {
+  margin: 0;
+  min-height: 1.4em;
+  font-weight: 700;
+}
+
+.demo-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.site-footer {
+  display: grid;
+  gap: 4px;
+  padding-top: 20px;
+  border-top: 1px solid var(--color-border);
+  color: var(--color-muted);
+  font-size: 0.85rem;
+}
+
+.site-footer p {
+  margin: 0;
+}
+
+/* Shown for the moment between choosing to practise and the app arriving. */
+.app-loading {
+  min-height: 100dvh;
+}

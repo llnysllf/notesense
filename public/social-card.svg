@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" role="img" aria-labelledby="title desc">
+  <title id="title">NoteSense — piano practice in your browser</title>
+  <desc id="desc">A dark blue musical staff with a piano keyboard, beside the words NoteSense, Practise music one note at a time, and Free. Offline. No account.</desc>
+  <defs>
+    <linearGradient id="background" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#102d43"/>
+      <stop offset="1" stop-color="#1b4d5f"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#f2c14e"/>
+      <stop offset="1" stop-color="#ef8354"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="630" fill="url(#background)"/>
+  <circle cx="1010" cy="105" r="220" fill="#ffffff" opacity=".06"/>
+  <circle cx="105" cy="610" r="260" fill="#ffffff" opacity=".04"/>
+  <g fill="none" stroke="#d9f0f5" stroke-linecap="round" stroke-width="6" opacity=".74">
+    <path d="M665 184h420M665 214h420M665 244h420M665 274h420M665 304h420"/>
+    <path d="M705 184v120" stroke-width="10"/>
+  </g>
+  <g fill="url(#accent)">
+    <ellipse cx="814" cy="244" rx="27" ry="19" transform="rotate(-18 814 244)"/>
+    <path d="M838 241v-104h11v101z"/>
+    <ellipse cx="970" cy="274" rx="27" ry="19" transform="rotate(-18 970 274)"/>
+    <path d="M994 271v-113h11v110z"/>
+  </g>
+  <g transform="translate(665 360)">
+    <rect width="420" height="126" rx="13" fill="#eff8f8"/>
+    <g stroke="#1a4051" stroke-width="3">
+      <path d="M52 0v126M104 0v126M156 0v126M208 0v126M260 0v126M312 0v126M364 0v126"/>
+    </g>
+    <g fill="#193d4d">
+      <rect x="35" width="32" height="76" rx="0 0 6 6"/>
+      <rect x="87" width="32" height="76" rx="0 0 6 6"/>
+      <rect x="191" width="32" height="76" rx="0 0 6 6"/>
+      <rect x="243" width="32" height="76" rx="0 0 6 6"/>
+      <rect x="295" width="32" height="76" rx="0 0 6 6"/>
+      <rect x="399" width="21" height="76" rx="0 0 6 6"/>
+    </g>
+    <rect x="260" y="76" width="51" height="50" fill="#f2c14e" opacity=".95"/>
+  </g>
+  <g font-family="Avenir Next, Avenir, Helvetica, Arial, sans-serif" fill="#f7fbfc">
+    <text x="100" y="195" font-size="78" font-weight="800" letter-spacing="-2">NoteSense</text>
+    <text x="100" y="277" font-size="42" font-weight="650" letter-spacing="-.5">Practise music one note at a time.</text>
+    <text x="100" y="425" font-size="30" font-weight="650" fill="#d9f0f5">Free. Offline. No account.</text>
+  </g>
+  <rect x="100" y="461" width="220" height="10" rx="5" fill="url(#accent)"/>
+</svg>

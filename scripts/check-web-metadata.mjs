@@ -1,4 +1,4 @@
-import { existsSync, readFileSync } from "node:fs";
+import { existsSync, readFileSync, readdirSync } from "node:fs";
 import { join } from "node:path";
 import { includesContractSnippet } from "./lib/contract-checks.mjs";
 
@@ -8,7 +8,7 @@ const EXPECTED_BASE_PATH = "/notesense/";
 
 const requiredHtmlSnippets = [
   "<title>NoteSense | Piano Note Reading Trainer</title>",
-  '<meta name="description" content="NoteSense is a focused piano note-reading trainer for beginner musicians.',
+  '<meta name="description" content="Practice sight reading, rhythm, ear training, and singing in your browser. Free, offline, and no account needed.',
   '<meta name="application-name" content="NoteSense"',
   '<meta name="theme-color" content="#1d1d1f"',
   '<meta name="color-scheme" content="light dark"',
@@ -19,8 +19,10 @@ const requiredHtmlSnippets = [
   '<meta property="og:site_name" content="NoteSense"',
   '<meta property="og:title" content="NoteSense | Piano Note Reading Trainer"',
   `<meta property="og:url" content="${LIVE_URL}"`,
-  '<meta name="twitter:card" content="summary"',
+  `<meta property="og:image" content="${LIVE_URL}social-card.png"`,
+  '<meta name="twitter:card" content="summary_large_image"',
   '<meta name="twitter:title" content="NoteSense | Piano Note Reading Trainer"',
+  `<meta name="twitter:image" content="${LIVE_URL}social-card.png"`,
 ];
 
 function assert(condition, message) {
@@ -84,6 +86,11 @@ assertIncludes(iconSvg, "viewBox=", "icon.svg");
 assertIncludes(iconSvg, "<title", "icon.svg");
 console.log("- icon.svg passed");
 
+const socialCard = join(DIST_DIR, "social-card.png");
+assert(existsSync(socialCard), "social-card.png must be emitted for shared-link previews");
+assert(readFileSync(socialCard).subarray(1, 4).toString("ascii") === "PNG", "social-card.png must be a PNG image");
+console.log("- social card passed");
+
 const robots = readDistFile("robots.txt");
 assertIncludes(robots, "User-agent: *", "robots.txt");
 assertIncludes(robots, "Allow: /", "robots.txt");
@@ -94,5 +101,42 @@ const sitemap = readDistFile("sitemap.xml");
 assertIncludes(sitemap, '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">', "sitemap.xml");
 assertIncludes(sitemap, `<loc>${LIVE_URL}</loc>`, "sitemap.xml");
 console.log("- sitemap.xml passed");
+
+// Per-page metadata for the public site.
+//
+// The app is a single page, so without prerendering every public URL would
+// return the home page's title and description — which is what a crawler, a
+// link preview, and a browser tab all read. These assertions are what stop that
+// regressing quietly: a page whose head was not swapped looks identical to a
+// working one until someone shares the link.
+function publicPageDirectories() {
+  return readdirSync(DIST_DIR, { withFileTypes: true })
+    .filter((entry) => entry.isDirectory() && entry.name !== "assets")
+    .map((entry) => entry.name)
+    .sort();
+}
+
+const shellTitle = /<title>([^<]*)<\/title>/.exec(html)?.[1] ?? "";
+const shellDescription = /<meta[^>]*name="description"[^>]*content="([^"]*)"/.exec(html)?.[1] ?? "";
+const publicPages = publicPageDirectories();
+assert(publicPages.length > 0, "No prerendered public pages were emitted");
+
+for (const name of publicPages) {
+  const pageHtml = readDistFile(`${name}/index.html`);
+  const title = /<title>([^<]*)<\/title>/.exec(pageHtml)?.[1] ?? "";
+  const canonical = /<link[^>]*rel="canonical"[^>]*href="([^"]*)"/.exec(pageHtml)?.[1] ?? "";
+  const description = /<meta[^>]*name="description"[^>]*content="([^"]*)"/.exec(pageHtml)?.[1] ?? "";
+  const ogUrl = /<meta[^>]*property="og:url"[^>]*content="([^"]*)"/.exec(pageHtml)?.[1] ?? "";
+  const ogImage = /<meta[^>]*property="og:image"[^>]*content="([^"]*)"/.exec(pageHtml)?.[1] ?? "";
+
+  assert(title.length > 0 && title !== shellTitle, `${name}/index.html still carries the shell title`);
+  assert(description.length > 0, `${name}/index.html has no description`);
+  assert(description !== shellDescription, `${name}/index.html still carries the shell description`);
+  assert(canonical === `${LIVE_URL}${name}`, `${name}/index.html canonical is ${canonical || "missing"}`);
+  assert(ogUrl === canonical, `${name}/index.html og:url does not match its canonical`);
+  assert(ogImage === `${LIVE_URL}social-card.png`, `${name}/index.html has the wrong social-card image`);
+  assertIncludes(pageHtml, `<meta property="og:title" content="${title}"`, `${name}/index.html`);
+}
+console.log(`- prerendered public pages checked: ${publicPages.length}`);
 
 console.log("Web metadata passed.");

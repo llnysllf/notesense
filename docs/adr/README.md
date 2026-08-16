@@ -88,3 +88,4 @@ Architecture Decision Records document durable product and engineering decisions
 - [ADR 0071: Singing And Microphone Analysis](0071-singing-and-microphone.md) - Accepted
 - [ADR 0072: MIDI Import And Repertoire](0072-midi-import-and-repertoire.md) - Accepted
 - [ADR 0073: Sound Worlds And Bundled Audio Licensing](0073-sound-worlds.md) - Accepted
+- [ADR 0074: A Public Site Whose Claims Are Generated From The Product](0074-public-marketing-site.md) - Accepted

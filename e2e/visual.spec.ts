@@ -26,6 +26,19 @@ async function openNavDrawerIfNeeded(page: Page) {
   }
 }
 
+test("matches the public home", async ({ page }) => {
+  await page.goto("/");
+  await expect(page.getByRole("heading", { name: "Try one now" })).toBeVisible();
+
+  await expect(page).toHaveScreenshot("public-home.png", {
+    fullPage: true,
+    // The demo draws a real prompt, and a real prompt is a different note every
+    // time. Masking the staff keeps the page's layout under test without
+    // pretending the drill is deterministic.
+    mask: [page.locator(".demo svg")],
+  });
+});
+
 test("matches the today shell", async ({ page }) => {
   await page.goto("/today");
   await expect(page.getByRole("heading", { name: "Your plan for today" })).toBeVisible();

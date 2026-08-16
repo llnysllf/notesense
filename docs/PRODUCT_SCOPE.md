@@ -13,31 +13,46 @@ Product-learning expectations live in [PRODUCT_LEARNING.md](PRODUCT_LEARNING.md)
 
 ## Current Supported Scope
 
-- Two practice modes: note reading and pitch training.
-- Two starter sight-reading clefs: treble and bass.
-- Ten starter reading notes across treble and bass.
-- Single-pitch training across natural, chromatic, two-octave, custom, or full 88-key ranges.
-- Three-to-sixteen-note pitch-sequence transcription across the selected pitch range, entered on a grand staff while the sequence plays.
-- Adaptive or random practice selection.
-- Configurable 30, 60, or 90 second rounds.
-- Local progress, daily goal, session history, practice insight chart, practice plan coach, and mastery map.
-- Self-paced song sheet reading from a built-in public-domain song library, with rhythm notation and sheet accidentals.
-- Per-song local progress: best accuracy and completion counts.
-- Local JSON import/export.
+Practice:
+
+- Note reading on treble, bass, and grand staff, in four modes: Learn, Practice, Test, and Custom.
+- Pitch training on single notes or three-to-sixteen-note sequences, across natural, chromatic, two-octave, custom, or full 88-key ranges.
+- Rhythm drills: generated patterns tapped against a metronome and graded on timing.
+- Ear training: intervals, chords, scales, and cadences by ear, plus staff transcription of what was heard.
+- Singing: sung phrases analysed in the browser for pitch, steadiness, and timing.
+- Songs: self-paced sheet reading from a built-in public-domain song library.
+- MIDI import: a local MIDI file mapped into the song model, previewed and saved to the learner's own songs.
+
+Assessment and progress:
+
+- Placement check that suggests a starting point without overriding practice evidence.
+- Reading Score: a repeatable timed sight-reading measurement, kept apart from practice evidence.
+- Daily plan, mastery map, session history, practice insight chart, and practice plan coach.
+
+Input, sound, and platform:
+
+- Web MIDI input from a digital piano, with a device-local latency setting.
+- Four synthesized sound worlds, all zero-download.
+- URL-addressable destinations, local JSON import/export, and an installable PWA with offline practice.
+- A public marketing site served from the same static deployment, whose claims are generated from the shipped route table.
 - Static GitHub Pages deployment.
-- Installable PWA with offline practice after the first load.
+
+Every entry above is checked against the product. Each capability in `shared/src/marketing/capability.ts` declares the phrase this document must use for it while it ships, and `npm run product:check` fails when a shipped feature is missing from this section or still named as a non-goal below. This section drifted for four slices before that check existed.
 
 ## Explicitly Out Of Scope
 
 These are not part of the current supported product surface:
 
-- account sign-in or user profiles
+- account sign-in, user profiles, or any sign-in page
 - cloud sync or hosted practice storage
 - backend APIs, PostgreSQL, AWS services, or direct database access
-- scales, chord entry, timed rhythm scoring, MIDI file upload, MIDI device input, or lesson content beyond the built-in song library
+- pricing, payments, subscriptions, or any commercial offer, and therefore any pricing page
+- waitlist capture, email collection, or any other form that leaves the device
+- MusicXML import, engraved score rendering, or lesson content beyond the built-in and imported libraries
+- downloadable or sampled audio packs
 - translated UI, locale selector, runtime locale negotiation, right-to-left layout, or localized music notation
-- analytics, telemetry, advertising pixels, or third-party tracking
-- payments, subscriptions, social sharing, or classroom management
+- analytics, telemetry, conversion measurement, advertising pixels, or third-party tracking
+- social sharing or classroom management
 
 ## Foundation-First Rule
 

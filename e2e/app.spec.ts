@@ -43,6 +43,15 @@ function appNav(page: Page) {
 // with exact names so labels like "Overview" cannot collide with other
 // controls (the piano rail's accessible name also contains "overview").
 async function openAppSection(page: Page, name: string) {
+  // The app is behind a lazy import now, so it may not be on the page yet.
+  // Asking whether the drawer toggle is visible before the app has rendered
+  // answers "no" and silently skips opening the drawer.
+  //
+  // Waited for by CSS rather than by role: on a phone the sidebar is off-canvas
+  // and therefore absent from the accessibility tree, so a role query does not
+  // match it even as "attached".
+  await page.locator("#app-sidebar").waitFor({ state: "attached" });
+
   const toggle = page.getByRole("button", { name: "Open menu" });
   if (await toggle.isVisible()) {
     await toggle.click();
@@ -63,10 +72,11 @@ test.beforeEach(async ({ page }) => {
 });
 
 test("opens on Today with a plan the learner can finish", async ({ page }) => {
-  await page.goto("/", { waitUntil: "domcontentloaded" });
+  // The site root is the public home page now, so the app's own home is /today.
+  await page.goto("/today", { waitUntil: "domcontentloaded" });
 
   // The app home is the plan, not a raw drill.
-  await expect(page).toHaveURL(/\/today$|\/$/);
+  await expect(page).toHaveURL(/\/today$/);
   await expect(page.getByRole("heading", { name: "Your plan for today" })).toBeVisible();
 
   const startLinks = page.getByRole("link", { name: "Start" });
@@ -647,4 +657,71 @@ test("keeps the chosen sound world, and shows what each one costs", async ({ pag
   await page.reload({ waitUntil: "domcontentloaded" });
   await openAppSection(page, "Preferences");
   await expect(worlds.getByRole("button", { name: /^Warm/ })).toHaveAttribute("aria-pressed", "true");
+});
+
+test("shows the public site at the root and only claims what is shipped", async ({ page }) => {
+  await page.goto("/", { waitUntil: "domcontentloaded" });
+
+  await expect(page).toHaveTitle("NoteSense | Piano Note Reading Trainer");
+  await expect(page.getByRole("heading", { level: 1 })).toContainText("Practice reading music");
+
+  // Every claim on the page offers the screen that backs it. A claim with no
+  // way through to the product is the thing this whole surface must not become.
+  const claims = page.getByRole("region", { name: "What you can do" });
+  await expect(claims.getByRole("listitem").first()).toBeVisible();
+  // A link, not a button: the deployed site lives under a sub-path, and a
+  // visitor should be able to open a claim in a new tab like any other link.
+  await expect(claims.getByRole("link", { name: /^Open note reading/i })).toHaveAttribute("href", "/practice/reading");
+
+  // No pricing and no sign-in, because there is neither.
+  await expect(page.getByRole("link", { name: /pricing|sign in|log in/i })).toHaveCount(0);
+});
+
+test("tries the real drill on the home page without saving anything", async ({ page }) => {
+  await page.goto("/", { waitUntil: "domcontentloaded" });
+
+  const demo = page.getByRole("group", { name: "Name the note" });
+  await expect(page.getByText("This is the real drill. Nothing here is saved.")).toBeVisible();
+  await expect(page.getByRole("button", { name: "Another note" })).toBeDisabled();
+
+  await demo.getByRole("button").first().click();
+
+  // One answer per prompt, and the answer is named rather than only marked.
+  await expect(page.getByText(/Yes — that is|Not quite\. It was/)).toBeVisible();
+  await expect(demo.getByRole("button").first()).toBeDisabled();
+  await expect(page.getByText(/of 1 so far/)).toBeVisible();
+
+  await page.getByRole("button", { name: "Another note" }).click();
+  await expect(page.getByText("Which note is on the staff?")).toBeVisible();
+
+  // Nothing the visitor did reached the practice record.
+  const stored = await page.evaluate(() => window.localStorage.getItem("notesense.progress.v2"));
+  expect(stored).toBeNull();
+});
+
+test("the public site has no automated accessibility violations", async ({ page }) => {
+  await page.goto("/", { waitUntil: "domcontentloaded" });
+  await expect(page.getByRole("heading", { name: "Try one now" })).toBeVisible();
+
+  const home = await new AxeBuilder({ page }).analyze();
+  expect(home.violations).toEqual([]);
+
+  await page.goto("/how-it-works", { waitUntil: "domcontentloaded" });
+  const inner = await new AxeBuilder({ page }).analyze();
+  expect(inner.violations).toEqual([]);
+});
+
+test("moves between public pages and into the app without a reload", async ({ page }) => {
+  await page.goto("/", { waitUntil: "domcontentloaded" });
+
+  await page.getByRole("navigation", { name: "Site" }).getByRole("link", { name: "Rhythm" }).click();
+  await expect(page).toHaveURL(/\/rhythm$/);
+  await expect(page.getByRole("heading", { level: 1 })).toContainText("Rhythm you can see");
+  await expect(page).toHaveTitle("Rhythm practice");
+
+  // Each public page owns one primary action. Rhythm therefore goes straight
+  // to the rhythm drill rather than relying on a competing site-wide CTA.
+  await page.getByRole("link", { name: "Try a rhythm drill" }).click();
+  await expect(page).toHaveURL(/\/practice\/rhythm$/);
+  await expect(page.getByRole("button", { name: "Start" })).toBeVisible();
 });

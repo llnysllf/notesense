@@ -12,7 +12,18 @@
     "noUncheckedIndexedAccess": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
-    "types": ["node"]
+    "types": ["node"],
+    // vite.config.ts imports the marketing page data directly so the build can
+    // prerender from the same source the app renders from. The extension is
+    // explicit so Vite's config loader does not have to resolve it.
+    "allowImportingTsExtensions": true
   },
-  "include": ["vite.config.ts", "playwright.config.ts", "playwright.pages.config.ts", "playwright.resilience.config.ts"]
+  "include": [
+    "vite.config.ts",
+    "playwright.config.ts",
+    "playwright.pages.config.ts",
+    "playwright.resilience.config.ts",
+    "playwright.visual.config.ts",
+    "shared/src/marketing/**/*.ts"
+  ]
 }

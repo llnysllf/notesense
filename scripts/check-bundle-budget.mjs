@@ -3,7 +3,7 @@ import { extname, join, relative } from "node:path";
 import { gzipSync } from "node:zlib";
 
 const DIST_DIR = "dist";
-const TRACKED_EXTENSIONS = new Set([".css", ".html", ".js", ".svg", ".txt", ".webmanifest", ".xml"]);
+const TRACKED_EXTENSIONS = new Set([".css", ".html", ".js", ".png", ".svg", ".txt", ".webmanifest", ".xml"]);
 const KIB = 1024;
 
 const budgets = [
@@ -16,8 +16,8 @@ const budgets = [
   {
     name: "CSS asset",
     matches: (file) => file.startsWith("assets/") && file.endsWith(".css"),
-    rawBytes: 42 * KIB,
-    gzipBytes: 9 * KIB,
+    rawBytes: 45 * KIB,
+    gzipBytes: 10 * KIB,
   },
   {
     name: "HTML shell",
@@ -27,10 +27,30 @@ const budgets = [
     gzipBytes: 1 * KIB,
   },
   {
+    // One small file per public page: the shell with its head tags swapped, so
+    // a direct load carries the right title and description before any script
+    // runs. Same size as the shell, because that is what each one is.
+    name: "prerendered public page",
+    matches: (file) => file.endsWith("/index.html"),
+    rawBytes: 4 * KIB,
+    gzipBytes: 2 * KIB,
+  },
+  {
     name: "web metadata asset",
     matches: (file) => ["icon.svg", "robots.txt", "site.webmanifest", "sitemap.xml"].includes(file),
     rawBytes: 6 * KIB,
     gzipBytes: 3 * KIB,
+  },
+  {
+    // Shared links need a real raster image: SVG is not reliably rendered by
+    // social crawlers. This is an intentional public-site asset, not an
+    // unbudgeted exception; PNGs are already compressed so their gzip budget
+    // is deliberately close to their raw budget. It remains in the total:
+    // the PWA precaches it, so it can be downloaded during installation.
+    name: "social card",
+    matches: (file) => file === "social-card.png" || file === "social-card.svg",
+    rawBytes: 64 * KIB,
+    gzipBytes: 64 * KIB,
   },
   {
     name: "service worker",
@@ -55,8 +75,8 @@ const totalBudget = {
   // grading, and accessible feedback surface.
   // Deliberate headroom for the next learner-facing slice. This is not a
   // waiver: every built asset remains individually budgeted above.
-  rawBytes: 520 * KIB,
-  gzipBytes: 165 * KIB,
+  rawBytes: 640 * KIB,
+  gzipBytes: 240 * KIB,
 };
 
 function collectFiles(directory) {
@@ -115,6 +135,7 @@ console.log("Bundle budget report");
 
 for (const file of measuredFiles) {
   const budget = findBudget(file.file);
+
   totalRawBytes += file.rawBytes;
   totalGzipBytes += file.gzipBytes;
 
