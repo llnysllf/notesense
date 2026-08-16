@@ -45,17 +45,12 @@ const budgets = [
     // Shared links need a real raster image: SVG is not reliably rendered by
     // social crawlers. This is an intentional public-site asset, not an
     // unbudgeted exception; PNGs are already compressed so their gzip budget
-    // is deliberately close to their raw budget.
-    //
-    // Left out of the page-weight total below, because no page requests it —
-    // only a crawler following og:image does. Counting a PNG that gzip cannot
-    // compress against the shipped-network cap would move that number without
-    // saying anything about what a visit costs. This cap still bounds it.
+    // is deliberately close to their raw budget. It remains in the total:
+    // the PWA precaches it, so it can be downloaded during installation.
     name: "social card",
     matches: (file) => file === "social-card.png" || file === "social-card.svg",
     rawBytes: 64 * KIB,
     gzipBytes: 64 * KIB,
-    excludeFromTotal: true,
   },
   {
     name: "service worker",
@@ -141,10 +136,8 @@ console.log("Bundle budget report");
 for (const file of measuredFiles) {
   const budget = findBudget(file.file);
 
-  if (!budget?.excludeFromTotal) {
-    totalRawBytes += file.rawBytes;
-    totalGzipBytes += file.gzipBytes;
-  }
+  totalRawBytes += file.rawBytes;
+  totalGzipBytes += file.gzipBytes;
 
   if (!budget) {
     failures.push(`${file.file}: no budget configured`);
