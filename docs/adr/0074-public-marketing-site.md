@@ -67,6 +67,11 @@ lazy import, so a first visit loads the page and nothing else.
 - The runtime-surface gate now checks every emitted HTML file rather than only the shell, and treats the site's own
   canonical URLs as self-references. A single outbound link to the project's public repository was allowlisted: a
   link is not a request.
-- **The product-evidence gate for this slice cannot be met.** Measuring visitor-to-practice conversion requires
-  analytics the project does not have and has not approved. The site is shipped on the argument that no public face
-  at all is worse than an unmeasured one, and the gate stays open until a consented measurement path exists.
+- **The product-evidence gate for this slice is deliberately left open.** Measuring visitor-to-practice conversion
+  needs numbers the project cannot currently get: production is served from GitHub Pages, which gives the owner no
+  request logs, so any measurement means either moving hosting or building a consented first-party endpoint — a
+  widened content policy, a hosted privacy policy, and a backend that does not exist. Both options were put to the
+  owner, who chose to leave the gate open rather than change the project's privacy posture for it. The site ships
+  unmeasured on the argument that no public face at all is worse than an unmeasured one, and the gate reopens with
+  the reviewed, consented measurement path the roadmap already schedules for a later slice. This is a decision, not
+  an oversight; the alternatives and their costs are recorded here so it does not have to be rediscovered.
