@@ -1,10 +1,15 @@
 import { useState, type FormEvent, type ReactNode } from "react";
 import { ROUND_LENGTHS } from "../practiceEngine";
-import { MAX_ROUND_LENGTH_SECONDS, MIN_ROUND_LENGTH_SECONDS } from "../storage";
 import MidiSettings from "./MidiSettings";
 import SoundWorldPicker from "./SoundWorldPicker";
 import type { MidiPanelProps } from "../midi/webMidi";
-import type { PracticeMode, PracticeSettings, SoundWorldView } from "../types";
+import {
+  MAX_ROUND_LENGTH_SECONDS,
+  MIN_ROUND_LENGTH_SECONDS,
+  type PracticeMode,
+  type PracticeSettings,
+  type SoundWorldView,
+} from "../types";
 
 type PracticeSettingsViewProps = {
   mode: PracticeMode;
