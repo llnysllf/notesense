@@ -164,13 +164,14 @@ export function usePracticeSession({
   ]);
   useEffect(() => {
     if (!isRunning) return;
+    if (settings.roundLength === 0) return;
     if (timeRemaining <= 0) {
       const t = window.setTimeout(finishRound, 0);
       return () => window.clearTimeout(t);
     }
     const t = window.setTimeout(() => setTimeRemaining((s) => s - 1), 1000);
     return () => window.clearTimeout(t);
-  }, [finishRound, isRunning, timeRemaining]);
+  }, [finishRound, isRunning, settings.roundLength, timeRemaining]);
   function setPracticeMode(nextMode: PracticeMode) {
     clearAdvanceTimer();
     readingAcademy.reset();

@@ -28,7 +28,7 @@ import type {
   TrainingNote,
 } from "./types";
 
-export const ROUND_LENGTHS: RoundLength[] = [30, 60, 90];
+export const ROUND_LENGTHS: RoundLength[] = [30, 60, 90, 0];
 export const RECENT_SESSION_LIMIT = 5;
 export const TREND_SESSION_LIMIT = 6;
 export const DAILY_GOAL_SESSION_TARGET = 1;
@@ -102,6 +102,10 @@ export function formatDuration(seconds: number): string {
   const remainingSeconds = safeSeconds % 60;
 
   return remainingSeconds === 0 ? `${minutes}m` : `${minutes}m ${remainingSeconds}s`;
+}
+
+export function formatRoundLength(roundLength: RoundLength): string {
+  return roundLength === 0 ? "An open-ended" : `One ${formatDuration(roundLength)}`;
 }
 
 export function getModeLabel(mode: PracticeMode): string {
@@ -377,6 +381,11 @@ export function getPracticePlan({
     mode === "reading"
       ? getReadingRange(readingRange, customReadingRange).detail
       : getPitchRange(pitchRange, customPitchRange).detail;
+  const roundStep = `${formatRoundLength(roundLength)} ${modeLabel} round`;
+  const carefulRoundStep =
+    roundLength === 0 ? "An open-ended careful round" : `One careful ${formatDuration(roundLength)} round`;
+  const fasterRoundStep =
+    roundLength === 0 ? "An open-ended faster round" : `One faster ${formatDuration(roundLength)} round`;
 
   if (modeProgress.totalAttempts < BASELINE_ATTEMPT_TARGET) {
     const remainingAttempts = BASELINE_ATTEMPT_TARGET - modeProgress.totalAttempts;
@@ -387,7 +396,7 @@ export function getPracticePlan({
       focus: scope,
       reason: "A few saved answers will make the next recommendation more reliable.",
       target: `${remainingAttempts} more answer${remainingAttempts === 1 ? "" : "s"}`,
-      steps: [`One ${roundLength}s ${modeLabel} round`, "At least 5 answers", "First focus area"],
+      steps: [roundStep, "At least 5 answers", "First focus area"],
     };
   }
 
@@ -400,7 +409,7 @@ export function getPracticePlan({
       focus: `${weakestItem.accuracy}% accuracy`,
       reason: `${weakestItem.note.id} is the weakest saved item across ${weakestItem.attempts} tries.`,
       target: `${FOCUS_ACCURACY_TARGET}% on ${weakestItem.note.id}`,
-      steps: [`One ${roundLength}s ${modeLabel} round`, adaptiveStep, `Slow answers on ${weakestItem.note.id}`],
+      steps: [roundStep, adaptiveStep, `Slow answers on ${weakestItem.note.id}`],
     };
   }
 
@@ -411,7 +420,7 @@ export function getPracticePlan({
       focus: `${insightSummary.latestAccuracy}% latest`,
       reason: `Accuracy is down ${Math.abs(insightSummary.accuracyDelta)}% from the previous saved round.`,
       target: "Back to 80%",
-      steps: [`One careful ${roundLength}s round`, "Accuracy before speed", "Finish with a steady streak"],
+      steps: [carefulRoundStep, "Accuracy before speed", "Finish with a steady streak"],
     };
   }
 
@@ -426,7 +435,7 @@ export function getPracticePlan({
       focus: `${historySummary.averageAccuracy}% recent avg`,
       reason: `Recent ${modeLabel} rounds are staying above ${ADVANCE_ACCURACY_TARGET}%.`,
       target: "Hold 90% again",
-      steps: [`One faster ${roundLength}s round`, "Keep the best streak steady", "Move up after another clean round"],
+      steps: [fasterRoundStep, "Keep the best streak steady", "Move up after another clean round"],
     };
   }
 
@@ -436,7 +445,7 @@ export function getPracticePlan({
     focus: `${formatAccuracy(modeProgress.totalCorrect, modeProgress.totalAttempts)} lifetime`,
     reason: `The current ${modeLabel} profile is balanced enough for a normal round.`,
     target: `${FOCUS_ACCURACY_TARGET}% accuracy`,
-    steps: [`One ${roundLength}s ${modeLabel} round`, "Steady tempo", "Review the round summary"],
+    steps: [roundStep, "Steady tempo", "Review the round summary"],
   };
 }
 

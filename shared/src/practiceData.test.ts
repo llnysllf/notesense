@@ -66,7 +66,7 @@ describe("catalog-less normalization (server path)", () => {
 
     expect(
       normalizeSettings({
-        roundLength: 45,
+        roundLength: 4,
         readingRange: "nope",
         customReadingRange: { startNoteId: "not-a-note", endNoteId: "F4" },
       }),
@@ -79,6 +79,12 @@ describe("catalog-less normalization (server path)", () => {
       pitchExercise: "single",
       melodyLength: 3,
     });
+  });
+
+  it("accepts custom and open-ended practice durations", () => {
+    expect(normalizeSettings({ roundLength: 150 })).toMatchObject({ roundLength: 150 });
+    expect(normalizeSettings({ roundLength: 0 })).toMatchObject({ roundLength: 0 });
+    expect(normalizeSettings({ roundLength: 14_401 })).toMatchObject({ roundLength: 60 });
   });
 
   it("normalizes expanded pitch settings and preserves older saved settings", () => {

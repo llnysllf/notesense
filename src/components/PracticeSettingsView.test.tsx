@@ -48,6 +48,7 @@ describe("PracticeSettingsView", () => {
     expect(screen.getByRole("button", { name: "60s" })).toHaveAttribute("aria-pressed", "true");
     expect(screen.getByRole("button", { name: "30s" })).toHaveAttribute("aria-pressed", "false");
     expect(screen.getByRole("button", { name: "90s" })).toHaveAttribute("aria-pressed", "false");
+    expect(screen.getByRole("button", { name: "Until I stop" })).toHaveAttribute("aria-pressed", "false");
   });
 
   it("patches the round length", () => {
@@ -55,6 +56,22 @@ describe("PracticeSettingsView", () => {
 
     fireEvent.click(screen.getByRole("button", { name: "90s" }));
     expect(props.onSettingsChange).toHaveBeenCalledWith({ roundLength: 90 });
+  });
+
+  it("supports an open-ended round", () => {
+    const { props } = renderSettingsView();
+
+    fireEvent.click(screen.getByRole("button", { name: "Until I stop" }));
+    expect(props.onSettingsChange).toHaveBeenCalledWith({ roundLength: 0 });
+  });
+
+  it("applies a custom round length in seconds", () => {
+    const { props } = renderSettingsView();
+
+    fireEvent.change(screen.getByLabelText("Custom time"), { target: { value: "150" } });
+    fireEvent.click(screen.getByRole("button", { name: "Use time" }));
+
+    expect(props.onSettingsChange).toHaveBeenCalledWith({ roundLength: 150 });
   });
 
   it("patches each practice toggle", () => {

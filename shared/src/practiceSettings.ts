@@ -27,6 +27,9 @@ export const DEFAULT_PITCH_EXERCISE: PitchExercise = "single";
 export const DEFAULT_MELODY_LENGTH: MelodyLength = 3;
 export const MIN_PITCH_SEQUENCE_LENGTH = 3;
 export const MAX_PITCH_SEQUENCE_LENGTH = 16;
+export const UNLIMITED_ROUND_LENGTH = 0;
+export const MIN_ROUND_LENGTH_SECONDS = 5;
+export const MAX_ROUND_LENGTH_SECONDS = 14_400;
 
 export const defaultSettings: PracticeSettings = {
   roundLength: 60,
@@ -84,9 +87,13 @@ function normalizeCustomPitchRange(value: unknown): CustomPitchRange {
 
 export function normalizeSettings(settings: unknown): PracticeSettings {
   const settingsRecord = isRecord(settings) ? settings : {};
-  const roundLength = [30, 60, 90].includes(Number(settingsRecord.roundLength))
-    ? (Number(settingsRecord.roundLength) as PracticeSettings["roundLength"])
-    : defaultSettings.roundLength;
+  const requestedRoundLength = Number(settingsRecord.roundLength);
+  const roundLength =
+    Number.isInteger(requestedRoundLength) &&
+    (requestedRoundLength === UNLIMITED_ROUND_LENGTH ||
+      (requestedRoundLength >= MIN_ROUND_LENGTH_SECONDS && requestedRoundLength <= MAX_ROUND_LENGTH_SECONDS))
+      ? requestedRoundLength
+      : defaultSettings.roundLength;
   const melodyLength = Number(settingsRecord.melodyLength);
   const midiLatencyMs = Number(settingsRecord.midiLatencyMs);
 
