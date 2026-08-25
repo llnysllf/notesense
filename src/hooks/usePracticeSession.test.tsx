@@ -343,6 +343,29 @@ describe("usePracticeSession", () => {
     expect(onProgressChange).toHaveBeenCalledTimes(1);
   });
 
+  it("keeps an open-ended round running until the learner finishes it", () => {
+    const progressAfterFinish = { current: freshProgress() };
+    const { result, onProgressChange } = renderPracticeSession({
+      settings: { ...defaultSettings, roundLength: 0 },
+      onProgressChange: (next) => {
+        progressAfterFinish.current = next;
+      },
+    });
+
+    act(() => result.current.startRound());
+    act(() => vi.advanceTimersByTime(120_000));
+
+    expect(result.current.isRunning).toBe(true);
+    expect(result.current.timeRemaining).toBe(0);
+    expect(onProgressChange).not.toHaveBeenCalled();
+
+    act(() => result.current.finishRound());
+
+    expect(result.current.isRunning).toBe(false);
+    expect(onProgressChange).toHaveBeenCalledTimes(1);
+    expect(progressAfterFinish.current.history[0]?.durationSeconds).toBe(120);
+  });
+
   it("finishes a round with a session record and summary", () => {
     const progressAfterAttempt = { current: freshProgress() };
     const onProgressChange = vi.fn((next: PracticeProgress) => {

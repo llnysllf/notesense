@@ -4,7 +4,9 @@
 export type NoteName = "C" | "D" | "E" | "F" | "G" | "A" | "B";
 export type ReadingNoteName = NoteName;
 export type PracticeMode = "reading" | "pitch";
-export type RoundLength = 30 | 60 | 90;
+// Whole seconds. Zero means the learner chose an open-ended round that only
+// finishes when they press the stop button.
+export type RoundLength = number;
 export type ReadingRange =
   "treble-starter" | "bass-starter" | "treble-one-octave" | "bass-one-octave" | "grand-starter" | "custom";
 export type PitchRange = "natural" | "chromatic" | "two-octaves" | "full" | "custom";

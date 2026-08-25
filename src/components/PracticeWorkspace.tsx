@@ -41,6 +41,7 @@ type PracticeWorkspaceProps = {
   roundCorrect: number;
   shouldRevealPitch: boolean;
   timeRemaining: number;
+  hasTimeLimit: boolean;
   onClearMelodyAnswer: () => void;
   onFinishRound: () => void;
   onMelodyNoteInput: (noteId: string) => void;
@@ -76,6 +77,7 @@ function PracticeWorkspace({
   roundCorrect,
   shouldRevealPitch,
   timeRemaining,
+  hasTimeLimit,
   onClearMelodyAnswer,
   onFinishRound,
   onMelodyNoteInput,
@@ -100,7 +102,7 @@ function PracticeWorkspace({
       {mode === "reading" && !isRunning ? <MistakeReplay misses={readingMisses} onReplay={onStartReplay} /> : null}
 
       <div className="round-strip" aria-label="Current round status">
-        <StatTile label="Time" value={`${timeRemaining}s`} />
+        <StatTile label="Time" value={hasTimeLimit ? `${timeRemaining}s` : "No limit"} />
         <StatTile label="Round" value={`${roundCorrect}/${roundAttempts}`} />
         <StatTile label="Accuracy" value={roundAccuracy} />
         <StatTile label="Streak" value={currentStreak} />

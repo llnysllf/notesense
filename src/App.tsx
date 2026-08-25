@@ -269,6 +269,7 @@ function App() {
           roundAttempts={roundAttempts}
           roundCorrect={roundCorrect}
           shouldRevealPitch={shouldRevealPitch}
+          hasTimeLimit={settings.roundLength !== 0}
           timeRemaining={timeRemaining}
           onClearMelodyAnswer={clearMelodyAnswer}
           onFinishRound={finishRound}

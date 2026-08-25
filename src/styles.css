@@ -1258,11 +1258,51 @@ h3 {
 }
 
 .length-options {
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
 .length-options button {
   min-height: 34px;
+}
+
+.custom-duration {
+  display: grid;
+  gap: 6px;
+}
+
+.custom-duration > label {
+  color: var(--color-muted);
+  font-size: 0.8rem;
+  font-weight: 750;
+}
+
+.custom-duration > div {
+  display: grid;
+  grid-template-columns: minmax(72px, 1fr) auto auto;
+  align-items: center;
+  gap: 8px;
+}
+
+.custom-duration input {
+  min-width: 0;
+  min-height: 38px;
+  padding: 7px 10px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-control);
+  background: var(--color-surface);
+  color: var(--color-text);
+  font: inherit;
+  font-variant-numeric: tabular-nums;
+}
+
+.custom-duration span,
+.setting-help {
+  color: var(--color-muted);
+  font-size: 0.8rem;
+}
+
+.setting-help {
+  margin: 0;
 }
 
 .toggle-row {

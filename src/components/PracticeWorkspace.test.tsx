@@ -30,6 +30,7 @@ function renderWorkspace(overrides: Partial<WorkspaceProps> = {}) {
     roundAttempts: 0,
     roundCorrect: 0,
     shouldRevealPitch: false,
+    hasTimeLimit: true,
     timeRemaining: 60,
     onClearMelodyAnswer: vi.fn(),
     onFinishRound: vi.fn(),
@@ -68,6 +69,13 @@ describe("PracticeWorkspace", () => {
 
     fireEvent.click(screen.getByRole("button", { name: "White piano key C4, inside selected range" }));
     expect(onPitchKeyAnswer).toHaveBeenCalledWith("C4");
+  });
+
+  it("shows an open-ended round without a countdown", () => {
+    renderWorkspace({ hasTimeLimit: false, timeRemaining: 0 });
+
+    expect(screen.getByText("No limit")).toBeInTheDocument();
+    expect(screen.queryByText("0s")).not.toBeInTheDocument();
   });
 
   it("disables pitch answers while idle or after feedback", () => {

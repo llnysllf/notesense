@@ -705,7 +705,7 @@ describe("storage progress reducers", () => {
 
     stubLocalStorage({
       "notesense.settings.v3": JSON.stringify({
-        roundLength: 45,
+        roundLength: 4,
         readingRange: "wide-range",
         adaptivePractice: false,
         autoPlayPitch: false,
