@@ -34,11 +34,7 @@ import type {
 } from "@notesense/shared";
 
 export { MAX_PITCH_SEQUENCE_LENGTH, MIN_PITCH_SEQUENCE_LENGTH } from "@notesense/shared";
-export {
-  MAX_ROUND_LENGTH_SECONDS,
-  MIN_ROUND_LENGTH_SECONDS,
-  UNLIMITED_ROUND_LENGTH,
-} from "@notesense/shared";
+export { MAX_ROUND_LENGTH_SECONDS, MIN_ROUND_LENGTH_SECONDS, UNLIMITED_ROUND_LENGTH } from "@notesense/shared";
 
 // Re-export the framework-agnostic data contract so existing `./types` imports keep working.
 export type {
