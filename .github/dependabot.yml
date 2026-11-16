@@ -28,6 +28,12 @@ updates:
       - dependency-name: "*"
         update-types:
           - "version-update:semver-major"
+      - dependency-name: "@axe-core/playwright"
+        versions:
+          - "4.14.0"
+      - dependency-name: "@playwright/test"
+        versions:
+          - "1.65.1"
 
   - package-ecosystem: github-actions
     directory: /
