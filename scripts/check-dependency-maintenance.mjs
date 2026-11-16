@@ -49,23 +49,28 @@ requireSnippets("package.json", [
   '"verify": "npm run security:supply-chain && npm run check',
 ]);
 
-requireSnippets("docs/DEPENDENCY_MAINTENANCE.md", ["## Audit Exceptions", "GHSA-mh99-v99m-4gvg", "2026-08-15"]);
+requireSnippets("docs/DEPENDENCY_MAINTENANCE.md", ["## Audit Exceptions", "There are currently no audit exceptions."]);
 
 const auditPolicyText = readProjectFile("config/npm-audit-exceptions.json");
 if (auditPolicyText) {
   try {
     const auditPolicy = JSON.parse(auditPolicyText);
-    const exception = auditPolicy.exceptions?.find(
-      (item) =>
-        item.package === "brace-expansion" &&
-        item.advisory === "GHSA-mh99-v99m-4gvg" &&
-        item.devOnly === true &&
-        item.expiresOn === "2026-08-15" &&
-        typeof item.reason === "string" &&
-        item.reason.length > 0,
-    );
-    if (!exception) {
-      failures.push("config/npm-audit-exceptions.json is missing the reviewed brace-expansion exception");
+    if (!Array.isArray(auditPolicy.exceptions)) {
+      failures.push("config/npm-audit-exceptions.json must define an exceptions array");
+    } else if (
+      auditPolicy.exceptions.some(
+        (item) =>
+          typeof item.package !== "string" ||
+          !/^GHSA-[\w-]+$/i.test(item.advisory) ||
+          item.devOnly !== true ||
+          !/^\d{4}-\d{2}-\d{2}$/.test(item.expiresOn) ||
+          typeof item.reason !== "string" ||
+          item.reason.trim().length === 0,
+      )
+    ) {
+      failures.push(
+        "config/npm-audit-exceptions.json entries must be advisory-specific, development-only, time-bound, and justified",
+      );
     }
   } catch {
     failures.push("config/npm-audit-exceptions.json must contain valid JSON");

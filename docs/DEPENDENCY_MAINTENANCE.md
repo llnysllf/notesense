@@ -22,6 +22,7 @@ Release safety and provenance expectations live in [RELEASE_SAFETY.md](RELEASE_S
 - Routine npm updates are grouped into app runtime dependencies and tooling dependencies.
 - CodeQL GitHub Actions updates are grouped so `github/codeql-action/init` and `github/codeql-action/analyze` move together.
 - npm major upgrades are ignored by Dependabot and should be opened as intentional engineering tasks.
+- `@axe-core/playwright` 4.14.0 and `@playwright/test` 1.65.1 are temporarily ignored because that pair repeatedly crashes Firefox during accessibility scans; remove both holds after a compatible browser-testing release passes the repeated Firefox accessibility checks.
 - Dependabot minor and patch PRs may merge without human review only after the repository-owned auto-merge workflow verifies the Dependabot author, source repository, and changed-file allowlist, then confirms every required check passes.
 
 ## Update Classes
@@ -42,10 +43,8 @@ exact package and advisory, proves every affected lockfile node is development-o
 expired. Runtime exposure can never inherit a development-only exception, and parent findings are allowed only when
 they are caused solely by the accepted advisory.
 
-The temporary exception for `brace-expansion` advisory `GHSA-mh99-v99m-4gvg` expires on 2026-08-15. The affected v1
-and v2 lines are transitive build dependencies of ESLint and Workbox, have no patched release, and receive only
-repository-controlled glob patterns in NoteSense. The compatible v5 paths are locked to 5.0.8. Remove the exception
-as soon as upstream packages leave the affected dependency lines; do not extend it without a new security review.
+There are currently no audit exceptions. Remove an exception as soon as a compatible patched dependency graph is
+available; never extend an expired exception without a new security review and a documented replacement deadline.
 
 ## Review Evidence
 
