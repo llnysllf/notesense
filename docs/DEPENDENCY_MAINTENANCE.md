@@ -22,7 +22,7 @@ Release safety and provenance expectations live in [RELEASE_SAFETY.md](RELEASE_S
 - Routine npm updates are grouped into app runtime dependencies and tooling dependencies.
 - CodeQL GitHub Actions updates are grouped so `github/codeql-action/init` and `github/codeql-action/analyze` move together.
 - npm major upgrades are ignored by Dependabot and should be opened as intentional engineering tasks.
-- `@axe-core/playwright` 4.14.0 and `@playwright/test` 1.64.1, 1.65.0, and 1.65.1 are temporarily ignored because those releases cause cross-browser failures in the full Playwright suite, including Firefox accessibility-scan crashes; remove the holds after a compatible browser-testing release passes the repeated cross-browser checks.
+- `@axe-core/playwright` 4.14.0 and `@playwright/test` 1.63.x-1.65.x are temporarily ignored. Playwright 1.62.1 is the known-good baseline, while repeated later releases cause the same Firefox and WebKit failures in the full browser suite; re-evaluate the hold when 1.66.x is available and remove it only after the repeated cross-browser checks pass.
 - Dependabot minor and patch PRs may merge without human review only after the repository-owned auto-merge workflow verifies the Dependabot author, source repository, and changed-file allowlist, then confirms every required check passes.
 
 ## Update Classes
